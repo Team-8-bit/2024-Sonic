@@ -2,11 +2,11 @@ import edu.wpi.first.gradlerio.GradleRIOPlugin
 import groovy.json.JsonSlurper
 
 plugins {
-    id "java"
-    id "edu.wpi.first.GradleRIO" version "2024.2.1"
-    id "org.jetbrains.kotlin.jvm" version "1.9.20"
-    id "com.peterabeles.gversion" version "1.10"
-    id "com.google.devtools.ksp"
+    id("java")
+    id("edu.wpi.first.GradleRIO").version("2024.2.1")
+    id("org.jetbrains.kotlin.jvm").version("1.9.20")
+    id("com.peterabeles.gversion").version("1.10")
+    id("com.google.devtools.ksp")
 }
 
 def javaVersion = JavaVersion.VERSION_17
@@ -94,8 +94,6 @@ dependencies {
     def akitJson = new JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit.junction:junction-autolog:$akitJson.version"
 }
-
-
 
 // Simulation configuration (e.g. environment variables).
 wpi.sim.addGui().defaultEnabled = true
