@@ -127,7 +127,7 @@ tasks.withType(JavaCompile).configureEach {
 
 project.compileJava.dependsOn(createVersionFile)
 gversion {
-    srcDir       = "src/main/java/"
+    srcDir       = "src/main/kotlin/"
     classPackage = "org.team9432"
     className    = "BuildConstants"
     dateFormat   = "yyyy-MM-dd HH:mm:ss z"
