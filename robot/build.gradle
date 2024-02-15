@@ -1,17 +1,20 @@
-import edu.wpi.first.gradlerio.deploy.roborio.RoboRIO
+import edu.wpi.first.gradlerio.GradleRIOPlugin
+import groovy.json.JsonSlurper
 
 plugins {
     id "java"
-    id "org.jetbrains.kotlin.jvm" version "1.8.0"
     id "edu.wpi.first.GradleRIO" version "2024.2.1"
-    id "idea"
-
+    id "org.jetbrains.kotlin.jvm" version "1.9.20"
     id "com.peterabeles.gversion" version "1.10"
+    id "com.google.devtools.ksp"
 }
 
-def javaVersion = JavaVersion.VERSION_11
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
+def javaVersion = JavaVersion.VERSION_17
+
+java {
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+}
 
 def ROBOT_MAIN_CLASS = "org.team9432.Main"
 
@@ -24,15 +27,14 @@ deploy {
             // or from command line. If not found an exception will be thrown.
             // You can use getTeamOrDefault(team) instead of getTeamNumber if you
             // want to store a team number in this file.
-            team = project.frc.getTeamNumber()
+            team = project.frc.getTeamOrDefault(9432)
             debug = project.frc.getDebugOrDefault(false)
 
             artifacts {
                 // First part is artifact name, 2nd is artifact type
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
-                frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-                }
+                frcJava(getArtifactTypeClass('FRCJavaArtifact')) {}
 
                 // Static files artifact
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
@@ -43,14 +45,6 @@ deploy {
         }
     }
 }
-
-def deployArtifact = deploy.targets.roborio.artifacts.frcJava
-
-// Set to true to use debug for JNI.
-wpi.java.debugJni = false
-
-// Set this to true to enable desktop support.
-def includeDesktopSupport = false
 
 repositories {
     maven {
@@ -63,37 +57,45 @@ repositories {
     mavenLocal()
 }
 
-project.compileJava.dependsOn(createVersionFile)
-gversion {
-    srcDir       = "src/main/java/"
-    classPackage = "org.team9432"
-    className    = "BuildConstants"
-    dateFormat   = "yyyy-MM-dd HH:mm:ss z"
-    timeZone     = "America/Phoenix" // Use preferred time zone
-    indent       = "  "
+configurations.configureEach {
+    exclude group: "edu.wpi.first.wpilibj"
 }
+
+def deployArtifact = deploy.targets.roborio.artifacts.frcJava
+
+// Set to true to use debug for JNI.
+wpi.java.debugJni = false
+
+// Set this to true to enable desktop support.
+def includeDesktopSupport = false
 
 dependencies {
-    implementation wpi.java.deps.wpilib()
-    implementation wpi.java.vendor.java()
+    implementation implementation(project(':annotation'))
+    ksp ksp(project(':annotation'))
 
-    roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
-    roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
+    wpi.java.deps.wpilib().forEach { implementation(it) }
+    wpi.java.vendor.java().forEach { implementation(it) }
 
-    roborioRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.roborio)
-    roborioRelease wpi.java.vendor.jniRelease(wpi.platforms.roborio)
+    wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio).forEach { roborioDebug(it) }
+    wpi.java.vendor.jniDebug(wpi.platforms.roborio).forEach { roborioDebug(it) }
 
-    nativeDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
-    nativeDebug wpi.java.vendor.jniDebug(wpi.platforms.desktop)
-    simulationDebug wpi.sim.enableDebug()
+    wpi.java.deps.wpilibJniRelease(wpi.platforms.roborio).forEach { roborioRelease(it) }
+    wpi.java.vendor.jniRelease(wpi.platforms.roborio).forEach { roborioRelease(it) }
 
-    nativeRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop)
-    nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
-    simulationRelease wpi.sim.enableRelease()
+    wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop).forEach { nativeDebug(it) }
+    wpi.java.vendor.jniDebug(wpi.platforms.desktop).forEach { nativeDebug(it) }
+    wpi.sim.enableDebug().forEach { simulationDebug(it) }
 
-    def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
+    wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop).forEach { nativeRelease(it) }
+    wpi.java.vendor.jniRelease(wpi.platforms.desktop).forEach { nativeRelease(it) }
+
+    wpi.sim.enableRelease().forEach { simulationRelease(it) }
+
+    def akitJson = new JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit.junction:junction-autolog:$akitJson.version"
 }
+
+
 
 // Simulation configuration (e.g. environment variables).
 wpi.sim.addGui().defaultEnabled = true
@@ -104,7 +106,7 @@ wpi.sim.addDriverstation()
 // knows where to look for our Robot Class.
 jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+    manifest GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
@@ -113,9 +115,6 @@ deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
-configurations.all {
-    exclude group: "edu.wpi.first.wpilibj"
-}
 
 task(checkAkitInstall, dependsOn: "classes", type: JavaExec) {
     mainClass = "org.littletonrobotics.junction.CheckInstall"
@@ -123,27 +122,17 @@ task(checkAkitInstall, dependsOn: "classes", type: JavaExec) {
 }
 compileJava.finalizedBy checkAkitInstall
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     // Configure string concat to always inline compile
     options.compilerArgs.add '-XDstringConcat=inline'
 }
 
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = javaVersion.toString()
-    }
-}
-
-idea {
-    project {
-        // The project.sourceCompatibility setting is not always picked up, so we set explicitly
-        languageLevel = javaVersion
-    }
-    module {
-        // Improve development & (especially) debugging experience (and IDEA's capabilities) by having libraries' source & javadoc attached
-        downloadJavadoc = true
-        downloadSources = true
-        // Exclude the .vscode directory from indexing and search
-        excludeDirs+=file(".vscode" )
-    }
+project.compileJava.dependsOn(createVersionFile)
+gversion {
+    srcDir       = "src/main/java/"
+    classPackage = "org.team9432"
+    className    = "BuildConstants"
+    dateFormat   = "yyyy-MM-dd HH:mm:ss z"
+    timeZone     = "America/Phoenix" // Use preferred time zone
+    indent       = "  "
 }

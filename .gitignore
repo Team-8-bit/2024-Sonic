@@ -289,7 +289,7 @@ $RECYCLE.BIN/
 ### Gradle ###
 .gradle
 **/build/
-!src/**/build/
+!robot/src/**/build/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -332,4 +332,4 @@ bin/
 
 # End entries from WPI Lib team
 
-/src/main/java/org/team9432/BuildConstants.java
+/robot/src/main/java/org/team9432/BuildConstants.java
