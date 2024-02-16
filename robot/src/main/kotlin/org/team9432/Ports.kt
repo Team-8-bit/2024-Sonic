@@ -5,4 +5,7 @@ object Ports {
         const val MOTOR_ID = 1
         const val LIMIT_ID = 1
     }
+    object Amp {
+        const val MOTOR_ID = 1
+    }
 }
