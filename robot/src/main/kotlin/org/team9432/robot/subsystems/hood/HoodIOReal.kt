@@ -1,14 +1,18 @@
 package org.team9432.robot.subsystems.hood
 
-import com.revrobotics.CANSparkLowLevel
-import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkBase
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Ports
 
 class HoodIOReal: HoodIO, SubsystemBase() {
-    private val spark = CANSparkMax(Ports.Hood.MOTOR_ID, CANSparkLowLevel.MotorType.kBrushless)
+    private val spark = KSparkMAX(Ports.Hood.MOTOR_ID) {
+        inverted = false
+        idleMode = CANSparkBase.IdleMode.kBrake
+    }
+
     private val encoder = spark.absoluteEncoder
     private val limit = DigitalInput(Ports.Hood.LIMIT_ID)
 
