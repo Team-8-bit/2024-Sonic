@@ -3,10 +3,11 @@ package org.team9432.robot.subsystems.hood
 import com.revrobotics.CANSparkBase
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Ports
 
-class HoodIOReal: HoodIO, SubsystemBase() {
+class HoodIOReal: HoodIO, KSubsystem() {
     private val spark = KSparkMAX(Ports.Hood.MOTOR_ID) {
         inverted = false
         idleMode = CANSparkBase.IdleMode.kBrake
@@ -25,12 +26,9 @@ class HoodIOReal: HoodIO, SubsystemBase() {
         controller.setFeedbackDevice(encoder)
     }
 
-    override fun periodic() {
-        controller.setReference(targetAngle, CANSparkBase.ControlType.kPosition)
-    }
-
     override fun setAngle(angle: Double) {
         targetAngle = angle * GEAR_RATIO
+        controller.setReference(targetAngle, CANSparkBase.ControlType.kPosition)
     }
 
     override fun updateInputs(inputs: HoodIO.HoodIOInputs) {
