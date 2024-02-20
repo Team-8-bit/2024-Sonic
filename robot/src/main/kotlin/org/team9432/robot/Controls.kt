@@ -9,7 +9,7 @@ object Controls {
     private val controller = KXboxController(0)
 
     init {
-        Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ controller.leftY }, { controller.leftX }, { controller.rightX })
+        Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX })
 
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
     }
