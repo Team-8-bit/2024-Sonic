@@ -333,3 +333,6 @@ bin/
 # End entries from WPI Lib team
 
 /robot/src/main/kotlin/org/team9432/BuildConstants.java
+/robot/ctre_sim/
+/robot/logs/
+/robot/networktables.json
