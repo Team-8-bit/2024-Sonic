@@ -22,11 +22,40 @@ interface ModuleIO {
     var disabled: Boolean
     val module: Module
 
-    enum class Module(number: Int) {
-        FL(1), FR(2), BL(3), BR(4);
-
-        val encoderID = (number * 10) + 0
-        val driveID = (number * 10) + 1
-        val steerID = (number * 10) + 2
+    enum class Module(
+       val encoderID: Int,
+       val driveID: Int,
+       val steerID: Int,
+       val driveInverted: Boolean,
+       val steerInverted: Boolean,
+    ) {
+        FL(
+            encoderID = 11,
+            driveID = 12,
+            steerID = 13,
+            driveInverted = false,
+            steerInverted = true,
+        ),
+        FR(
+            encoderID = 21,
+            driveID = 22,
+            steerID = 23,
+            driveInverted = true,
+            steerInverted = false,
+        ),
+        BL(
+            encoderID = 31,
+            driveID = 32,
+            steerID = 33,
+            driveInverted = false,
+            steerInverted = true,
+        ),
+        BR(
+            encoderID = 41,
+            driveID = 42,
+            steerID = 43,
+            driveInverted = true,
+            steerInverted = false,
+        );
     }
 }

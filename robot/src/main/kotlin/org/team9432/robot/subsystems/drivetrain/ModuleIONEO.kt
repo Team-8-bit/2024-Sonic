@@ -42,7 +42,7 @@ class ModuleIONEO(override val module: ModuleIO.Module): ModuleIO {
         drive.restoreFactoryDefaults()
         drive.setSmartCurrentLimit(20)
         drive.openLoopRampRate = 1.0
-        drive.inverted = true
+        drive.inverted = !module.driveInverted
         drivePID.p = 0.0000628319270
         drivePID.i = 0.0
         drivePID.d = 0.0001
@@ -51,7 +51,7 @@ class ModuleIONEO(override val module: ModuleIO.Module): ModuleIO {
         steer.restoreFactoryDefaults()
         steer.setSmartCurrentLimit(20)
         steer.openLoopRampRate = 1.0
-        steer.inverted = true
+        steer.inverted = !module.steerInverted
         steerPID.p = 0.3
         steerPID.i = 0.0
         steerPID.d = 0.0
