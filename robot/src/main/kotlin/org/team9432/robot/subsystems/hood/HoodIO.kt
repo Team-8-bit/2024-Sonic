@@ -1,4 +1,4 @@
-package org.team9432.subsystems.hood
+package org.team9432.robot.subsystems.hood
 
 import org.team9432.lib.annotation.Logged
 

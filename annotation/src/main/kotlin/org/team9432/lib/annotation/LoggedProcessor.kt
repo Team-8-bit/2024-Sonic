@@ -12,6 +12,18 @@ import com.squareup.kotlinpoet.ksp.writeTo
 class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor {
     private val logTableType = ClassName("org.littletonrobotics.junction", "LogTable")
     private val loggableInputsType = ClassName("org.littletonrobotics.junction.inputs", "LoggableInputs")
+    private val loggableTypes = listOf(
+        "kotlin.ByteArray",
+        "kotlin.Boolean",
+        "kotlin.Long",
+        "kotlin.Float",
+        "kotlin.Double",
+        "kotlin.String",
+        "kotlin.BooleanArray",
+        "kotlin.LongArray",
+        "kotlin.FloatArray",
+        "kotlin.DoubleArray",
+    )
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val annotatedClasses = resolver.getSymbolsWithAnnotation("org.team9432.lib.annotation.Logged").filterIsInstance<KSClassDeclaration>()
@@ -25,7 +37,7 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor
         val packageName = classDeclaration.packageName.asString()
         val className = classDeclaration.simpleName.asString()
 
-        val newClassName = "${className}AutoLogged"
+        val newClassName = "Logged${className}"
 
         val toLogBuilder = FunSpec.builder("toLog")
             .addModifiers(KModifier.OVERRIDE)
@@ -39,9 +51,9 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor
             val simpleName = property.simpleName.asString()
             val logName = simpleName.substring(0, 1).uppercase() + simpleName.substring(1)
 
-            val fieldType = property.type.toString()
-
-            if (fieldType.startsWith("java") && !fieldType.startsWith("java.lang.String")) throw Exception("""[Logged] Unknown type for "$simpleName" from "$className" ("$fieldType" is not supported)""")
+            val fieldType = property.type.resolve().toClassName().canonicalName
+            if (!property.isMutable) throw Exception("""[Logged] Please ensure the class you are annotating (${classDeclaration.simpleName.asString()}) has only mutable properties!""")
+            if (!loggableTypes.contains(fieldType)) throw Exception("""[Logged] Unknown type for "$simpleName" in "$className" ("$fieldType" is not supported)""")
 
             toLogBuilder.addCode(
                 """ |table.put("$logName", $simpleName)
