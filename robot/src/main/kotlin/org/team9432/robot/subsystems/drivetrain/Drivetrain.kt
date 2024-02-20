@@ -88,18 +88,11 @@ object Drivetrain: KSubsystem() {
         Logger.processInputs("Gyro", gyroInputs)
 
         when (Robot.mode) {
-            REAL, REPLAY -> poseEstimator.update(Rotation2d.fromDegrees(yaw), getModulePositions().toTypedArray())
-            SIM -> {
-                val currentPosition = getPose()
-                val currentVelocity = currentSpeeds
-                Logger.recordOutput("Velocity", Pose2d(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond, Rotation2d.fromRadians(currentVelocity.omegaRadiansPerSecond)))
-                val newX = currentPosition.x + currentVelocity.vxMetersPerSecond * Robot.period
-                val newY = currentPosition.y + currentVelocity.vyMetersPerSecond * Robot.period
-                val newAngle = currentPosition.rotation.radians + currentVelocity.omegaRadiansPerSecond * Robot.period
-                val newPosition = Pose2d(newX, newY, Rotation2d.fromRadians(newAngle))
-                poseEstimator.resetPosition(newPosition.rotation, getModulePositions().toTypedArray(), newPosition)
-                gyro.setYaw(newAngle)
-            }
+            REAL, REPLAY, SIM -> poseEstimator.update(Rotation2d.fromDegrees(yaw), getModulePositions().toTypedArray())
+        }
+
+        if (Robot.mode == SIM) {
+            gyro.setYaw(getPose().rotation.degrees + Math.toDegrees(kinematics.toChassisSpeeds(*targetStates.toTypedArray()).omegaRadiansPerSecond) * Robot.period)
         }
 
         Logger.recordOutput("Odometry", getPose())
@@ -155,9 +148,7 @@ object Drivetrain: KSubsystem() {
     }
 
     private fun x() {
-        if (Robot.mode == SIM) {
-            currentSpeeds = ChassisSpeeds()
-        }
+        setSpeeds(ChassisSpeeds())
         setSwerveModules(
             listOf(
                 SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)),
