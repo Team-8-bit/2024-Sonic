@@ -1,4 +1,4 @@
-package org.team9432.subsystems.hopper
+package org.team9432.robot.subsystems.hopper
 
 import org.team9432.lib.annotation.Logged
 
