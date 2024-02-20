@@ -1,4 +1,4 @@
-package org.team9432.robot.subsystems
+package org.team9432.robot.subsystems.amp
 
 import org.team9432.lib.annotation.Logged
 

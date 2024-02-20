@@ -1,4 +1,4 @@
-package org.team9432.robot.subsystems
+package org.team9432.robot.subsystems.amp
 
 import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.CANSparkMax
