@@ -56,6 +56,7 @@ object Drivetrain: KSubsystem() {
     private var targetStates = getModuleStates()
 
     private var manualSpeeds = ChassisSpeeds()
+    private var currentSpeeds = ChassisSpeeds()
 
     init {
         mode = SubsystemMode.MANUAL
@@ -86,15 +87,24 @@ object Drivetrain: KSubsystem() {
         gyro.updateInputs(gyroInputs)
         Logger.processInputs("Gyro", gyroInputs)
 
-        poseEstimator.update(Rotation2d.fromDegrees(yaw), getModulePositions().toTypedArray())
+        when (Robot.mode) {
+            REAL, REPLAY -> poseEstimator.update(Rotation2d.fromDegrees(yaw), getModulePositions().toTypedArray())
+            SIM -> {
+                val currentPosition = getPose()
+                val currentVelocity = currentSpeeds
+                Logger.recordOutput("Velocity", Pose2d(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond, Rotation2d.fromRadians(currentVelocity.omegaRadiansPerSecond)))
+                val newX = currentPosition.x + currentVelocity.vxMetersPerSecond * Robot.period
+                val newY = currentPosition.y + currentVelocity.vyMetersPerSecond * Robot.period
+                val newAngle = currentPosition.rotation.radians + currentVelocity.omegaRadiansPerSecond * Robot.period
+                val newPosition = Pose2d(newX, newY, Rotation2d.fromRadians(newAngle))
+                poseEstimator.resetPosition(newPosition.rotation, getModulePositions().toTypedArray(), newPosition)
+                gyro.setYaw(newAngle)
+            }
+        }
 
         Logger.recordOutput("Odometry", getPose())
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
         Logger.recordOutput("Drive/TargetStates", *targetStates.toTypedArray())
-
-        if (Robot.mode == SIM) {
-            gyro.setYaw(gyroInputs.yaw + Math.toDegrees(kinematics.toChassisSpeeds(*targetStates.toTypedArray()).omegaRadiansPerSecond) * Robot.period)
-        }
     }
 
     override fun manualPeriodic() {
@@ -127,6 +137,7 @@ object Drivetrain: KSubsystem() {
     }
 
     private fun setSpeeds(speeds: ChassisSpeeds) {
+        currentSpeeds = speeds
         speeds.vxMetersPerSecond = xLimiter.calculate(speeds.vxMetersPerSecond)
         speeds.vyMetersPerSecond = yLimiter.calculate(speeds.vyMetersPerSecond)
         targetStates = kinematics.toSwerveModuleStates(speeds).toList()
@@ -144,12 +155,17 @@ object Drivetrain: KSubsystem() {
     }
 
     private fun x() {
-        setSwerveModules(listOf(
-            SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)),
-            SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)),
-            SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)),
-            SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)),
-        ))
+        if (Robot.mode == SIM) {
+            currentSpeeds = ChassisSpeeds()
+        }
+        setSwerveModules(
+            listOf(
+                SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)),
+                SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)),
+                SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)),
+                SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)),
+            )
+        )
     }
 
     private fun getPose(): Pose2d = poseEstimator.estimatedPosition
