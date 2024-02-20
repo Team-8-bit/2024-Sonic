@@ -45,16 +45,16 @@ object DrivetrainConstants {
         const val P = 5.0
         const val I = 0.0
         const val D = 0.0
-        const val EPSILON = 0.0
+        const val EPSILON = 3.0
 
         // Constraints for the profiled angle controller
         val CONTROLLER_CONSTRAINTS = TrapezoidProfile.Constraints(MAX_ANGULAR_SPEED_DEGREES_PER_SECOND, MAX_ANGULAR_SPEED_DEGREES_PER_SECOND_SQUARED)
     }
 
     object PoseConstants {
-        const val P = 0.0
+        const val P = 3.0
         const val I = 0.0
         const val D = 0.0
-        const val EPSILON = 0.0
+        const val EPSILON = 0.05
     }
 }

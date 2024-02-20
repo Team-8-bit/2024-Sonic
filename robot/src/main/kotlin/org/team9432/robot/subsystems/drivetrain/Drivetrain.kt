@@ -124,9 +124,15 @@ object Drivetrain: KSubsystem() {
     }
 
     private fun setPositionGoal(pose2d: Pose2d) {
+        Logger.recordOutput("Drive/PositionGoal", pose2d)
         xController.setpoint = pose2d.x
         yController.setpoint = pose2d.y
         angleController.setGoal(pose2d.rotation.degrees)
+    }
+
+    private fun atPositionGoal(): Boolean {
+        val pose = getPose()
+        return abs(xController.setpoint - pose.x) < PoseConstants.EPSILON && abs(yController.setpoint - pose.y) < PoseConstants.EPSILON && abs(angleController.setpoint.position - pose.rotation.degrees) < AngleConstants.EPSILON
     }
 
     private fun setSpeeds(speeds: ChassisSpeeds) {
@@ -167,6 +173,18 @@ object Drivetrain: KSubsystem() {
             gyro.setYaw(angle)
             angleController.reset(angle)
         }
+
+
+    fun driveToPositionCommand(
+        position: Pose2d,
+    ) = SimpleCommand(
+        initialize = {
+            setPositionGoal(position)
+            mode = SubsystemMode.PID
+        },
+        requirements = mutableSetOf(Drivetrain),
+        isFinished = { mode != SubsystemMode.PID || atPositionGoal() }
+    )
 
     fun fieldOrientedDriveCommand(
         xJoystickInput: () -> Double,
