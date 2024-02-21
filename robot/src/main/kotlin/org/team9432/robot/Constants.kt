@@ -8,11 +8,13 @@ import kotlin.math.pow
 
 @Suppress("unused")
 object DrivetrainConstants {
+    const val MK4I_L1_DRIVE_REDUCTION = 8.14
     const val MK4I_L2_DRIVE_REDUCTION = 6.75
-    const val MK4I_L2_STEER_REDUCTION = 21.428571428571427
+    const val MK4I_L3_DRIVE_REDUCTION = 6.12
+    const val MK4I_STEER_REDUCTION = 21.43
 
-    const val DRIVE_WHEEL_DIAMETER = 4.0
-    const val DRIVE_WHEEL_CIRCUMFERENCE = DRIVE_WHEEL_DIAMETER * kotlin.math.PI
+    const val DRIVE_WHEEL_RADIUS = 2.0
+    const val DRIVE_WHEEL_CIRCUMFERENCE = DRIVE_WHEEL_RADIUS * 2.0 * kotlin.math.PI
 
     val MODULE_TRANSLATIONS: Array<Translation2d>
         get() {
