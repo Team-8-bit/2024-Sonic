@@ -23,6 +23,11 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor
         "kotlin.LongArray",
         "kotlin.FloatArray",
         "kotlin.DoubleArray",
+        "edu.wpi.first.math.geometry.Rotation2d"
+    )
+
+    private val arrayTypes = listOf(
+        "edu.wpi.first.math.geometry.Rotation2d",
     )
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -61,11 +66,20 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor
                 """.trimMargin()
             )
 
-            fromLogBuilder.addCode(
-                """ |$simpleName = table.get("$logName", $simpleName)
+            if (arrayTypes.contains(fieldType)) {
+                fromLogBuilder.addCode(
+                    """ |$simpleName = table.get("$logName", $simpleName)[0]
                     |
                 """.trimMargin()
-            )
+                )
+            } else {
+
+                fromLogBuilder.addCode(
+                    """ |$simpleName = table.get("$logName", $simpleName)
+                    |
+                """.trimMargin()
+                )
+            }
         }
 
         val type = TypeSpec.classBuilder(newClassName)
