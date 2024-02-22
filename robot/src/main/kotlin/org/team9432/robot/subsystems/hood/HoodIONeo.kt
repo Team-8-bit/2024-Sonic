@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DigitalInput
 import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Ports
 
-class HoodIOReal: HoodIO {
+class HoodIONeo: HoodIO {
     private val spark = KSparkMAX(Ports.Hood.MOTOR_ID) {
         inverted = false
         idleMode = CANSparkBase.IdleMode.kBrake

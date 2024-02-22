@@ -8,7 +8,7 @@ import org.team9432.lib.commandbased.KSubsystem
 object Hood: KSubsystem() {
     private val inputs = LoggedHoodIOInputs()
     private val io = when (Robot.mode) {
-        REAL, REPLAY -> HoodIOReal()
+        REAL, REPLAY -> HoodIONeo()
         SIM -> TODO()
     }
 
