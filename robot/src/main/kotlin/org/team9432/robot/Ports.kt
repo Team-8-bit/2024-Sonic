@@ -7,8 +7,8 @@ object Ports {
     }
     object Hopper {
         const val MOTOR_ID = 1
-        const val Amp_BRAKE_ID = 1
-        const val Shooter_BRAKE_ID = 1
+        const val AMP_BREAK_ID = 1
+        const val SHOOTER_BREAK_ID = 1
     }
     object Amp {
         const val MOTOR_ID = 1
