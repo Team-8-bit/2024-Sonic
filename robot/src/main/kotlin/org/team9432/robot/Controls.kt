@@ -8,7 +8,7 @@ import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
 object Controls {
-    private val controller = KXboxController(0, squareJoysticks = false)
+    private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.0)
 
     init {
         Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX })
