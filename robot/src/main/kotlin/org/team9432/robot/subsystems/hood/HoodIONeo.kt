@@ -16,7 +16,9 @@ class HoodIONeo: HoodIO {
 
     private val pid = spark.pidController
 
-    private val gearRatio = 2.0 * (150 / 15)
+    private val motorToHoodRatio = 2.0 * (150 / 15)
+    private val encoderToHoodRatio = 150 / 15
+
     private val encoderOffset = Rotation2d.fromDegrees(0.0)
 
     init {
@@ -37,9 +39,9 @@ class HoodIONeo: HoodIO {
     }
 
     override fun updateInputs(inputs: HoodIO.HoodIOInputs) {
-        inputs.absoluteAngle = Rotation2d.fromRotations(absoluteEncoder.position).minus(encoderOffset)
-        inputs.relativeAngle = Rotation2d.fromRotations(relativeEncoder.position / gearRatio)
-        inputs.velocityDegPerSec = Units.rotationsPerMinuteToRadiansPerSecond(relativeEncoder.velocity) / gearRatio
+        inputs.absoluteAngle = Rotation2d.fromRotations(absoluteEncoder.position / encoderToHoodRatio).minus(encoderOffset)
+        inputs.relativeAngle = Rotation2d.fromRotations(relativeEncoder.position / motorToHoodRatio)
+        inputs.velocityDegPerSec = Units.rotationsPerMinuteToRadiansPerSecond(relativeEncoder.velocity) / motorToHoodRatio
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
         inputs.currentAmps = spark.outputCurrent
     }
