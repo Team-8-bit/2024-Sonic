@@ -22,7 +22,7 @@ object Shooter: KSubsystem() {
 
             SIM -> {
                 io = ShooterIOSim()
-                io.setPID(1.0, 0.0, 0.0)
+                io.setPID(0.1, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0)
             }
         }
