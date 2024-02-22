@@ -8,11 +8,13 @@ import kotlin.math.pow
 
 @Suppress("unused")
 object DrivetrainConstants {
+    const val MK4I_L1_DRIVE_REDUCTION = 8.14
     const val MK4I_L2_DRIVE_REDUCTION = 6.75
-    const val MK4I_L2_STEER_REDUCTION = 21.428571428571427
+    const val MK4I_L3_DRIVE_REDUCTION = 6.12
+    const val MK4I_STEER_REDUCTION = 21.43
 
-    const val DRIVE_WHEEL_DIAMETER = 4.0
-    const val DRIVE_WHEEL_CIRCUMFERENCE = DRIVE_WHEEL_DIAMETER * kotlin.math.PI
+    const val DRIVE_WHEEL_RADIUS = 2.0
+    const val DRIVE_WHEEL_CIRCUMFERENCE = DRIVE_WHEEL_RADIUS * 2.0 * kotlin.math.PI
 
     val MODULE_TRANSLATIONS: Array<Translation2d>
         get() {
@@ -45,16 +47,16 @@ object DrivetrainConstants {
         const val P = 5.0
         const val I = 0.0
         const val D = 0.0
-        const val EPSILON = 0.0
+        const val EPSILON = 3.0
 
         // Constraints for the profiled angle controller
         val CONTROLLER_CONSTRAINTS = TrapezoidProfile.Constraints(MAX_ANGULAR_SPEED_DEGREES_PER_SECOND, MAX_ANGULAR_SPEED_DEGREES_PER_SECOND_SQUARED)
     }
 
     object PoseConstants {
-        const val P = 0.0
+        const val P = 3.0
         const val I = 0.0
         const val D = 0.0
-        const val EPSILON = 0.0
+        const val EPSILON = 0.05
     }
 }

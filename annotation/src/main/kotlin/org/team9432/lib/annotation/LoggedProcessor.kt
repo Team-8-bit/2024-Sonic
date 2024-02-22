@@ -23,6 +23,15 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor
         "kotlin.LongArray",
         "kotlin.FloatArray",
         "kotlin.DoubleArray",
+        "kotlin.Array",
+        "edu.wpi.first.math.geometry.Rotation2d"
+    )
+
+    private val arrayTypes = listOf(
+        "edu.wpi.first.math.geometry.Rotation2d",
+    )
+    private val destructureTypes = listOf(
+        "kotlin.Array",
     )
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -55,17 +64,48 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor
             if (!property.isMutable) throw Exception("""[Logged] Please ensure the class you are annotating (${classDeclaration.simpleName.asString()}) has only mutable properties!""")
             if (!loggableTypes.contains(fieldType)) throw Exception("""[Logged] Unknown type for "$simpleName" in "$className" ("$fieldType" is not supported)""")
 
-            toLogBuilder.addCode(
-                """ |table.put("$logName", $simpleName)
-                    |
-                """.trimMargin()
-            )
+            when {
+                destructureTypes.contains(fieldType) -> {
+                    toLogBuilder.addCode(
+                        """ |table.put("$logName", *$simpleName)
+                            |
+                        """.trimMargin()
+                    )
+                }
+                else -> {
+                    toLogBuilder.addCode(
+                        """ |table.put("$logName", $simpleName)
+                            |
+                        """.trimMargin()
+                    )
+                }
+            }
 
-            fromLogBuilder.addCode(
-                """ |$simpleName = table.get("$logName", $simpleName)
-                    |
-                """.trimMargin()
-            )
+            when {
+                arrayTypes.contains(fieldType) -> {
+                    fromLogBuilder.addCode(
+                        """ |$simpleName = table.get("$logName", $simpleName)[0]
+                            |
+                        """.trimMargin()
+                    )
+                }
+
+                destructureTypes.contains(fieldType) -> {
+                    fromLogBuilder.addCode(
+                        """ |$simpleName = table.get("$logName", *$simpleName)
+                            |
+                        """.trimMargin()
+                    )
+                }
+
+                else -> {
+                    fromLogBuilder.addCode(
+                        """ |$simpleName = table.get("$logName", $simpleName)
+                            |
+                        """.trimMargin()
+                    )
+                }
+            }
         }
 
         val type = TypeSpec.classBuilder(newClassName)

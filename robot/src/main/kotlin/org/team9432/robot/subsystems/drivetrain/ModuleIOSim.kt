@@ -1,63 +1,49 @@
 package org.team9432.robot.subsystems.drivetrain
 
 import edu.wpi.first.math.MathUtil
-import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.system.plant.DCMotor
-import edu.wpi.first.math.util.Units
-import edu.wpi.first.wpilibj.simulation.FlywheelSim
+import edu.wpi.first.wpilibj.simulation.DCMotorSim
 import org.team9432.Robot
-import org.team9432.lib.util.RotationUtil
-import org.team9432.lib.util.SwerveUtil
-import org.team9432.robot.DrivetrainConstants.DRIVE_WHEEL_CIRCUMFERENCE
-import org.team9432.robot.DrivetrainConstants.MK4I_L2_DRIVE_REDUCTION
-import org.team9432.robot.DrivetrainConstants.MK4I_L2_STEER_REDUCTION
+import org.team9432.robot.DrivetrainConstants.MK4I_L3_DRIVE_REDUCTION
+import org.team9432.robot.DrivetrainConstants.MK4I_STEER_REDUCTION
+import org.team9432.robot.subsystems.drivetrain.ModuleIO.ModuleIOInputs
+import kotlin.math.abs
 
 class ModuleIOSim(override val module: ModuleIO.Module): ModuleIO {
-    private val driveSim = FlywheelSim(DCMotor.getNEO(1), MK4I_L2_DRIVE_REDUCTION, 0.025)
-    private val steerSim = FlywheelSim(DCMotor.getNEO(1), MK4I_L2_STEER_REDUCTION, 0.004096955)
-    private val drivePID = PIDController(20.0, 0.0, 0.003)
-    private val steerPID = PIDController(0.1, 0.0, 0.1)
+    private val LOOP_PERIOD_SECS = Robot.period
 
-    private var currentAngle = 0.0
-    private var currentTarget = SwerveModuleState()
+    private val driveSim = DCMotorSim(DCMotor.getNeoVortex(1), MK4I_L3_DRIVE_REDUCTION, 0.025)
+    private val steerSim = DCMotorSim(DCMotor.getNEO(1), MK4I_STEER_REDUCTION, 0.004096955)
 
-    override var disabled = false
+    private val steerAbsoluteInitPosition = Rotation2d(Math.random() * 2.0 * Math.PI)
 
-    init {
-        drivePID.setTolerance(0.0)
-        steerPID.setTolerance(0.0)
+    private var driveAppliedVolts = 0.0
+    private var steerAppliedVolts = 0.0
+
+    override fun updateInputs(inputs: ModuleIOInputs) {
+        driveSim.update(LOOP_PERIOD_SECS)
+        steerSim.update(LOOP_PERIOD_SECS)
+
+        inputs.drivePositionRad = driveSim.angularPositionRad
+        inputs.driveVelocityRadPerSec = driveSim.angularVelocityRadPerSec
+        inputs.driveAppliedVolts = driveAppliedVolts
+        inputs.driveCurrentAmps = abs(driveSim.currentDrawAmps)
+
+        inputs.steerAbsolutePosition = Rotation2d(steerSim.angularPositionRad).plus(steerAbsoluteInitPosition)
+        inputs.steerPosition = Rotation2d(steerSim.angularPositionRad)
+        inputs.steerVelocityRadPerSec = steerSim.angularVelocityRadPerSec
+        inputs.steerAppliedVolts = steerAppliedVolts
+        inputs.steerCurrentAmps = abs(steerSim.currentDrawAmps)
     }
 
-    override fun setState(state: SwerveModuleState) {
-        currentTarget = SwerveUtil.optimize(state, currentAngle)
-        drivePID.setSetpoint(currentTarget.speedMetersPerSecond)
-        steerPID.setSetpoint(currentTarget.angle.degrees)
+    override fun setDriveVoltage(volts: Double) {
+        driveAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0)
+        driveSim.setInputVoltage(driveAppliedVolts)
     }
 
-    override fun updateInputs(inputs: ModuleIO.ModuleIOInputs) {
-        steerPID.calculate(inputs.angle)
-        drivePID.calculate(inputs.speedMetersPerSecond)
-
-        val driveVoltage = MathUtil.applyDeadband(drivePID.calculate(inputs.speedMetersPerSecond), 0.001)
-        val steerVoltage = MathUtil.applyDeadband(steerPID.calculate(inputs.angle), 0.001)
-
-        if (disabled) {
-            driveSim.setInputVoltage(0.0)
-            steerSim.setInputVoltage(0.0)
-        } else {
-            driveSim.setInputVoltage(driveVoltage)
-            steerSim.setInputVoltage(steerVoltage)
-        }
-
-        driveSim.update(Robot.period)
-        steerSim.update(Robot.period)
-
-        currentAngle = RotationUtil.toSignedDegrees(inputs.angle)
-
-        inputs.speedMetersPerSecond =
-            Units.inchesToMeters(DRIVE_WHEEL_CIRCUMFERENCE) * (Math.toDegrees(driveSim.angularVelocityRadPerSec) / 360)
-        inputs.positionMeters += inputs.speedMetersPerSecond * Robot.period
-        inputs.angle += Math.toDegrees(steerSim.angularVelocityRadPerSec) * Robot.period
+    override fun setSteerVoltage(volts: Double) {
+        steerAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0)
+        steerSim.setInputVoltage(steerAppliedVolts)
     }
 }
