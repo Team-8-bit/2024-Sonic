@@ -34,7 +34,6 @@ object Robot: LoggedRobot() {
         // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
         Logger.start()
 
-        Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, Math.toRadians(10.0), 0.0)))
         Logger.recordOutput("Subsystems/Climber", Pose3d(Translation3d(0.0, 0.0, 0.0), Rotation3d()))
         Logger.recordOutput("Subsystems/Limelight", Pose3d(Translation3d(-0.063500, 0.0, 0.420370 + 0.124460), Rotation3d(0.0, 0.0, Math.toRadians(180.0))))
 

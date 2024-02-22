@@ -12,12 +12,15 @@ object Controls {
     private val controller = KXboxController(0, squareJoysticks = false)
 
     init {
+        Drivetrain
+        Hood
+
         Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX })
 
         controller.x.onTrue(Drivetrain.driveToPositionCommand(Pose2d(4.0, 5.0, Rotation2d.fromDegrees(180.0))))
         controller.y.onTrue(Drivetrain.driveToPositionCommand(Pose2d(7.0, 3.0, Rotation2d.fromDegrees(0.0))))
 
-        controller.a.onTrue(InstantCommand { Hood.setAngle(Rotation2d.fromDegrees(10.0)) })
+        controller.a.onTrue(InstantCommand { Hood.setAngle(Rotation2d.fromDegrees(30.0)) })
         controller.b.onTrue(InstantCommand { Hood.setAngle(Rotation2d.fromDegrees(0.0)) })
 
 //        controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
