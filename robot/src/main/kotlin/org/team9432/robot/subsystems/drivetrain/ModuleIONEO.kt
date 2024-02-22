@@ -1,85 +1,85 @@
 package org.team9432.robot.subsystems.drivetrain
 
+import com.ctre.phoenix6.BaseStatusSignal
+import com.ctre.phoenix6.StatusSignal
 import com.ctre.phoenix6.configs.CANcoderConfiguration
 import com.ctre.phoenix6.hardware.CANcoder
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue
-import com.revrobotics.CANSparkBase
-import com.revrobotics.CANSparkBase.*
-import edu.wpi.first.math.kinematics.SwerveModuleState
+import com.revrobotics.CANSparkBase.IdleMode
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
 import org.team9432.lib.drivers.motors.KSparkMAX
-import org.team9432.lib.util.MotorConversions
-import org.team9432.lib.util.SwerveUtil
-import org.team9432.robot.DrivetrainConstants
-import org.team9432.robot.DrivetrainConstants.DRIVE_WHEEL_CIRCUMFERENCE
-import org.team9432.robot.DrivetrainConstants.DRIVE_WHEEL_DIAMETER
-import org.team9432.robot.DrivetrainConstants.MK4I_L2_DRIVE_REDUCTION
-import org.team9432.robot.DrivetrainConstants.MK4I_L2_STEER_REDUCTION
+import org.team9432.robot.DrivetrainConstants.MK4I_L3_DRIVE_REDUCTION
+import org.team9432.robot.DrivetrainConstants.MK4I_STEER_REDUCTION
 import org.team9432.robot.subsystems.drivetrain.ModuleIO.ModuleIOInputs
+
 
 class ModuleIONEO(override val module: ModuleIO.Module): ModuleIO {
     private val drive = KSparkMAX(module.driveID)
     private val steer = KSparkMAX(module.steerID)
+    private val cancoder = CANcoder(module.encoderID)
     private val driveEncoder = drive.encoder
     private val steerEncoder = steer.encoder
-    private val drivePID = drive.pidController
-    private val steerPID = steer.pidController
-    private val cancoder = CANcoder(module.encoderID)
 
-    private val angleOffset = DrivetrainConstants.MODULE_OFFSETS[module]!!
-    private var currentTarget = SwerveModuleState()
+    private val steerAbsolutePosition: StatusSignal<Double>
 
-    override var disabled = false
-        set(disabled) {
-            if (disabled) {
-                drive.disable()
-                steer.disable()
-            }
-            field = disabled
-        }
 
     init {
         drive.restoreFactoryDefaults()
-        drive.setSmartCurrentLimit(20)
-        drive.openLoopRampRate = 1.0
-        drive.inverted = true
-        drivePID.p = 0.0000628319270
-        drivePID.i = 0.0
-        drivePID.d = 0.0001
-        drivePID.setOutputRange(-1.0, 1.0)
-
         steer.restoreFactoryDefaults()
-        steer.setSmartCurrentLimit(20)
-        steer.openLoopRampRate = 1.0
-        steer.inverted = true
-        steerPID.p = 0.3
-        steerPID.i = 0.0
-        steerPID.d = 0.0
-        steerPID.setOutputRange(-1.0, 1.0)
+
+        drive.setCANTimeout(250)
+        steer.setCANTimeout(250)
+
+        drive.inverted = !module.driveInverted
+        steer.inverted = !module.steerInverted
+
+        drive.setSmartCurrentLimit(40)
+        steer.setSmartCurrentLimit(30)
+
+        drive.enableVoltageCompensation(12.0)
+        steer.enableVoltageCompensation(12.0)
+
+        driveEncoder.position = 0.0
+        driveEncoder.measurementPeriod = 10
+        driveEncoder.averageDepth = 2
+
+        steerEncoder.position = 0.0
+        steerEncoder.measurementPeriod = 10
+        steerEncoder.averageDepth = 2
+
+        drive.setCANTimeout(0)
+        steer.setCANTimeout(0)
+
+        drive.burnFlash()
+        steer.burnFlash()
 
         val cancoderConfig = CANcoderConfiguration()
         cancoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1
         cancoder.configurator.apply(cancoderConfig)
-    }
 
-    override fun setState(state: SwerveModuleState) {
-        currentTarget = SwerveUtil.optimize(state, MotorConversions.NEOToDegrees(steerEncoder.position, MK4I_L2_STEER_REDUCTION))
-        drivePID.setReference(MotorConversions.MPSToNEO(currentTarget.speedMetersPerSecond, Units.inchesToMeters(DRIVE_WHEEL_DIAMETER), MK4I_L2_DRIVE_REDUCTION), ControlType.kVelocity)
-        val rotations = MotorConversions.degreesToNEO(currentTarget.angle.degrees, MK4I_L2_STEER_REDUCTION)
-        steerPID.setReference(rotations, ControlType.kPosition)
+        steerAbsolutePosition = cancoder.absolutePosition
+        BaseStatusSignal.setUpdateFrequencyForAll(50.0, steerAbsolutePosition)
+        cancoder.optimizeBusUtilization()
     }
 
     override fun updateInputs(inputs: ModuleIOInputs) {
-        inputs.positionMeters = MotorConversions.NEOToRotations(driveEncoder.position, MK4I_L2_DRIVE_REDUCTION) * Units.inchesToMeters(DRIVE_WHEEL_CIRCUMFERENCE)
-        inputs.speedMetersPerSecond = MotorConversions.NEOToMPS(driveEncoder.velocity, Units.inchesToMeters(DRIVE_WHEEL_CIRCUMFERENCE), MK4I_L2_DRIVE_REDUCTION)
-        inputs.angle = MotorConversions.NEOToDegrees(steerEncoder.position, MK4I_L2_STEER_REDUCTION)
-        inputs.targetAngle = currentTarget.angle.degrees
-        inputs.targetSpeed = currentTarget.speedMetersPerSecond
+        BaseStatusSignal.refreshAll(steerAbsolutePosition)
+
+        inputs.drivePositionRad = Units.rotationsToRadians(driveEncoder.position) / MK4I_L3_DRIVE_REDUCTION
+        inputs.driveVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(driveEncoder.velocity) / MK4I_L3_DRIVE_REDUCTION
+        inputs.driveAppliedVolts = drive.getAppliedOutput() * drive.getBusVoltage()
+        inputs.driveCurrentAmps = doubleArrayOf(drive.getOutputCurrent())
+
+        inputs.steerAbsolutePosition = Rotation2d.fromRotations(steerAbsolutePosition.valueAsDouble).minus(module.encoderOffset)
+        inputs.steerPosition = Rotation2d.fromRotations(steerEncoder.position / MK4I_STEER_REDUCTION)
+        inputs.steerVelocityRadPerSec = (Units.rotationsPerMinuteToRadiansPerSecond(steerEncoder.velocity) / MK4I_STEER_REDUCTION)
+        inputs.steerAppliedVolts = steer.getAppliedOutput() * steer.getBusVoltage()
+        inputs.steerCurrentAmps = doubleArrayOf(steer.getOutputCurrent())
     }
 
-    override fun updateIntegratedEncoder() {
-        steerEncoder.position = MotorConversions.degreesToNEO((cancoder.absolutePosition.value * 360) - angleOffset, MK4I_L2_STEER_REDUCTION)
-    }
+    override fun setDriveVoltage(volts: Double) = drive.setVoltage(volts)
+    override fun setSteerVoltage(volts: Double) = steer.setVoltage(volts)
 
     override fun setBrakeMode(enabled: Boolean) {
         drive.idleMode = if (enabled) IdleMode.kBrake else IdleMode.kCoast
