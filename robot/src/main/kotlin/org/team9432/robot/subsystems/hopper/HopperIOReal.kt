@@ -8,8 +8,8 @@ import org.team9432.robot.Ports
 
 class HopperIOReal: HopperIO, SubsystemBase() {
     private val spark = CANSparkMax(Ports.Hopper.MOTOR_ID, CANSparkLowLevel.MotorType.kBrushless)
-    private val ampBeamBrake = DigitalInput(Ports.Hopper.AMP_BRAKE_ID)
-    private val shooterBeamBrake = DigitalInput(Ports.Hopper.SHOOTER_BRAKE_ID)
+    private val ampBeamBreak = DigitalInput(Ports.Hopper.AMP_BREAK_ID)
+    private val shooterBeamBreak = DigitalInput(Ports.Hopper.SHOOTER_BREAK_ID)
     private var speed = 0.0
 
     override fun periodic() {
@@ -17,8 +17,8 @@ class HopperIOReal: HopperIO, SubsystemBase() {
     }
 
     override fun updateInputs(inputs: HopperIO.HopperIOInputs) {
-        inputs.atAmpBeamBrake = ampBeamBrake.get()
-        inputs.atShooterBeamBrake = shooterBeamBrake.get()
+        inputs.atAmpBeamBreak = ampBeamBreak.get()
+        inputs.atShooterBeamBreak = shooterBeamBreak.get()
     }
     
     override fun setSpeed(speed: Double) {
