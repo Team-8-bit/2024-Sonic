@@ -20,7 +20,7 @@ class HopperIOReal: HopperIO, SubsystemBase() {
         inputs.atAmpBeamBreak = ampBeamBreak.get()
         inputs.atShooterBeamBreak = shooterBeamBreak.get()
     }
-    
+
     override fun setSpeed(speed: Double) {
         this.speed = speed
     }

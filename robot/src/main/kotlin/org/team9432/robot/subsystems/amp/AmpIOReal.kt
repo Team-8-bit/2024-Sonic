@@ -10,9 +10,8 @@ class AmpIOReal: AmpIO, SubsystemBase() {
     private var speed = 0.0
     override fun updateInputs(inputs: AmpIO.AmpIOInputs) {}
 
-
-    override fun setSpeed(speed: Double){
-      this.speed = speed
+    override fun setSpeed(speed: Double) {
+        this.speed = speed
     }
 
     override fun periodic() {
