@@ -1,36 +1,71 @@
 package org.team9432.robot.subsystems.hood
 
-import com.revrobotics.CANSparkBase
-import edu.wpi.first.wpilibj.DigitalInput
+import com.revrobotics.CANSparkBase.ControlType
+import com.revrobotics.CANSparkBase.IdleMode
+import com.revrobotics.SparkPIDController.ArbFFUnits
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.util.Units
 import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Ports
 
 class HoodIONeo: HoodIO {
-    private val spark = KSparkMAX(Ports.Hood.MOTOR_ID) {
-        inverted = false
-        idleMode = CANSparkBase.IdleMode.kBrake
-        openLoopRampRate = 0.5
+    private val spark = KSparkMAX(Ports.Hood.MOTOR_ID)
 
-        setPIDConstants(p = 0.0)
-    }
+    private val absoluteEncoder = spark.absoluteEncoder
+    private val relativeEncoder = spark.encoder
 
-    private val encoder = spark.absoluteEncoder
-    private val controller = spark.pidController
-    private val limit = DigitalInput(Ports.Hood.LIMIT_ID)
-    private var targetAngle = 0.0
-    private val GEAR_RATIO = 1
+    private val pid = spark.pidController
+
+    private val gearRatio = 2.0 * (150 / 15)
+    private val encoderOffset = Rotation2d.fromDegrees(0.0)
 
     init {
-        controller.setFeedbackDevice(encoder)
-    }
+        spark.restoreFactoryDefaults()
+        spark.setCANTimeout(250)
 
-    override fun setAngle(angle: Double) {
-        targetAngle = angle * GEAR_RATIO
-        controller.setReference(targetAngle, CANSparkBase.ControlType.kPosition)
+        spark.inverted = false
+        spark.setSmartCurrentLimit(20)
+        spark.enableVoltageCompensation(12.0)
+
+        relativeEncoder.position = 0.0
+        absoluteEncoder.inverted = false
+
+        pid.setFeedbackDevice(absoluteEncoder)
+
+        spark.setCANTimeout(0)
+        spark.burnFlash()
     }
 
     override fun updateInputs(inputs: HoodIO.HoodIOInputs) {
-        inputs.absolutePosition = encoder.position
-        inputs.atLimit = limit.get()
+        inputs.absoluteAngle = Rotation2d.fromRotations(absoluteEncoder.position).minus(encoderOffset)
+        inputs.relativeAngle = Rotation2d.fromRotations(relativeEncoder.position / gearRatio)
+        inputs.velocityDegPerSec = Units.rotationsPerMinuteToRadiansPerSecond(relativeEncoder.velocity) / gearRatio
+        inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
+        inputs.currentAmps = spark.outputCurrent
     }
+
+    override fun setVoltage(volts: Double) = spark.setVoltage(volts)
+
+    override fun setAngle(angle: Rotation2d, feedforwardVolts: Double) {
+        pid.setReference(
+            angle.rotations,
+            ControlType.kPosition,
+            0, // PID slot
+            feedforwardVolts,
+            ArbFFUnits.kVoltage
+        )
+    }
+
+    override fun setPID(p: Double, i: Double, d: Double) {
+        pid.setP(p, 0)
+        pid.setI(i, 0)
+        pid.setD(d, 0)
+        pid.setFF(0.0, 0)
+    }
+
+    override fun setBrakeMode(enabled: Boolean) {
+        spark.idleMode = if (enabled) IdleMode.kBrake else IdleMode.kCoast
+    }
+
+    override fun stop() = spark.stopMotor()
 }
