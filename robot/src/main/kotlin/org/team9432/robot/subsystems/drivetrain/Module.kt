@@ -79,7 +79,7 @@ class Module(module: ModuleIO.Module) {
     }
 
     private fun getAngle(): Rotation2d {
-        return steerRelativeOffset?.let { inputs.steerPosition.plus(it) } ?: Rotation2d()
+        return inputs.steerPosition.plus(steerRelativeOffset ?: Rotation2d())
     }
 
     fun runSetpoint(state: SwerveModuleState): SwerveModuleState {
