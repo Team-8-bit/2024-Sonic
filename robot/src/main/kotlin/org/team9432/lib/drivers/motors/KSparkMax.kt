@@ -23,4 +23,11 @@ class KSparkMAX(
             lastSpeed = speed
         }
     }
+
+    fun setPIDConstants(p: Double = 0.0, i: Double = 0.0, d: Double = 0.0) {
+        val controller = pidController
+        controller.p = p
+        controller.i = i
+        controller.d = d
+    }
 }
