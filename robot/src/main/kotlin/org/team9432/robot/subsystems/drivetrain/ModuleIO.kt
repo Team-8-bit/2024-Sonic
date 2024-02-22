@@ -10,13 +10,13 @@ interface ModuleIO {
         var drivePositionRad = 0.0
         var driveVelocityRadPerSec = 0.0
         var driveAppliedVolts = 0.0
-        var driveCurrentAmps = doubleArrayOf()
+        var driveCurrentAmps = 0.0
 
         var steerAbsolutePosition = Rotation2d()
         var steerPosition = Rotation2d()
         var steerVelocityRadPerSec = 0.0
         var steerAppliedVolts = 0.0
-        var steerCurrentAmps = doubleArrayOf()
+        var steerCurrentAmps = 0.0
     }
 
     fun updateInputs(inputs: ModuleIOInputs)

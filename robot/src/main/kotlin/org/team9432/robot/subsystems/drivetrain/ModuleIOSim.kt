@@ -28,13 +28,13 @@ class ModuleIOSim(override val module: ModuleIO.Module): ModuleIO {
         inputs.drivePositionRad = driveSim.angularPositionRad
         inputs.driveVelocityRadPerSec = driveSim.angularVelocityRadPerSec
         inputs.driveAppliedVolts = driveAppliedVolts
-        inputs.driveCurrentAmps = doubleArrayOf(abs(driveSim.currentDrawAmps))
+        inputs.driveCurrentAmps = abs(driveSim.currentDrawAmps)
 
         inputs.steerAbsolutePosition = Rotation2d(steerSim.angularPositionRad).plus(steerAbsoluteInitPosition)
         inputs.steerPosition = Rotation2d(steerSim.angularPositionRad)
         inputs.steerVelocityRadPerSec = steerSim.angularVelocityRadPerSec
         inputs.steerAppliedVolts = steerAppliedVolts
-        inputs.steerCurrentAmps = doubleArrayOf(abs(steerSim.currentDrawAmps))
+        inputs.steerCurrentAmps = abs(steerSim.currentDrawAmps)
     }
 
     override fun setDriveVoltage(volts: Double) {
