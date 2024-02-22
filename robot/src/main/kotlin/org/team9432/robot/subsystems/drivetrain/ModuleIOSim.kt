@@ -13,7 +13,7 @@ import kotlin.math.abs
 class ModuleIOSim(override val module: ModuleIO.Module): ModuleIO {
     private val LOOP_PERIOD_SECS = Robot.period
 
-    private val driveSim = DCMotorSim(DCMotor.getNEO(1), MK4I_L3_DRIVE_REDUCTION, 0.025)
+    private val driveSim = DCMotorSim(DCMotor.getNeoVortex(1), MK4I_L3_DRIVE_REDUCTION, 0.025)
     private val steerSim = DCMotorSim(DCMotor.getNEO(1), MK4I_STEER_REDUCTION, 0.004096955)
 
     private val steerAbsoluteInitPosition = Rotation2d(Math.random() * 2.0 * Math.PI)
@@ -28,13 +28,13 @@ class ModuleIOSim(override val module: ModuleIO.Module): ModuleIO {
         inputs.drivePositionRad = driveSim.angularPositionRad
         inputs.driveVelocityRadPerSec = driveSim.angularVelocityRadPerSec
         inputs.driveAppliedVolts = driveAppliedVolts
-        inputs.driveCurrentAmps = doubleArrayOf(abs(driveSim.currentDrawAmps))
+        inputs.driveCurrentAmps = abs(driveSim.currentDrawAmps)
 
         inputs.steerAbsolutePosition = Rotation2d(steerSim.angularPositionRad).plus(steerAbsoluteInitPosition)
         inputs.steerPosition = Rotation2d(steerSim.angularPositionRad)
         inputs.steerVelocityRadPerSec = steerSim.angularVelocityRadPerSec
         inputs.steerAppliedVolts = steerAppliedVolts
-        inputs.steerCurrentAmps = doubleArrayOf(abs(steerSim.currentDrawAmps))
+        inputs.steerCurrentAmps = abs(steerSim.currentDrawAmps)
     }
 
     override fun setDriveVoltage(volts: Double) {

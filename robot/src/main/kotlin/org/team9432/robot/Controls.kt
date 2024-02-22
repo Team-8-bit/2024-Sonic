@@ -9,7 +9,7 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
 
 object Controls {
-    private val controller = KXboxController(0, squareJoysticks = false)
+    private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.0)
 
     init {
         Drivetrain

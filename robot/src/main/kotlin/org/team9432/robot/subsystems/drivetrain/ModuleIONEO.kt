@@ -69,13 +69,13 @@ class ModuleIONEO(override val module: ModuleIO.Module): ModuleIO {
         inputs.drivePositionRad = Units.rotationsToRadians(driveEncoder.position) / MK4I_L3_DRIVE_REDUCTION
         inputs.driveVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(driveEncoder.velocity) / MK4I_L3_DRIVE_REDUCTION
         inputs.driveAppliedVolts = drive.getAppliedOutput() * drive.getBusVoltage()
-        inputs.driveCurrentAmps = doubleArrayOf(drive.getOutputCurrent())
+        inputs.driveCurrentAmps = drive.getOutputCurrent()
 
         inputs.steerAbsolutePosition = Rotation2d.fromRotations(steerAbsolutePosition.valueAsDouble).minus(module.encoderOffset)
         inputs.steerPosition = Rotation2d.fromRotations(steerEncoder.position / MK4I_STEER_REDUCTION)
         inputs.steerVelocityRadPerSec = (Units.rotationsPerMinuteToRadiansPerSecond(steerEncoder.velocity) / MK4I_STEER_REDUCTION)
         inputs.steerAppliedVolts = steer.getAppliedOutput() * steer.getBusVoltage()
-        inputs.steerCurrentAmps = doubleArrayOf(steer.getOutputCurrent())
+        inputs.steerCurrentAmps = steer.getOutputCurrent()
     }
 
     override fun setDriveVoltage(volts: Double) = drive.setVoltage(volts)
