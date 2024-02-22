@@ -6,7 +6,7 @@ import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 
-class Shooter: KSubsystem() {
+object Shooter: KSubsystem() {
     private val io: ShooterIO
     private val inputs = LoggedShooterIOInputs()
 
