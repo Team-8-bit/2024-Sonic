@@ -15,7 +15,7 @@ class Shooter: KSubsystem() {
     init {
         when (Robot.mode) {
             REAL, REPLAY -> {
-                io = object: ShooterIO {}
+                io = ShooterIOVortex()
                 io.setPID(0.0, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0)
             }

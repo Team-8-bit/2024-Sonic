@@ -8,7 +8,7 @@ interface ShooterIO {
     open class ShooterIOInputs {
         var velocityRPM = 0.0
         var appliedVolts = 0.0
-        var currentAmps = 0.0
+        var currentAmps = doubleArrayOf()
     }
 
     fun updateInputs(inputs: ShooterIOInputs) {}
