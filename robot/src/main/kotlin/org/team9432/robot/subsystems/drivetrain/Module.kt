@@ -59,7 +59,7 @@ class Module(module: ModuleIO.Module) {
 
         // Run closed loop turn control
         if (angleSetpoint != null) {
-            io.setSteerVoltage(steerFeedback.calculate(currentAngle.radians, angleSetpoint!!.radians))
+            io.setSteerVoltage(steerFeedback.calculate(getAngle().radians, angleSetpoint!!.radians))
 
             // Run closed loop drive control
             // Only allowed if closed loop turn control is running
@@ -78,12 +78,12 @@ class Module(module: ModuleIO.Module) {
         }
     }
 
-    private val currentAngle: Rotation2d
-        get() = steerRelativeOffset?.let { inputs.steerPosition.plus(it) } ?: Rotation2d()
-
+    private fun getAngle(): Rotation2d {
+        return steerRelativeOffset?.let { inputs.steerPosition.plus(it) } ?: Rotation2d()
+    }
 
     fun runSetpoint(state: SwerveModuleState): SwerveModuleState {
-        val optimizedState = SwerveUtil.optimize(state, currentAngle.degrees)
+        val optimizedState = SwerveUtil.optimize(state, getAngle().degrees)
         angleSetpoint = optimizedState.angle
         speedSetpoint = optimizedState.speedMetersPerSecond
         return optimizedState
@@ -102,7 +102,7 @@ class Module(module: ModuleIO.Module) {
 
     val positionMeters get() = inputs.drivePositionRad * DRIVE_WHEEL_RADIUS
     val velocityMetersPerSec get() = inputs.driveVelocityRadPerSec * DRIVE_WHEEL_RADIUS
-    val position get() = SwerveModulePosition(positionMeters, currentAngle)
-    val state get() = SwerveModuleState(velocityMetersPerSec, currentAngle)
+    val position get() = SwerveModulePosition(positionMeters, getAngle())
+    val state get() = SwerveModuleState(velocityMetersPerSec, getAngle())
 
 }
