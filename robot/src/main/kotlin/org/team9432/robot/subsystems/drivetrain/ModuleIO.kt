@@ -2,18 +2,18 @@ package org.team9432.robot.subsystems.drivetrain
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.annotation.Logged
-import org.team9432.robot.Devices.BACK_LEFT_CANCODER
-import org.team9432.robot.Devices.BACK_LEFT_DRIVE
-import org.team9432.robot.Devices.BACK_LEFT_STEER
-import org.team9432.robot.Devices.BACK_RIGHT_CANCODER
-import org.team9432.robot.Devices.BACK_RIGHT_DRIVE
-import org.team9432.robot.Devices.BACK_RIGHT_STEER
-import org.team9432.robot.Devices.FRONT_LEFT_CANCODER
-import org.team9432.robot.Devices.FRONT_LEFT_DRIVE
-import org.team9432.robot.Devices.FRONT_LEFT_STEER
-import org.team9432.robot.Devices.FRONT_RIGHT_CANCODER
-import org.team9432.robot.Devices.FRONT_RIGHT_DRIVE
-import org.team9432.robot.Devices.FRONT_RIGHT_STEER
+import org.team9432.robot.Devices.BACK_LEFT_CANCODER_ID
+import org.team9432.robot.Devices.BACK_LEFT_DRIVE_ID
+import org.team9432.robot.Devices.BACK_LEFT_STEER_ID
+import org.team9432.robot.Devices.BACK_RIGHT_CANCODER_ID
+import org.team9432.robot.Devices.BACK_RIGHT_DRIVE_ID
+import org.team9432.robot.Devices.BACK_RIGHT_STEER_ID
+import org.team9432.robot.Devices.FRONT_LEFT_CANCODER_ID
+import org.team9432.robot.Devices.FRONT_LEFT_DRIVE_ID
+import org.team9432.robot.Devices.FRONT_LEFT_STEER_ID
+import org.team9432.robot.Devices.FRONT_RIGHT_CANCODER_ID
+import org.team9432.robot.Devices.FRONT_RIGHT_DRIVE_ID
+import org.team9432.robot.Devices.FRONT_RIGHT_STEER_ID
 
 
 interface ModuleIO {
@@ -49,33 +49,33 @@ interface ModuleIO {
         val encoderOffset: Rotation2d,
     ) {
         FL(
-            encoderID = FRONT_LEFT_CANCODER,
-            driveID = FRONT_LEFT_DRIVE,
-            steerID = FRONT_LEFT_STEER,
+            encoderID = FRONT_LEFT_CANCODER_ID,
+            driveID = FRONT_LEFT_DRIVE_ID,
+            steerID = FRONT_LEFT_STEER_ID,
             driveInverted = false,
             steerInverted = true,
             encoderOffset = Rotation2d.fromDegrees(0.0),
         ),
         FR(
-            encoderID = FRONT_RIGHT_CANCODER,
-            driveID = FRONT_RIGHT_DRIVE,
-            steerID = FRONT_RIGHT_STEER,
+            encoderID = FRONT_RIGHT_CANCODER_ID,
+            driveID = FRONT_RIGHT_DRIVE_ID,
+            steerID = FRONT_RIGHT_STEER_ID,
             driveInverted = true,
             steerInverted = false,
             encoderOffset = Rotation2d.fromDegrees(0.0),
         ),
         BL(
-            encoderID = BACK_LEFT_CANCODER,
-            driveID = BACK_LEFT_DRIVE,
-            steerID = BACK_LEFT_STEER,
+            encoderID = BACK_LEFT_CANCODER_ID,
+            driveID = BACK_LEFT_DRIVE_ID,
+            steerID = BACK_LEFT_STEER_ID,
             driveInverted = false,
             steerInverted = true,
             encoderOffset = Rotation2d.fromDegrees(0.0),
         ),
         BR(
-            encoderID = BACK_RIGHT_CANCODER,
-            driveID = BACK_RIGHT_DRIVE,
-            steerID = BACK_RIGHT_STEER,
+            encoderID = BACK_RIGHT_CANCODER_ID,
+            driveID = BACK_RIGHT_DRIVE_ID,
+            steerID = BACK_RIGHT_STEER_ID,
             driveInverted = true,
             steerInverted = false,
             encoderOffset = Rotation2d.fromDegrees(0.0),

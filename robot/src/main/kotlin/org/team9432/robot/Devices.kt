@@ -1,22 +1,22 @@
 package org.team9432.robot
 
 object Devices {
-    const val PIGEON = 1
+    const val PIGEON_ID = 1
 
     // Drivetrain
-    const val FRONT_LEFT_CANCODER = 5
-    const val FRONT_RIGHT_CANCODER = 6
-    const val BACK_LEFT_CANCODER = 7
-    const val BACK_RIGHT_CANCODER = 8
+    const val FRONT_LEFT_CANCODER_ID = 5
+    const val FRONT_RIGHT_CANCODER_ID = 6
+    const val BACK_LEFT_CANCODER_ID = 7
+    const val BACK_RIGHT_CANCODER_ID = 8
 
-    const val FRONT_LEFT_DRIVE = 11
-    const val FRONT_LEFT_STEER = 12
-    const val FRONT_RIGHT_DRIVE = 13
-    const val FRONT_RIGHT_STEER = 14
-    const val BACK_LEFT_DRIVE = 15
-    const val BACK_LEFT_STEER = 16
-    const val BACK_RIGHT_DRIVE = 17
-    const val BACK_RIGHT_STEER = 18
+    const val FRONT_LEFT_DRIVE_ID = 11
+    const val FRONT_LEFT_STEER_ID = 12
+    const val FRONT_RIGHT_DRIVE_ID = 13
+    const val FRONT_RIGHT_STEER_ID = 14
+    const val BACK_LEFT_DRIVE_ID = 15
+    const val BACK_LEFT_STEER_ID = 16
+    const val BACK_RIGHT_DRIVE_ID = 17
+    const val BACK_RIGHT_STEER_ID = 18
 
     // Hopper
     const val HOPPER_ID = 21

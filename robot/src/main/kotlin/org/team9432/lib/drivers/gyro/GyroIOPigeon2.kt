@@ -11,7 +11,7 @@ import org.team9432.robot.Devices
 
 
 class GyroIOPigeon2: GyroIO {
-    private val pigeon = Pigeon2(Devices.PIGEON)
+    private val pigeon = Pigeon2(Devices.PIGEON_ID)
     private val yaw = pigeon.yaw
     private val yawVelocity = pigeon.angularVelocityZWorld
 
