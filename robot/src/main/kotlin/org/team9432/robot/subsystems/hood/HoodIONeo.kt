@@ -9,7 +9,7 @@ import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Ports
 
 class HoodIONeo: HoodIO {
-    private val spark = KSparkMAX(Ports.Hood.MOTOR_ID)
+    private val spark = KSparkMAX(Ports.HOOD_ID)
 
     private val absoluteEncoder = spark.absoluteEncoder
     private val relativeEncoder = spark.encoder

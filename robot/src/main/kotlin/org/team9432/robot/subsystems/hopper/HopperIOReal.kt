@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.team9432.robot.Ports
 
 class HopperIOReal: HopperIO, SubsystemBase() {
-    private val spark = CANSparkMax(Ports.Hopper.MOTOR_ID, CANSparkLowLevel.MotorType.kBrushless)
-    private val ampBeamBreak = DigitalInput(Ports.Hopper.AMP_BREAK_ID)
-    private val shooterBeamBreak = DigitalInput(Ports.Hopper.SHOOTER_BREAK_ID)
+    private val spark = CANSparkMax(Ports.HOPPER_ID, CANSparkLowLevel.MotorType.kBrushless)
+    private val ampBeamBreak = DigitalInput(Ports.AMP_BREAK_ID)
+    private val shooterBeamBreak = DigitalInput(Ports.SHOOTER_BREAK_ID)
     private var speed = 0.0
 
     override fun periodic() {

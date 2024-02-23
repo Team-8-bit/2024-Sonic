@@ -6,8 +6,8 @@ import org.team9432.lib.drivers.motors.KSparkFlex
 import org.team9432.robot.Ports
 
 class ShooterIOVortex: ShooterIO {
-    private val left = KSparkFlex(Ports.Shooter.LEFT_SHOOTER_ID)
-    private val right = KSparkFlex(Ports.Shooter.RIGHT_SHOOTER_ID)
+    private val left = KSparkFlex(Ports.LEFT_SHOOTER_ID)
+    private val right = KSparkFlex(Ports.RIGHT_SHOOTER_ID)
 
     private val leftEncoder = left.encoder
     private val leftPid = left.pidController
