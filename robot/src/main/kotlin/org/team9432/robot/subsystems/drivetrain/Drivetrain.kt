@@ -123,11 +123,7 @@ object Drivetrain: KSubsystem() {
     }
 
     override fun manualPeriodic() {
-//        if (isNotMoving()) {
-//            x()
-//        } else {
         setSpeeds(manualSpeeds)
-//        }
     }
 
     private fun isNotMoving() = abs(manualSpeeds.vxMetersPerSecond) < 0.5 && abs(manualSpeeds.vyMetersPerSecond) < 0.5 && abs(Math.toDegrees(manualSpeeds.omegaRadiansPerSecond)) < 5
