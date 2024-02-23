@@ -6,10 +6,10 @@ import com.revrobotics.SparkPIDController.ArbFFUnits
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
 import org.team9432.lib.drivers.motors.KSparkMAX
-import org.team9432.robot.Ports
+import org.team9432.robot.Devices
 
 class HoodIONeo: HoodIO {
-    private val spark = KSparkMAX(Ports.Hood.MOTOR_ID)
+    private val spark = KSparkMAX(Devices.HOOD_ID)
 
     private val absoluteEncoder = spark.absoluteEncoder
     private val relativeEncoder = spark.encoder
