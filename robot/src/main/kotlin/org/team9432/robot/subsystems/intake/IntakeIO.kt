@@ -18,7 +18,7 @@ interface IntakeIO {
         var centerBeambreakActive = false
     }
 
-    fun updateInputs(inputs: IntakeIOInputs)
+    fun updateInputs(inputs: IntakeIOInputs) {}
 
     /* Run open loop at the specified voltage */
     fun setVoltage(ampSideVolts: Double, speakerSideVolts: Double) {}
