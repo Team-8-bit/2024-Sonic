@@ -3,6 +3,8 @@ package org.team9432
 import edu.wpi.first.math.geometry.Pose3d
 import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Translation3d
+import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.DriverStation.Alliance
 import edu.wpi.first.wpilibj.PowerDistribution
 import org.littletonrobotics.junction.LogFileUtil
 import org.littletonrobotics.junction.LoggedRobot
@@ -13,10 +15,13 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.robot.Controls
 
+
 val LOOP_PERIOD_SECS = Robot.period
 
 object Robot: LoggedRobot() {
     val mode = Mode.SIM
+
+    var alliance: Alliance? = null
 
     override fun robotInit() {
         Logger.recordMetadata("ProjectName", "2024 - Sonic") // Set a metadata value
@@ -43,6 +48,10 @@ object Robot: LoggedRobot() {
 
     override fun robotPeriodic() {
         KCommandScheduler.run()
+
+        if (alliance == null) {
+            alliance = DriverStation.getAlliance().orElse(null)
+        }
     }
 
     enum class Mode {

@@ -1,10 +1,8 @@
 package org.team9432.robot
 
 
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
-import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.input.KXboxController
+import org.team9432.robot.commands.auto.testAuto
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.shooter.Shooter
@@ -25,10 +23,12 @@ object Controls {
 //        controller.a.onTrue(InstantCommand { Hood.setAngle(Rotation2d.fromDegrees(30.0)) })
 //        controller.b.onTrue(InstantCommand { Hood.setAngle(Rotation2d.fromDegrees(0.0)) })
 
-        controller.a.onTrue(InstantCommand { Shooter.setSpeed(3000.0, 3000.0) })
-        controller.b.onTrue(InstantCommand { Shooter.setSpeed(2000.0, 2000.0) })
-        controller.x.onTrue(InstantCommand { Shooter.setSpeed(1000.0, 1000.0) })
-        controller.y.onTrue(InstantCommand { Shooter.setSpeed(0000.0, 0000.0) })
+//        controller.a.onTrue(InstantCommand { Shooter.setSpeed(3000.0, 3000.0) })
+//        controller.b.onTrue(InstantCommand { Shooter.setSpeed(2000.0, 2000.0) })
+//        controller.x.onTrue(InstantCommand { Shooter.setSpeed(1000.0, 1000.0) })
+//        controller.y.onTrue(InstantCommand { Shooter.setSpeed(0000.0, 0000.0) })
+
+        controller.a.onTrue(testAuto)
 
 //        controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
     }
