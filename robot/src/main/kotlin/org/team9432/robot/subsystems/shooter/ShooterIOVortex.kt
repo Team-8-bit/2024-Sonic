@@ -6,59 +6,82 @@ import org.team9432.lib.drivers.motors.KSparkFlex
 import org.team9432.robot.Ports
 
 class ShooterIOVortex: ShooterIO {
-    private val leader = KSparkFlex(Ports.Shooter.LEFT_SHOOTER_ID)
-    private val follower = KSparkFlex(Ports.Shooter.RIGHT_SHOOTER_ID)
+    private val left = KSparkFlex(Ports.Shooter.LEFT_SHOOTER_ID)
+    private val right = KSparkFlex(Ports.Shooter.RIGHT_SHOOTER_ID)
 
-    private val encoder = leader.encoder
-    private val pid = leader.pidController
+    private val leftEncoder = left.encoder
+    private val leftPid = left.pidController
+
+    private val rightEncoder = right.encoder
+    private val rightPid = right.pidController
 
     private val gearRatio = 0.5
 
     init {
-        leader.restoreFactoryDefaults()
-        follower.restoreFactoryDefaults()
+        left.restoreFactoryDefaults()
+        right.restoreFactoryDefaults()
 
-        leader.inverted = false
+        left.inverted = false
+        right.inverted = true
 
-        follower.follow(leader, true)
+        left.idleMode = IdleMode.kCoast
+        right.idleMode = IdleMode.kCoast
 
-        leader.idleMode = IdleMode.kCoast
-        follower.idleMode = IdleMode.kCoast
+        left.enableVoltageCompensation(12.0)
+        right.enableVoltageCompensation(12.0)
 
-        leader.enableVoltageCompensation(12.0)
-        follower.enableVoltageCompensation(12.0)
+        left.setSmartCurrentLimit(30)
+        right.setSmartCurrentLimit(30)
 
-        leader.setSmartCurrentLimit(30)
-        follower.setSmartCurrentLimit(30)
-
-        leader.burnFlash()
-        follower.burnFlash()
+        left.burnFlash()
+        right.burnFlash()
     }
 
     override fun updateInputs(inputs: ShooterIO.ShooterIOInputs) {
-        inputs.velocityRPM = encoder.velocity / gearRatio
-        inputs.appliedVolts = leader.appliedOutput * leader.busVoltage
-        inputs.currentAmps = doubleArrayOf(leader.outputCurrent, follower.outputCurrent)
+        inputs.leftVelocityRPM = leftEncoder.velocity / gearRatio
+        inputs.leftAppliedVolts = left.appliedOutput * left.busVoltage
+        inputs.leftCurrentAmps = left.outputCurrent
+
+        inputs.rightVelocityRPM = rightEncoder.velocity / gearRatio
+        inputs.rightAppliedVolts = right.appliedOutput * right.busVoltage
+        inputs.rightCurrentAmps = right.outputCurrent
     }
 
-    override fun setVoltage(volts: Double) = leader.setVoltage(volts)
+    override fun setVoltage(leftVolts: Double, rightVolts: Double) {
+        left.setVoltage(leftVolts)
+        right.setVoltage(rightVolts)
+    }
 
-    override fun setSpeed(rotationPerMinute: Double, feedforwardVolts: Double) {
-        pid.setReference(
-            rotationPerMinute * gearRatio,
+    override fun setSpeed(leftRPM: Double, leftFFVolts: Double, rightRPM: Double, rightFFVolts: Double) {
+        leftPid.setReference(
+            leftRPM * gearRatio,
             ControlType.kVelocity,
             0, // PID slot
-            feedforwardVolts,
+            leftFFVolts,
+            ArbFFUnits.kVoltage
+        )
+        rightPid.setReference(
+            rightRPM * gearRatio,
+            ControlType.kVelocity,
+            0, // PID slot
+            rightFFVolts,
             ArbFFUnits.kVoltage
         )
     }
 
     override fun setPID(p: Double, i: Double, d: Double) {
-        pid.setP(p, 0)
-        pid.setI(i, 0)
-        pid.setD(d, 0)
-        pid.setFF(0.0, 0)
+        leftPid.setP(p, 0)
+        leftPid.setI(i, 0)
+        leftPid.setD(d, 0)
+        leftPid.setFF(0.0, 0)
+        rightPid.setP(p, 0)
+        rightPid.setI(i, 0)
+        rightPid.setD(d, 0)
+        rightPid.setFF(0.0, 0)
     }
 
-    override fun stop() = leader.stopMotor()
+    override fun stop() {
+        left.stopMotor()
+        right.stopMotor()
+    }
 }

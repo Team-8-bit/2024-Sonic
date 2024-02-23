@@ -25,10 +25,10 @@ object Controls {
 //        controller.a.onTrue(InstantCommand { Hood.setAngle(Rotation2d.fromDegrees(30.0)) })
 //        controller.b.onTrue(InstantCommand { Hood.setAngle(Rotation2d.fromDegrees(0.0)) })
 
-        controller.a.onTrue(InstantCommand { Shooter.setSpeed(3000.0) })
-        controller.b.onTrue(InstantCommand { Shooter.setSpeed(2000.0) })
-        controller.x.onTrue(InstantCommand { Shooter.setSpeed(1000.0) })
-        controller.y.onTrue(InstantCommand { Shooter.setSpeed(0.0) })
+        controller.a.onTrue(InstantCommand { Shooter.setSpeed(3000.0, 3000.0) })
+        controller.b.onTrue(InstantCommand { Shooter.setSpeed(2000.0, 2000.0) })
+        controller.x.onTrue(InstantCommand { Shooter.setSpeed(1000.0, 1000.0) })
+        controller.y.onTrue(InstantCommand { Shooter.setSpeed(0000.0, 0000.0) })
 
 //        controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
     }

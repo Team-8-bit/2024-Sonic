@@ -6,18 +6,21 @@ import org.team9432.lib.annotation.Logged
 interface ShooterIO {
     @Logged
     open class ShooterIOInputs {
-        var velocityRPM = 0.0
-        var appliedVolts = 0.0
-        var currentAmps = doubleArrayOf()
+        var leftVelocityRPM = 0.0
+        var rightVelocityRPM = 0.0
+        var leftAppliedVolts = 0.0
+        var rightAppliedVolts = 0.0
+        var leftCurrentAmps = 0.0
+        var rightCurrentAmps = 0.0
     }
 
     fun updateInputs(inputs: ShooterIOInputs) {}
 
     /* Run open loop at the specified voltage */
-    fun setVoltage(volts: Double) {}
+    fun setVoltage(leftVolts: Double, rightVolts: Double) {}
 
     /* Run closed loop speed control */
-    fun setSpeed(rotationPerMinute: Double, feedforwardVolts: Double) {}
+    fun setSpeed(leftRPM: Double, leftFFVolts: Double, rightRPM: Double, rightFFVolts: Double) {}
 
     fun setPID(p: Double, i: Double, d: Double) {}
 

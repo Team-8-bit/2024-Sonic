@@ -33,14 +33,11 @@ object Shooter: KSubsystem() {
         Logger.processInputs("Shooter", inputs)
     }
 
-    fun runVolts(volts: Double) {
-        io.setVoltage(volts)
-    }
+    fun setSpeed(leftRPM: Double, rightRPM: Double) {
+        io.setSpeed(leftRPM, feedforward.calculate(leftRPM), rightRPM, feedforward.calculate(rightRPM))
 
-    fun setSpeed(rotationsPerMinute: Double) {
-        io.setSpeed(rotationsPerMinute, feedforward.calculate(rotationsPerMinute))
-
-        Logger.recordOutput("Shooter/SetpointRPM", rotationsPerMinute)
+        Logger.recordOutput("Shooter/LeftSetpointRPM", leftRPM)
+        Logger.recordOutput("Shooter/RightSetpointRPM", rightRPM)
     }
 
     fun stop() = io.stop()
