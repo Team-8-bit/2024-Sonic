@@ -3,8 +3,11 @@ package org.team9432.robot
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.math.util.Units
+import org.team9432.Robot
 import org.team9432.robot.subsystems.drivetrain.ModuleIO
 import kotlin.math.pow
+
+val LOOP_PERIOD_SECS = Robot.period
 
 @Suppress("unused")
 object DrivetrainConstants {
