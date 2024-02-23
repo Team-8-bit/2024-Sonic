@@ -7,9 +7,11 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
@@ -21,17 +23,16 @@ import org.team9432.lib.drivers.gyro.GyroIO
 import org.team9432.lib.drivers.gyro.GyroIOPigeon2
 import org.team9432.lib.drivers.gyro.LoggedGyroIOInputs
 import org.team9432.lib.wpilib.ChassisSpeeds
-import org.team9432.robot.DrivetrainConstants
-import org.team9432.robot.DrivetrainConstants.AngleConstants
-import org.team9432.robot.DrivetrainConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED
-import org.team9432.robot.DrivetrainConstants.MAX_VELOCITY_METERS_PER_SECOND
-import org.team9432.robot.DrivetrainConstants.MODULE_TRANSLATIONS
-import org.team9432.robot.DrivetrainConstants.PoseConstants
 import kotlin.math.abs
 import edu.wpi.first.math.kinematics.ChassisSpeeds as WPIChassisSpeeds
 
 
 object Drivetrain: KSubsystem() {
+    private const val MAX_ANGULAR_SPEED_DEGREES_PER_SECOND = 360.0
+    private const val MAX_VELOCITY_METERS_PER_SECOND = 5.0
+    private const val MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 20.0
+
+
     private val modules = ModuleIO.Module.entries.map { Module(it) }
 
     private val gyroInputs = LoggedGyroIOInputs()
@@ -40,10 +41,10 @@ object Drivetrain: KSubsystem() {
         SIM -> object: GyroIO {}
     }
 
-    private val angleController = ProfiledPIDController(AngleConstants.P, AngleConstants.I, AngleConstants.D, AngleConstants.CONTROLLER_CONSTRAINTS)
+    private val angleController = ProfiledPIDController(5.0, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
 
-    private val xController = PIDController(PoseConstants.P, PoseConstants.I, PoseConstants.D)
-    private val yController = PIDController(PoseConstants.P, PoseConstants.I, PoseConstants.D)
+    private val xController = PIDController(3.0, 0.0, 0.0)
+    private val yController = PIDController(3.0, 0.0, 0.0)
 
     private val xLimiter = SlewRateLimiter(MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
     private val yLimiter = SlewRateLimiter(MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
@@ -146,7 +147,9 @@ object Drivetrain: KSubsystem() {
 
     private fun atPositionGoal(): Boolean {
         val pose = getPose()
-        return abs(xController.setpoint - pose.x) < PoseConstants.EPSILON && abs(yController.setpoint - pose.y) < PoseConstants.EPSILON && abs(angleController.setpoint.position - pose.rotation.degrees) < AngleConstants.EPSILON
+        val rotationalTolerance = 3.0 // Degrees
+        val positionalTolerance = 0.05 // Meters
+        return abs(xController.setpoint - pose.x) < positionalTolerance && abs(yController.setpoint - pose.y) < positionalTolerance && abs(angleController.setpoint.position - pose.rotation.degrees) < rotationalTolerance
     }
 
     private fun setSpeeds(speeds: ChassisSpeeds) {
@@ -211,8 +214,8 @@ object Drivetrain: KSubsystem() {
         xJoystickInput: () -> Double,
         yJoystickInput: () -> Double,
         angleJoystickInput: () -> Double,
-        maxSpeedMetersPerSecond: Double = DrivetrainConstants.MAX_VELOCITY_METERS_PER_SECOND,
-        maxSpeedDegreesPerSecond: Double = DrivetrainConstants.MAX_ANGULAR_SPEED_DEGREES_PER_SECOND,
+        maxSpeedMetersPerSecond: Double = MAX_VELOCITY_METERS_PER_SECOND,
+        maxSpeedDegreesPerSecond: Double = MAX_ANGULAR_SPEED_DEGREES_PER_SECOND,
     ) = SimpleCommand(
         execute = {
             val xSpeed = xJoystickInput.invoke() * maxSpeedMetersPerSecond
@@ -225,4 +228,14 @@ object Drivetrain: KSubsystem() {
         requirements = mutableSetOf(Drivetrain),
         initialize = { mode = SubsystemMode.MANUAL }
     )
+
+    private val MODULE_TRANSLATIONS: Array<Translation2d>
+        get() {
+            val moduleDistance = Units.inchesToMeters(14.67246)
+            val frontLeft = Translation2d(moduleDistance, moduleDistance)
+            val frontRight = Translation2d(moduleDistance, -moduleDistance)
+            val backLeft = Translation2d(-moduleDistance, moduleDistance)
+            val backRight = Translation2d(-moduleDistance, -moduleDistance)
+            return arrayOf(frontLeft, frontRight, backLeft, backRight)
+        }
 }

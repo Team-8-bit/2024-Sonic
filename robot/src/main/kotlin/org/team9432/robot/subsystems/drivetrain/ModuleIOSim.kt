@@ -4,15 +4,13 @@ import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.wpilibj.simulation.DCMotorSim
-import org.team9432.Robot
-import org.team9432.robot.DrivetrainConstants.MK4I_L3_DRIVE_REDUCTION
-import org.team9432.robot.DrivetrainConstants.MK4I_STEER_REDUCTION
+import org.team9432.LOOP_PERIOD_SECS
+import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
+import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
 import org.team9432.robot.subsystems.drivetrain.ModuleIO.ModuleIOInputs
 import kotlin.math.abs
 
 class ModuleIOSim(override val module: ModuleIO.Module): ModuleIO {
-    private val LOOP_PERIOD_SECS = Robot.period
-
     private val driveSim = DCMotorSim(DCMotor.getNeoVortex(1), MK4I_L3_DRIVE_REDUCTION, 0.025)
     private val steerSim = DCMotorSim(DCMotor.getNEO(1), MK4I_STEER_REDUCTION, 0.004096955)
 
