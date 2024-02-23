@@ -2,18 +2,18 @@ package org.team9432.robot.subsystems.drivetrain
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.annotation.Logged
-import org.team9432.robot.Ports.BACK_LEFT_CANCODER
-import org.team9432.robot.Ports.BACK_LEFT_DRIVE
-import org.team9432.robot.Ports.BACK_LEFT_STEER
-import org.team9432.robot.Ports.BACK_RIGHT_CANCODER
-import org.team9432.robot.Ports.BACK_RIGHT_DRIVE
-import org.team9432.robot.Ports.BACK_RIGHT_STEER
-import org.team9432.robot.Ports.FRONT_LEFT_CANCODER
-import org.team9432.robot.Ports.FRONT_LEFT_DRIVE
-import org.team9432.robot.Ports.FRONT_LEFT_STEER
-import org.team9432.robot.Ports.FRONT_RIGHT_CANCODER
-import org.team9432.robot.Ports.FRONT_RIGHT_DRIVE
-import org.team9432.robot.Ports.FRONT_RIGHT_STEER
+import org.team9432.robot.Devices.BACK_LEFT_CANCODER
+import org.team9432.robot.Devices.BACK_LEFT_DRIVE
+import org.team9432.robot.Devices.BACK_LEFT_STEER
+import org.team9432.robot.Devices.BACK_RIGHT_CANCODER
+import org.team9432.robot.Devices.BACK_RIGHT_DRIVE
+import org.team9432.robot.Devices.BACK_RIGHT_STEER
+import org.team9432.robot.Devices.FRONT_LEFT_CANCODER
+import org.team9432.robot.Devices.FRONT_LEFT_DRIVE
+import org.team9432.robot.Devices.FRONT_LEFT_STEER
+import org.team9432.robot.Devices.FRONT_RIGHT_CANCODER
+import org.team9432.robot.Devices.FRONT_RIGHT_DRIVE
+import org.team9432.robot.Devices.FRONT_RIGHT_STEER
 
 
 interface ModuleIO {

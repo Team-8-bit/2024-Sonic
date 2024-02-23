@@ -1,6 +1,6 @@
 package org.team9432.robot
 
-object Ports {
+object Devices {
     const val PIGEON = 1
 
     // Drivetrain

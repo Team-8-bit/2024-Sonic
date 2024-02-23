@@ -7,11 +7,11 @@ import com.ctre.phoenix6.StatusCode
 import com.ctre.phoenix6.configs.Pigeon2Configuration
 import com.ctre.phoenix6.hardware.Pigeon2
 import edu.wpi.first.math.geometry.Rotation2d
-import org.team9432.robot.Ports
+import org.team9432.robot.Devices
 
 
 class GyroIOPigeon2: GyroIO {
-    private val pigeon = Pigeon2(Ports.PIGEON)
+    private val pigeon = Pigeon2(Devices.PIGEON)
     private val yaw = pigeon.yaw
     private val yawVelocity = pigeon.angularVelocityZWorld
 
