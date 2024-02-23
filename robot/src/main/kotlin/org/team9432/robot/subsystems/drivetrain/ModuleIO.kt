@@ -2,6 +2,18 @@ package org.team9432.robot.subsystems.drivetrain
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.annotation.Logged
+import org.team9432.robot.Ports.Drivetrain.BACK_LEFT_CANCODER
+import org.team9432.robot.Ports.Drivetrain.BACK_LEFT_DRIVE
+import org.team9432.robot.Ports.Drivetrain.BACK_LEFT_STEER
+import org.team9432.robot.Ports.Drivetrain.BACK_RIGHT_CANCODER
+import org.team9432.robot.Ports.Drivetrain.BACK_RIGHT_DRIVE
+import org.team9432.robot.Ports.Drivetrain.BACK_RIGHT_STEER
+import org.team9432.robot.Ports.Drivetrain.FRONT_LEFT_CANCODER
+import org.team9432.robot.Ports.Drivetrain.FRONT_LEFT_DRIVE
+import org.team9432.robot.Ports.Drivetrain.FRONT_LEFT_STEER
+import org.team9432.robot.Ports.Drivetrain.FRONT_RIGHT_CANCODER
+import org.team9432.robot.Ports.Drivetrain.FRONT_RIGHT_DRIVE
+import org.team9432.robot.Ports.Drivetrain.FRONT_RIGHT_STEER
 
 
 interface ModuleIO {
@@ -37,33 +49,33 @@ interface ModuleIO {
         val encoderOffset: Rotation2d,
     ) {
         FL(
-            encoderID = 11,
-            driveID = 12,
-            steerID = 13,
+            encoderID = FRONT_LEFT_CANCODER,
+            driveID = FRONT_LEFT_DRIVE,
+            steerID = FRONT_LEFT_STEER,
             driveInverted = false,
             steerInverted = true,
             encoderOffset = Rotation2d.fromDegrees(0.0),
         ),
         FR(
-            encoderID = 21,
-            driveID = 22,
-            steerID = 23,
+            encoderID = FRONT_RIGHT_CANCODER,
+            driveID = FRONT_RIGHT_DRIVE,
+            steerID = FRONT_RIGHT_STEER,
             driveInverted = true,
             steerInverted = false,
             encoderOffset = Rotation2d.fromDegrees(0.0),
         ),
         BL(
-            encoderID = 31,
-            driveID = 32,
-            steerID = 33,
+            encoderID = BACK_LEFT_CANCODER,
+            driveID = BACK_LEFT_DRIVE,
+            steerID = BACK_LEFT_STEER,
             driveInverted = false,
             steerInverted = true,
             encoderOffset = Rotation2d.fromDegrees(0.0),
         ),
         BR(
-            encoderID = 41,
-            driveID = 42,
-            steerID = 43,
+            encoderID = BACK_RIGHT_CANCODER,
+            driveID = BACK_RIGHT_DRIVE,
+            steerID = BACK_RIGHT_STEER,
             driveInverted = true,
             steerInverted = false,
             encoderOffset = Rotation2d.fromDegrees(0.0),
