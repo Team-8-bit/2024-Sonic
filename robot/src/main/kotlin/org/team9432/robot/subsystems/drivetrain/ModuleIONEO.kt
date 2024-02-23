@@ -29,9 +29,6 @@ class ModuleIONEO(override val module: ModuleIO.Module): ModuleIO {
         drive.restoreFactoryDefaults()
         steer.restoreFactoryDefaults()
 
-        drive.setCANTimeout(250)
-        steer.setCANTimeout(250)
-
         drive.inverted = !module.driveInverted
         steer.inverted = !module.steerInverted
 
@@ -48,9 +45,6 @@ class ModuleIONEO(override val module: ModuleIO.Module): ModuleIO {
         steerEncoder.position = 0.0
         steerEncoder.measurementPeriod = 10
         steerEncoder.averageDepth = 2
-
-        drive.setCANTimeout(0)
-        steer.setCANTimeout(0)
 
         drive.burnFlash()
         steer.burnFlash()
