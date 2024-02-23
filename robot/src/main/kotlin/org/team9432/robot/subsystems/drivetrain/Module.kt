@@ -8,8 +8,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
+import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
 import org.team9432.lib.util.SwerveUtil
-import org.team9432.robot.DrivetrainConstants.DRIVE_WHEEL_RADIUS
 import kotlin.math.cos
 
 
@@ -72,7 +72,7 @@ class Module(module: ModuleIO.Module) {
                 val adjustSpeedSetpoint = speedSetpoint!! * cos(steerFeedback.positionError)
 
                 // Run drive controller
-                val velocityRadPerSec = adjustSpeedSetpoint / DRIVE_WHEEL_RADIUS
+                val velocityRadPerSec = adjustSpeedSetpoint / MK4I_DRIVE_WHEEL_RADIUS
                 io.setDriveVoltage(driveFeedforward.calculate(velocityRadPerSec) + driveFeedback.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec))
             }
         }
@@ -100,9 +100,8 @@ class Module(module: ModuleIO.Module) {
 
     fun setBrakeMode(enabled: Boolean) = io.setBrakeMode(enabled)
 
-    val positionMeters get() = inputs.drivePositionRad * DRIVE_WHEEL_RADIUS
-    val velocityMetersPerSec get() = inputs.driveVelocityRadPerSec * DRIVE_WHEEL_RADIUS
+    val positionMeters get() = inputs.drivePositionRad * MK4I_DRIVE_WHEEL_RADIUS
+    val velocityMetersPerSec get() = inputs.driveVelocityRadPerSec * MK4I_DRIVE_WHEEL_RADIUS
     val position get() = SwerveModulePosition(positionMeters, getAngle())
     val state get() = SwerveModuleState(velocityMetersPerSec, getAngle())
-
 }

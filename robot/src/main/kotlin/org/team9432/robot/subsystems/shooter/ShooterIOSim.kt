@@ -4,7 +4,7 @@ import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.wpilibj.simulation.DCMotorSim
-import org.team9432.robot.LOOP_PERIOD_SECS
+import org.team9432.LOOP_PERIOD_SECS
 import kotlin.math.abs
 
 class ShooterIOSim: ShooterIO {

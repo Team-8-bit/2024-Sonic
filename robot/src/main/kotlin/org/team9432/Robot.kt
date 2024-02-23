@@ -13,6 +13,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.robot.Controls
 
+val LOOP_PERIOD_SECS = Robot.period
 
 object Robot: LoggedRobot() {
     val mode = Mode.SIM

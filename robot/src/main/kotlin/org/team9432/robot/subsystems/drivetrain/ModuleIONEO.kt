@@ -8,10 +8,10 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue
 import com.revrobotics.CANSparkBase.IdleMode
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
+import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
+import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
 import org.team9432.lib.drivers.motors.KSparkFlex
 import org.team9432.lib.drivers.motors.KSparkMAX
-import org.team9432.robot.DrivetrainConstants.MK4I_L3_DRIVE_REDUCTION
-import org.team9432.robot.DrivetrainConstants.MK4I_STEER_REDUCTION
 import org.team9432.robot.subsystems.drivetrain.ModuleIO.ModuleIOInputs
 
 

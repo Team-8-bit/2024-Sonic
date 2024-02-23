@@ -5,12 +5,10 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.wpilibj.simulation.DCMotorSim
-import org.team9432.Robot
+import org.team9432.LOOP_PERIOD_SECS
 import kotlin.math.abs
 
 class HoodIOSim: HoodIO {
-    private val LOOP_PERIOD_SECS = Robot.period
-
     private val motorToHoodRatio = 2.0 * (150 / 15)
 
     private val sim = DCMotorSim(DCMotor.getNEO(1), motorToHoodRatio, 0.01507)
