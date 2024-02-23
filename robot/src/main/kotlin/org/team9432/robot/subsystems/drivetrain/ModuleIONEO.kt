@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue
 import com.revrobotics.CANSparkBase.IdleMode
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
+import org.team9432.lib.drivers.motors.KSparkFlex
 import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.DrivetrainConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.robot.DrivetrainConstants.MK4I_STEER_REDUCTION
@@ -15,7 +16,7 @@ import org.team9432.robot.subsystems.drivetrain.ModuleIO.ModuleIOInputs
 
 
 class ModuleIONEO(override val module: ModuleIO.Module): ModuleIO {
-    private val drive = KSparkMAX(module.driveID)
+    private val drive = KSparkFlex(module.driveID)
     private val steer = KSparkMAX(module.steerID)
     private val cancoder = CANcoder(module.encoderID)
     private val driveEncoder = drive.encoder
@@ -27,9 +28,6 @@ class ModuleIONEO(override val module: ModuleIO.Module): ModuleIO {
     init {
         drive.restoreFactoryDefaults()
         steer.restoreFactoryDefaults()
-
-        drive.setCANTimeout(250)
-        steer.setCANTimeout(250)
 
         drive.inverted = !module.driveInverted
         steer.inverted = !module.steerInverted
@@ -47,9 +45,6 @@ class ModuleIONEO(override val module: ModuleIO.Module): ModuleIO {
         steerEncoder.position = 0.0
         steerEncoder.measurementPeriod = 10
         steerEncoder.averageDepth = 2
-
-        drive.setCANTimeout(0)
-        steer.setCANTimeout(0)
 
         drive.burnFlash()
         steer.burnFlash()
