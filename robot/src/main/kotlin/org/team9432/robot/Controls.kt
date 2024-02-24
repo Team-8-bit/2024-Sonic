@@ -5,6 +5,7 @@ import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.auto.testAuto
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
+import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.shooter.Shooter
 
 object Controls {
@@ -14,6 +15,7 @@ object Controls {
         Drivetrain
         Hood
         Shooter
+        Hopper
 
         Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX })
 

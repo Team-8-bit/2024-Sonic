@@ -9,6 +9,6 @@ interface HopperIO {
         var atShooterBeamBreak = false
     }
 
-    fun updateInputs(inputs: HopperIOInputs)
-    fun setSpeed(speed: Double)
+    fun updateInputs(inputs: HopperIOInputs) {}
+    fun setSpeed(speed: Double) {}
 }
