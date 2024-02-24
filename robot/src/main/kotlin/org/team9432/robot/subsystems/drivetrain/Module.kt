@@ -43,7 +43,7 @@ class Module(module: ModuleIO.Module) {
             }
         }
 
-        steerFeedback.enableContinuousInput(-180.0, 180.0)
+        steerFeedback.enableContinuousInput(-Math.PI, Math.PI);
         setBrakeMode(true)
     }
 
@@ -83,7 +83,7 @@ class Module(module: ModuleIO.Module) {
     }
 
     fun runSetpoint(state: SwerveModuleState): SwerveModuleState {
-        val optimizedState = SwerveUtil.optimize(state, getAngle().degrees)
+        val optimizedState = SwerveModuleState.optimize(state, getAngle())
         angleSetpoint = optimizedState.angle
         speedSetpoint = optimizedState.speedMetersPerSecond
         return optimizedState
