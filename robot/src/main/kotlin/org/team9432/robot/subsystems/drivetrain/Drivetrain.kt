@@ -24,6 +24,7 @@ import org.team9432.lib.drivers.gyro.GyroIOPigeon2
 import org.team9432.lib.drivers.gyro.LoggedGyroIOInputs
 import org.team9432.lib.wpilib.ChassisSpeeds
 import kotlin.math.abs
+import kotlin.math.hypot
 import edu.wpi.first.math.kinematics.ChassisSpeeds as WPIChassisSpeeds
 
 
@@ -138,7 +139,7 @@ object Drivetrain: KSubsystem() {
         setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vx, vy, va, yaw))
     }
 
-    private fun setPositionGoal(pose2d: Pose2d) {
+    fun setPositionGoal(pose2d: Pose2d) {
         Logger.recordOutput("Drive/PositionGoal", pose2d)
         xController.setpoint = pose2d.x
         yController.setpoint = pose2d.y
@@ -191,6 +192,10 @@ object Drivetrain: KSubsystem() {
     }
 
     private fun getPose(): Pose2d = poseEstimator.estimatedPosition
+
+    fun isNear(pose: Pose2d, epsilon: Double): Boolean {
+        return hypot(getPose().x - pose.x, getPose().y - pose.y) < epsilon
+    }
 
     private var yaw: Double
         get() = rawGyroRotation.degrees
