@@ -32,12 +32,12 @@ class IntakeSideIONeo(override val intakeSide: IntakeSideIO.IntakeSide): IntakeS
         spark.setVoltage(volts)
     }
 
-    override fun setSpeed(rotationsPerMinute: Double, feedForwardVolts: Double) {
+    override fun setSpeed(rotationsPerMinute: Double, feedforwardVolts: Double) {
         pid.setReference(
             rotationsPerMinute * gearRatio,
             CANSparkBase.ControlType.kVelocity,
             0, // PID slot
-            feedForwardVolts,
+            feedforwardVolts,
             SparkPIDController.ArbFFUnits.kVoltage
         )
     }

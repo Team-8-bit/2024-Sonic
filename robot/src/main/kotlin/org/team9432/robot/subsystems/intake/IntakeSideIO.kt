@@ -17,7 +17,7 @@ interface IntakeSideIO {
     fun setVoltage(volts: Double) {}
 
     /* Run closed loop speed control */
-    fun setSpeed(rotationsPerMinute: Double, feedForwardVolts: Double) {}
+    fun setSpeed(rotationsPerMinute: Double, feedforwardVolts: Double) {}
 
     fun setPID(p: Double, i: Double, d: Double) {}
 
