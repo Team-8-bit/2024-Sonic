@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.commandbased.commands.InstantCommand
 
 object Intake: KSubsystem() {
     private val io: IntakeIO
@@ -36,6 +37,8 @@ object Intake: KSubsystem() {
     fun runVolts(ampSideVolts: Double, shooterSideVolts: Double) {
         io.setVoltage(ampSideVolts, shooterSideVolts)
     }
+
+    fun stopCommand() = InstantCommand(requirements = mutableSetOf(Intake)) { stop() }
 
     fun setSpeed(ampSideRPM: Double, shooterSideRPM: Double) {
         io.setSpeed(ampSideRPM, feedforward.calculate(ampSideRPM), shooterSideRPM, feedforward.calculate(shooterSideRPM))

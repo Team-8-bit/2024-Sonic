@@ -91,7 +91,7 @@ class IntakeIONeo: IntakeIO {
     }
 
     override fun stop() {
-        ampSide.stopMotor()
-        speakerSide.stopMotor()
+        ampSide.setVoltage(0.0)
+        speakerSide.setVoltage(0.0)
     }
 }
