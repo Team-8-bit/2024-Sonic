@@ -8,9 +8,7 @@ import org.team9432.LOOP_PERIOD_SECS
 import kotlin.math.abs
 
 class AmpIOSim: AmpIO {
-        private val gearRatio = 0.5
-
-        private val sim = DCMotorSim(DCMotor.getNeoVortex(1), gearRatio, 0.003)
+        private val sim = DCMotorSim(DCMotor.getNEO(1), 1.0, 0.003)
 
         private val pid = PIDController(0.0, 0.0, 0.0)
 
