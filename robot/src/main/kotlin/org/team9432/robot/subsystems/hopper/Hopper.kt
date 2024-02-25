@@ -28,8 +28,8 @@ object Hopper: KSubsystem() {
         Logger.processInputs("Hopper", inputs)
     }
 
-    fun setVoltage(volts: Double) = InstantCommand(mutableSetOf(Hopper)) { io.setVoltage(volts) }
-    fun stopCommand() = InstantCommand(mutableSetOf(Hopper)) { io.stop() }
+    fun setVoltage(volts: Double) = InstantCommand(Hopper) { io.setVoltage(volts) }
+    fun stopCommand() = InstantCommand(Hopper) { io.stop() }
 
     val ampSideBeambreakActive get() = inputs.atAmpBeamBreak
     val speakerSideBeambreakActive get() = inputs.atShooterBeamBreak

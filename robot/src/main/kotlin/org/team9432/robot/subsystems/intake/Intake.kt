@@ -34,11 +34,11 @@ object Intake: KSubsystem() {
         Logger.processInputs("Intake", inputs)
     }
 
-    fun runVolts(ampSideVolts: Double, shooterSideVolts: Double) = InstantCommand(mutableSetOf(Intake)) { io.setVoltage(ampSideVolts, shooterSideVolts) }
+    fun runVolts(ampSideVolts: Double, shooterSideVolts: Double) = InstantCommand(Intake) { io.setVoltage(ampSideVolts, shooterSideVolts) }
 
-    fun stopCommand() = InstantCommand(requirements = mutableSetOf(Intake)) { io.stop() }
+    fun stopCommand() = InstantCommand(Intake) { io.stop() }
 
-    fun setSpeed(ampSideRPM: Double, shooterSideRPM: Double) = InstantCommand(mutableSetOf(Intake)) {
+    fun setSpeed(ampSideRPM: Double, shooterSideRPM: Double) = InstantCommand(Intake) {
         io.setSpeed(ampSideRPM, feedforward.calculate(ampSideRPM), shooterSideRPM, feedforward.calculate(shooterSideRPM))
 
         Logger.recordOutput("Intake/AmpSideSetpointRPM", ampSideRPM)

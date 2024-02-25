@@ -26,8 +26,8 @@ object Controls {
         Shooter
 
         Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 3.5)
-        Hopper.defaultCommand = SimpleCommand(execute = { Hopper.setVoltage(0.0) }, requirements = mutableSetOf(Hopper))
-        Intake.defaultCommand = SimpleCommand(execute = { Intake.stopCommand() }, requirements = mutableSetOf(Intake))
+        Hopper.defaultCommand = SimpleCommand(execute = { Hopper.setVoltage(0.0) }, requirements = setOf(Hopper))
+        Intake.defaultCommand = SimpleCommand(execute = { Intake.stopCommand() }, requirements = setOf(Intake))
 
         controller.rightBumper.whileTrue(Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
         controller.rightTrigger.onTrue(intakeAndScore()).onFalse(Intake.stopCommand())
