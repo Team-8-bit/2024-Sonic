@@ -20,8 +20,8 @@ object Intake: KSubsystem() {
     fun stopCommand() = InstantCommand(requirements = mutableSetOf(Intake)) { stop() }
 
     fun setSpeed(ampSideRPM: Double, speakerSideRPM: Double) {
-        ampSide.runVolts(ampSideRPM)
-        speakerSide.runVolts(speakerSideRPM)
+        ampSide.setSpeed(ampSideRPM)
+        speakerSide.setSpeed(speakerSideRPM)
     }
 
     fun stop() {

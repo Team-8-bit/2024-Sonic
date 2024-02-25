@@ -1,8 +1,8 @@
 package org.team9432.robot.subsystems.intake
 
-import com.revrobotics.CANSparkBase
+import com.revrobotics.CANSparkBase.ControlType
 import com.revrobotics.CANSparkBase.IdleMode
-import com.revrobotics.SparkPIDController
+import com.revrobotics.SparkPIDController.ArbFFUnits
 import org.team9432.lib.drivers.motors.KSparkMAX
 
 class IntakeSideIONeo(override val intakeSide: IntakeSideIO.IntakeSide): IntakeSideIO {
@@ -35,10 +35,10 @@ class IntakeSideIONeo(override val intakeSide: IntakeSideIO.IntakeSide): IntakeS
     override fun setSpeed(rotationsPerMinute: Double, feedforwardVolts: Double) {
         pid.setReference(
             rotationsPerMinute * gearRatio,
-            CANSparkBase.ControlType.kVelocity,
+            ControlType.kVelocity,
             0, // PID slot
             feedforwardVolts,
-            SparkPIDController.ArbFFUnits.kVoltage
+            ArbFFUnits.kVoltage
         )
     }
 
