@@ -22,12 +22,12 @@ fun moveToSide(side: MechanismSide) = SequentialCommand(
     InstantCommand { Intake.runVolts(3.0, 3.0) },
 
     // Again, this just checks both sides
-    WaitUntilCommand { Hopper.ampSideBeambreakActive || Hopper.speakerSideBeambreakActive },
+    WaitUntilCommand { !Hopper.ampSideBeambreakActive || !Hopper.speakerSideBeambreakActive },
 
     // Run back slowly to align the note. There is totally a better way to do this
     when {
-        Hopper.ampSideBeambreakActive -> InstantCommand { Hopper.runPercentage(0.2) }
-        Hopper.speakerSideBeambreakActive -> InstantCommand { Hopper.runPercentage(-0.2) }
+        !Hopper.ampSideBeambreakActive -> InstantCommand { Hopper.runPercentage(0.2) }
+        !Hopper.speakerSideBeambreakActive -> InstantCommand { Hopper.runPercentage(-0.2) }
         else -> throw Exception()
     },
 
