@@ -2,18 +2,15 @@ package org.team9432.robot.subsystems.amp
 
 import com.revrobotics.CANSparkBase
 import com.revrobotics.CANSparkLowLevel
-import com.revrobotics.CANSparkMax
 import com.revrobotics.SparkPIDController
-import edu.wpi.first.wpilibj2.command.SubsystemBase
+import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Devices
 
 class AmpIOReal: AmpIO {
-    private val spark = CANSparkMax(Devices.AMP_ID, CANSparkLowLevel.MotorType.kBrushless)
+    private val spark = KSparkMAX(Devices.AMP_ID, CANSparkLowLevel.MotorType.kBrushless)
 
     private val encoder = spark.encoder
     private val pid = spark.pidController
-
-    private val gearRatio = 1
 
     init {
         spark.restoreFactoryDefaults()
@@ -29,7 +26,7 @@ class AmpIOReal: AmpIO {
 
 
     override fun updateInputs(inputs: AmpIO.AmpIOInputs) {
-        inputs.velocityRPM = encoder.velocity / gearRatio
+        inputs.velocityRPM = encoder.velocity
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
         inputs.currentAmps = spark.outputCurrent
     }
@@ -38,7 +35,7 @@ class AmpIOReal: AmpIO {
     }
     override fun setSpeed(rpm: Double, ffVolts: Double) {
         pid.setReference(
-            rpm * gearRatio,
+            rpm,
             CANSparkBase.ControlType.kVelocity,
             0, // PID slot
             ffVolts,
@@ -54,7 +51,7 @@ class AmpIOReal: AmpIO {
     }
 
     override fun stop() {
-        spark.stopMotor()
+        spark.setVoltage(0.0)
     }
 
 }
