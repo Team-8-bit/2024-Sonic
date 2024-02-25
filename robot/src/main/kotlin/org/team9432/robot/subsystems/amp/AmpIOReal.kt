@@ -14,7 +14,7 @@ class AmpIOReal: AmpIO, SubsystemBase() {
     private val encoder = spark.encoder
     private val pid = spark.pidController
 
-    private val gearRatio = 0.5
+    private val gearRatio = 1
     override fun updateInputs(inputs: AmpIO.AmpIOInputs) {
         inputs.velocityRPM = encoder.velocity / gearRatio
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
