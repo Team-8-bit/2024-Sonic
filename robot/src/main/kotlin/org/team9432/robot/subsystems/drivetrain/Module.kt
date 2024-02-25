@@ -77,6 +77,8 @@ class Module(module: ModuleIO.Module) {
                 io.setDriveVoltage(driveFeedforward.calculate(velocityRadPerSec) + driveFeedback.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec))
             }
         }
+
+        Logger.recordOutput("Drive/${io.module.name}_Module/AbsoluteAngleDegrees", inputs.steerAbsolutePosition.degrees)
     }
 
     private fun getAngle(): Rotation2d {
