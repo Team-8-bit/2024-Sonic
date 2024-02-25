@@ -20,15 +20,15 @@ object Devices {
 
     // Hopper
     const val HOPPER_ID = 21
-    val HOPPER_AMP_SIDE_BEAMBREAK_PORT: Nothing = TODO()
-    val HOPPER_SHOOTER_SIDE_BEAMBREAK_PORT: Nothing = TODO()
+    const val HOPPER_AMP_SIDE_BEAMBREAK_PORT = 0
+    const val HOPPER_SHOOTER_SIDE_BEAMBREAK_PORT = 7
 
     // Intake
     const val AMP_SIDE_INTAKE_ID = 31
     const val SPEAKER_SIDE_INTAKE_ID = 32
-    val INTAKE_AMP_SIDE_BEAMBREAK_PORT: Nothing = TODO()
-    val INTAKE_SHOOTER_SIDE_BEAMBREAK_PORT: Nothing = TODO()
-    val INTAKE_CENTER_BEAMBREAK_PORT: Nothing = TODO()
+    const val INTAKE_AMP_SIDE_BEAMBREAK_PORT = 6
+    const val INTAKE_SHOOTER_SIDE_BEAMBREAK_PORT = 3
+    const val INTAKE_CENTER_BEAMBREAK_PORT = 2
 
     // Amp
     const val AMP_ID = 41
