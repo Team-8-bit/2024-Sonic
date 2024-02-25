@@ -29,7 +29,7 @@ object Controls {
         Hopper.defaultCommand = SimpleCommand(execute = { Hopper.setVoltage(0.0) }, requirements = mutableSetOf(Hopper))
         Intake.defaultCommand = SimpleCommand(execute = { Intake.stopCommand() }, requirements = mutableSetOf(Intake))
 
-        controller.rightBumper.onTrue(Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
+        controller.rightBumper.whileTrue(Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
         controller.rightTrigger.onTrue(intakeAndScore()).onFalse(Intake.stopCommand())
 
         controller.x.onTrue(moveToSide(MechanismSide.AMP)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
