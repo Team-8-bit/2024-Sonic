@@ -25,11 +25,11 @@ object Controls {
         Hood
         Shooter
 
-        Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { controller.rightX }, maxSpeedMetersPerSecond = 3.5)
+        Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 3.5)
         Hopper.defaultCommand = SimpleCommand(execute = { Hopper.setVoltage(0.0) }, requirements = mutableSetOf(Hopper))
         Intake.defaultCommand = SimpleCommand(execute = { Intake.stopCommand() }, requirements = mutableSetOf(Intake))
 
-        controller.rightBumper.onTrue(Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { controller.rightX }, maxSpeedMetersPerSecond = 6.0))
+        controller.rightBumper.onTrue(Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
         controller.rightTrigger.onTrue(intakeAndScore()).onFalse(Intake.stopCommand())
 
         controller.x.onTrue(moveToSide(MechanismSide.AMP)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
