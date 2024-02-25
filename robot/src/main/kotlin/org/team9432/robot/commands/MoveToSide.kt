@@ -5,6 +5,7 @@ import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.lib.commandbased.commands.WaitUntilCommand
 import org.team9432.robot.MechanismSide
+import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.intake.Intake
 
@@ -19,7 +20,7 @@ fun moveToSide(side: MechanismSide) = SequentialCommand(
     Intake.runVolts(-10.0, -10.0),
 
     // Again, this just checks both sides
-    WaitUntilCommand { Hopper.ampSideBeambreakActive || Hopper.speakerSideBeambreakActive },
+    WaitUntilCommand { RobotState.noteInAmpSideHopper() || RobotState.noteInSpeakerSideHopper() },
 
     // Run back slowly to align the note
     when (side) {
@@ -27,7 +28,7 @@ fun moveToSide(side: MechanismSide) = SequentialCommand(
         MechanismSide.AMP -> InstantCommand { Hopper.setVoltage(3.0) }
     },
 
-    WaitUntilCommand { !Hopper.ampSideBeambreakActive && !Hopper.speakerSideBeambreakActive },
+    WaitUntilCommand { !RobotState.noteInAmpSideHopper() && !RobotState.noteInSpeakerSideHopper() },
 
     ParallelCommand(Hopper.stopCommand(), Intake.stopCommand())
 )
