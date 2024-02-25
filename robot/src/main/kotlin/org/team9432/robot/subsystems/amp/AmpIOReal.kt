@@ -7,7 +7,7 @@ import com.revrobotics.SparkPIDController
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.team9432.robot.Devices
 
-class AmpIOReal: AmpIO, SubsystemBase() {
+class AmpIOReal: AmpIO {
     private val spark = CANSparkMax(Devices.AMP_ID, CANSparkLowLevel.MotorType.kBrushless)
 
     private val encoder = spark.encoder
