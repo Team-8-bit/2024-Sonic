@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.commandbased.commands.InstantCommand
 
 object Intake: KSubsystem() {
     private val io: IntakeIO
@@ -15,7 +16,7 @@ object Intake: KSubsystem() {
     init {
         when (Robot.mode) {
             REAL, REPLAY -> {
-                io = object: IntakeIO {}
+                io = IntakeIONeo()
                 io.setPID(0.0, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0)
             }
@@ -37,12 +38,18 @@ object Intake: KSubsystem() {
         io.setVoltage(ampSideVolts, shooterSideVolts)
     }
 
+    fun stopCommand() = InstantCommand(requirements = mutableSetOf(Intake)) { stop() }
+
     fun setSpeed(ampSideRPM: Double, shooterSideRPM: Double) {
         io.setSpeed(ampSideRPM, feedforward.calculate(ampSideRPM), shooterSideRPM, feedforward.calculate(shooterSideRPM))
 
         Logger.recordOutput("Intake/AmpSideSetpointRPM", ampSideRPM)
         Logger.recordOutput("Intake/ShooterSideSetpointRPM", shooterSideRPM)
     }
+
+    val ampSideBeambreakActive get() = inputs.ampSideBeambreakActive
+    val speakerSideBeambreakActive get() = inputs.centerBeambreakActive
+    val centerBeambreakActive get() = inputs.centerBeambreakActive
 
     fun stop() = io.stop()
 }
