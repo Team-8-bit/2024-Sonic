@@ -2,9 +2,12 @@ package org.team9432.lib.commandbased.commands
 
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.KCommandScheduler
+import org.team9432.lib.commandbased.KSubsystem
 
 class RepeatCommand(private val command: KCommand): KCommand() {
     private var ended = false
+
+    override val requirements = mutableSetOf<KSubsystem>()
 
     init {
         KCommandScheduler.registerComposedCommands(command)
