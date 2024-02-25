@@ -10,5 +10,5 @@ interface HopperIO {
     }
 
     fun updateInputs(inputs: HopperIOInputs) {}
-    fun setSpeed(speed: Double) {}
+    fun setVoltage(volts: Double) {}
 }

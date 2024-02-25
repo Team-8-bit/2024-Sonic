@@ -26,12 +26,12 @@ object Hopper: KSubsystem() {
         Logger.processInputs("Hopper", inputs)
     }
 
-    fun runPercentage(percentage: Double) {
-        io.setSpeed(percentage)
+    fun setVoltage(volts: Double) {
+        io.setVoltage(volts)
     }
 
     val ampSideBeambreakActive get() = inputs.atAmpBeamBreak
     val speakerSideBeambreakActive get() = inputs.atShooterBeamBreak
 
-    fun stop() = io.setSpeed(0.0)
+    fun stop() = io.setVoltage(0.0)
 }

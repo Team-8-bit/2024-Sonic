@@ -1,10 +1,6 @@
 package org.team9432.robot.subsystems.hopper
 
-import com.revrobotics.CANSparkLowLevel
-import com.revrobotics.CANSparkMax
 import edu.wpi.first.wpilibj.DigitalInput
-import edu.wpi.first.wpilibj2.command.SubsystemBase
-import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Devices
 
@@ -18,7 +14,7 @@ class HopperIOReal: HopperIO {
         inputs.atShooterBeamBreak = shooterBeamBreak.get()
     }
 
-    override fun setSpeed(speed: Double) {
-        spark.set(speed)
+    override fun setVoltage(volts: Double) {
+        spark.setVoltage(volts)
     }
 }
