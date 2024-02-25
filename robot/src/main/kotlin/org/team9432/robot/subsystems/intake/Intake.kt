@@ -34,13 +34,11 @@ object Intake: KSubsystem() {
         Logger.processInputs("Intake", inputs)
     }
 
-    fun runVolts(ampSideVolts: Double, shooterSideVolts: Double) {
-        io.setVoltage(ampSideVolts, shooterSideVolts)
-    }
+    fun runVolts(ampSideVolts: Double, shooterSideVolts: Double) = InstantCommand(mutableSetOf(Intake)) { io.setVoltage(ampSideVolts, shooterSideVolts) }
 
-    fun stopCommand() = InstantCommand(requirements = mutableSetOf(Intake)) { stop() }
+    fun stopCommand() = InstantCommand(requirements = mutableSetOf(Intake)) { io.stop() }
 
-    fun setSpeed(ampSideRPM: Double, shooterSideRPM: Double) {
+    fun setSpeed(ampSideRPM: Double, shooterSideRPM: Double) = InstantCommand(mutableSetOf(Intake)) {
         io.setSpeed(ampSideRPM, feedforward.calculate(ampSideRPM), shooterSideRPM, feedforward.calculate(shooterSideRPM))
 
         Logger.recordOutput("Intake/AmpSideSetpointRPM", ampSideRPM)
@@ -50,6 +48,4 @@ object Intake: KSubsystem() {
     val ampSideBeambreakActive get() = inputs.ampSideBeambreakActive
     val speakerSideBeambreakActive get() = inputs.centerBeambreakActive
     val centerBeambreakActive get() = inputs.centerBeambreakActive
-
-    fun stop() = io.stop()
 }

@@ -1,6 +1,7 @@
 package org.team9432.robot.commands
 
 import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.lib.commandbased.commands.WaitUntilCommand
 import org.team9432.robot.MechanismSide
@@ -15,7 +16,7 @@ fun moveToSide(side: MechanismSide) = SequentialCommand(
     },
 
     // Just run both intakes for now, though we don't really need to
-    InstantCommand { Intake.runVolts(-10.0, -10.0) },
+    Intake.runVolts(-10.0, -10.0),
 
     // Again, this just checks both sides
     WaitUntilCommand { Hopper.ampSideBeambreakActive || Hopper.speakerSideBeambreakActive },
@@ -27,5 +28,6 @@ fun moveToSide(side: MechanismSide) = SequentialCommand(
     },
 
     WaitUntilCommand { !Hopper.ampSideBeambreakActive && !Hopper.speakerSideBeambreakActive },
-    InstantCommand { Hopper.stop(); Intake.stop() }
+
+    ParallelCommand(Hopper.stopCommand(), Intake.stopCommand())
 )
