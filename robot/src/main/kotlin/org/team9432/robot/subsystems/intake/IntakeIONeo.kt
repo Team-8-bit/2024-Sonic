@@ -36,8 +36,8 @@ class IntakeIONeo: IntakeIO {
         ampSide.enableVoltageCompensation(12.0)
         speakerSide.enableVoltageCompensation(12.0)
 
-        ampSide.setSmartCurrentLimit(20)
-        speakerSide.setSmartCurrentLimit(20)
+        ampSide.setSmartCurrentLimit(80)
+        speakerSide.setSmartCurrentLimit(80)
 
         ampSide.burnFlash()
         speakerSide.burnFlash()

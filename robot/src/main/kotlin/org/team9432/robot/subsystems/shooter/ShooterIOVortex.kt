@@ -30,8 +30,8 @@ class ShooterIOVortex: ShooterIO {
         left.enableVoltageCompensation(12.0)
         right.enableVoltageCompensation(12.0)
 
-        left.setSmartCurrentLimit(30)
-        right.setSmartCurrentLimit(30)
+        left.setSmartCurrentLimit(80)
+        right.setSmartCurrentLimit(80)
 
         left.burnFlash()
         right.burnFlash()
