@@ -19,7 +19,16 @@ object Robot: LoggedRobot() {
     val mode = Mode.SIM
 
     override fun robotInit() {
-        Logger.recordMetadata("ProjectName", "2024 - Sonic") // Set a metadata value
+        Logger.recordMetadata("ProjectName", "2024 - Sonic")
+        Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE)
+        Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA)
+        Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE)
+        Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH)
+        when (BuildConstants.DIRTY) {
+            0 -> Logger.recordMetadata("GitDirty", "All changes committed")
+            1 -> Logger.recordMetadata("GitDirty", "Uncomitted changes")
+            else -> Logger.recordMetadata("GitDirty", "Unknown")
+        }
 
         if (isReal() || mode == Mode.SIM) {
             Logger.addDataReceiver(WPILOGWriter()) // Log to a USB stick ("/U/logs")
