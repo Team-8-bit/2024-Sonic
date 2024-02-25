@@ -40,5 +40,9 @@ object Shooter: KSubsystem() {
         Logger.recordOutput("Shooter/RightSetpointRPM", rightRPM)
     }
 
+    fun setVolts(leftRPM: Double, rightRPM: Double) {
+        io.setVoltage(leftRPM, rightRPM)
+    }
+
     fun stop() = io.stop()
 }

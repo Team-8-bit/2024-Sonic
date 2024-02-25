@@ -8,7 +8,11 @@ import edu.wpi.first.math.geometry.Translation3d
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
+import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.commandbased.commands.SimpleCommand
+import org.team9432.robot.subsystems.hopper.Hopper
+import org.team9432.robot.subsystems.intake.Intake
 
 object Hood: KSubsystem() {
     private val io: HoodIO

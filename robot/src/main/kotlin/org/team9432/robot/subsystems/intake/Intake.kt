@@ -4,7 +4,10 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
+import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.SimpleCommand
 
 object Intake: KSubsystem() {
     private val io: IntakeIO
@@ -15,7 +18,7 @@ object Intake: KSubsystem() {
     init {
         when (Robot.mode) {
             REAL, REPLAY -> {
-                io = object: IntakeIO {}
+                io = IntakeIONeo()
                 io.setPID(0.0, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0)
             }
@@ -35,6 +38,22 @@ object Intake: KSubsystem() {
 
     fun runVolts(ampSideVolts: Double, shooterSideVolts: Double) {
         io.setVoltage(ampSideVolts, shooterSideVolts)
+    }
+
+    fun runIntake(ampSideVolts: Double, shooterSideVolts: Double): KCommand {
+        return SimpleCommand(
+            initialize = { io.setVoltage(ampSideVolts, shooterSideVolts) },
+            end = { io.stop() },
+            requirements = mutableSetOf(Intake)
+        )
+    }
+
+    fun stopCommand(): KCommand {
+        return SimpleCommand(
+            initialize = { io.setVoltage(0.0, 0.0) },
+            isFinished = { true },
+            requirements = mutableSetOf(Intake)
+        )
     }
 
     fun setSpeed(ampSideRPM: Double, shooterSideRPM: Double) {

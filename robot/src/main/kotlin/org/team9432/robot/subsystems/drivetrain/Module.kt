@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
@@ -72,10 +73,12 @@ class Module(module: ModuleIO.Module) {
                 val adjustSpeedSetpoint = speedSetpoint!! * cos(steerFeedback.positionError)
 
                 // Run drive controller
-                val velocityRadPerSec = adjustSpeedSetpoint / MK4I_DRIVE_WHEEL_RADIUS
+                val velocityRadPerSec = adjustSpeedSetpoint / Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
                 io.setDriveVoltage(driveFeedforward.calculate(velocityRadPerSec) + driveFeedback.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec))
             }
         }
+
+        Logger.recordOutput("AbsAngle${io.module.name}", inputs.steerAbsolutePosition.degrees)
     }
 
     private fun getAngle(): Rotation2d {
@@ -100,8 +103,8 @@ class Module(module: ModuleIO.Module) {
 
     fun setBrakeMode(enabled: Boolean) = io.setBrakeMode(enabled)
 
-    val positionMeters get() = inputs.drivePositionRad * MK4I_DRIVE_WHEEL_RADIUS
-    val velocityMetersPerSec get() = inputs.driveVelocityRadPerSec * MK4I_DRIVE_WHEEL_RADIUS
+    val positionMeters get() = inputs.drivePositionRad * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
+    val velocityMetersPerSec get() = inputs.driveVelocityRadPerSec * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
     val position get() = SwerveModulePosition(positionMeters, getAngle())
     val state get() = SwerveModuleState(velocityMetersPerSec, getAngle())
 }

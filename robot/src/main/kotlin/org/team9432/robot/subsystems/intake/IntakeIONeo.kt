@@ -36,8 +36,8 @@ class IntakeIONeo: IntakeIO {
         ampSide.enableVoltageCompensation(12.0)
         speakerSide.enableVoltageCompensation(12.0)
 
-        ampSide.setSmartCurrentLimit(20)
-        speakerSide.setSmartCurrentLimit(20)
+        ampSide.setSmartCurrentLimit(80)
+        speakerSide.setSmartCurrentLimit(80)
 
         ampSide.burnFlash()
         speakerSide.burnFlash()
@@ -47,14 +47,14 @@ class IntakeIONeo: IntakeIO {
         inputs.ampSideVelocityRPM = ampSideEncoder.velocity / gearRatio
         inputs.ampSideAppliedVolts = ampSide.appliedOutput * ampSide.busVoltage
         inputs.ampSideCurrentAmps = ampSide.outputCurrent
-        inputs.ampSideBeambreakActive = ampSideBeambreak.get()
+        inputs.ampSideBeambreakActive = !ampSideBeambreak.get()
 
         inputs.speakerSideVelocityRPM = speakerSideEncoder.velocity / gearRatio
         inputs.speakerSideAppliedVolts = speakerSide.appliedOutput * speakerSide.busVoltage
         inputs.speakerSideCurrentAmps = speakerSide.outputCurrent
-        inputs.speakerSideBeambreakActive = speakerSideBeambreak.get()
+        inputs.speakerSideBeambreakActive = !speakerSideBeambreak.get()
 
-        inputs.centerBeambreakActive = centerBeambreak.get()
+        inputs.centerBeambreakActive = !centerBeambreak.get()
     }
 
     override fun setVoltage(ampSideVolts: Double, speakerSideVolts: Double) {

@@ -19,7 +19,7 @@ import org.team9432.robot.Controls
 val LOOP_PERIOD_SECS = Robot.period
 
 object Robot: LoggedRobot() {
-    val mode = Mode.SIM
+    val mode = Mode.REAL
 
     var alliance: Alliance? = null
 
@@ -27,7 +27,7 @@ object Robot: LoggedRobot() {
         Logger.recordMetadata("ProjectName", "2024 - Sonic") // Set a metadata value
 
         if (isReal() || mode == Mode.SIM) {
-            Logger.addDataReceiver(WPILOGWriter()) // Log to a USB stick ("/U/logs")
+           // Logger.addDataReceiver(WPILOGWriter()) // Log to a USB stick ("/U/logs")
             Logger.addDataReceiver(NT4Publisher()) // Publish data to NetworkTables
             PowerDistribution(1, PowerDistribution.ModuleType.kRev) // Enables power distribution logging
         } else if (mode == Mode.REPLAY) {
@@ -42,6 +42,8 @@ object Robot: LoggedRobot() {
 
         Logger.recordOutput("Subsystems/Climber", Pose3d(Translation3d(0.0, 0.0, 0.0), Rotation3d()))
         Logger.recordOutput("Subsystems/Limelight", Pose3d(Translation3d(-0.063500, 0.0, 0.420370 + 0.124460), Rotation3d(0.0, 0.0, Math.toRadians(180.0))))
+
+        Logger.recordMetadata("Git Hash", BuildConstants.GIT_SHA)
 
         Controls
     }

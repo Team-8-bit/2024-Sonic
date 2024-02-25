@@ -14,10 +14,13 @@ class HopperIOReal: HopperIO {
     private val shooterBeamBreak = DigitalInput(Devices.HOPPER_SHOOTER_SIDE_BEAMBREAK_PORT)
 
     override fun updateInputs(inputs: HopperIO.HopperIOInputs) {
-        inputs.atAmpBeamBreak = ampBeamBreak.get()
-        inputs.atShooterBeamBreak = shooterBeamBreak.get()
+        inputs.atAmpBeamBreak = !ampBeamBreak.get()
+        inputs.atShooterBeamBreak = !shooterBeamBreak.get()
     }
 
+    override fun setVoltage(volts: Double) {
+        spark.setVoltage(volts)
+    }
     override fun setSpeed(speed: Double) {
         spark.set(speed)
     }
