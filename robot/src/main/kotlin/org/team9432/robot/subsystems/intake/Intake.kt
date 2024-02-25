@@ -15,7 +15,7 @@ object Intake: KSubsystem() {
     init {
         when (Robot.mode) {
             REAL, REPLAY -> {
-                io = object: IntakeIO {}
+                io = IntakeIONeo()
                 io.setPID(0.0, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0)
             }
