@@ -11,10 +11,6 @@ class IntakeIONeo: IntakeIO {
     private val ampSide = KSparkMAX(Devices.AMP_SIDE_INTAKE_ID)
     private val speakerSide = KSparkMAX(Devices.SPEAKER_SIDE_INTAKE_ID)
 
-    private val ampSideBeambreak = DigitalInput(Devices.INTAKE_AMP_SIDE_BEAMBREAK_PORT)
-    private val speakerSideBeambreak = DigitalInput(Devices.INTAKE_SHOOTER_SIDE_BEAMBREAK_PORT)
-    private val centerBeambreak = DigitalInput(Devices.INTAKE_CENTER_BEAMBREAK_PORT)
-
     private val ampSideEncoder = ampSide.encoder
     private val ampSidePid = ampSide.pidController
 
@@ -47,14 +43,10 @@ class IntakeIONeo: IntakeIO {
         inputs.ampSideVelocityRPM = ampSideEncoder.velocity / gearRatio
         inputs.ampSideAppliedVolts = ampSide.appliedOutput * ampSide.busVoltage
         inputs.ampSideCurrentAmps = ampSide.outputCurrent
-        inputs.ampSideBeambreakActive = ampSideBeambreak.get()
 
         inputs.speakerSideVelocityRPM = speakerSideEncoder.velocity / gearRatio
         inputs.speakerSideAppliedVolts = speakerSide.appliedOutput * speakerSide.busVoltage
         inputs.speakerSideCurrentAmps = speakerSide.outputCurrent
-        inputs.speakerSideBeambreakActive = speakerSideBeambreak.get()
-
-        inputs.centerBeambreakActive = centerBeambreak.get()
     }
 
     override fun setVoltage(ampSideVolts: Double, speakerSideVolts: Double) {

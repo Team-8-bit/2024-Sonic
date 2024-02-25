@@ -47,9 +47,5 @@ object Intake: KSubsystem() {
         Logger.recordOutput("Intake/ShooterSideSetpointRPM", shooterSideRPM)
     }
 
-    val ampSideBeambreakActive get() = inputs.ampSideBeambreakActive
-    val speakerSideBeambreakActive get() = inputs.centerBeambreakActive
-    val centerBeambreakActive get() = inputs.centerBeambreakActive
-
     fun stop() = io.stop()
 }

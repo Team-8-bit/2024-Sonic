@@ -8,14 +8,10 @@ interface IntakeIO {
         var ampSideVelocityRPM = 0.0
         var ampSideAppliedVolts = 0.0
         var ampSideCurrentAmps = 0.0
-        var ampSideBeambreakActive = false
 
         var speakerSideVelocityRPM = 0.0
         var speakerSideAppliedVolts = 0.0
         var speakerSideCurrentAmps = 0.0
-        var speakerSideBeambreakActive = false
-
-        var centerBeambreakActive = false
     }
 
     fun updateInputs(inputs: IntakeIOInputs) {}

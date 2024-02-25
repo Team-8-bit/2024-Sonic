@@ -34,8 +34,5 @@ object Hopper: KSubsystem() {
 
     fun stopCommand() = InstantCommand(requirements = mutableSetOf(Hopper)) { stop() }
 
-    val ampSideBeambreakActive get() = inputs.atAmpBeamBreak
-    val speakerSideBeambreakActive get() = inputs.atShooterBeamBreak
-
     fun stop() = io.setVoltage(0.0)
 }
