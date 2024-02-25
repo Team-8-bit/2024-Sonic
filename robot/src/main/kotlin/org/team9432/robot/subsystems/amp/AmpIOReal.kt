@@ -15,6 +15,20 @@ class AmpIOReal: AmpIO, SubsystemBase() {
     private val pid = spark.pidController
 
     private val gearRatio = 1
+
+    init {
+        spark.restoreFactoryDefaults()
+        
+        spark.idleMode = CANSparkBase.IdleMode.kCoast
+
+        spark.enableVoltageCompensation(12.0)
+
+        spark.setSmartCurrentLimit(30)
+
+        spark.burnFlash()
+    }
+
+
     override fun updateInputs(inputs: AmpIO.AmpIOInputs) {
         inputs.velocityRPM = encoder.velocity / gearRatio
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
