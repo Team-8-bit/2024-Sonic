@@ -15,7 +15,7 @@ import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.subsystems.drivetrain.ModuleIO.ModuleIOInputs
 
 
-class ModuleIONEO(override val module: ModuleIO.Module): ModuleIO {
+class ModuleIONeo(override val module: ModuleIO.Module): ModuleIO {
     private val drive = KSparkFlex(module.driveID)
     private val steer = KSparkMAX(module.steerID)
     private val cancoder = CANcoder(module.encoderID)

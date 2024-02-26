@@ -10,7 +10,6 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
-import org.team9432.lib.util.SwerveUtil
 import kotlin.math.cos
 
 
@@ -30,7 +29,7 @@ class Module(module: ModuleIO.Module) {
     init {
         when (Robot.mode) {
             REAL, REPLAY -> {
-                io = ModuleIONEO(module)
+                io = ModuleIONeo(module)
                 driveFeedforward = SimpleMotorFeedforward(0.1, 0.13)
                 driveFeedback = PIDController(0.05, 0.0, 0.0)
                 steerFeedback = PIDController(7.0, 0.0, 0.0)
