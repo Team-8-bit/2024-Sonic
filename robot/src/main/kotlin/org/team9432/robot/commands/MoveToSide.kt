@@ -7,11 +7,7 @@ import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.intake.Intake
 
 fun moveToSide(side: MechanismSide) = SequentialCommand(
-    // This just starts the hopper in the right direction
-    when (side) {
-        MechanismSide.SPEAKER -> Hopper.setVoltage(10.0)
-        MechanismSide.AMP -> Hopper.setVoltage(-10.0)
-    },
+    Hopper.loadTo(side, volts = 10.0),
 
     // Wait a bit to get the hopper up to speed
     WaitCommand(0.5),
@@ -21,13 +17,8 @@ fun moveToSide(side: MechanismSide) = SequentialCommand(
 
     // After the note is at the beam break, slowly unload to align it
     WaitUntilCommand { RobotState.noteInHopperSide(side) },
-
     Intake.setVoltage(3.0, 3.0),
-    when (side) {
-        MechanismSide.SPEAKER -> Hopper.setVoltage(-3.0)
-        MechanismSide.AMP -> Hopper.setVoltage(3.0)
-    },
-
+    Hopper.unloadFrom(side, volts = 3.0),
     WaitUntilCommand { !RobotState.noteInHopperSide(side) },
 
     ParallelCommand(Hopper.stopCommand(), Intake.stopCommand())
