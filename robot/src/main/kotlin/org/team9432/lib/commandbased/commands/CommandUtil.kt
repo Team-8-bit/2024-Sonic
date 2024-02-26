@@ -6,3 +6,5 @@ fun KCommand.runsWhenDisabled(value: Boolean): KCommand {
     runsWhenDisabled = value
     return this
 }
+
+fun KCommand.withTimeout(seconds: Double) = ParallelRaceCommand(WaitCommand(seconds), this)

@@ -7,7 +7,7 @@ import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.lib.commandbased.input.KXboxController
-import org.team9432.robot.commands.intakeAndScore
+import org.team9432.robot.commands.intakeAndStore
 import org.team9432.robot.commands.moveToSide
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
@@ -27,10 +27,11 @@ object Controls {
 
         Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 3.5)
         Hopper.defaultCommand = SimpleCommand(execute = { Hopper.setVoltage(0.0) }, requirements = setOf(Hopper))
-        Intake.defaultCommand = SimpleCommand(execute = { Intake.stopCommand() }, requirements = setOf(Intake))
+        Intake.defaultCommand = Intake.stopCommand()
 
         controller.rightBumper.whileTrue(Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
-        controller.rightTrigger.onTrue(intakeAndScore()).onFalse(Intake.stopCommand())
+
+        controller.rightTrigger.whileTrue(intakeAndStore())
 
         controller.x.onTrue(moveToSide(MechanismSide.AMP)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
         controller.b.onTrue(moveToSide(MechanismSide.SPEAKER)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
