@@ -10,18 +10,17 @@ fun AlignNote() = SuppliedCommand(Intake) {
     when (RobotState.notePosition) {
         RobotState.NotePosition.AMP_INTAKE -> SequentialCommand(
             Intake.runIntakeCommand(MechanismSide.AMP, 4.0),
-            WaitUntilCommand { !RobotState.noteInCenterBeambreak() }.orSimTimeout(0.5) { BeambreakIOSim.center = true },
+            WaitUntilCommand { !RobotState.noteInCenterBeambreak() }.afterSimDelay(0.5) { BeambreakIOSim.center = true },
             Intake.runIntakeCommand(MechanismSide.AMP, -4.0),
-            WaitUntilCommand { RobotState.noteInCenterBeambreak() }.orSimTimeout(0.5) { BeambreakIOSim.center = false },
+            WaitUntilCommand { RobotState.noteInCenterBeambreak() }.afterSimDelay(0.5) { BeambreakIOSim.center = false },
             Intake.stopCommand()
         )
 
         RobotState.NotePosition.SPEAKER_INTAKE -> SequentialCommand(
-            PrintCommand("hi?"),
             Intake.runIntakeCommand(MechanismSide.SPEAKER, 4.0),
-            WaitUntilCommand { !RobotState.noteInCenterBeambreak() }.orSimTimeout(0.5) { BeambreakIOSim.center = true },
+            WaitUntilCommand { !RobotState.noteInCenterBeambreak() }.afterSimDelay(0.5) { BeambreakIOSim.center = true },
             Intake.runIntakeCommand(MechanismSide.SPEAKER, -4.0),
-            WaitUntilCommand { RobotState.noteInCenterBeambreak() }.orSimTimeout(0.5) { BeambreakIOSim.center = false },
+            WaitUntilCommand { RobotState.noteInCenterBeambreak() }.afterSimDelay(0.5) { BeambreakIOSim.center = false },
             Intake.stopCommand()
         )
 
