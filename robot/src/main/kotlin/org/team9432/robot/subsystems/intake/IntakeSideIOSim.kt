@@ -8,7 +8,7 @@ import org.team9432.LOOP_PERIOD_SECS
 import kotlin.math.abs
 
 class IntakeSideIOSim(override val intakeSide: IntakeSideIO.IntakeSide): IntakeSideIO {
-    private val sim = DCMotorSim(DCMotor.getNEO(1), 2.0, 0.03)
+    private val sim = DCMotorSim(DCMotor.getNEO(1), 2.0, 0.003)
 
     private val pid = PIDController(0.0, 0.0, 0.0)
 
