@@ -8,7 +8,7 @@ import org.team9432.LOOP_PERIOD_SECS
 import kotlin.math.abs
 
 class HopperIOSim: HopperIO {
-    private val sim = DCMotorSim(DCMotor.getNEO(1), 0.0, 0.0015)
+    private val sim = DCMotorSim(DCMotor.getNEO(1), 1.0, 0.0015)
 
     private val pid = PIDController(0.0, 0.0, 0.0)
 
