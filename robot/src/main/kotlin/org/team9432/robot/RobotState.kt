@@ -1,8 +1,6 @@
 package org.team9432.robot
 
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
-import org.team9432.robot.subsystems.hopper.Hopper
-import org.team9432.robot.subsystems.intake.Intake
 
 enum class MechanismSide { SPEAKER, AMP }
 
@@ -12,4 +10,7 @@ object RobotState {
     fun noteInCenter() = !Beambreaks.getHopperAmpSide()
     fun noteInAmpSideHopper() = !Beambreaks.getHopperSpeakerSide()
     fun noteInSpeakerSideHopper() = !Beambreaks.getCenter()
+
+    fun noteInHopperSide(side: MechanismSide) = if (side == MechanismSide.SPEAKER) noteInSpeakerSideHopper() else noteInAmpSideHopper()
+    fun noteInIntakeSide(side: MechanismSide) = if (side == MechanismSide.SPEAKER) noteInSpeakerSideIntake() else noteInAmpSideIntake()
 }
