@@ -12,9 +12,9 @@ object Intake: KSubsystem() {
         speakerSide.periodic()
     }
 
-    fun runVolts(ampSideVolts: Double, speakerSideVolts: Double) = InstantCommand(Intake) {
-        ampSide.runVolts(ampSideVolts)
-        speakerSide.runVolts(speakerSideVolts)
+    fun setVoltage(ampSideVolts: Double, speakerSideVolts: Double) = InstantCommand(Intake) {
+        ampSide.setVoltage(ampSideVolts)
+        speakerSide.setVoltage(speakerSideVolts)
     }
 
     fun stopCommand() = InstantCommand(Intake) { stop() }

@@ -17,12 +17,12 @@ fun moveToSide(side: MechanismSide) = SequentialCommand(
     WaitCommand(0.5),
 
     // Both intakes need to be run when feeding across, but it could run only one when bending the note
-    Intake.runVolts(-10.0, -10.0),
+    Intake.setVoltage(-10.0, -10.0),
 
     // After the note is at the beam break, slowly unload to align it
     WaitUntilCommand { RobotState.noteInHopperSide(side) },
 
-    Intake.runVolts(3.0, 3.0),
+    Intake.setVoltage(3.0, 3.0),
     when (side) {
         MechanismSide.SPEAKER -> Hopper.setVoltage(-3.0)
         MechanismSide.AMP -> Hopper.setVoltage(3.0)

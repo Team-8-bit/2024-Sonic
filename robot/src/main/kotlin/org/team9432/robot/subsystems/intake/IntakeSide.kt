@@ -34,7 +34,7 @@ class IntakeSide(intakeSide: IntakeSideIO.IntakeSide) {
         Logger.processInputs("Intake/${io.intakeSide.name}_Side", inputs)
     }
 
-    fun runVolts(volts: Double) {
+    fun setVoltage(volts: Double) {
         io.setVoltage(volts)
     }
 
