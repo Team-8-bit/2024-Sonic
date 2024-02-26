@@ -3,11 +3,14 @@ package org.team9432.lib.commandbased.commands
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.KCommandGroup
 import org.team9432.lib.commandbased.KCommandScheduler
+import org.team9432.lib.commandbased.KSubsystem
 import java.util.*
 
 class ParallelCommand(vararg commands: KCommand): KCommandGroup() {
     // maps commands in this composition to whether they are still running
     private val commands: MutableMap<KCommand, Boolean> = HashMap()
+
+    override val requirements = mutableSetOf<KSubsystem>()
 
     init {
         addCommands(*commands)

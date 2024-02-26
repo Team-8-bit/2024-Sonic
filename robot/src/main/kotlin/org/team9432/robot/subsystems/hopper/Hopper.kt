@@ -5,7 +5,7 @@ import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
-import org.team9432.robot.subsystems.intake.Intake
+import org.team9432.robot.MechanismSide
 
 object Hopper: KSubsystem() {
     private val io: HopperIO
@@ -28,11 +28,11 @@ object Hopper: KSubsystem() {
         Logger.processInputs("Hopper", inputs)
     }
 
-    fun setVoltage(volts: Double) {
-        io.setVoltage(volts)
-    }
+    fun setVoltage(volts: Double) = InstantCommand(Hopper) { io.setVoltage(volts) }
+    fun stopCommand() = InstantCommand(Hopper) { io.stop() }
 
-    fun stopCommand() = InstantCommand(requirements = mutableSetOf(Hopper)) { stop() }
+    fun loadTo(side: MechanismSide, volts: Double) = if (side == MechanismSide.SPEAKER) setVoltage(volts) else setVoltage(-volts)
+    fun unloadFrom(side: MechanismSide, volts: Double) = if (side == MechanismSide.SPEAKER) setVoltage(-volts) else setVoltage(volts)
 
     fun stop() = io.setVoltage(0.0)
 }

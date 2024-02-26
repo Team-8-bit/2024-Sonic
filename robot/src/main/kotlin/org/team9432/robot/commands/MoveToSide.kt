@@ -1,32 +1,25 @@
 package org.team9432.robot.commands
 
-import org.team9432.lib.commandbased.commands.InstantCommand
-import org.team9432.lib.commandbased.commands.SequentialCommand
-import org.team9432.lib.commandbased.commands.WaitUntilCommand
+import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.intake.Intake
 
-fun moveToSide(side: MechanismSide) = SequentialCommand(
-    // This just starts the hopper in the right direction
-    when (side) {
-        MechanismSide.SPEAKER -> InstantCommand { Hopper.setVoltage(10.0) }
-        MechanismSide.AMP -> InstantCommand { Hopper.setVoltage(-10.0) }
-    },
+fun MoveToSide(side: MechanismSide) = SequentialCommand(
+    Hopper.loadTo(side, volts = 10.0),
 
-    // Just run both intakes for now, though we don't really need to
-    InstantCommand { Intake.runVolts(-10.0, -10.0) },
+    // Wait a bit to get the hopper up to speed
+    WaitCommand(0.5),
 
-    // Again, this just checks both sides
-    WaitUntilCommand { RobotState.noteInAmpSideHopper() || RobotState.noteInSpeakerSideHopper() },
+    // Both intakes need to be run when feeding across, but it could run only one when bending the note
+    Intake.setVoltageCommand(-10.0, -10.0),
 
-    // Run back slowly to align the note
-    when (side) {
-        MechanismSide.SPEAKER -> InstantCommand { Hopper.setVoltage(-3.0) }
-        MechanismSide.AMP -> InstantCommand { Hopper.setVoltage(3.0) }
-    },
+    // After the note is at the beam break, slowly unload to align it
+    WaitUntilCommand { RobotState.noteInHopperSide(side) },
+    Intake.setVoltageCommand(3.0, 3.0),
+    Hopper.unloadFrom(side, volts = 3.0),
+    WaitUntilCommand { !RobotState.noteInHopperSide(side) },
 
-    WaitUntilCommand { !RobotState.noteInAmpSideHopper() && !RobotState.noteInSpeakerSideHopper() },
-    InstantCommand { Hopper.stop(); Intake.stop() }
+    ParallelCommand(Hopper.stopCommand(), Intake.stopCommand())
 )

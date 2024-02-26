@@ -15,4 +15,8 @@ class HopperIOReal: HopperIO {
     override fun setVoltage(volts: Double) {
         spark.setVoltage(volts)
     }
+
+    override fun stop() {
+        spark.setVoltage(0.0)
+    }
 }

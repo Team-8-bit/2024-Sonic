@@ -6,7 +6,7 @@ abstract class KCommand {
     open fun isFinished(): Boolean = false
     open fun end(interrupted: Boolean) {}
 
-    open val requirements = mutableSetOf<KSubsystem>()
+    open val requirements = setOf<KSubsystem>()
 
     fun schedule() = KCommandScheduler.schedule(this)
     fun cancel() = KCommandScheduler.cancel(this)

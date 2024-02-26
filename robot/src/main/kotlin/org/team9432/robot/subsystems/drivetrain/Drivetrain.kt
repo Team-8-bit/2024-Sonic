@@ -206,9 +206,13 @@ object Drivetrain: KSubsystem() {
             setPositionGoal(position)
             mode = SubsystemMode.PID
         },
-        requirements = mutableSetOf(Drivetrain),
+        requirements = setOf(Drivetrain),
         isFinished = { mode != SubsystemMode.PID || atPositionGoal() }
     )
+
+    fun getRobotRelativeSpeeds(): ChassisSpeeds {
+        return ChassisSpeeds.fromWPIChassisSpeeds(kinematics.toChassisSpeeds(*getModuleStates().toTypedArray()))
+    }
 
     fun fieldOrientedDriveCommand(
         xJoystickInput: () -> Double,
@@ -225,7 +229,7 @@ object Drivetrain: KSubsystem() {
         },
         end = { manualSpeeds = ChassisSpeeds(0.0, 0.0, 0.0) },
         isFinished = { false },
-        requirements = mutableSetOf(Drivetrain),
+        requirements = setOf(Drivetrain),
         initialize = { mode = SubsystemMode.MANUAL }
     )
 

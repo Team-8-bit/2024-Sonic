@@ -9,4 +9,5 @@ interface HopperIO {
 
     fun updateInputs(inputs: HopperIOInputs) {}
     fun setVoltage(volts: Double) {}
+    fun stop() {}
 }

@@ -3,11 +3,14 @@ package org.team9432.lib.commandbased.commands
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.KCommandGroup
 import org.team9432.lib.commandbased.KCommandScheduler
+import org.team9432.lib.commandbased.KSubsystem
 import java.util.*
 
 class ParallelRaceCommand(vararg commands: KCommand): KCommandGroup() {
     private val commands: MutableList<KCommand> = mutableListOf()
     private var finished = true
+
+    override val requirements = mutableSetOf<KSubsystem>()
 
     init {
         addCommands(*commands)
