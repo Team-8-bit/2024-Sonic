@@ -1,14 +1,15 @@
 package org.team9432.robot
 
 
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.lib.commandbased.input.KXboxController
-import org.team9432.robot.commands.intakeAndStore
-import org.team9432.robot.commands.moveToSide
+import org.team9432.robot.commands.IntakeAndStore
+import org.team9432.robot.commands.MoveToSide
+import org.team9432.robot.subsystems.amp.Amp
+import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
+import org.team9432.robot.subsystems.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.hopper.Hopper
@@ -24,6 +25,8 @@ object Controls {
         Intake
         Hood
         Shooter
+        Amp
+        Beambreaks
 
         Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 3.5)
         Hopper.defaultCommand = SimpleCommand(execute = { Hopper.setVoltage(0.0) }, requirements = setOf(Hopper))
@@ -31,10 +34,19 @@ object Controls {
 
         controller.rightBumper.whileTrue(Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
 
-        controller.rightTrigger.whileTrue(intakeAndStore())
+        controller.rightTrigger.whileTrue(IntakeAndStore())
 
-        controller.x.onTrue(moveToSide(MechanismSide.AMP)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
-        controller.b.onTrue(moveToSide(MechanismSide.SPEAKER)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
+        controller.y.onTrue(InstantCommand {
+            BeambreakIOSim.intakeAmpSide = true
+            BeambreakIOSim.intakeSpeakerSide = true
+            BeambreakIOSim.hopperAmpSide = true
+            BeambreakIOSim.hopperSpeakerSide = true
+            BeambreakIOSim.center = true
+            RobotState.notePosition = RobotState.NotePosition.NONE
+        })
+
+        controller.x.onTrue(MoveToSide(MechanismSide.AMP)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
+        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
 
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
 

@@ -12,7 +12,7 @@ object Beambreaks: KSubsystem() {
     init {
         when (Robot.mode) {
             REAL, REPLAY -> io = BeambreakIOReal()
-            SIM -> io = object: BeambreakIO {}
+            SIM -> io = BeambreakIOSim()
         }
     }
 

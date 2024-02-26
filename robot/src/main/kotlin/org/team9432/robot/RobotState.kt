@@ -1,5 +1,7 @@
 package org.team9432.robot
 
+import org.littletonrobotics.junction.Logger
+import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
@@ -7,14 +9,14 @@ import kotlin.math.abs
 enum class MechanismSide { SPEAKER, AMP }
 
 object RobotState {
-    fun noteInAmpSideIntake() = !Beambreaks.getIntakeAmpSide()
-    fun noteInSpeakerSideIntake() = !Beambreaks.getIntakeSpeakerSide()
-    fun noteInCenter() = !Beambreaks.getHopperAmpSide()
-    fun noteInAmpSideHopper() = !Beambreaks.getHopperSpeakerSide()
-    fun noteInSpeakerSideHopper() = !Beambreaks.getCenter()
+    fun noteInAmpSideIntakeBeambreak() = !Beambreaks.getIntakeAmpSide()
+    fun noteInSpeakerSideIntakeBeambreak() = !Beambreaks.getIntakeSpeakerSide()
+    fun noteInCenterBeambreak() = !Beambreaks.getCenter()
+    fun noteInAmpSideHopperBeambreak() = !Beambreaks.getHopperAmpSide()
+    fun noteInSpeakerSideHopperBeambreak() = !Beambreaks.getHopperSpeakerSide()
 
-    fun noteInHopperSide(side: MechanismSide) = if (side == MechanismSide.SPEAKER) noteInSpeakerSideHopper() else noteInAmpSideHopper()
-    fun noteInIntakeSide(side: MechanismSide) = if (side == MechanismSide.SPEAKER) noteInSpeakerSideIntake() else noteInAmpSideIntake()
+    fun noteInHopperSide(side: MechanismSide) = if (side == MechanismSide.SPEAKER) noteInSpeakerSideHopperBeambreak() else noteInAmpSideHopperBeambreak()
+    fun noteInIntakeSide(side: MechanismSide) = if (side == MechanismSide.SPEAKER) noteInSpeakerSideIntakeBeambreak() else noteInAmpSideIntakeBeambreak()
 
     fun getMovementDirection(): MechanismSide {
         val speeds = Drivetrain.getRobotRelativeSpeeds()
@@ -24,5 +26,17 @@ object RobotState {
     fun shouldRunOneIntake(): Boolean {
         val speeds = Drivetrain.getRobotRelativeSpeeds()
         return maxOf(abs(speeds.vxMetersPerSecond), abs(speeds.vyMetersPerSecond)) > 1
+    }
+
+    enum class NotePosition {
+        AMP_INTAKE, SPEAKER_INTAKE, AMP_HOPPER, SPEAKER_HOPPER, NONE
+    }
+
+    var notePosition = NotePosition.NONE
+
+    fun SetNotePositionCommand(notePosition: NotePosition) = InstantCommand { this.notePosition = notePosition}
+
+    fun log() {
+        Logger.recordOutput("RobotState/NotePosition", notePosition.name)
     }
 }
