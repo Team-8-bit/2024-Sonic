@@ -14,6 +14,7 @@ import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
+import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.intake.Intake
@@ -52,8 +53,8 @@ object Controls {
             RobotState.notePosition = RobotState.NotePosition.NONE
         })
 
-        controller.x.onTrue(MoveToSide(MechanismSide.AMP)).onFalse(ParallelCommand(CommandIntake.stop(), Hopper.stopCommand()))
-        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER)).onFalse(ParallelCommand(CommandIntake.stop(), Hopper.stopCommand()))
+        controller.x.onTrue(MoveToSide(MechanismSide.AMP)).onFalse(ParallelCommand(CommandIntake.stop(), CommandHopper.stop()))
+        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER)).onFalse(ParallelCommand(CommandIntake.stop(), CommandHopper.stop()))
 
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
 

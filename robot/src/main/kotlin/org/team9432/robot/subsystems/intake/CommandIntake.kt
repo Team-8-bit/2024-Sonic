@@ -9,5 +9,5 @@ object CommandIntake {
     fun setVoltage(ampSideVolts: Double, speakerSideVolts: Double) = InstantCommand(Intake) { Intake.setVoltage(ampSideVolts, speakerSideVolts) }
     fun stop() = InstantCommand(Intake) { Intake.stop() }
     fun runIntake(side: MechanismSide, volts: Double) = InstantCommand(Intake) { Intake.runIntake(side, volts) }
-    fun setSpeedCommand(ampSideRPM: Double, speakerSideRPM: Double) = InstantCommand(Intake) { Intake.setSpeed(ampSideRPM, speakerSideRPM) }
+    fun setSpeed(ampSideRPM: Double, speakerSideRPM: Double) = InstantCommand(Intake) { Intake.setSpeed(ampSideRPM, speakerSideRPM) }
 }
