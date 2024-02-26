@@ -20,9 +20,7 @@ class IntakeSide(intakeSide: IntakeSideIO.IntakeSide) {
             }
 
             SIM -> {
-                io = object: IntakeSideIO {
-                    override val intakeSide = intakeSide
-                }
+                io = IntakeSideIOSim(intakeSide)
                 io.setPID(0.0, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0)
             }
