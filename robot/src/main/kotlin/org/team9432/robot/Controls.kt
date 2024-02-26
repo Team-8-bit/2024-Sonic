@@ -4,9 +4,11 @@ package org.team9432.robot
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
+import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.input.KXboxController
-import org.team9432.robot.commands.IntakeAndStore
 import org.team9432.robot.commands.MoveToSide
+import org.team9432.robot.commands.intake.AlignNote
+import org.team9432.robot.commands.intake.IntakeToBeambreak
 import org.team9432.robot.subsystems.amp.Amp
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
@@ -34,7 +36,11 @@ object Controls {
 
         controller.rightBumper.whileTrue(Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
 
-        controller.rightTrigger.whileTrue(IntakeAndStore())
+        controller.rightTrigger.whileTrue(IntakeToBeambreak().afterSimDelay(3.0) {
+            // Pretend to get a note after 3 seconds in sim
+            if (RobotState.getMovementDirection() == MechanismSide.AMP) BeambreakIOSim.intakeAmpSide = false else BeambreakIOSim.intakeSpeakerSide = false
+            BeambreakIOSim.center = false
+        }).onFalse(AlignNote())
 
         controller.y.onTrue(InstantCommand {
             BeambreakIOSim.intakeAmpSide = true
