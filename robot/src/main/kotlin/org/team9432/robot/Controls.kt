@@ -15,6 +15,7 @@ import org.team9432.robot.subsystems.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.hopper.Hopper
+import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.intake.Intake
 import org.team9432.robot.subsystems.shooter.Shooter
 
@@ -32,7 +33,7 @@ object Controls {
 
         Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 3.5)
         Hopper.defaultCommand = SimpleCommand(execute = { Hopper.setVoltage(0.0) }, requirements = setOf(Hopper))
-        Intake.defaultCommand = Intake.stopCommand()
+//        Intake.defaultCommand = CommandIntake.stop()
 
         controller.rightBumper.whileTrue(Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
 
@@ -51,8 +52,8 @@ object Controls {
             RobotState.notePosition = RobotState.NotePosition.NONE
         })
 
-        controller.x.onTrue(MoveToSide(MechanismSide.AMP)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
-        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
+        controller.x.onTrue(MoveToSide(MechanismSide.AMP)).onFalse(ParallelCommand(CommandIntake.stop(), Hopper.stopCommand()))
+        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER)).onFalse(ParallelCommand(CommandIntake.stop(), Hopper.stopCommand()))
 
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
 
