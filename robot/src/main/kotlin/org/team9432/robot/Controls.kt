@@ -5,7 +5,7 @@ import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.MoveToSide
-import org.team9432.robot.commands.auto.testAuto
+import org.team9432.robot.auto.commands.testAuto
 import org.team9432.robot.commands.drivetrain.FieldOrientedDriveCommand
 import org.team9432.robot.commands.intake.AlignNote
 import org.team9432.robot.commands.intake.IntakeToBeambreak
