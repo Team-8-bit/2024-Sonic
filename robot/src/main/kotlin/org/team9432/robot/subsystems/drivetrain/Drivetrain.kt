@@ -30,7 +30,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds as WPIChassisSpeeds
 object Drivetrain: KSubsystem() {
     private const val MAX_ANGULAR_SPEED_DEGREES_PER_SECOND = 360.0
     private const val MAX_VELOCITY_METERS_PER_SECOND = 5.0
-    private const val MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 20.0
 
     private val modules = ModuleIO.Module.entries.map { Module(it) }
 
