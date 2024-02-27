@@ -6,7 +6,7 @@ object Shooter: KSubsystem() {
     private val leftSide = ShooterSide(ShooterSideIO.ShooterSide.LEFT)
     private val rightSide = ShooterSide(ShooterSideIO.ShooterSide.RIGHT)
 
-    override fun constantPeriodic() {
+    override fun periodic() {
         leftSide.periodic()
         rightSide.periodic()
     }

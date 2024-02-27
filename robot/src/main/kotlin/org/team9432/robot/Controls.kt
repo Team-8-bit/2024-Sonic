@@ -5,6 +5,7 @@ import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.MoveToSide
+import org.team9432.robot.commands.auto.testAuto
 import org.team9432.robot.commands.intake.AlignNote
 import org.team9432.robot.commands.intake.IntakeToBeambreak
 import org.team9432.robot.subsystems.amp.Amp
@@ -50,6 +51,8 @@ object Controls {
         controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER))
 
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
+
+        controller.start.onTrue(testAuto)
 
         controller.leftBumper.onTrue(InstantCommand { Shooter.setVoltage(0.70, 0.70) }).onFalse(InstantCommand { Shooter.setVoltage(0.0, 0.0) })
     }

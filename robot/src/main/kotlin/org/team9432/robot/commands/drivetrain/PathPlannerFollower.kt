@@ -7,9 +7,9 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.KSubsystem
-import org.team9432.lib.commandbased.KSubsystem.SubsystemMode
 import org.team9432.lib.util.PoseUtil
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
+import org.team9432.robot.subsystems.drivetrain.Drivetrain.DrivetrainMode
 
 class PathPlannerFollower(private val trajectory: PathPlannerTrajectory): KCommand() {
     private val trajectoryTimer = Timer()
@@ -23,7 +23,7 @@ class PathPlannerFollower(private val trajectory: PathPlannerTrajectory): KComma
         // Display the trajectory in advantagescope, but remove a bunch of states to reduce lag
         Logger.recordOutput("CurrentTrajectory", *trajectory.states.map { it.targetHolonomicPose }.filterIndexed { index, _ -> index % 2 /* <- Increase this number to reduce states */ == 0 }.toTypedArray())
 
-        Drivetrain.mode = SubsystemMode.PID
+        Drivetrain.mode = DrivetrainMode.PID
     }
 
     override fun execute() {
@@ -36,7 +36,7 @@ class PathPlannerFollower(private val trajectory: PathPlannerTrajectory): KComma
     }
 
     override fun isFinished(): Boolean {
-        if (Drivetrain.mode != SubsystemMode.PID) return true
+        if (Drivetrain.mode != DrivetrainMode.PID) return true
 
         return if (Robot.alliance == Alliance.Blue) {
             Drivetrain.isNear(trajectory.endState.targetHolonomicPose, 0.1)

@@ -3,11 +3,12 @@ package org.team9432.lib.commandbased
 import edu.wpi.first.hal.FRCNetComm.tInstances
 import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
-import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.RobotState
+import edu.wpi.first.wpilibj.Watchdog
 import edu.wpi.first.wpilibj.event.EventLoop
-import org.team9432.lib.commandbased.KCommand.InterruptionBehavior
 import org.littletonrobotics.junction.LoggedRobot
-import org.team9432.lib.commandbased.KSubsystem.SubsystemMode
+import org.team9432.lib.commandbased.KCommand.InterruptionBehavior
 import java.util.*
 
 object KCommandScheduler {
@@ -140,15 +141,8 @@ object KCommandScheduler {
 
         // Run the periodic method of all registered subsystems.
         for (subsystem in subsystems.keys) {
-            when (subsystem.mode) {
-                SubsystemMode.MANUAL -> subsystem.manualPeriodic()
-                SubsystemMode.PID -> subsystem.PIDPeriodic()
-                SubsystemMode.DISABLED -> subsystem.disabledPeriodic()
-            }
-            subsystem.constantPeriodic()
-            if (RobotBase.isSimulation()) {
-                subsystem.simulationPeriodic()
-            }
+            subsystem.periodic()
+
             watchdog.addEpoch(subsystem.javaClass.getSimpleName() + ".periodic()")
         }
 

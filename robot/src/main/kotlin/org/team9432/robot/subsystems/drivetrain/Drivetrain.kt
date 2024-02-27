@@ -51,6 +51,8 @@ object Drivetrain: KSubsystem() {
 
     private var rawGyroRotation = Rotation2d()
 
+    var mode = DrivetrainMode.MANUAL
+
     private val lastModulePositions = mutableListOf(
         SwerveModulePosition(),
         SwerveModulePosition(),
@@ -59,7 +61,6 @@ object Drivetrain: KSubsystem() {
     )
 
     init {
-        mode = SubsystemMode.MANUAL
         angleController.enableContinuousInput(-180.0, 180.0)
         angleController.setTolerance(0.0)
         xController.setTolerance(0.0)
@@ -76,7 +77,7 @@ object Drivetrain: KSubsystem() {
         for (m in modules) m.setBrakeMode(true)
     }
 
-    override fun constantPeriodic() {
+    override fun periodic() {
         gyro.updateInputs(gyroInputs)
         Logger.processInputs("Gyro", gyroInputs)
 
@@ -113,24 +114,25 @@ object Drivetrain: KSubsystem() {
 
         poseEstimator.update(rawGyroRotation, modulePositions.toTypedArray())
 
+        when (mode) {
+            DrivetrainMode.PID -> {
+                val currentPose = getPose()
+                val vx = xController.calculate(currentPose.x)
+                val vy = yController.calculate(currentPose.y)
+                val va = Math.toRadians(angleController.calculate(currentPose.rotation.degrees))
+
+                setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vx, vy, va, yaw))
+            }
+            DrivetrainMode.MANUAL -> {
+                setSpeeds(manualSpeeds)
+            }
+        }
+
         Logger.recordOutput("Odometry", getPose())
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
     }
 
-    override fun manualPeriodic() {
-        setSpeeds(manualSpeeds)
-    }
-
     private fun isNotMoving() = abs(manualSpeeds.vxMetersPerSecond) < 0.5 && abs(manualSpeeds.vyMetersPerSecond) < 0.5 && abs(Math.toDegrees(manualSpeeds.omegaRadiansPerSecond)) < 5
-
-    override fun PIDPeriodic() {
-        val currentPose = getPose()
-        val vx = xController.calculate(currentPose.x)
-        val vy = yController.calculate(currentPose.y)
-        val va = Math.toRadians(angleController.calculate(currentPose.rotation.degrees))
-
-        setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vx, vy, va, yaw))
-    }
 
     fun setPositionGoal(pose2d: Pose2d) {
         Logger.recordOutput("Drive/PositionGoal", pose2d)
@@ -199,10 +201,10 @@ object Drivetrain: KSubsystem() {
     ) = SimpleCommand(
         initialize = {
             setPositionGoal(position)
-            mode = SubsystemMode.PID
+            mode = DrivetrainMode.PID
         },
         requirements = setOf(Drivetrain),
-        isFinished = { mode != SubsystemMode.PID || atPositionGoal() }
+        isFinished = { mode != DrivetrainMode.PID || atPositionGoal() }
     )
 
     fun getRobotRelativeSpeeds(): ChassisSpeeds {
@@ -225,7 +227,7 @@ object Drivetrain: KSubsystem() {
         end = { manualSpeeds = ChassisSpeeds(0.0, 0.0, 0.0) },
         isFinished = { false },
         requirements = setOf(Drivetrain),
-        initialize = { mode = SubsystemMode.MANUAL }
+        initialize = { mode = DrivetrainMode.MANUAL }
     )
 
     private val MODULE_TRANSLATIONS: Array<Translation2d>
@@ -237,4 +239,8 @@ object Drivetrain: KSubsystem() {
             val backRight = Translation2d(-moduleDistance, -moduleDistance)
             return arrayOf(frontLeft, frontRight, backLeft, backRight)
         }
+
+    enum class DrivetrainMode {
+        PID, MANUAL
+    }
 }

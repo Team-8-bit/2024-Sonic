@@ -29,7 +29,7 @@ object Hopper: KSubsystem() {
         }
     }
 
-    override fun constantPeriodic() {
+    override fun periodic() {
         io.updateInputs(inputs)
         Logger.processInputs("Hopper", inputs)
     }
