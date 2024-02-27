@@ -11,9 +11,9 @@ object Shooter: KSubsystem() {
         rightSide.periodic()
     }
 
-    fun setVolts(leftVolts: Double, rightVolts: Double) {
-        leftSide.setVolts(leftVolts)
-        rightSide.setVolts(rightVolts)
+    fun setVoltage(leftVolts: Double, rightVolts: Double) {
+        leftSide.setVoltage(leftVolts)
+        rightSide.setVoltage(rightVolts)
     }
 
     fun setSpeed(leftRPM: Double, rightRPM: Double) {

@@ -32,7 +32,7 @@ class ShooterSide(shooterSide: ShooterSideIO.ShooterSide) {
         Logger.processInputs("Shooter/${io.shooterSide.name}_Side", inputs)
     }
 
-    fun setVolts(volts: Double) {
+    fun setVoltage(volts: Double) {
         io.setVoltage(volts)
     }
 

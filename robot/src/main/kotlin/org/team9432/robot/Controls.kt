@@ -2,8 +2,6 @@ package org.team9432.robot
 
 
 import org.team9432.lib.commandbased.commands.InstantCommand
-import org.team9432.lib.commandbased.commands.ParallelCommand
-import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.MoveToSide
@@ -14,9 +12,7 @@ import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
-import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.hopper.Hopper
-import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.intake.Intake
 import org.team9432.robot.subsystems.shooter.Shooter
 
@@ -55,6 +51,6 @@ object Controls {
 
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
 
-        controller.leftBumper.onTrue(InstantCommand { Shooter.setVolts(0.70, 0.70) }).onFalse(InstantCommand { Shooter.setVolts(0.0, 0.0) })
+        controller.leftBumper.onTrue(InstantCommand { Shooter.setVoltage(0.70, 0.70) }).onFalse(InstantCommand { Shooter.setVoltage(0.0, 0.0) })
     }
 }
