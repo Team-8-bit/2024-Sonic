@@ -1,29 +1,28 @@
-package org.team9432.robot.subsystems.hopper
+package org.team9432.robot.subsystems.shooter
 
-import com.revrobotics.CANSparkBase
-import com.revrobotics.CANSparkBase.IdleMode
-import com.revrobotics.SparkPIDController
-import edu.wpi.first.wpilibj.DigitalInput
-import org.team9432.lib.drivers.motors.KSparkMAX
-import org.team9432.robot.Devices
+import com.revrobotics.CANSparkBase.*
+import com.revrobotics.SparkPIDController.ArbFFUnits
+import org.team9432.lib.drivers.motors.KSparkFlex
 
-class HopperIOReal: HopperIO {
-    private val spark = KSparkMAX(Devices.HOPPER_ID)
+class ShooterSideIOVortex(override val shooterSide: ShooterSideIO.ShooterSide): ShooterSideIO {
+    private val spark = KSparkFlex(shooterSide.motorID)
 
     private val encoder = spark.encoder
     private val pid = spark.pidController
 
+    private val gearRatio = 0.5
+
     init {
         spark.restoreFactoryDefaults()
-        spark.inverted = false
-        spark.idleMode = IdleMode.kBrake
+        spark.inverted = shooterSide.inverted
+        spark.idleMode = IdleMode.kCoast
         spark.enableVoltageCompensation(12.0)
-        spark.setSmartCurrentLimit(40)
+        spark.setSmartCurrentLimit(80)
         spark.burnFlash()
     }
 
-    override fun updateInputs(inputs: HopperIO.HopperIOInputs) {
-        inputs.velocityRPM = encoder.velocity
+    override fun updateInputs(inputs: ShooterSideIO.ShooterSideIOInputs) {
+        inputs.velocityRPM = encoder.velocity / gearRatio
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
         inputs.currentAmps = spark.outputCurrent
     }
@@ -34,11 +33,11 @@ class HopperIOReal: HopperIO {
 
     override fun setSpeed(rotationsPerMinute: Double, feedforwardVolts: Double) {
         pid.setReference(
-            rotationsPerMinute,
-            CANSparkBase.ControlType.kVelocity,
+            rotationsPerMinute * gearRatio,
+            ControlType.kVelocity,
             0, // PID slot
             feedforwardVolts,
-            SparkPIDController.ArbFFUnits.kVoltage
+            ArbFFUnits.kVoltage
         )
     }
 

@@ -14,7 +14,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader
 import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.robot.Controls
-
+import org.team9432.robot.RobotState
 
 val LOOP_PERIOD_SECS = Robot.period
 
@@ -24,7 +24,16 @@ object Robot: LoggedRobot() {
     var alliance: Alliance? = null
 
     override fun robotInit() {
-        Logger.recordMetadata("ProjectName", "2024 - Sonic") // Set a metadata value
+        Logger.recordMetadata("ProjectName", "2024 - Sonic")
+        Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE)
+        Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA)
+        Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE)
+        Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH)
+        when (BuildConstants.DIRTY) {
+            0 -> Logger.recordMetadata("GitDirty", "All changes committed")
+            1 -> Logger.recordMetadata("GitDirty", "Uncomitted changes")
+            else -> Logger.recordMetadata("GitDirty", "Unknown")
+        }
 
         if (isReal() || mode == Mode.SIM) {
             Logger.addDataReceiver(WPILOGWriter()) // Log to a USB stick ("/U/logs")
@@ -48,6 +57,7 @@ object Robot: LoggedRobot() {
 
     override fun robotPeriodic() {
         KCommandScheduler.run()
+        RobotState.log()
 
         if (alliance == null) {
             alliance = DriverStation.getAlliance().orElse(null)

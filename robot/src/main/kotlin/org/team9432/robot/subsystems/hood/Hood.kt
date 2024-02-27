@@ -39,11 +39,6 @@ object Hood: KSubsystem() {
         Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, inputs.absoluteAngle.radians, 0.0)))
     }
 
-
-    fun runVolts(volts: Double) {
-        io.setVoltage(volts)
-    }
-
     fun setAngle(angle: Rotation2d) {
         io.setAngle(angle, feedforward.calculate(angle.degrees))
 

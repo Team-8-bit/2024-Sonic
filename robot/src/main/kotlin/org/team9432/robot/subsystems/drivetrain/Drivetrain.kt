@@ -4,7 +4,6 @@ import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
-import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
@@ -33,7 +32,6 @@ object Drivetrain: KSubsystem() {
     private const val MAX_VELOCITY_METERS_PER_SECOND = 5.0
     private const val MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 20.0
 
-
     private val modules = ModuleIO.Module.entries.map { Module(it) }
 
     private val gyroInputs = LoggedGyroIOInputs()
@@ -46,9 +44,6 @@ object Drivetrain: KSubsystem() {
 
     private val xController = PIDController(3.0, 0.0, 0.0)
     private val yController = PIDController(3.0, 0.0, 0.0)
-
-    private val xLimiter = SlewRateLimiter(MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
-    private val yLimiter = SlewRateLimiter(MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
 
     private val kinematics: SwerveDriveKinematics
     private val poseEstimator: SwerveDrivePoseEstimator
@@ -70,8 +65,7 @@ object Drivetrain: KSubsystem() {
         angleController.setTolerance(0.0)
         xController.setTolerance(0.0)
         yController.setTolerance(0.0)
-        xLimiter.reset(0.0)
-        yLimiter.reset(0.0)
+
         kinematics = SwerveDriveKinematics(*MODULE_TRANSLATIONS)
         poseEstimator = SwerveDrivePoseEstimator(
             kinematics, Rotation2d.fromDegrees(yaw), lastModulePositions.toTypedArray(), Pose2d(), VecBuilder.fill(
@@ -158,9 +152,6 @@ object Drivetrain: KSubsystem() {
         val targetStates = kinematics.toSwerveModuleStates(discreteSpeeds)
         SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, MAX_VELOCITY_METERS_PER_SECOND)
 
-//        speeds.vxMetersPerSecond = xLimiter.calculate(speeds.vxMetersPerSecond)
-//        speeds.vyMetersPerSecond = yLimiter.calculate(speeds.vyMetersPerSecond)
-
         // Send setpoints to modules
         val optimizedSetpointStates = arrayOfNulls<SwerveModuleState>(4)
         for (i in modules.indices) {
@@ -211,9 +202,13 @@ object Drivetrain: KSubsystem() {
             setPositionGoal(position)
             mode = SubsystemMode.PID
         },
-        requirements = mutableSetOf(Drivetrain),
+        requirements = setOf(Drivetrain),
         isFinished = { mode != SubsystemMode.PID || atPositionGoal() }
     )
+
+    fun getRobotRelativeSpeeds(): ChassisSpeeds {
+        return ChassisSpeeds.fromWPIChassisSpeeds(kinematics.toChassisSpeeds(*getModuleStates().toTypedArray()))
+    }
 
     fun fieldOrientedDriveCommand(
         xJoystickInput: () -> Double,
@@ -230,7 +225,7 @@ object Drivetrain: KSubsystem() {
         },
         end = { manualSpeeds = ChassisSpeeds(0.0, 0.0, 0.0) },
         isFinished = { false },
-        requirements = mutableSetOf(Drivetrain),
+        requirements = setOf(Drivetrain),
         initialize = { mode = SubsystemMode.MANUAL }
     )
 

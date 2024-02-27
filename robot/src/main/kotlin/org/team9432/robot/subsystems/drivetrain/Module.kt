@@ -5,11 +5,11 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
-import org.team9432.lib.util.SwerveUtil
 import kotlin.math.cos
 
 
@@ -29,7 +29,7 @@ class Module(module: ModuleIO.Module) {
     init {
         when (Robot.mode) {
             REAL, REPLAY -> {
-                io = ModuleIONEO(module)
+                io = ModuleIONeo(module)
                 driveFeedforward = SimpleMotorFeedforward(0.1, 0.13)
                 driveFeedback = PIDController(0.05, 0.0, 0.0)
                 steerFeedback = PIDController(7.0, 0.0, 0.0)
@@ -43,7 +43,7 @@ class Module(module: ModuleIO.Module) {
             }
         }
 
-        steerFeedback.enableContinuousInput(-180.0, 180.0)
+        steerFeedback.enableContinuousInput(-Math.PI, Math.PI);
         setBrakeMode(true)
     }
 
@@ -72,10 +72,12 @@ class Module(module: ModuleIO.Module) {
                 val adjustSpeedSetpoint = speedSetpoint!! * cos(steerFeedback.positionError)
 
                 // Run drive controller
-                val velocityRadPerSec = adjustSpeedSetpoint / MK4I_DRIVE_WHEEL_RADIUS
+                val velocityRadPerSec = adjustSpeedSetpoint / Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
                 io.setDriveVoltage(driveFeedforward.calculate(velocityRadPerSec) + driveFeedback.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec))
             }
         }
+
+        Logger.recordOutput("Drive/${io.module.name}_Module/AbsoluteAngleDegrees", inputs.steerAbsolutePosition.degrees)
     }
 
     private fun getAngle(): Rotation2d {
@@ -83,7 +85,7 @@ class Module(module: ModuleIO.Module) {
     }
 
     fun runSetpoint(state: SwerveModuleState): SwerveModuleState {
-        val optimizedState = SwerveUtil.optimize(state, getAngle().degrees)
+        val optimizedState = SwerveModuleState.optimize(state, getAngle())
         angleSetpoint = optimizedState.angle
         speedSetpoint = optimizedState.speedMetersPerSecond
         return optimizedState
@@ -100,8 +102,8 @@ class Module(module: ModuleIO.Module) {
 
     fun setBrakeMode(enabled: Boolean) = io.setBrakeMode(enabled)
 
-    val positionMeters get() = inputs.drivePositionRad * MK4I_DRIVE_WHEEL_RADIUS
-    val velocityMetersPerSec get() = inputs.driveVelocityRadPerSec * MK4I_DRIVE_WHEEL_RADIUS
+    val positionMeters get() = inputs.drivePositionRad * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
+    val velocityMetersPerSec get() = inputs.driveVelocityRadPerSec * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
     val position get() = SwerveModulePosition(positionMeters, getAngle())
     val state get() = SwerveModuleState(velocityMetersPerSec, getAngle())
 }

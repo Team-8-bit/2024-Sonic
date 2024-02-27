@@ -8,7 +8,7 @@ class SimpleCommand(
     private val execute: () -> Unit = {},
     private val isFinished: () -> Boolean = { false },
     private val end: (interrupted: Boolean) -> Unit = {},
-    override val requirements: MutableSet<KSubsystem> = mutableSetOf(),
+    override val requirements: Set<KSubsystem> = setOf(),
 ): KCommand() {
     override fun initialize() {
         initialize.invoke()
