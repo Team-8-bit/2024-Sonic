@@ -17,7 +17,6 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
-import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.lib.drivers.gyro.GyroIO
 import org.team9432.lib.drivers.gyro.GyroIOPigeon2
 import org.team9432.lib.drivers.gyro.LoggedGyroIOInputs
@@ -68,11 +67,9 @@ object Drivetrain: KSubsystem() {
 
         kinematics = SwerveDriveKinematics(*MODULE_TRANSLATIONS)
         poseEstimator = SwerveDrivePoseEstimator(
-            kinematics, Rotation2d.fromDegrees(yaw), lastModulePositions.toTypedArray(), Pose2d(), VecBuilder.fill(
-                Units.inchesToMeters(3.0), Units.inchesToMeters(3.0), Math.toDegrees(4.0)
-            ), VecBuilder.fill(
-                Units.inchesToMeters(0.0), Units.inchesToMeters(0.0), Math.toDegrees(0.0)
-            )
+            kinematics, Rotation2d.fromDegrees(yaw), lastModulePositions.toTypedArray(), Pose2d(),
+            VecBuilder.fill(Units.inchesToMeters(3.0), Units.inchesToMeters(3.0), Math.toDegrees(4.0)),
+            VecBuilder.fill(Units.inchesToMeters(0.0), Units.inchesToMeters(0.0), Math.toDegrees(0.0))
         )
         for (m in modules) m.setBrakeMode(true)
     }
@@ -123,12 +120,14 @@ object Drivetrain: KSubsystem() {
 
                 setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vx, vy, va, yaw))
             }
+
             DrivetrainMode.MANUAL -> {
                 setSpeeds(manualSpeeds)
             }
         }
 
         Logger.recordOutput("Odometry", getPose())
+        Logger.recordOutput("CurrentSpeed", getRobotRelativeSpeeds().vxMetersPerSecond)
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
     }
 
@@ -141,10 +140,8 @@ object Drivetrain: KSubsystem() {
         angleController.setGoal(pose2d.rotation.degrees)
     }
 
-    private fun atPositionGoal(): Boolean {
+    fun atPositionGoal(rotationalTolerance: Double = 3.0, positionalTolerance: Double = 0.05): Boolean {
         val pose = getPose()
-        val rotationalTolerance = 3.0 // Degrees
-        val positionalTolerance = 0.05 // Meters
         return abs(xController.setpoint - pose.x) < positionalTolerance && abs(yController.setpoint - pose.y) < positionalTolerance && abs(angleController.setpoint.position - pose.rotation.degrees) < rotationalTolerance
     }
 
@@ -172,7 +169,7 @@ object Drivetrain: KSubsystem() {
 
     fun stop() = setSpeeds(ChassisSpeeds())
 
-    private fun stopAndX() {
+    fun stopAndX() {
         val headings = listOf(
             Rotation2d.fromDegrees(-45.0),
             Rotation2d.fromDegrees(45.0),
@@ -185,50 +182,23 @@ object Drivetrain: KSubsystem() {
 
     private fun getPose(): Pose2d = poseEstimator.estimatedPosition
 
-    fun isNear(pose: Pose2d, epsilon: Double): Boolean {
-        return hypot(getPose().x - pose.x, getPose().y - pose.y) < epsilon
-    }
+    fun isNear(pose: Pose2d, epsilon: Double) = hypot(getPose().x - pose.x, getPose().y - pose.y) < epsilon
 
-    private var yaw: Double
+    var yaw: Double
         get() = rawGyroRotation.degrees
         set(angle) {
             gyro.setYaw(angle)
             angleController.reset(angle)
         }
 
-    fun driveToPositionCommand(
-        position: Pose2d,
-    ) = SimpleCommand(
-        initialize = {
-            setPositionGoal(position)
-            mode = DrivetrainMode.PID
-        },
-        requirements = setOf(Drivetrain),
-        isFinished = { mode != DrivetrainMode.PID || atPositionGoal() }
-    )
-
     fun getRobotRelativeSpeeds(): ChassisSpeeds {
         return ChassisSpeeds.fromWPIChassisSpeeds(kinematics.toChassisSpeeds(*getModuleStates().toTypedArray()))
     }
 
-    fun fieldOrientedDriveCommand(
-        xJoystickInput: () -> Double,
-        yJoystickInput: () -> Double,
-        angleJoystickInput: () -> Double,
-        maxSpeedMetersPerSecond: Double = MAX_VELOCITY_METERS_PER_SECOND,
-        maxSpeedDegreesPerSecond: Double = MAX_ANGULAR_SPEED_DEGREES_PER_SECOND,
-    ) = SimpleCommand(
-        execute = {
-            val xSpeed = xJoystickInput.invoke() * maxSpeedMetersPerSecond
-            val ySpeed = yJoystickInput.invoke() * maxSpeedMetersPerSecond
-            val radiansPerSecond = Math.toRadians(angleJoystickInput.invoke() * maxSpeedDegreesPerSecond)
-            manualSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, radiansPerSecond, yaw)
-        },
-        end = { manualSpeeds = ChassisSpeeds(0.0, 0.0, 0.0) },
-        isFinished = { false },
-        requirements = setOf(Drivetrain),
-        initialize = { mode = DrivetrainMode.MANUAL }
-    )
+    fun setManualSpeeds(speeds: ChassisSpeeds) {
+        mode = DrivetrainMode.MANUAL
+        manualSpeeds = speeds
+    }
 
     private val MODULE_TRANSLATIONS: Array<Translation2d>
         get() {

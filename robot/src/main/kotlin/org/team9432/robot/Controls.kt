@@ -6,6 +6,7 @@ import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.MoveToSide
 import org.team9432.robot.commands.auto.testAuto
+import org.team9432.robot.commands.drivetrain.FieldOrientedDriveCommand
 import org.team9432.robot.commands.intake.AlignNote
 import org.team9432.robot.commands.intake.IntakeToBeambreak
 import org.team9432.robot.subsystems.amp.Amp
@@ -18,7 +19,7 @@ import org.team9432.robot.subsystems.intake.Intake
 import org.team9432.robot.subsystems.shooter.Shooter
 
 object Controls {
-    private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.0)
+    private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
 
     init {
         Drivetrain
@@ -29,8 +30,8 @@ object Controls {
         Amp
         Beambreaks
 
-        Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 3.5)
-        controller.rightBumper.whileTrue(Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
+        Drivetrain.defaultCommand = FieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 2.0)
+        controller.rightBumper.whileTrue(FieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
 
         // Pretend to get a note after 2 seconds in sim
         controller.rightTrigger.whileTrue(IntakeToBeambreak().afterSimDelay(2.0) {
