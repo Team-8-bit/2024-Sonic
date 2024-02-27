@@ -2,8 +2,6 @@ package org.team9432.robot
 
 
 import org.team9432.lib.commandbased.commands.InstantCommand
-import org.team9432.lib.commandbased.commands.ParallelCommand
-import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.MoveToSide
@@ -31,31 +29,28 @@ object Controls {
         Beambreaks
 
         Drivetrain.defaultCommand = Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 3.5)
-        Hopper.defaultCommand = SimpleCommand(execute = { Hopper.setVoltage(0.0) }, requirements = setOf(Hopper))
-        Intake.defaultCommand = Intake.stopCommand()
-
         controller.rightBumper.whileTrue(Drivetrain.fieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
 
-        controller.rightTrigger.whileTrue(IntakeToBeambreak().afterSimDelay(3.0) {
-            // Pretend to get a note after 3 seconds in sim
-            if (RobotState.getMovementDirection() == MechanismSide.AMP) BeambreakIOSim.intakeAmpSide = false else BeambreakIOSim.intakeSpeakerSide = false
-            BeambreakIOSim.center = false
+        // Pretend to get a note after 2 seconds in sim
+        controller.rightTrigger.whileTrue(IntakeToBeambreak().afterSimDelay(2.0) {
+            BeambreakIOSim.setNoteInIntake(RobotState.getMovementDirection(), true)
+            BeambreakIOSim.setNoteInCenter(true)
         }).onFalse(AlignNote())
 
         controller.y.onTrue(InstantCommand {
-            BeambreakIOSim.intakeAmpSide = true
-            BeambreakIOSim.intakeSpeakerSide = true
-            BeambreakIOSim.hopperAmpSide = true
-            BeambreakIOSim.hopperSpeakerSide = true
-            BeambreakIOSim.center = true
+            BeambreakIOSim.setNoteInIntakeAmpSide(false)
+            BeambreakIOSim.setNoteInIntakeSpeakerSide(false)
+            BeambreakIOSim.setNoteInHopperAmpSide(false)
+            BeambreakIOSim.setNoteInHopperSpeakerSide(false)
+            BeambreakIOSim.setNoteInCenter(false)
             RobotState.notePosition = RobotState.NotePosition.NONE
         })
 
-        controller.x.onTrue(MoveToSide(MechanismSide.AMP)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
-        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER)).onFalse(ParallelCommand(Intake.stopCommand(), Hopper.stopCommand()))
+        controller.x.onTrue(MoveToSide(MechanismSide.AMP))
+        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER))
 
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
 
-        controller.leftBumper.onTrue(InstantCommand { Shooter.setVolts(0.70, 0.70) }).onFalse(InstantCommand { Shooter.setVolts(0.0, 0.0) })
+        controller.leftBumper.onTrue(InstantCommand { Shooter.setVoltage(0.70, 0.70) }).onFalse(InstantCommand { Shooter.setVoltage(0.0, 0.0) })
     }
 }

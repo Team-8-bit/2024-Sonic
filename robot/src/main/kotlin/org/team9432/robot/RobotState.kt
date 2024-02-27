@@ -28,15 +28,18 @@ object RobotState {
         return maxOf(abs(speeds.vxMetersPerSecond), abs(speeds.vyMetersPerSecond)) > 1
     }
 
-    enum class NotePosition {
-        AMP_INTAKE, SPEAKER_INTAKE, AMP_HOPPER, SPEAKER_HOPPER, NONE
-    }
-
     var notePosition = NotePosition.NONE
-
-    fun SetNotePositionCommand(notePosition: NotePosition) = InstantCommand { this.notePosition = notePosition}
 
     fun log() {
         Logger.recordOutput("RobotState/NotePosition", notePosition.name)
     }
+
+    enum class NotePosition {
+        AMP_INTAKE, SPEAKER_INTAKE, AMP_HOPPER, SPEAKER_HOPPER, NONE;
+
+        val isIntake get() = this == AMP_INTAKE || this == SPEAKER_INTAKE
+        val isHopper get() = this == AMP_HOPPER || this == SPEAKER_HOPPER
+    }
 }
+
+fun SetNotePositionCommand(notePosition: RobotState.NotePosition) = InstantCommand { RobotState.notePosition = notePosition; println(notePosition) }

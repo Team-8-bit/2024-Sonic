@@ -22,13 +22,17 @@ _Code for Team 8-Bit's 2024 robot, Sonic_
 
   Contains our subsystem definitions for the robot
 
+- [`org.team9432.robot.commands`](robot/src/main/kotlin/org/team9432/robot/commands)
+
+  Contains commands for each subsystem of the robot
+
 - [`org.team9432.lib`](robot/src/main/kotlin/org/team9432/lib)
 
   Contains library utilities that can be used across multiple robots and seasons
 
 - [`org.team9432.lib.commandbased`](robot/src/main/kotlin/org/team9432/lib/commandbased)
 
-  A Kotlin implementation of the WPILib command-based subsystem manager
+  A Kotlin implementation of the WPILib command-based subsystem manager with custom features
 
 - [`org.team9432.lib.drivers`](robot/src/main/kotlin/org/team9432/lib/drivers)
 
