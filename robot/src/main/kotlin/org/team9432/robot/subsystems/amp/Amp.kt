@@ -28,7 +28,7 @@ object Amp: KSubsystem() {
         }
     }
 
-    override fun constantPeriodic() {
+    override fun periodic() {
         io.updateInputs(inputs)
         Logger.processInputs("Amp", inputs)
     }

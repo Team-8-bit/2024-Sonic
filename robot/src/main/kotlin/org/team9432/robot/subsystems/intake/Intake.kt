@@ -31,7 +31,7 @@ object Intake: KSubsystem() {
         speakerSide.setSpeed(speakerSideRPM)
     }
 
-    override fun constantPeriodic() {
+    override fun periodic() {
         ampSide.periodic()
         speakerSide.periodic()
     }
