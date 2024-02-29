@@ -2,11 +2,12 @@ package org.team9432.robot
 
 
 import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.SuppliedCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.lib.wpilib.ChassisSpeeds
-import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.auto.commands.testAuto
+import org.team9432.robot.commands.drivetrain.DriveStraightToPosition
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
 import org.team9432.robot.commands.drivetrain.MobileSpeakerAlign
 import org.team9432.robot.commands.drivetrain.StaticSpeakerAlign
@@ -55,8 +56,11 @@ object Controls {
             RobotState.notePosition = RobotState.NotePosition.NONE
         })
 
-        controller.x.onTrue(MoveToSide(MechanismSide.AMP))
-        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER))
+//        controller.x.onTrue(MoveToSide(MechanismSide.AMP))
+//        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER))
+
+        controller.x.onTrue(SuppliedCommand(Drivetrain) { DriveStraightToPosition(FieldConstants.ampPose) })
+        controller.b.onTrue(InstantCommand(Drivetrain) {})
 
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
 

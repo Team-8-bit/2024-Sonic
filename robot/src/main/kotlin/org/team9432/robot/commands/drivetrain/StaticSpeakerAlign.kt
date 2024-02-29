@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KCommand
+import org.team9432.lib.util.PoseUtil
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.atan2
@@ -18,13 +19,10 @@ class StaticSpeakerAlign: KCommand() {
     override fun execute() {
         val drivetrainPose = Drivetrain.getPose()
         val speakerPose = FieldConstants.speakerPose
-        val robotRelativeSpeakerPoseX = speakerPose.x - drivetrainPose.x
-        val robotRelativeSpeakerPoseY = speakerPose.y - drivetrainPose.y
-        val angle = atan2(robotRelativeSpeakerPoseY, robotRelativeSpeakerPoseX)
 
         Logger.recordOutput("TargetPose", FieldConstants.speakerPose)
 
-        Drivetrain.setAutoAlignGoal(Rotation2d(angle))
+        Drivetrain.setAutoAlignGoal(PoseUtil.angleBetween(drivetrainPose, speakerPose))
     }
 
     override fun end(interrupted: Boolean) {

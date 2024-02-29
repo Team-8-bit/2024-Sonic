@@ -144,6 +144,9 @@ object Drivetrain: KSubsystem() {
 
         Logger.recordOutput("Odometry", getPose())
         Logger.recordOutput("CurrentSpeed", getRobotRelativeSpeeds().vxMetersPerSecond)
+
+        val fieldPose = getFieldRelativeSpeeds()
+        Logger.recordOutput("FieldRelativeSpeed", Pose2d(fieldPose.vxMetersPerSecond, fieldPose.vyMetersPerSecond, Rotation2d(fieldPose.omegaRadiansPerSecond)))
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
     }
 
@@ -193,6 +196,7 @@ object Drivetrain: KSubsystem() {
     fun getPose() = poseEstimator.estimatedPosition
     fun isNear(pose: Pose2d, epsilon: Double) = hypot(getPose().x - pose.x, getPose().y - pose.y) < epsilon
     fun getRobotRelativeSpeeds() = ChassisSpeeds.fromWPIChassisSpeeds(kinematics.toChassisSpeeds(*getModuleStates().toTypedArray()))
+    fun getFieldRelativeSpeeds() = ChassisSpeeds.toFieldRelativeSpeeds(ChassisSpeeds.fromWPIChassisSpeeds(kinematics.toChassisSpeeds(*getModuleStates().toTypedArray())), yaw)
 
     var yaw: Double
         get() = rawGyroRotation.degrees
