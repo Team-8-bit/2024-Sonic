@@ -14,16 +14,17 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
+import org.team9432.LOOP_PERIOD_SECS
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.drivers.gyro.GyroIO
 import org.team9432.lib.drivers.gyro.GyroIOPigeon2
 import org.team9432.lib.drivers.gyro.LoggedGyroIOInputs
+import org.team9432.lib.util.SwerveUtil
 import org.team9432.lib.wpilib.ChassisSpeeds
 import kotlin.math.abs
 import kotlin.math.hypot
-import edu.wpi.first.math.kinematics.ChassisSpeeds as WPIChassisSpeeds
 
 
 object Drivetrain: KSubsystem() {
@@ -146,7 +147,7 @@ object Drivetrain: KSubsystem() {
     }
 
     private fun setSpeeds(speeds: ChassisSpeeds) {
-        val discreteSpeeds = WPIChassisSpeeds.discretize(speeds, Robot.period)
+        val discreteSpeeds = SwerveUtil.correctForDynamics(speeds, LOOP_PERIOD_SECS)
         val targetStates = kinematics.toSwerveModuleStates(discreteSpeeds)
         SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, MAX_VELOCITY_METERS_PER_SECOND)
 
