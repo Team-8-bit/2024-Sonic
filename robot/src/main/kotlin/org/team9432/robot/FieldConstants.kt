@@ -13,7 +13,7 @@ object FieldConstants {
     val speakerPose
         get() = if (Robot.alliance == DriverStation.Alliance.Blue) blueSpeakerPose else redSpeakerPose
 
-    private val blueAmpPose = Pose2d(1.86, 7.78, Rotation2d.fromDegrees(90.0))
+    private val blueAmpPose = Pose2d(1.86, 7.78, Rotation2d.fromDegrees(-90.0))
     private val redAmpPose = PoseUtil.flip(blueAmpPose)
 
     val ampPose
