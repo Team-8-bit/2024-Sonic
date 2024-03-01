@@ -39,16 +39,16 @@ object Devices {
     const val LEFT_CLIMBER_ID = 61
 
     const val RIGHT_CLIMBER_ID = 62
-    val LEFT_CLIMBER_LIMIT_PORT: Nothing = TODO()
-    val RIGHT_CLIMBER_LIMIT_PORT: Nothing = TODO()
+    const val LEFT_CLIMBER_LIMIT_PORT = 3
+    const val RIGHT_CLIMBER_LIMIT_PORT = 5
 
     // Limelight
     const val LIMELIGHT_MOTOR_ID = 60
 
     // Beambreaks
     const val CENTER_BEAMBREAK_PORT = 2
-    const val HOPPER_AMP_SIDE_BEAMBREAK_PORT = 0
+    const val HOPPER_AMP_SIDE_BEAMBREAK_PORT = 1
     const val INTAKE_AMP_SIDE_BEAMBREAK_PORT = 6
-    const val HOPPER_SPEAKER_SIDE_BEAMBREAK_PORT = 7
-    const val INTAKE_SPEAKER_SIDE_BEAMBREAK_PORT = 3
+    const val HOPPER_SPEAKER_SIDE_BEAMBREAK_PORT = 0
+    const val INTAKE_SPEAKER_SIDE_BEAMBREAK_PORT = 7
 }
