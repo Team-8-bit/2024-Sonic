@@ -11,8 +11,10 @@ import org.team9432.robot.commands.drivetrain.DriveStraightToPosition
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
 import org.team9432.robot.commands.drivetrain.MobileSpeakerAlign
 import org.team9432.robot.commands.drivetrain.StaticSpeakerAlign
+import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.AlignNote
 import org.team9432.robot.commands.intake.IntakeToBeambreak
+import org.team9432.robot.commands.shooter.ShootStatic
 import org.team9432.robot.subsystems.amp.Amp
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
@@ -56,11 +58,13 @@ object Controls {
             RobotState.notePosition = RobotState.NotePosition.NONE
         })
 
-//        controller.x.onTrue(MoveToSide(MechanismSide.AMP))
-//        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER))
+        controller.x.onTrue(MoveToSide(MechanismSide.AMP))
+        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER))
 
-        controller.x.onTrue(SuppliedCommand(Drivetrain) { DriveStraightToPosition(FieldConstants.ampPose) })
-        controller.b.onTrue(InstantCommand(Drivetrain) {})
+//        controller.x.onTrue(SuppliedCommand(Drivetrain) { DriveStraightToPosition(FieldConstants.ampPose) })
+//        controller.b.onTrue(InstantCommand(Drivetrain) {})
+
+        controller.rightTrigger.onTrue(ShootStatic(2000.0, 3000.0))
 
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
 
@@ -68,8 +72,8 @@ object Controls {
 
 //        controller.leftBumper.onTrue(InstantCommand { Shooter.setVoltage(0.70, 0.70) }).onFalse(InstantCommand { Shooter.setVoltage(0.0, 0.0) })
 
-        controller.rightTrigger.onTrue(StaticSpeakerAlign()).onFalse(FieldOrientedDrive())
-        controller.leftTrigger.onTrue(MobileSpeakerAlign()).onFalse(FieldOrientedDrive())
+//        controller.rightTrigger.onTrue(StaticSpeakerAlign()).onFalse(FieldOrientedDrive())
+//        controller.leftTrigger.onTrue(MobileSpeakerAlign()).onFalse(FieldOrientedDrive())
     }
 
     fun getDrivetrainSpeeds(): ChassisSpeeds {
