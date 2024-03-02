@@ -18,6 +18,8 @@ import org.team9432.robot.commands.shooter.ShootStatic
 import org.team9432.robot.subsystems.amp.Amp
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
+import org.team9432.robot.subsystems.climber.LeftClimber
+import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.hopper.Hopper
@@ -32,7 +34,6 @@ object Controls {
     var angleSupplier = { -controller.rightX }
 
     init {
-
         Drivetrain
         Hopper
         Intake
@@ -40,6 +41,8 @@ object Controls {
         Shooter
         Amp
         Beambreaks
+        LeftClimber
+        RightClimber
 
         Drivetrain.defaultCommand = FieldOrientedDrive()
 
@@ -69,6 +72,22 @@ object Controls {
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
 
         controller.start.onTrue(testAuto)
+
+//        controller.a.onTrue(InstantCommand(LeftClimber, RightClimber) {
+//            LeftClimber.setVoltage(6.0)
+//            RightClimber.setVoltage(6.0)
+//        }).onFalse(InstantCommand(LeftClimber, RightClimber) {
+//            LeftClimber.stop()
+//            RightClimber.stop()
+//        })
+//
+//        controller.b.onTrue(InstantCommand(LeftClimber, RightClimber) {
+//            LeftClimber.setVoltage(-6.0)
+//            RightClimber.setVoltage(-6.0)
+//        }).onFalse(InstantCommand(LeftClimber, RightClimber) {
+//            LeftClimber.stop()
+//            RightClimber.stop()
+//        })
 
 //        controller.leftBumper.onTrue(InstantCommand { Shooter.setVoltage(0.70, 0.70) }).onFalse(InstantCommand { Shooter.setVoltage(0.0, 0.0) })
 
