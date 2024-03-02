@@ -42,3 +42,4 @@ _Code for Team 8-Bit's 2024 robot, Sonic_
 
 - Team 6328's swerve drive AdvantageKit example
 - Team 95's drivetrain skew fix
+- Team 6328's led control
