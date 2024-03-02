@@ -19,7 +19,7 @@ import org.team9432.robot.RobotState
 val LOOP_PERIOD_SECS = Robot.period
 
 object Robot: LoggedRobot() {
-    val mode = Mode.SIM
+    val mode = if (isReal()) Mode.REAL else Mode.SIM
 
     var alliance: Alliance? = null
 
