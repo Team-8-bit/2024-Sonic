@@ -2,13 +2,19 @@ package org.team9432.robot
 
 
 import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.SuppliedCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.input.KXboxController
-import org.team9432.robot.commands.MoveToSide
+import org.team9432.lib.wpilib.ChassisSpeeds
 import org.team9432.robot.auto.commands.testAuto
-import org.team9432.robot.commands.drivetrain.FieldOrientedDriveCommand
+import org.team9432.robot.commands.drivetrain.DriveStraightToPosition
+import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
+import org.team9432.robot.commands.drivetrain.MobileSpeakerAlign
+import org.team9432.robot.commands.drivetrain.StaticSpeakerAlign
+import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.AlignNote
 import org.team9432.robot.commands.intake.IntakeToBeambreak
+import org.team9432.robot.commands.shooter.ShootStatic
 import org.team9432.robot.subsystems.amp.Amp
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
@@ -21,7 +27,12 @@ import org.team9432.robot.subsystems.shooter.Shooter
 object Controls {
     private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
 
+    val xSpeedSupplier = { -controller.leftY }
+    var ySpeedSupplier = { -controller.leftX }
+    var angleSupplier = { -controller.rightX }
+
     init {
+
         Drivetrain
         Hopper
         Intake
@@ -30,11 +41,10 @@ object Controls {
         Amp
         Beambreaks
 
-        Drivetrain.defaultCommand = FieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 2.0)
-        controller.rightBumper.whileTrue(FieldOrientedDriveCommand({ -controller.leftY }, { -controller.leftX }, { -controller.rightX }, maxSpeedMetersPerSecond = 6.0))
+        Drivetrain.defaultCommand = FieldOrientedDrive()
 
         // Pretend to get a note after 2 seconds in sim
-        controller.rightTrigger.whileTrue(IntakeToBeambreak().afterSimDelay(2.0) {
+        controller.leftBumper.whileTrue(IntakeToBeambreak().afterSimDelay(2.0) {
             BeambreakIOSim.setNoteInIntake(RobotState.getMovementDirection(), true)
             BeambreakIOSim.setNoteInCenter(true)
         }).onFalse(AlignNote())
@@ -51,10 +61,26 @@ object Controls {
         controller.x.onTrue(MoveToSide(MechanismSide.AMP))
         controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER))
 
+//        controller.x.onTrue(SuppliedCommand(Drivetrain) { DriveStraightToPosition(FieldConstants.ampPose) })
+//        controller.b.onTrue(InstantCommand(Drivetrain) {})
+
+        controller.rightTrigger.onTrue(ShootStatic(2000.0, 3000.0))
+
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
 
         controller.start.onTrue(testAuto)
 
-        controller.leftBumper.onTrue(InstantCommand { Shooter.setVoltage(0.70, 0.70) }).onFalse(InstantCommand { Shooter.setVoltage(0.0, 0.0) })
+//        controller.leftBumper.onTrue(InstantCommand { Shooter.setVoltage(0.70, 0.70) }).onFalse(InstantCommand { Shooter.setVoltage(0.0, 0.0) })
+
+//        controller.rightTrigger.onTrue(StaticSpeakerAlign()).onFalse(FieldOrientedDrive())
+//        controller.leftTrigger.onTrue(MobileSpeakerAlign()).onFalse(FieldOrientedDrive())
+    }
+
+    fun getDrivetrainSpeeds(): ChassisSpeeds {
+        val maxSpeedMetersPerSecond = if (controller.rightBumper.asBoolean) 6.0 else 2.5
+        val xSpeed = xSpeedSupplier.invoke() * maxSpeedMetersPerSecond
+        val ySpeed = ySpeedSupplier.invoke() * maxSpeedMetersPerSecond
+        val radiansPerSecond = Math.toRadians(angleSupplier.invoke() * 360.0)
+        return ChassisSpeeds(xSpeed, ySpeed, radiansPerSecond)
     }
 }

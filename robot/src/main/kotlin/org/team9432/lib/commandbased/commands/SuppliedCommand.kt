@@ -8,7 +8,6 @@ class SuppliedCommand(vararg requirements: KSubsystem, private val supplier: () 
     var command: KCommand? = null
 
     override fun initialize() {
-
         command = supplier.invoke()
         name = "Decided(" + command!!.name + ")"
 

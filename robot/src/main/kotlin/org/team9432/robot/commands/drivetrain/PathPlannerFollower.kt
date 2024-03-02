@@ -11,7 +11,7 @@ import org.team9432.lib.util.PoseUtil
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.drivetrain.Drivetrain.DrivetrainMode
 
-class PathPlannerFollower(private val trajectory: PathPlannerTrajectory): KCommand() {
+class PathPlannerFollower(private val trajectory: PathPlannerTrajectory, private val allowFlip: Boolean = true): KCommand() {
     private val trajectoryTimer = Timer()
 
     override val requirements: MutableSet<KSubsystem> = mutableSetOf(Drivetrain)
@@ -21,14 +21,14 @@ class PathPlannerFollower(private val trajectory: PathPlannerTrajectory): KComma
         trajectoryTimer.start()
 
         // Display the trajectory in advantagescope, but remove a bunch of states to reduce lag
-        Logger.recordOutput("CurrentTrajectory", *trajectory.states.map { it.targetHolonomicPose }.filterIndexed { index, _ -> index % 2 /* <- Increase this number to reduce states */ == 0 }.toTypedArray())
+        Logger.recordOutput("CurrentTrajectory", *trajectory.states.map { it.targetHolonomicPose }.filterIndexed { index, _ -> index % 1 /* <- Increase this number to reduce states */ == 0 }.toTypedArray())
 
         Drivetrain.mode = DrivetrainMode.PID
     }
 
     override fun execute() {
         val state = trajectory.sample(trajectoryTimer.get())
-        if (Robot.alliance === Alliance.Blue) {
+        if (Robot.alliance == Alliance.Blue || !allowFlip) {
             Drivetrain.setPositionGoal(state.targetHolonomicPose)
         } else {
             Drivetrain.setPositionGoal(PoseUtil.flip(state.targetHolonomicPose))
@@ -38,7 +38,7 @@ class PathPlannerFollower(private val trajectory: PathPlannerTrajectory): KComma
     override fun isFinished(): Boolean {
         if (Drivetrain.mode != DrivetrainMode.PID) return true
 
-        return if (Robot.alliance == Alliance.Blue) {
+        return if (Robot.alliance == Alliance.Blue || !allowFlip) {
             Drivetrain.isNear(trajectory.endState.targetHolonomicPose, 0.1)
         } else {
             Drivetrain.isNear(PoseUtil.flip(trajectory.endState.targetHolonomicPose), 0.1)

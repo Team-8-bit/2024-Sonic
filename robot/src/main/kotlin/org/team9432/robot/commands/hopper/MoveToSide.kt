@@ -1,4 +1,4 @@
-package org.team9432.robot.commands
+package org.team9432.robot.commands.hopper
 
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
@@ -21,10 +21,8 @@ fun MoveToSide(side: MechanismSide) = SuppliedCommand {
 
             // After the note is at the beam break, slowly unload and reload to align it
             WaitUntilCommand { RobotState.noteInHopperSide(side) }.afterSimDelay(1.0) {
-                BeambreakIOSim.setNoteInHopper(
-                    side,
-                    true
-                ); BeambreakIOSim.setNoteInIntakeAmpSide(false); BeambreakIOSim.setNoteInIntakeSpeakerSide(false)
+                BeambreakIOSim.setNoteInHopper(side, true)
+                BeambreakIOSim.setNoteInIntakeAmpSide(false); BeambreakIOSim.setNoteInIntakeSpeakerSide(false)
             },
 
             // Unload
