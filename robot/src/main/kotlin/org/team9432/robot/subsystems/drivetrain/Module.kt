@@ -10,6 +10,8 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
+import org.team9432.lib.constants.SwerveConstants.MK4I_L2_DRIVE_REDUCTION
+import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import kotlin.math.cos
 
 
@@ -26,12 +28,14 @@ class Module(module: ModuleIO.Module) {
 
     private var steerRelativeOffset: Rotation2d? = null // Relative + Offset = Absolute
 
+    private fun Double.adjustRatio() = (this / MK4I_L2_DRIVE_REDUCTION) * MK4I_L3_DRIVE_REDUCTION
+
     init {
         when (Robot.mode) {
             REAL, REPLAY -> {
                 io = ModuleIONeo(module)
-                driveFeedforward = SimpleMotorFeedforward(0.1, 0.13)
-                driveFeedback = PIDController(0.05, 0.0, 0.0)
+                driveFeedforward = SimpleMotorFeedforward(0.1.adjustRatio(), 0.13.adjustRatio())
+                driveFeedback = PIDController(0.05.adjustRatio(), 0.0, 0.0)
                 steerFeedback = PIDController(7.0, 0.0, 0.0)
             }
 

@@ -31,7 +31,7 @@ object Controls {
 
     val xSpeedSupplier = { -controller.leftY }
     var ySpeedSupplier = { -controller.leftX }
-    var angleSupplier = { controller.rightX }
+    var angleSupplier = { -controller.rightX }
 
     init {
         Drivetrain
@@ -63,7 +63,6 @@ object Controls {
 
         controller.x.onTrue(MoveToSide(MechanismSide.AMP).withTimeout(3.0))
         controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER).withTimeout(3.0))
-
 
 //        controller.x.onTrue(SuppliedCommand(Drivetrain) { DriveStraightToPosition(FieldConstants.ampPose) })
 //        controller.b.onTrue(InstantCommand(Drivetrain) {})
