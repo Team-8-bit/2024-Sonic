@@ -1,9 +1,12 @@
 package org.team9432.robot.subsystems.shooter
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
+
 
 class ShooterSide(shooterSide: ShooterSideIO.ShooterSide) {
     private val io: ShooterSideIO
@@ -15,7 +18,7 @@ class ShooterSide(shooterSide: ShooterSideIO.ShooterSide) {
         when (Robot.mode) {
             REAL, REPLAY -> {
                 io = ShooterSideIOVortex(shooterSide)
-                io.setPID(0.0, 0.0, 0.0)
+                io.setPID(0.0005, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0)
             }
 

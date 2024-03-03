@@ -15,7 +15,7 @@ class HopperIOReal: HopperIO {
 
     init {
         spark.restoreFactoryDefaults()
-        spark.inverted = false
+        spark.inverted = true
         spark.idleMode = IdleMode.kBrake
         spark.enableVoltageCompensation(12.0)
         spark.setSmartCurrentLimit(40)

@@ -7,7 +7,7 @@ import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.robot.MechanismSide
 
-object Hopper: KSubsystem() {
+object Hopper : KSubsystem() {
     private val io: HopperIO
     private val inputs = LoggedHopperIOInputs()
 
@@ -38,8 +38,11 @@ object Hopper: KSubsystem() {
         io.setVoltage(volts)
     }
 
-    fun loadTo(side: MechanismSide, volts: Double) = if (side == MechanismSide.SPEAKER) setVoltage(volts) else setVoltage(-volts)
-    fun unloadFrom(side: MechanismSide, volts: Double) = if (side == MechanismSide.SPEAKER) setVoltage(-volts) else setVoltage(volts)
+    fun loadTo(side: MechanismSide, volts: Double) =
+        if (side == MechanismSide.SPEAKER) setVoltage(-volts) else setVoltage(volts)
+
+    fun unloadFrom(side: MechanismSide, volts: Double) =
+        if (side == MechanismSide.SPEAKER) setVoltage(volts) else setVoltage(-volts)
 
     fun setSpeed(rotationsPerMinute: Double) {
         io.setSpeed(rotationsPerMinute, feedforward.calculate(rotationsPerMinute))

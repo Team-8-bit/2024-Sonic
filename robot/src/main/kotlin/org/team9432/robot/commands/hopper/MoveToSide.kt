@@ -1,3 +1,4 @@
+
 package org.team9432.robot.commands.hopper
 
 import org.team9432.lib.commandbased.commands.*
@@ -11,13 +12,13 @@ import org.team9432.robot.subsystems.intake.CommandIntake
 fun MoveToSide(side: MechanismSide) = SuppliedCommand {
     if (RobotState.notePosition.isIntake) {
         SequentialCommand(
-            CommandHopper.loadTo(side, volts = 10.0),
+            CommandHopper.loadTo(side, volts = 4.0),
 
             // Wait a bit to get the hopper up to speed
-            WaitCommand(0.5),
+            WaitCommand(0.25),
 
             // Both intakes need to be run when feeding across, but it could run only one when bending the note
-            CommandIntake.setVoltage(-10.0, -10.0),
+            CommandIntake.setVoltage(4.0, 4.0),
 
             // After the note is at the beam break, slowly unload and reload to align it
             WaitUntilCommand { RobotState.noteInHopperSide(side) }.afterSimDelay(1.0) {
@@ -26,12 +27,12 @@ fun MoveToSide(side: MechanismSide) = SuppliedCommand {
             },
 
             // Unload
-            CommandIntake.setVoltage(3.0, 3.0),
+            CommandIntake.setVoltage(-3.0, -3.0),
             CommandHopper.unloadFrom(side, volts = 3.0),
             WaitUntilCommand { !RobotState.noteInHopperSide(side) }.afterSimDelay(0.5) { BeambreakIOSim.setNoteInHopper(side, false) },
 
             // Reload
-            CommandIntake.setVoltage(-3.0, -3.0),
+            CommandIntake.setVoltage(3.0, 3.0),
             CommandHopper.loadTo(side, volts = 3.0),
             WaitUntilCommand { RobotState.noteInHopperSide(side) }.afterSimDelay(0.5) { BeambreakIOSim.setNoteInHopper(side, true) },
 
