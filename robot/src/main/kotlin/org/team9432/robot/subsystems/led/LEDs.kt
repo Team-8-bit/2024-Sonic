@@ -69,14 +69,14 @@ object LEDs : KSubsystem() {
             solid(Color.kGreen, Strip.BACK_RIGHT)
             solid(Color.kYellow, Strip.BACK_LEFT)
         } else { // Teleop
+            rainbow(30.0, 0.5, Strip.ALL) // This will be the default unless overwritten later
+
             if (RobotState.noteInAmpSideIntakeBeambreak()) {
-                strobe(Color.kPurple, 0.25, Strip.BACK_RIGHT)
-                strobe(Color.kPurple, 0.25, Strip.BACK_LEFT)
-            } else if (RobotState.noteInSpeakerSideIntakeBeambreak()) {
-                strobe(Color.kPurple, 0.25, Strip.FRONT_RIGHT)
                 strobe(Color.kPurple, 0.25, Strip.FRONT_LEFT)
-            } else {
-                rainbow(30.0, 0.5, Strip.ALL)
+                strobe(Color.kPurple, 0.25, Strip.FRONT_RIGHT)
+            } else if (RobotState.noteInSpeakerSideIntakeBeambreak()) {
+                strobe(Color.kPurple, 0.25, Strip.BACK_LEFT)
+                strobe(Color.kPurple, 0.25, Strip.BACK_RIGHT)
             }
         }
 
