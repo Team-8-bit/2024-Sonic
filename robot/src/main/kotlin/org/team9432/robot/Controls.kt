@@ -23,6 +23,7 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.intake.Intake
+import org.team9432.robot.subsystems.limelight.Limelight
 import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.shooter.Shooter
 
@@ -34,16 +35,6 @@ object Controls {
     var angleSupplier = { -controller.rightX }
 
     init {
-        Drivetrain
-        Hopper
-        Intake
-        Hood
-        Shooter
-        Amp
-        Beambreaks
-        LeftClimber
-        RightClimber
-
         Drivetrain.defaultCommand = FieldOrientedDrive()
 
         // Pretend to get a note after 2 seconds in sim

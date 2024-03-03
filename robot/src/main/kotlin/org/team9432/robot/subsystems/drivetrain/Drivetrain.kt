@@ -24,6 +24,7 @@ import org.team9432.lib.drivers.gyro.LoggedGyroIOInputs
 import org.team9432.lib.util.SwerveUtil
 import org.team9432.lib.wpilib.ChassisSpeeds
 import org.team9432.robot.Controls
+import org.team9432.robot.subsystems.vision.Vision
 import kotlin.math.abs
 import kotlin.math.hypot
 
@@ -69,7 +70,7 @@ object Drivetrain: KSubsystem() {
         poseEstimator = SwerveDrivePoseEstimator(
             kinematics, Rotation2d.fromDegrees(yaw), lastModulePositions.toTypedArray(), Pose2d(),
             VecBuilder.fill(Units.inchesToMeters(3.0), Units.inchesToMeters(3.0), Math.toDegrees(4.0)),
-            VecBuilder.fill(Units.inchesToMeters(0.0), Units.inchesToMeters(0.0), Math.toDegrees(0.0))
+            VecBuilder.fill(Units.inchesToMeters(6.0), Units.inchesToMeters(6.0), Math.toDegrees(10.0))
         )
         for (m in modules) m.setBrakeMode(true)
     }
@@ -107,6 +108,10 @@ object Drivetrain: KSubsystem() {
             // Use the angle delta from the kinematics and module deltas
             val twist = kinematics.toTwist2d(*moduleDeltas)
             rawGyroRotation = rawGyroRotation.plus(Rotation2d(twist.dtheta))
+        }
+
+        Vision.getEstimatedPose2d()?.let {
+            poseEstimator.addVisionMeasurement(it.first, it.second)
         }
 
         poseEstimator.update(rawGyroRotation, modulePositions.toTypedArray())
