@@ -11,7 +11,7 @@ import org.team9432.robot.subsystems.hopper.CommandHopper
 
 fun AmpShoot() = SequentialCommand(
     MoveToSide(MechanismSide.AMP),
-    CommandAmp.setSpeed(1000.0),
+    CommandAmp.setSpeed(1000.0), //TODO: Change to actual speed
     WaitCommand(1.0),
     CommandHopper.loadTo(MechanismSide.AMP, 5.0),
     WaitCommand(5.0),
