@@ -22,26 +22,12 @@ object LEDs : KSubsystem() {
 
     private val MAIN_GREEN = Color(0.05, 1.0, 0.1)
 
-    fun setBuffer(strip: Strip, index: Int, color: Color) {
-        buffer.setLED(getIndex(strip, index), color)
-    }
-
-    fun setBufferHSV(strip: Strip, index: Int, h: Int, s: Int, v: Int) {
-        buffer.setHSV(getIndex(strip, index), h, s, v)
-    }
-
-    fun getIndex(strip: Strip, index: Int): Int {
-        return when (strip) {
-            Strip.FRONT_LEFT -> index
-            Strip.FRONT_RIGHT -> 22 + index
-            Strip.BACK_RIGHT -> 44 + index
-            Strip.BACK_LEFT -> 66 + index
-            Strip.ALL -> index
-        }
-    }
-
-    enum class Strip(val length: Int) {
-        FRONT_LEFT(22), FRONT_RIGHT(22), BACK_RIGHT(22), BACK_LEFT(22), ALL(88)
+    enum class Strip(val indices: List<Int>) {
+        FRONT_LEFT((0..21).toList()),
+        FRONT_RIGHT((22..43).toList()),
+        BACK_RIGHT((44..65).toList()),
+        BACK_LEFT((66..87).toList()),
+        ALL((0..87).toList())
     }
 
     init {
@@ -54,8 +40,8 @@ object LEDs : KSubsystem() {
                 breath(
                     Color.kWhite,
                     Color.kBlack,
-                    System.currentTimeMillis() / 1000.0,
-                    Strip.ALL
+                    Strip.ALL,
+                    timestamp = System.currentTimeMillis() / 1000.0
                 )
                 leds.setData(buffer)
             }
@@ -74,7 +60,7 @@ object LEDs : KSubsystem() {
         loadingNotifier?.stop()
 
         if (DriverStation.isDisabled()) {
-            breath(MAIN_GREEN, Color.kBlack, Strip.ALL)
+            breath(MAIN_GREEN, Color.kBlack, Strip.ALL, 3.0)
         } else if (DriverStation.isAutonomous()) {
             strobe(Color.kRed, 0.25, Strip.ALL)
         } else if (DriverStation.isTest()) {
@@ -98,8 +84,8 @@ object LEDs : KSubsystem() {
     }
 
     private fun solid(color: Color, strip: Strip) {
-        for (i in 0 until strip.length) {
-            setBuffer(strip, i, color)
+        for (index in strip.indices) {
+            buffer.setLED(index, color)
         }
     }
 
@@ -108,12 +94,8 @@ object LEDs : KSubsystem() {
         solid(if (on) color else Color.kBlack, strip)
     }
 
-    private fun breath(c1: Color, c2: Color, strip: Strip) {
-        breath(c1, c2, Timer.getFPGATimestamp(), strip)
-    }
-
-    private fun breath(c1: Color, c2: Color, timestamp: Double, strip: Strip) {
-        val x = timestamp % BREATH_DURATION / BREATH_DURATION * 2.0 * Math.PI
+    private fun breath(c1: Color, c2: Color, strip: Strip, duration: Double = 1.0, timestamp: Double = Timer.getFPGATimestamp()) {
+        val x = timestamp % duration / duration * 2.0 * Math.PI
         val ratio = (sin(x) + 1.0) / 2.0
         val red = c1.red * (1 - ratio) + c2.red * ratio
         val green = c1.green * (1 - ratio) + c2.green * ratio
@@ -124,17 +106,17 @@ object LEDs : KSubsystem() {
     private fun rainbow(cycleLength: Double, duration: Double, strip: Strip) {
         var x = (1 - Timer.getFPGATimestamp() / duration % 1.0) * 180.0
         val xDiffPerLed = 180.0 / cycleLength
-        for (i in 0 until strip.length) {
+        for (index in strip.indices) {
             x += xDiffPerLed
             x %= 180.0
-            setBufferHSV(strip, i, x.toInt(), 255, 255)
+            buffer.setHSV(index, x.toInt(), 255, 255)
         }
     }
 
     private fun wave(c1: Color, c2: Color, cycleLength: Double, duration: Double, strip: Strip) {
         var x = (1 - Timer.getFPGATimestamp() % duration / duration) * 2.0 * Math.PI
         val xDiffPerLed = 2.0 * Math.PI / cycleLength
-        for (i in 0 until strip.length) {
+        for (index in strip.indices) {
             x += xDiffPerLed
             var ratio = (sin(x).pow(WAVE_EXPONENT) + 1.0) / 2.0
             if (java.lang.Double.isNaN(ratio)) {
@@ -146,15 +128,15 @@ object LEDs : KSubsystem() {
             val red = c1.red * (1 - ratio) + c2.red * ratio
             val green = c1.green * (1 - ratio) + c2.green * ratio
             val blue = c1.blue * (1 - ratio) + c2.blue * ratio
-            setBuffer(strip, i, Color(red, green, blue))
+            buffer.setLED(index, Color(red, green, blue))
         }
     }
 
     private fun stripes(colors: List<Color>, length: Int, duration: Double, strip: Strip) {
-        for (i in 0 until length) {
-            var colorIndex = (floor((i - (Timer.getFPGATimestamp() % duration / duration * length * colors.size)) / length) + colors.size).toInt() % colors.size
+        for (index in strip.indices) {
+            var colorIndex = (floor((index - (Timer.getFPGATimestamp() % duration / duration * length * colors.size)) / length) + colors.size).toInt() % colors.size
             colorIndex = colors.size - 1 - colorIndex
-            setBuffer(strip, i, colors[colorIndex])
+            buffer.setLED(index, colors[colorIndex])
         }
     }
 }
