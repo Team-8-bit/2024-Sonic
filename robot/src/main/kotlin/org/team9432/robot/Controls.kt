@@ -6,6 +6,7 @@ import org.team9432.lib.commandbased.commands.*
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.lib.wpilib.ChassisSpeeds
 import org.team9432.robot.auto.commands.testAuto
+import org.team9432.robot.commands.amp.AmpShoot
 import org.team9432.robot.commands.drivetrain.DriveStraightToPosition
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
 import org.team9432.robot.commands.drivetrain.MobileSpeakerAlign
@@ -68,7 +69,7 @@ object Controls {
 //        controller.b.onTrue(InstantCommand(Drivetrain) {})
 
         controller.rightTrigger.onTrue(ShootStatic(6000.0, 6000.0))
-        controller.leftTrigger.onTrue(ShootStatic(2000.0, 2000.0))
+        controller.leftTrigger.onTrue(AmpShoot())
 
 //        controller.a.toggleOnTrue(
 //            SimpleCommand(

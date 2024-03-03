@@ -6,7 +6,7 @@ import com.revrobotics.SparkPIDController
 import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Devices
 
-class AmpIOReal: AmpIO {
+class AmpIONeo: AmpIO {
     private val spark = KSparkMAX(Devices.AMP_ID, CANSparkLowLevel.MotorType.kBrushless)
 
     private val encoder = spark.encoder

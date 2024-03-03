@@ -15,7 +15,7 @@ object Amp: KSubsystem() {
     init {
         when (Robot.mode) {
             REAL, REPLAY -> {
-                io = AmpIOReal()
+                io = AmpIONeo()
                 io.setPID(0.0, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0)
             }
@@ -31,6 +31,12 @@ object Amp: KSubsystem() {
     override fun periodic() {
         io.updateInputs(inputs)
         Logger.processInputs("Amp", inputs)
+    }
+
+    fun setVoltage(volts: Double) {
+        io.setVoltage(volts)
+
+        Logger.recordOutput("Amp/SetpointVolts", volts)
     }
 
     fun setSpeed(rpm: Double) {
