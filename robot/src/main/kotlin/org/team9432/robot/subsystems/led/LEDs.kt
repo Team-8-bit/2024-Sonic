@@ -23,11 +23,27 @@ object LEDs : KSubsystem() {
     private val MAIN_GREEN = Color(0.05, 1.0, 0.1)
 
     enum class Strip(val indices: List<Int>) {
-        FRONT_LEFT((0..21).toList()),
-        FRONT_RIGHT((22..43).toList()),
-        BACK_RIGHT((44..65).toList()),
-        BACK_LEFT((66..87).toList()),
-        ALL((0..87).toList())
+        SPEAKER_LEFT_BOTTOM((0..11).toList()),
+        SPEAKER_LEFT_TOP((12..21).toList()),
+
+        SPEAKER_RIGHT_TOP((22..33).toList()),
+        SPEAKER_RIGHT_BOTTOM((34..43).toList()),
+
+        AMP_LEFT_BOTTOM((44..55).toList()),
+        AMP_LEFT_TOP((56..65).toList()),
+
+        AMP_RIGHT_TOP((66..77).toList()),
+        AMP_RIGHT_BOTTOM((78..87).toList()),
+
+        SPEAKER_LEFT(SPEAKER_LEFT_TOP.indices + SPEAKER_LEFT_BOTTOM.indices),
+        SPEAKER_RIGHT(SPEAKER_RIGHT_TOP.indices + SPEAKER_RIGHT_BOTTOM.indices),
+        AMP_LEFT(AMP_LEFT_TOP.indices + AMP_LEFT_BOTTOM.indices),
+        AMP_RIGHT(AMP_RIGHT_TOP.indices + AMP_RIGHT_BOTTOM.indices),
+
+        SPEAKER(SPEAKER_LEFT.indices + SPEAKER_RIGHT.indices),
+        AMP(AMP_LEFT.indices + AMP_RIGHT.indices),
+
+        ALL(SPEAKER.indices + AMP.indices),
     }
 
     init {
@@ -64,19 +80,22 @@ object LEDs : KSubsystem() {
         } else if (DriverStation.isAutonomous()) {
             strobe(Color.kRed, 0.25, Strip.ALL)
         } else if (DriverStation.isTest()) {
-            solid(Color.kRed, Strip.FRONT_RIGHT)
-            solid(Color.kBlue, Strip.FRONT_LEFT)
-            solid(Color.kGreen, Strip.BACK_RIGHT)
-            solid(Color.kYellow, Strip.BACK_LEFT)
+            solid(Color.kRed, Strip.SPEAKER_RIGHT_TOP)
+            solid(Color.kBlue, Strip.SPEAKER_LEFT_TOP)
+            solid(Color.kGreen, Strip.AMP_LEFT_TOP)
+            solid(Color.kYellow, Strip.AMP_RIGHT_TOP)
+
+            solid(Color.kOrange, Strip.SPEAKER_RIGHT_BOTTOM)
+            solid(Color.kAqua, Strip.SPEAKER_LEFT_BOTTOM)
+            solid(Color.kLime, Strip.AMP_LEFT_BOTTOM)
+            solid(Color.kLightYellow, Strip.AMP_RIGHT_BOTTOM)
         } else { // Teleop
             rainbow(30.0, 0.5, Strip.ALL) // This will be the default unless overwritten later
 
             if (RobotState.noteInAmpSideIntakeBeambreak()) {
-                strobe(Color.kPurple, 0.25, Strip.FRONT_LEFT)
-                strobe(Color.kPurple, 0.25, Strip.FRONT_RIGHT)
+                strobe(Color.kPurple, 0.25, Strip.SPEAKER)
             } else if (RobotState.noteInSpeakerSideIntakeBeambreak()) {
-                strobe(Color.kPurple, 0.25, Strip.BACK_LEFT)
-                strobe(Color.kPurple, 0.25, Strip.BACK_RIGHT)
+                strobe(Color.kPurple, 0.25, Strip.AMP)
             }
         }
 
