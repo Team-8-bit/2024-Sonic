@@ -54,7 +54,7 @@ interface ModuleIO {
             steerID = FRONT_LEFT_STEER_ID,
             driveInverted = true,
             steerInverted = false,
-            encoderOffset = Rotation2d.fromDegrees(-161.631),
+            encoderOffset = Rotation2d.fromDegrees(18.193),
         ),
         FR(
             encoderID = FRONT_RIGHT_CANCODER_ID,
@@ -62,7 +62,7 @@ interface ModuleIO {
             steerID = FRONT_RIGHT_STEER_ID,
             driveInverted = false,
             steerInverted = true,
-            encoderOffset = Rotation2d.fromDegrees(-110.039),
+            encoderOffset = Rotation2d.fromDegrees(70.225),
         ),
         BL(
             encoderID = BACK_LEFT_CANCODER_ID,
@@ -70,7 +70,7 @@ interface ModuleIO {
             steerID = BACK_LEFT_STEER_ID,
             driveInverted = false,
             steerInverted = true,
-            encoderOffset = Rotation2d.fromDegrees(97.207),
+            encoderOffset = Rotation2d.fromDegrees(-82.090),
         ),
         BR(
             encoderID = BACK_RIGHT_CANCODER_ID,
@@ -78,7 +78,7 @@ interface ModuleIO {
             steerID = BACK_RIGHT_STEER_ID,
             driveInverted = true,
             steerInverted = false,
-            encoderOffset = Rotation2d.fromDegrees(-52.013),
+            encoderOffset = Rotation2d.fromDegrees(128.320),
         );
     }
 }
