@@ -9,12 +9,12 @@ import org.photonvision.targeting.PhotonTrackedTarget
 import org.team9432.robot.subsystems.limelight.Limelight
 import kotlin.jvm.optionals.getOrNull
 
-object VisionIOPhotonvision: VisionIO {
+class VisionIOPhotonvision: VisionIO {
     private val camera = PhotonCamera("Limelight")
     private val aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField()
     private val photonPoseEstimator = PhotonPoseEstimator(
         aprilTagFieldLayout,
-        PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY,
         camera,
         Limelight.getCurrentRobotToCamera()
     )

@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Transform3d
 import edu.wpi.first.math.geometry.Translation3d
+import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
@@ -43,7 +44,6 @@ object Limelight: KSubsystem() {
     fun getCurrentRobotToCamera(): Transform3d {
         val limelightRotationTransform = Transform3d(Translation3d(), Rotation3d(0.0, 0.0, inputs.absoluteAngle.radians))
 
-        // TODO get the actual base transformation
-        return Transform3d().plus(limelightRotationTransform)
+        return Transform3d(Translation3d(Units.inchesToMeters(-0.039), Units.inchesToMeters(1.4272), Units.inchesToMeters(18.949)), Rotation3d(Math.toRadians(0.0), Math.toRadians(-40.0), Math.toRadians(0.0)))//.plus(limelightRotationTransform)
     }
 }

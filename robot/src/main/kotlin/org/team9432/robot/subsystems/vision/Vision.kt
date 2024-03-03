@@ -12,7 +12,7 @@ object Vision: KSubsystem() {
 
     init {
         io = when (Robot.mode) {
-            REAL, REPLAY -> VisionIOPhotonvision
+            REAL, REPLAY -> VisionIOPhotonvision()
             SIM -> object: VisionIO {}
         }
     }
