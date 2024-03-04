@@ -44,6 +44,18 @@ object Limelight: KSubsystem() {
     fun getCurrentRobotToCamera(): Transform3d {
         val limelightRotationTransform = Transform3d(Translation3d(), Rotation3d(0.0, 0.0, inputs.absoluteAngle.radians))
 
-        return Transform3d(Translation3d(Units.inchesToMeters(-0.039), Units.inchesToMeters(1.4272), Units.inchesToMeters(18.949)), Rotation3d(Math.toRadians(0.0), Math.toRadians(-40.0), Math.toRadians(0.0)))//.plus(limelightRotationTransform)
+        return Transform3d(
+            Translation3d(
+                Units.inchesToMeters(-0.039),
+                Units.inchesToMeters(1.4272),
+                Units.inchesToMeters(18.949) + 0.124460
+            ),
+            Rotation3d(
+                Math.toRadians(0.0),
+                Math.toRadians(-40.0),
+                Math.toRadians(0.0)
+            )
+        )
+        //.plus(limelightRotationTransform)
     }
 }
