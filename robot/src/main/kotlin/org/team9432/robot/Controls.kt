@@ -15,6 +15,7 @@ import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.intake.CommandIntake
+import org.team9432.robot.subsystems.led.LEDCommands
 
 object Controls {
     private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
@@ -75,6 +76,9 @@ object Controls {
             LeftClimber.stop()
             RightClimber.stop()
         })
+
+        // Test LEDs
+        controller.b.whileTrue(LEDCommands.testMode())
     }
 
     fun getDrivetrainSpeeds(): ChassisSpeeds {

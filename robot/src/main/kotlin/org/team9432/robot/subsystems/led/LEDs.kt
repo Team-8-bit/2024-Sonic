@@ -1,26 +1,20 @@
 package org.team9432.robot.subsystems.led
 
-import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.AddressableLED
+import edu.wpi.first.wpilibj.AddressableLEDBuffer
+import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.util.Color
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.robot.Devices
-import org.team9432.robot.RobotState
-import kotlin.math.floor
-import kotlin.math.pow
-import kotlin.math.sin
+import org.team9432.robot.subsystems.led.BaseLEDCommands.breath
 
 
-object LEDs : KSubsystem() {
+object LEDs: KSubsystem() {
     private const val LENGTH = 88 // Two 8s!
 
     private val leds = AddressableLED(Devices.LED_PORT)
-    private val buffer = AddressableLEDBuffer(LENGTH)
+    val buffer = AddressableLEDBuffer(LENGTH)
     private var loadingNotifier: Notifier? = null
-
-    private const val BREATH_DURATION = 3.0
-    private const val WAVE_EXPONENT = 0.4
-
-    private val MAIN_GREEN = Color(0.05, 1.0, 0.1)
 
     enum class Strip(val indices: List<Int>) {
         SPEAKER_LEFT_BOTTOM((0..11).toList()),
@@ -62,6 +56,8 @@ object LEDs : KSubsystem() {
                 leds.setData(buffer)
             }
         }.also { it.startPeriodic(0.02) }
+
+        LEDSubsystems
     }
 
     private const val INIT_AFTER_LOOP_CYCLE = 10
@@ -75,87 +71,6 @@ object LEDs : KSubsystem() {
 
         loadingNotifier?.stop()
 
-        if (DriverStation.isDisabled()) {
-            breath(MAIN_GREEN, Color.kBlack, Strip.ALL, 3.0)
-        } else if (DriverStation.isAutonomous()) {
-            strobe(Color.kRed, 0.25, Strip.ALL)
-        } else if (DriverStation.isTest()) {
-            solid(Color.kRed, Strip.SPEAKER_RIGHT_TOP)
-            solid(Color.kBlue, Strip.SPEAKER_LEFT_TOP)
-            solid(Color.kGreen, Strip.AMP_LEFT_TOP)
-            solid(Color.kYellow, Strip.AMP_RIGHT_TOP)
-
-            solid(Color.kOrange, Strip.SPEAKER_RIGHT_BOTTOM)
-            solid(Color.kAqua, Strip.SPEAKER_LEFT_BOTTOM)
-            solid(Color.kLime, Strip.AMP_LEFT_BOTTOM)
-            solid(Color.kLightYellow, Strip.AMP_RIGHT_BOTTOM)
-        } else { // Teleop
-            rainbow(30.0, 0.5, Strip.ALL) // This will be the default unless overwritten later
-
-            if (RobotState.noteInAmpSideIntakeBeambreak()) {
-                strobe(Color.kPurple, 0.25, Strip.SPEAKER)
-            } else if (RobotState.noteInSpeakerSideIntakeBeambreak()) {
-                strobe(Color.kPurple, 0.25, Strip.AMP)
-            }
-        }
-
         leds.setData(buffer)
-    }
-
-    private fun solid(color: Color, strip: Strip) {
-        for (index in strip.indices) {
-            buffer.setLED(index, color)
-        }
-    }
-
-    private fun strobe(color: Color, duration: Double, strip: Strip) {
-        val on = Timer.getFPGATimestamp() % duration / duration > 0.5
-        solid(if (on) color else Color.kBlack, strip)
-    }
-
-    private fun breath(c1: Color, c2: Color, strip: Strip, duration: Double = 1.0, timestamp: Double = Timer.getFPGATimestamp()) {
-        val x = timestamp % duration / duration * 2.0 * Math.PI
-        val ratio = (sin(x) + 1.0) / 2.0
-        val red = c1.red * (1 - ratio) + c2.red * ratio
-        val green = c1.green * (1 - ratio) + c2.green * ratio
-        val blue = c1.blue * (1 - ratio) + c2.blue * ratio
-        solid(Color(red, green, blue), strip)
-    }
-
-    private fun rainbow(cycleLength: Double, duration: Double, strip: Strip) {
-        var x = (1 - Timer.getFPGATimestamp() / duration % 1.0) * 180.0
-        val xDiffPerLed = 180.0 / cycleLength
-        for (index in strip.indices) {
-            x += xDiffPerLed
-            x %= 180.0
-            buffer.setHSV(index, x.toInt(), 255, 255)
-        }
-    }
-
-    private fun wave(c1: Color, c2: Color, cycleLength: Double, duration: Double, strip: Strip) {
-        var x = (1 - Timer.getFPGATimestamp() % duration / duration) * 2.0 * Math.PI
-        val xDiffPerLed = 2.0 * Math.PI / cycleLength
-        for (index in strip.indices) {
-            x += xDiffPerLed
-            var ratio = (sin(x).pow(WAVE_EXPONENT) + 1.0) / 2.0
-            if (java.lang.Double.isNaN(ratio)) {
-                ratio = (-sin(x + Math.PI).pow(WAVE_EXPONENT) + 1.0) / 2.0
-            }
-            if (java.lang.Double.isNaN(ratio)) {
-                ratio = 0.5
-            }
-            val red = c1.red * (1 - ratio) + c2.red * ratio
-            val green = c1.green * (1 - ratio) + c2.green * ratio
-            val blue = c1.blue * (1 - ratio) + c2.blue * ratio
-            buffer.setLED(index, Color(red, green, blue))
-        }
-    }
-
-    private fun stripes(colors: List<Color>, length: Int, duration: Double, strip: Strip) {
-        for (index in strip.indices) {
-            var colorIndex = (floor((index - (Timer.getFPGATimestamp() % duration / duration * length * colors.size)) / length) + colors.size).toInt() % colors.size
-            colorIndex = colors.size - 1 - colorIndex
-            buffer.setLED(index, colors[colorIndex])
-        }
     }
 }
