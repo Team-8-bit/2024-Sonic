@@ -10,14 +10,18 @@ class BeambreakIOSim: BeambreakIO {
         fun setNoteInHopperSpeakerSide(boolean: Boolean) { hopperSpeakerSide = !boolean }
         fun setNoteInCenter(boolean: Boolean) { center = !boolean }
 
-        fun setNoteInIntake(side: MechanismSide, boolean: Boolean) {
-            if (side == MechanismSide.SPEAKER) setNoteInIntakeSpeakerSide(boolean)
-            else setNoteInIntakeAmpSide(boolean)
+        fun setNoteInIntakeSide(side: MechanismSide, boolean: Boolean) {
+            when (side) {
+                MechanismSide.AMP -> setNoteInIntakeAmpSide(boolean)
+                MechanismSide.SPEAKER -> setNoteInIntakeSpeakerSide(boolean)
+            }
         }
 
-        fun setNoteInHopper(side: MechanismSide, boolean: Boolean) {
-            if (side == MechanismSide.SPEAKER) setNoteInHopperSpeakerSide(boolean)
-            else setNoteInHopperAmpSide(boolean)
+        fun setNoteInHopperSide(side: MechanismSide, boolean: Boolean) {
+            when (side) {
+                MechanismSide.AMP -> setNoteInHopperAmpSide(boolean)
+                MechanismSide.SPEAKER -> setNoteInHopperSpeakerSide(boolean)
+            }
         }
 
         private var intakeAmpSide = true

@@ -26,6 +26,20 @@ object Intake: KSubsystem() {
         setVoltage(-abs(ampVolts), -abs(speakerVolts))
     }
 
+    fun intakeSide(side: MechanismSide, volts: Double) {
+        when (side) {
+            MechanismSide.AMP -> intake(volts, 0.0)
+            MechanismSide.SPEAKER -> intake(0.0, volts)
+        }
+    }
+
+    fun outtakeSide(side: MechanismSide, volts: Double) {
+        when (side) {
+            MechanismSide.AMP -> outtake(volts, 0.0)
+            MechanismSide.SPEAKER -> outtake(0.0, volts)
+        }
+    }
+
     fun stop() {
         teleIntakeVolts = null
         ampSide.stop()

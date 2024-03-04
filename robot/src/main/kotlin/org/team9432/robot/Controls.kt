@@ -30,7 +30,7 @@ object Controls {
 
         // Run Intake
         controller.leftBumper
-            .whileTrue(TeleIntake().afterSimDelay(2.0) { BeambreakIOSim.setNoteInIntake(RobotState.getMovementDirection(), true) }) // Pretend to get a note after 2 seconds in sim
+            .whileTrue(TeleIntake().afterSimDelay(2.0) { BeambreakIOSim.setNoteInIntakeSide(RobotState.getMovementDirection(), true) }) // Pretend to get a note after 2 seconds in sim
             .onFalse(CommandIntake.stop()) // This should be blocked if the intake is still aligning the note
 
         // Outtake Intake

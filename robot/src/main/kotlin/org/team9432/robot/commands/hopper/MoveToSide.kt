@@ -21,14 +21,14 @@ fun MoveToSide(side: MechanismSide) = SuppliedCommand {
 
             // After the note is at the beam break, slowly unload and reload to align it
             WaitUntilCommand { RobotState.noteInHopperSide(side) }.afterSimDelay(1.0) {
-                BeambreakIOSim.setNoteInHopper(side, true)
+                BeambreakIOSim.setNoteInHopperSide(side, true)
                 BeambreakIOSim.setNoteInIntakeAmpSide(false); BeambreakIOSim.setNoteInIntakeSpeakerSide(false)
             },
 
             // Unload
             CommandIntake.outtake(5.0, 5.0),
             CommandHopper.unloadFrom(side, volts = 5.0),
-            WaitUntilCommand { !RobotState.noteInHopperSide(side) }.afterSimDelay(0.5) { BeambreakIOSim.setNoteInHopper(side, false) },
+            WaitUntilCommand { !RobotState.noteInHopperSide(side) }.afterSimDelay(0.5) { BeambreakIOSim.setNoteInHopperSide(side, false) },
 
             ParallelCommand(CommandHopper.stop(), CommandIntake.stop()),
             InstantCommand {
