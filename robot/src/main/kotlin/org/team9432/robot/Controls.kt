@@ -82,6 +82,9 @@ object Controls {
         controller.b.and(isLedMode)
             .whileTrue(LEDCommands.testMode())
 
+        controller.a.and(isLedMode)
+            .whileTrue(LEDCommands.testBottom())
+
         /* -------------- CLIMB BUTTONS -------------- */
 
         // Raise Left Climber

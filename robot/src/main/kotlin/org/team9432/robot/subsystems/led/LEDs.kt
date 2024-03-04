@@ -17,22 +17,22 @@ object LEDs: KSubsystem() {
     private var loadingNotifier: Notifier? = null
 
     enum class Strip(val indices: List<Int>) {
-        SPEAKER_LEFT_BOTTOM((0..11).toList()),
-        SPEAKER_LEFT_TOP((12..21).toList()),
+        SPEAKER_LEFT_TOP((0..11).toList()),
+        SPEAKER_LEFT_BOTTOM((12..21).toList()),
 
-        SPEAKER_RIGHT_TOP((22..33).toList()),
-        SPEAKER_RIGHT_BOTTOM((34..43).toList()),
+        SPEAKER_RIGHT_BOTTOM((22..33).toList()),
+        SPEAKER_RIGHT_TOP((34..43).toList()),
 
-        AMP_LEFT_BOTTOM((44..55).toList()),
-        AMP_LEFT_TOP((56..65).toList()),
+        AMP_LEFT_TOP((44..55).toList()),
+        AMP_LEFT_BOTTOM((56..65).toList()),
 
-        AMP_RIGHT_TOP((66..77).toList()),
-        AMP_RIGHT_BOTTOM((78..87).toList()),
+        AMP_RIGHT_BOTTOM((66..77).toList()),
+        AMP_RIGHT_TOP((78..87).toList()),
 
-        SPEAKER_LEFT(SPEAKER_LEFT_TOP.indices + SPEAKER_LEFT_BOTTOM.indices),
-        SPEAKER_RIGHT(SPEAKER_RIGHT_TOP.indices + SPEAKER_RIGHT_BOTTOM.indices),
-        AMP_LEFT(AMP_LEFT_TOP.indices + AMP_LEFT_BOTTOM.indices),
-        AMP_RIGHT(AMP_RIGHT_TOP.indices + AMP_RIGHT_BOTTOM.indices),
+        SPEAKER_LEFT(SPEAKER_LEFT_BOTTOM.indices + SPEAKER_LEFT_TOP.indices),
+        SPEAKER_RIGHT(SPEAKER_RIGHT_BOTTOM.indices + SPEAKER_RIGHT_TOP.indices),
+        AMP_LEFT(AMP_LEFT_BOTTOM.indices + AMP_LEFT_TOP.indices),
+        AMP_RIGHT(AMP_RIGHT_BOTTOM.indices + AMP_RIGHT_TOP.indices),
 
         SPEAKER(SPEAKER_LEFT.indices + SPEAKER_RIGHT.indices),
         AMP(AMP_LEFT.indices + AMP_RIGHT.indices),
