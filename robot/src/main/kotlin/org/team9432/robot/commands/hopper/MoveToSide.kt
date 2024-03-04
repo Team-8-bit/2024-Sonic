@@ -1,6 +1,5 @@
 package org.team9432.robot.commands.hopper
 
-import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
@@ -8,9 +7,9 @@ import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 
-fun MoveToSide(side: MechanismSide): KCommand {
+fun MoveToSide(side: MechanismSide) = SuppliedCommand {
     // This shouldn't happen if there isn't a note in the intake
-    return if (!RobotState.notePosition.isIntake) InstantCommand {}
+    if (!RobotState.notePosition.isIntake) InstantCommand {}
     else {
         // If the note is going to a different side than the one it's already on
         val noteIsCrossing = RobotState.notePosition.side != side
