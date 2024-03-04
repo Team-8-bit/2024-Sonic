@@ -17,7 +17,7 @@ fun MoveToSide(side: MechanismSide) = SuppliedCommand {
             WaitCommand(0.125),
 
             // Both intakes need to be run when feeding across, but it could run only one when bending the note
-            CommandIntake.setVoltage(4.0, 4.0),
+            CommandIntake.intake(4.0, 4.0),
 
             // After the note is at the beam break, slowly unload and reload to align it
             WaitUntilCommand { RobotState.noteInHopperSide(side) }.afterSimDelay(1.0) {
@@ -26,7 +26,7 @@ fun MoveToSide(side: MechanismSide) = SuppliedCommand {
             },
 
             // Unload
-            CommandIntake.setVoltage(-5.0, -5.0),
+            CommandIntake.outtake(5.0, 5.0),
             CommandHopper.unloadFrom(side, volts = 5.0),
             WaitUntilCommand { !RobotState.noteInHopperSide(side) }.afterSimDelay(0.5) { BeambreakIOSim.setNoteInHopper(side, false) },
 

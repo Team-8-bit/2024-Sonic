@@ -8,6 +8,11 @@ fun KCommand.runsWhenDisabled(value: Boolean): KCommand {
     return this
 }
 
+fun KCommand.withInterruptBehaviour(behavior: KCommand.InterruptionBehavior): KCommand {
+    interruptionBehavior = behavior
+    return this
+}
+
 fun KCommand.withTimeout(seconds: Double) = ParallelRaceCommand(WaitCommand(seconds), this)
 
 fun KCommand.orSimTimeout(seconds: Double, effect: () -> Unit = {}): KCommand {

@@ -10,6 +10,6 @@ import org.team9432.robot.subsystems.intake.Intake
 
 fun Outtake() = SimpleCommand(
     requirements = setOf(Intake),
-    initialize = { Intake.setVoltage(-8.0, -8.0) },
+    initialize = { Intake.outtake(8.0, 8.0) },
     end = { Intake.stop() }
 )

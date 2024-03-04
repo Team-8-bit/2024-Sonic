@@ -1,7 +1,6 @@
 package org.team9432.robot.commands.shooter
 
 import org.team9432.lib.commandbased.commands.InstantCommand
-import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.lib.commandbased.commands.WaitCommand
 import org.team9432.robot.MechanismSide

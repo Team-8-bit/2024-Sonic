@@ -1,55 +1,54 @@
 package org.team9432.robot
 
 
-import edu.wpi.first.math.proto.Controller
-import org.team9432.lib.commandbased.commands.*
+import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.afterSimDelay
+import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.lib.wpilib.ChassisSpeeds
-import org.team9432.robot.auto.commands.testAuto
-import org.team9432.robot.commands.drivetrain.DriveStraightToPosition
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
-import org.team9432.robot.commands.drivetrain.MobileSpeakerAlign
-import org.team9432.robot.commands.drivetrain.StaticSpeakerAlign
-import org.team9432.robot.commands.hopper.MoveToSide
-import org.team9432.robot.commands.intake.AlignNote
-import org.team9432.robot.commands.intake.IntakeToBeambreak
-import org.team9432.robot.commands.intake.IntakeToBeambreak2
 import org.team9432.robot.commands.intake.Outtake
+import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.ShootStatic
-import org.team9432.robot.subsystems.amp.Amp
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
-import org.team9432.robot.subsystems.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.subsystems.hood.Hood
-import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.intake.CommandIntake
-import org.team9432.robot.subsystems.intake.Intake
-import org.team9432.robot.subsystems.limelight.Limelight
-import org.team9432.robot.subsystems.shooter.CommandShooter
-import org.team9432.robot.subsystems.shooter.Shooter
 
 object Controls {
     private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
 
-    val xSpeedSupplier = { -controller.leftY }
-    var ySpeedSupplier = { -controller.leftX }
-    var angleSupplier = { -controller.rightX }
+    private val xSpeedSupplier = { -controller.leftY }
+    private val ySpeedSupplier = { -controller.leftX }
+    private val angleSupplier = { -controller.rightX }
 
     init {
         Drivetrain.defaultCommand = FieldOrientedDrive()
 
-        // Pretend to get a note after 2 seconds in sim
-        controller.leftBumper.whileTrue(IntakeToBeambreak().afterSimDelay(2.0) {
-            BeambreakIOSim.setNoteInIntake(RobotState.getMovementDirection(), true)
-            BeambreakIOSim.setNoteInCenter(true)
-        }).onFalse(
-            SequentialCommand(
-                CommandIntake.stop(),
-                AlignNote(), AlignNote()).withTimeout(2.0)
-        )
+        /* --------------- REAL BUTTONS --------------- */
 
+        // Run Intake
+        controller.leftBumper
+            .whileTrue(TeleIntake().afterSimDelay(2.0) { BeambreakIOSim.setNoteInIntake(RobotState.getMovementDirection(), true) }) // Pretend to get a note after 2 seconds in sim
+            .onFalse(CommandIntake.stop()) // This should be blocked if the intake is still aligning the note
+
+        // Outtake Intake
+        controller.x.whileTrue(Outtake())
+
+        // Shoot Speaker
+        controller.rightTrigger.onTrue(ShootStatic(6000.0, 6000.0).withTimeout(10.0))
+
+        // Shoot Amplifier
+        controller.leftTrigger.onTrue(ShootStatic(2500.0, 2500.0).withTimeout(10.0))
+
+        // Reset Drivetrain Heading
+        controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
+
+
+        /* --------------- TEST BUTTONS --------------- */
+
+        // Clear note position
         controller.y.onTrue(InstantCommand {
             BeambreakIOSim.setNoteInIntakeAmpSide(false)
             BeambreakIOSim.setNoteInIntakeSpeakerSide(false)
@@ -59,27 +58,7 @@ object Controls {
             RobotState.notePosition = RobotState.NotePosition.NONE
         })
 
-        controller.x.whileTrue(Outtake())
-
-//        controller.x.onTrue(SuppliedCommand(Drivetrain) { DriveStraightToPosition(FieldConstants.ampPose) })
-
-        controller.rightTrigger.onTrue(ShootStatic(6000.0, 6000.0).withTimeout(10.0))
-        controller.leftTrigger.onTrue(ShootStatic(2500.0, 2500.0).withTimeout(10.0))
-
-//        controller.a.toggleOnTrue(
-//            SimpleCommand(
-//                execute = { Shooter.setVoltage(controller.rightTriggerAxisRaw * 1.0, 0.0)},
-//                end = {Shooter.stop()}
-//            )
-//        )
-
-        controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
-
-//        controller.start.onTrue(CommandShooter.setSpeed(2000.0, 0.0))
-//        controller.back.onTrue(CommandShooter.setSpeed(0.0, 0.0))
-
-       // controller.start.onTrue(testAuto)
-
+        // Raise Climbers
         controller.start.onTrue(InstantCommand(LeftClimber, RightClimber) {
             LeftClimber.setVoltage(6.0)
             RightClimber.setVoltage(6.0)
@@ -88,6 +67,7 @@ object Controls {
             RightClimber.stop()
         })
 
+        // Lower Climbers
         controller.back.onTrue(InstantCommand(LeftClimber, RightClimber) {
             LeftClimber.setVoltage(-6.0)
             RightClimber.setVoltage(-6.0)
@@ -95,11 +75,6 @@ object Controls {
             LeftClimber.stop()
             RightClimber.stop()
         })
-
-//        controller.leftBumper.onTrue(InstantCommand { Shooter.setVoltage(0.70, 0.70) }).onFalse(InstantCommand { Shooter.setVoltage(0.0, 0.0) })
-
-//        controller.rightTrigger.onTrue(StaticSpeakerAlign()).onFalse(FieldOrientedDrive())
-//        controller.leftTrigger.onTrue(MobileSpeakerAlign()).onFalse(FieldOrientedDrive())
     }
 
     fun getDrivetrainSpeeds(): ChassisSpeeds {
