@@ -8,6 +8,5 @@ object CommandIntake {
     fun intake(ampVolts: Double, speakerVolts: Double) = InstantCommand(Intake) { Intake.intake(ampVolts, speakerVolts) }
     fun outtake(ampVolts: Double, speakerVolts: Double) = InstantCommand(Intake) { Intake.outtake(ampVolts, speakerVolts) }
     fun stop() = InstantCommand(Intake) { Intake.stop() }
-    fun setSpeed(ampSideRPM: Double, speakerSideRPM: Double) = InstantCommand(Intake) { Intake.setSpeed(ampSideRPM, speakerSideRPM) }
     fun runTeleIntake(volts: Double) = InstantCommand(Intake) { Intake.runTeleIntake(volts) }
 }

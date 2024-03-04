@@ -36,11 +36,6 @@ object Intake: KSubsystem() {
         teleIntakeVolts = abs(volts)
     }
 
-    fun setSpeed(ampSideRPM: Double, speakerSideRPM: Double) {
-        ampSide.setSpeed(ampSideRPM)
-        speakerSide.setSpeed(speakerSideRPM)
-    }
-
     override fun periodic() {
         ampSide.periodic()
         speakerSide.periodic()
