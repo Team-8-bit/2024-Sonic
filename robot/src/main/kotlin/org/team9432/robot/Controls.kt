@@ -26,6 +26,7 @@ import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.intake.Intake
+import org.team9432.robot.subsystems.led.LEDCommands
 import org.team9432.robot.subsystems.limelight.Limelight
 import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.shooter.Shooter
@@ -100,6 +101,8 @@ object Controls {
 
 //        controller.rightTrigger.onTrue(StaticSpeakerAlign()).onFalse(FieldOrientedDrive())
 //        controller.leftTrigger.onTrue(MobileSpeakerAlign()).onFalse(FieldOrientedDrive())
+
+        controller.b.onTrue(LEDCommands.testMode())
     }
 
     fun getDrivetrainSpeeds(): ChassisSpeeds {
