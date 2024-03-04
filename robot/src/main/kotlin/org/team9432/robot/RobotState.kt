@@ -1,7 +1,6 @@
 package org.team9432.robot
 
 import org.littletonrobotics.junction.Logger
-import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
@@ -18,6 +17,7 @@ object RobotState {
     fun noteInAnyHopper() = noteInAmpSideHopperBeambreak() || noteInSpeakerSideHopperBeambreak()
 
     fun noteInAnyIntake() = noteInAmpSideIntakeBeambreak() || noteInSpeakerSideIntakeBeambreak()
+
     // This prioritizes the amp side, but it should be really hard to actually get a note in both
     fun getOneIntakeBeambreak(): MechanismSide? {
         return if (noteInAmpSideIntakeBeambreak()) MechanismSide.AMP
@@ -43,9 +43,17 @@ object RobotState {
 
     enum class NotePosition {
         AMP_INTAKE, SPEAKER_INTAKE, AMP_HOPPER, SPEAKER_HOPPER, NONE;
-        val isIntake get() = this == AMP_INTAKE || this == SPEAKER_INTAKE
 
+        val isIntake get() = this == AMP_INTAKE || this == SPEAKER_INTAKE
         val isHopper get() = this == AMP_HOPPER || this == SPEAKER_HOPPER
+
+        val side
+            get() = when (this) {
+                AMP_INTAKE, AMP_HOPPER -> MechanismSide.AMP
+                SPEAKER_INTAKE, SPEAKER_HOPPER -> MechanismSide.SPEAKER
+                NONE -> null
+            }
+
     }
 
 }
@@ -57,6 +65,7 @@ enum class MechanismSide {
         AMP -> RobotState.NotePosition.AMP_INTAKE
         SPEAKER -> RobotState.NotePosition.SPEAKER_INTAKE
     }
+
     fun getNotePositionHopper() = when (this) {
         AMP -> RobotState.NotePosition.AMP_HOPPER
         SPEAKER -> RobotState.NotePosition.SPEAKER_HOPPER
