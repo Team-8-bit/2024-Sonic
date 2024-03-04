@@ -10,4 +10,5 @@ object CommandIntake {
     fun stop() = InstantCommand(Intake) { Intake.stop() }
     fun runIntake(side: MechanismSide, volts: Double) = InstantCommand(Intake) { Intake.runIntake(side, volts) }
     fun setSpeed(ampSideRPM: Double, speakerSideRPM: Double) = InstantCommand(Intake) { Intake.setSpeed(ampSideRPM, speakerSideRPM) }
+    fun runCorrectIntake(volts: Double) = InstantCommand(Intake) { Intake.runCorrectIntake(volts) }
 }

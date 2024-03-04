@@ -91,6 +91,10 @@ object Robot: LoggedRobot() {
         }
     }
 
+    override fun disabledInit() {
+        KCommandScheduler.cancelAll()
+    }
+
     enum class Mode {
         REAL, SIM, REPLAY
     }

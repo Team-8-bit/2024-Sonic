@@ -13,6 +13,8 @@ import org.team9432.robot.commands.drivetrain.StaticSpeakerAlign
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.AlignNote
 import org.team9432.robot.commands.intake.IntakeToBeambreak
+import org.team9432.robot.commands.intake.IntakeToBeambreak2
+import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.shooter.ShootStatic
 import org.team9432.robot.subsystems.amp.Amp
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
@@ -22,6 +24,7 @@ import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.hopper.Hopper
+import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.intake.Intake
 import org.team9432.robot.subsystems.limelight.Limelight
 import org.team9432.robot.subsystems.shooter.CommandShooter
@@ -41,7 +44,11 @@ object Controls {
         controller.leftBumper.whileTrue(IntakeToBeambreak().afterSimDelay(2.0) {
             BeambreakIOSim.setNoteInIntake(RobotState.getMovementDirection(), true)
             BeambreakIOSim.setNoteInCenter(true)
-        }).onFalse(AlignNote().withTimeout(2.0))
+        }).onFalse(
+            SequentialCommand(
+                CommandIntake.stop(),
+                AlignNote(), AlignNote()).withTimeout(2.0)
+        )
 
         controller.y.onTrue(InstantCommand {
             BeambreakIOSim.setNoteInIntakeAmpSide(false)
@@ -52,14 +59,12 @@ object Controls {
             RobotState.notePosition = RobotState.NotePosition.NONE
         })
 
-        controller.x.onTrue(MoveToSide(MechanismSide.AMP).withTimeout(3.0))
-        controller.b.onTrue(MoveToSide(MechanismSide.SPEAKER).withTimeout(3.0))
+        controller.x.whileTrue(Outtake())
 
 //        controller.x.onTrue(SuppliedCommand(Drivetrain) { DriveStraightToPosition(FieldConstants.ampPose) })
-//        controller.b.onTrue(InstantCommand(Drivetrain) {})
 
-        controller.rightTrigger.onTrue(ShootStatic(6000.0, 6000.0))
-        controller.leftTrigger.onTrue(ShootStatic(2000.0, 2000.0))
+        controller.rightTrigger.onTrue(ShootStatic(6000.0, 6000.0).withTimeout(10.0))
+        controller.leftTrigger.onTrue(ShootStatic(2500.0, 2500.0).withTimeout(10.0))
 
 //        controller.a.toggleOnTrue(
 //            SimpleCommand(

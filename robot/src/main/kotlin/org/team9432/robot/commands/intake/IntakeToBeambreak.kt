@@ -7,7 +7,7 @@ import org.team9432.robot.RobotState.NotePosition
 import org.team9432.robot.subsystems.intake.Intake
 
 class IntakeToBeambreak: KCommand() {
-    val intakingVolts = 7.0
+    val intakingVolts = 5.0
     var lastSide: MechanismSide? = null
 
     override var requirements = setOf(Intake)
@@ -35,8 +35,7 @@ class IntakeToBeambreak: KCommand() {
 
     // End when a note hits the center beambreak
     override fun isFinished(): Boolean {
-        return (!RobotState.noteInAmpSideIntakeBeambreak() && lastSide == MechanismSide.AMP)
-                || (!RobotState.noteInSpeakerSideIntakeBeambreak() && lastSide == MechanismSide.SPEAKER)
+        return (!RobotState.noteInAmpSideIntakeBeambreak() && lastSide == MechanismSide.AMP) || (!RobotState.noteInSpeakerSideIntakeBeambreak() && lastSide == MechanismSide.SPEAKER)
     }
 
     override fun end(interrupted: Boolean) {
