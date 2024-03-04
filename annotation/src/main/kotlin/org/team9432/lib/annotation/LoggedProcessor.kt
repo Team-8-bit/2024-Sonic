@@ -23,12 +23,15 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor
         "kotlin.LongArray",
         "kotlin.FloatArray",
         "kotlin.DoubleArray",
+        "kotlin.IntArray",
         "kotlin.Array",
-        "edu.wpi.first.math.geometry.Rotation2d"
+        "edu.wpi.first.math.geometry.Rotation2d",
+        "edu.wpi.first.math.geometry.Pose3d",
     )
 
     private val arrayTypes = listOf(
         "edu.wpi.first.math.geometry.Rotation2d",
+        "edu.wpi.first.math.geometry.Pose3d",
     )
     private val destructureTypes = listOf(
         "kotlin.Array",

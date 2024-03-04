@@ -13,9 +13,9 @@ import org.team9432.robot.subsystems.shooter.CommandShooter
 fun ShootStatic(rpmLeft: Double, rpmRight: Double) = SequentialCommand(
     MoveToSide(MechanismSide.SPEAKER),
     CommandShooter.setSpeed(rpmLeft, rpmRight),
-    WaitCommand(2.0),
+    WaitCommand(0.75),
     CommandHopper.loadTo(MechanismSide.SPEAKER, 5.0),
-    WaitCommand(5.0),
+    WaitCommand(1.0),
     CommandShooter.stop(),
     CommandHopper.stop(),
     InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE }

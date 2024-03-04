@@ -11,8 +11,8 @@ import org.team9432.robot.subsystems.intake.Intake
 fun AlignNote() = SuppliedCommand(Intake) {
     when (RobotState.notePosition) {
         RobotState.NotePosition.AMP_INTAKE -> SequentialCommand(
-            CommandIntake.runIntake(MechanismSide.AMP, -3.0),
-            CommandHopper.unloadFrom(MechanismSide.SPEAKER, 3.0),
+            CommandIntake.runIntake(MechanismSide.AMP, -4.0),
+//            CommandHopper.unloadFrom(MechanismSide.SPEAKER, 4.0),
             WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.afterSimDelay(0.5) {
                 BeambreakIOSim.setNoteInIntakeAmpSide(true)
             },
@@ -21,8 +21,8 @@ fun AlignNote() = SuppliedCommand(Intake) {
         )
 
         RobotState.NotePosition.SPEAKER_INTAKE -> SequentialCommand(
-            CommandIntake.runIntake(MechanismSide.SPEAKER, -3.0),
-            CommandHopper.unloadFrom(MechanismSide.AMP, 3.0),
+            CommandIntake.runIntake(MechanismSide.SPEAKER, -4.0),
+//            CommandHopper.unloadFrom(MechanismSide.AMP, 4.0),
             WaitUntilCommand { RobotState.noteInSpeakerSideIntakeBeambreak() }.afterSimDelay(0.5) {
                 BeambreakIOSim.setNoteInIntakeSpeakerSide(true)
             },

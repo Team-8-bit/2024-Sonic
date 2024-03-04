@@ -3,6 +3,7 @@ package org.team9432.robot.subsystems.intake
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.robot.MechanismSide
+import org.team9432.robot.RobotState
 
 object Intake: KSubsystem() {
     private val ampSide = IntakeSide(IntakeSideIO.IntakeSide.AMP)
@@ -16,6 +17,17 @@ object Intake: KSubsystem() {
     fun stop() {
         ampSide.stop()
         speakerSide.stop()
+    }
+
+    fun runCorrectIntake(volts: Double) {
+        if (RobotState.shouldRunOneIntake()) {
+            when (RobotState.getMovementDirection()) {
+                MechanismSide.SPEAKER -> setVoltage(0.0, volts)
+                MechanismSide.AMP -> setVoltage(volts, 0.0)
+            }
+        } else {
+            setVoltage(volts, volts)
+        }
     }
 
     fun runIntake(side: MechanismSide, volts: Double) {
