@@ -6,9 +6,10 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.RobotState.NotePosition
 import org.team9432.robot.subsystems.intake.Intake
 
+@Deprecated("Use TeleIntake")
 class IntakeToBeambreak: KCommand() {
-    val intakingVolts = 5.0
-    var lastSide: MechanismSide? = null
+    private val intakingVolts = 5.0
+    private var lastSide: MechanismSide? = null
 
     override var requirements = setOf(Intake)
 
@@ -20,11 +21,11 @@ class IntakeToBeambreak: KCommand() {
         // If the robot is moving fast, only run one intake
         if (RobotState.shouldRunOneIntake()) {
             when (RobotState.getMovementDirection()) {
-                MechanismSide.SPEAKER -> Intake.setVoltage(0.0, intakingVolts)
-                MechanismSide.AMP -> Intake.setVoltage(intakingVolts, 0.0)
+                MechanismSide.SPEAKER -> Intake.intake(0.0, intakingVolts)
+                MechanismSide.AMP -> Intake.intake(intakingVolts, 0.0)
             }
         } else {
-            Intake.setVoltage(intakingVolts, intakingVolts)
+            Intake.intake(intakingVolts, intakingVolts)
         }
 
         when {
@@ -41,7 +42,7 @@ class IntakeToBeambreak: KCommand() {
     override fun end(interrupted: Boolean) {
         // If there is now a note in the intake, check which one and update the robot state accordingly
         lastSide?.let {
-            when(it) {
+            when (it) {
                 MechanismSide.AMP -> RobotState.notePosition = NotePosition.AMP_INTAKE
                 MechanismSide.SPEAKER -> RobotState.notePosition = NotePosition.SPEAKER_INTAKE
             }

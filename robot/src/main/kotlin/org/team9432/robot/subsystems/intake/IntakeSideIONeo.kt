@@ -9,7 +9,6 @@ class IntakeSideIONeo(override val intakeSide: IntakeSideIO.IntakeSide): IntakeS
     private val spark = KSparkMAX(intakeSide.motorID)
 
     private val encoder = spark.encoder
-    private val pid = spark.pidController
 
     private val gearRatio = 2
 
@@ -30,23 +29,6 @@ class IntakeSideIONeo(override val intakeSide: IntakeSideIO.IntakeSide): IntakeS
 
     override fun setVoltage(volts: Double) {
         spark.setVoltage(volts)
-    }
-
-    override fun setSpeed(rotationsPerMinute: Double, feedforwardVolts: Double) {
-        pid.setReference(
-            rotationsPerMinute * gearRatio,
-            ControlType.kVelocity,
-            0, // PID slot
-            feedforwardVolts,
-            ArbFFUnits.kVoltage
-        )
-    }
-
-    override fun setPID(p: Double, i: Double, d: Double) {
-        pid.setP(p, 0)
-        pid.setI(i, 0)
-        pid.setD(d, 0)
-        pid.setFF(0.0, 0)
     }
 
     override fun stop() {
