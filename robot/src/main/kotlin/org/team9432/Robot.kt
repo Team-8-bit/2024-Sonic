@@ -21,6 +21,7 @@ import org.team9432.robot.subsystems.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
+import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.intake.Intake
@@ -69,6 +70,7 @@ object Robot: LoggedRobot() {
 
         Controls
         Vision
+        Gyro
         Drivetrain
         Hopper
         Intake

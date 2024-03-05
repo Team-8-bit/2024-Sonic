@@ -10,6 +10,7 @@ import org.team9432.lib.util.PoseUtil
 import org.team9432.lib.wpilib.ChassisSpeeds
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
+import org.team9432.robot.subsystems.gyro.Gyro
 
 class PathPlannerFollower(private val trajectory: PathPlannerTrajectory, private val allowFlip: Boolean = true): KCommand() {
     override val requirements = setOf(Drivetrain)
@@ -32,7 +33,7 @@ class PathPlannerFollower(private val trajectory: PathPlannerTrajectory, private
             Drivetrain.setPositionGoal(PoseUtil.flip(state.targetHolonomicPose))
         }
 
-        val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(Drivetrain.calculatePositionSpeed(), Drivetrain.yaw)
+        val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(Drivetrain.calculatePositionSpeed(), Gyro.getYaw().degrees)
         Drivetrain.setSpeeds(speeds)
     }
 

@@ -8,45 +8,30 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
-import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
 import org.team9432.LOOP_PERIOD_SECS
-import org.team9432.Robot
-import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
-import org.team9432.lib.drivers.gyro.GyroIO
-import org.team9432.lib.drivers.gyro.GyroIOPigeon2
-import org.team9432.lib.drivers.gyro.LoggedGyroIOInputs
 import org.team9432.lib.util.SwerveUtil
 import org.team9432.lib.wpilib.ChassisSpeeds
+import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.vision.Vision
 import kotlin.math.abs
 
 
 object Drivetrain: KSubsystem() {
-    private val modules = ModuleIO.Module.entries.map { Module(it) }
-
-    private val gyroInputs = LoggedGyroIOInputs()
-    private val gyro: GyroIO = when (Robot.mode) {
-        REAL, REPLAY -> GyroIOPigeon2()
-        SIM -> object: GyroIO {}
-    }
+    val modules = ModuleIO.Module.entries.map { Module(it) }
 
     private val angleController = ProfiledPIDController(5.0, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
 
     private val xController = PIDController(3.0, 0.0, 0.0)
     private val yController = PIDController(3.0, 0.0, 0.0)
 
-    private val kinematics: SwerveDriveKinematics
+    val kinematics: SwerveDriveKinematics
     private val poseEstimator: SwerveDrivePoseEstimator
-
-    private var rawGyroRotation = Rotation2d()
-
-    private val lastModulePositions = MutableList(4) { SwerveModulePosition() }
 
     init {
         angleController.enableContinuousInput(-180.0, 180.0)
@@ -56,7 +41,7 @@ object Drivetrain: KSubsystem() {
 
         kinematics = SwerveDriveKinematics(*MODULE_TRANSLATIONS)
         poseEstimator = SwerveDrivePoseEstimator(
-            kinematics, Rotation2d.fromDegrees(yaw), lastModulePositions.toTypedArray(), Pose2d(),
+            kinematics, Rotation2d(), getModulePositions().toTypedArray(), Pose2d(),
             VecBuilder.fill(Units.inchesToMeters(3.0), Units.inchesToMeters(3.0), Math.toDegrees(4.0)),
             VecBuilder.fill(Units.inchesToMeters(6.0), Units.inchesToMeters(6.0), Math.toDegrees(10.0))
         )
@@ -64,9 +49,6 @@ object Drivetrain: KSubsystem() {
     }
 
     override fun periodic() {
-        gyro.updateInputs(gyroInputs)
-        Logger.processInputs("Gyro", gyroInputs)
-
         modules.forEach(Module::periodic)
 
         if (DriverStation.isDisabled()) {
@@ -79,30 +61,11 @@ object Drivetrain: KSubsystem() {
         // Read wheel positions and deltas from each module
         val modulePositions = getModulePositions()
 
-        // Update gyro angle
-        if (gyroInputs.connected) {
-            rawGyroRotation = gyroInputs.yaw
-        } else {
-            val moduleDeltas = arrayOfNulls<SwerveModulePosition>(4)
-
-            for (i in modules.indices) {
-                moduleDeltas[i] = SwerveModulePosition(
-                    modulePositions[i].distanceMeters - lastModulePositions[i].distanceMeters,
-                    modulePositions[i].angle
-                )
-                lastModulePositions[i] = modulePositions[i]
-            }
-
-            // Use the angle delta from the kinematics and module deltas
-            val twist = kinematics.toTwist2d(*moduleDeltas)
-            rawGyroRotation = rawGyroRotation.plus(Rotation2d(twist.dtheta))
-        }
-
         Vision.getEstimatedPose2d()?.let {
             poseEstimator.addVisionMeasurement(it.first, it.second)
         }
 
-        poseEstimator.update(rawGyroRotation, modulePositions.toTypedArray())
+        poseEstimator.update(Gyro.getYaw(), modulePositions.toTypedArray())
 
         Logger.recordOutput("Drive/Odometry", getPose())
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
@@ -143,7 +106,7 @@ object Drivetrain: KSubsystem() {
     fun atYGoal() = abs(yController.positionError) < POSITIONAL_TOLERANCE
 
     fun setAngleGoal(angle: Rotation2d) = angleController.setGoal(angle.degrees)
-    fun calculateAngleSpeed() = angleController.calculate(yaw)
+    fun calculateAngleSpeed() = angleController.calculate(Gyro.getYaw().degrees)
     fun atAngleGoal() = abs(angleController.positionError) < ROTATIONAL_TOLERANCE
 
     fun stop() = setSpeeds(ChassisSpeeds())
@@ -153,19 +116,12 @@ object Drivetrain: KSubsystem() {
         stop()
     }
 
-    fun resetGyro() = gyro.setYaw(0.0)
     fun getPose(): Pose2d = poseEstimator.estimatedPosition
 
     fun getSpeeds() = ChassisSpeeds.fromWPIChassisSpeeds(kinematics.toChassisSpeeds(*getModuleStates().toTypedArray()))
 
-    var yaw: Double
-        get() = rawGyroRotation.degrees
-        set(angle) {
-            gyro.setYaw(angle)
-        }
-
-    private fun getModulePositions() = modules.map { it.position }
-    private fun getModuleStates() = modules.map { it.state }
+    fun getModulePositions() = modules.map { it.position }
+    fun getModuleStates() = modules.map { it.state }
 
     private val MODULE_TRANSLATIONS: Array<Translation2d>
         get() {

@@ -1,4 +1,4 @@
-package org.team9432.lib.drivers.gyro
+package org.team9432.robot.subsystems.gyro
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.annotation.Logged

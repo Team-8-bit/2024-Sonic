@@ -4,6 +4,7 @@ import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.wpilib.ChassisSpeeds
 import org.team9432.robot.Controls
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
+import org.team9432.robot.subsystems.gyro.Gyro
 
 class FieldOrientedDrive: KCommand() {
     override val requirements = setOf(Drivetrain)
@@ -14,6 +15,6 @@ class FieldOrientedDrive: KCommand() {
         val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond
         val rSpeed = Math.toRadians(Controls.angle * 360.0)
 
-        Drivetrain.setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Drivetrain.yaw))
+        Drivetrain.setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Gyro.getYaw().degrees))
     }
 }

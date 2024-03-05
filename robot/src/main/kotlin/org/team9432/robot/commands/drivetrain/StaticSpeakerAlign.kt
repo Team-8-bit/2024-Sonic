@@ -10,6 +10,7 @@ import org.team9432.robot.Controls
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
+import org.team9432.robot.subsystems.gyro.Gyro
 import kotlin.math.atan2
 
 class StaticSpeakerAlign(private val target: Pose2d): KCommand() {
@@ -21,7 +22,7 @@ class StaticSpeakerAlign(private val target: Pose2d): KCommand() {
         Drivetrain.setAngleGoal(RobotPosition.angleTo(target))
         val rSpeed = Drivetrain.calculateAngleSpeed()
 
-        val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(0.0, 0.0, rSpeed, Drivetrain.yaw)
+        val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(0.0, 0.0, rSpeed, Gyro.getYaw().degrees)
         Drivetrain.setSpeeds(speeds)
     }
 

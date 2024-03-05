@@ -15,6 +15,7 @@ import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
+import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.led.LEDCommands
 
@@ -65,7 +66,7 @@ object Controls {
 
         // Reset Drivetrain Heading
         controller.a.and(isDefaultMode)
-            .onTrue(InstantCommand { Drivetrain.resetGyro() })
+            .onTrue(InstantCommand { Gyro.resetYaw() })
 
         // Clear note position
         controller.y.onTrue(InstantCommand {

@@ -7,6 +7,7 @@ import org.team9432.lib.wpilib.ChassisSpeeds
 import org.team9432.robot.Controls
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
+import org.team9432.robot.subsystems.gyro.Gyro
 
 class TargetDrive(private val target: () -> Pose2d): KCommand() {
     override val requirements = setOf(Drivetrain)
@@ -23,7 +24,7 @@ class TargetDrive(private val target: () -> Pose2d): KCommand() {
         Drivetrain.setAngleGoal(RobotPosition.angleTo(currentTarget))
         val rSpeed = Drivetrain.calculateAngleSpeed()
 
-        val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Drivetrain.yaw)
+        val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Gyro.getYaw().degrees)
         Drivetrain.setSpeeds(speeds)
     }
 }
