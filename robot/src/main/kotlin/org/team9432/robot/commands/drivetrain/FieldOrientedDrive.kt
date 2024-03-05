@@ -1,18 +1,19 @@
 package org.team9432.robot.commands.drivetrain
 
 import org.team9432.lib.commandbased.KCommand
+import org.team9432.lib.wpilib.ChassisSpeeds
+import org.team9432.robot.Controls
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
 class FieldOrientedDrive: KCommand() {
     override val requirements = setOf(Drivetrain)
 
-    override fun initialize() {
-        Drivetrain.mode = Drivetrain.DrivetrainMode.MANUAL
-    }
+    override fun execute() {
+        val maxSpeedMetersPerSecond = if (Controls.fastDrive) 6.0 else 2.5
+        val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond
+        val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond
+        val rSpeed = Math.toRadians(Controls.angle * 360.0)
 
-    override fun end(interrupted: Boolean) {
-        Drivetrain.stop()
+        Drivetrain.setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Drivetrain.yaw))
     }
-
-    override fun isFinished() = false
 }

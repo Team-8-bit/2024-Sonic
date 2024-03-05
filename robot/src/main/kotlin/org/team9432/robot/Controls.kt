@@ -7,7 +7,6 @@ import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
-import org.team9432.lib.wpilib.ChassisSpeeds
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
@@ -22,9 +21,10 @@ import org.team9432.robot.subsystems.led.LEDCommands
 object Controls {
     private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
 
-    private val xSpeedSupplier = { -controller.leftY }
-    private val ySpeedSupplier = { -controller.leftX }
-    private val angleSupplier = { -controller.rightX }
+    val xSpeed get() = -controller.leftY
+    val ySpeed get() = -controller.leftX
+    val angle get() = -controller.rightX
+    val fastDrive get() = controller.rightBumper.asBoolean
 
     private var currentMode = ControllerMode.DEFAULT
         set(value) {
@@ -124,13 +124,5 @@ object Controls {
 
     private enum class ControllerMode {
         DEFAULT, CLIMB, LED
-    }
-
-    fun getDrivetrainSpeeds(): ChassisSpeeds {
-        val maxSpeedMetersPerSecond = if (controller.rightBumper.asBoolean) 6.0 else 2.5
-        val xSpeed = xSpeedSupplier.invoke() * maxSpeedMetersPerSecond
-        val ySpeed = ySpeedSupplier.invoke() * maxSpeedMetersPerSecond
-        val radiansPerSecond = Math.toRadians(angleSupplier.invoke() * 360.0)
-        return ChassisSpeeds(xSpeed, ySpeed, radiansPerSecond)
     }
 }

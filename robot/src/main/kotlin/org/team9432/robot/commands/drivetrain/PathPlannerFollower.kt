@@ -6,15 +6,15 @@ import edu.wpi.first.wpilibj.Timer
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.lib.commandbased.KCommand
-import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.util.PoseUtil
+import org.team9432.lib.wpilib.ChassisSpeeds
+import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.subsystems.drivetrain.Drivetrain.DrivetrainMode
 
 class PathPlannerFollower(private val trajectory: PathPlannerTrajectory, private val allowFlip: Boolean = true): KCommand() {
-    private val trajectoryTimer = Timer()
+    override val requirements = setOf(Drivetrain)
 
-    override val requirements: MutableSet<KSubsystem> = mutableSetOf(Drivetrain)
+    private val trajectoryTimer = Timer()
 
     override fun initialize() {
         trajectoryTimer.reset()
@@ -22,8 +22,6 @@ class PathPlannerFollower(private val trajectory: PathPlannerTrajectory, private
 
         // Display the trajectory in advantagescope, but remove a bunch of states to reduce lag
         Logger.recordOutput("CurrentTrajectory", *trajectory.states.map { it.targetHolonomicPose }.filterIndexed { index, _ -> index % 1 /* <- Increase this number to reduce states */ == 0 }.toTypedArray())
-
-        Drivetrain.mode = DrivetrainMode.PID
     }
 
     override fun execute() {
@@ -33,15 +31,16 @@ class PathPlannerFollower(private val trajectory: PathPlannerTrajectory, private
         } else {
             Drivetrain.setPositionGoal(PoseUtil.flip(state.targetHolonomicPose))
         }
+
+        val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(Drivetrain.calculatePositionSpeed(), Drivetrain.yaw)
+        Drivetrain.setSpeeds(speeds)
     }
 
     override fun isFinished(): Boolean {
-        if (Drivetrain.mode != DrivetrainMode.PID) return true
-
         return if (Robot.alliance == Alliance.Blue || !allowFlip) {
-            Drivetrain.isNear(trajectory.endState.targetHolonomicPose, 0.1)
+            RobotPosition.isNear(trajectory.endState.targetHolonomicPose, 0.1)
         } else {
-            Drivetrain.isNear(PoseUtil.flip(trajectory.endState.targetHolonomicPose), 0.1)
+            RobotPosition.isNear(PoseUtil.flip(trajectory.endState.targetHolonomicPose), 0.1)
         }
     }
 

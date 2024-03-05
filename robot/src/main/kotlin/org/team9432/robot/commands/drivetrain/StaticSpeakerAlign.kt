@@ -5,32 +5,26 @@ import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.util.PoseUtil
+import org.team9432.lib.wpilib.ChassisSpeeds
+import org.team9432.robot.Controls
 import org.team9432.robot.FieldConstants
+import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.atan2
 
-class StaticSpeakerAlign: KCommand() {
+class StaticSpeakerAlign(private val target: Pose2d): KCommand() {
     override val requirements = setOf(Drivetrain)
 
-    override fun initialize() {
-        Drivetrain.mode = Drivetrain.DrivetrainMode.STATIC_AIM
-    }
-
     override fun execute() {
-        val drivetrainPose = Drivetrain.getPose()
-        val speakerPose = FieldConstants.speakerPose
+        Logger.recordOutput("Drive/AngleTarget", target)
 
-        Logger.recordOutput("TargetPose", FieldConstants.speakerPose)
+        Drivetrain.setAngleGoal(RobotPosition.angleTo(target))
+        val rSpeed = Drivetrain.calculateAngleSpeed()
 
-        Drivetrain.setAutoAlignGoal(PoseUtil.angleBetween(drivetrainPose, speakerPose))
+        val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(0.0, 0.0, rSpeed, Drivetrain.yaw)
+        Drivetrain.setSpeeds(speeds)
     }
 
-    override fun end(interrupted: Boolean) {
-        Logger.recordOutput("TargetPose", *emptyArray<Pose2d>())
-        Drivetrain.stopAndX()
-    }
-
-    override fun isFinished(): Boolean {
-        return false
-    }
+    override fun end(interrupted: Boolean) = Drivetrain.stopAndX()
+    override fun isFinished() = Drivetrain.atAngleGoal()
 }

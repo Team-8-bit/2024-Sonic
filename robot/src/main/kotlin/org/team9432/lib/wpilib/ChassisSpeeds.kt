@@ -22,7 +22,7 @@ class ChassisSpeeds(vxMetersPerSecond: Double = 0.0, vyMetersPerSecond: Double =
         fun fromFieldRelativeSpeeds(
             fieldRelativeSpeeds: edu.wpi.first.math.kinematics.ChassisSpeeds,
             robotAngle: Double,
-        ): edu.wpi.first.math.kinematics.ChassisSpeeds {
+        ): ChassisSpeeds {
             return fromFieldRelativeSpeeds(
                 fieldRelativeSpeeds.vxMetersPerSecond,
                 fieldRelativeSpeeds.vyMetersPerSecond,

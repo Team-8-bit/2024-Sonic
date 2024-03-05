@@ -11,10 +11,4 @@ object PoseUtil {
     fun flip(input: Pose2d): Pose2d {
         return Pose2d(FIELD_MIDLINE + (FIELD_MIDLINE - input.x), input.y, Rotation2d.fromDegrees((input.rotation.degrees + 180) * -1))
     }
-
-    fun angleBetween(one: Pose2d, two: Pose2d): Rotation2d {
-        val robotRelativeSpeakerPoseX = two.x - one.x
-        val robotRelativeSpeakerPoseY = two.y - one.y
-        return Rotation2d(atan2(robotRelativeSpeakerPoseY, robotRelativeSpeakerPoseX))
-    }
 }

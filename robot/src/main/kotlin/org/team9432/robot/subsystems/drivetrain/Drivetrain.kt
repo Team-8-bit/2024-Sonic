@@ -23,16 +23,11 @@ import org.team9432.lib.drivers.gyro.GyroIOPigeon2
 import org.team9432.lib.drivers.gyro.LoggedGyroIOInputs
 import org.team9432.lib.util.SwerveUtil
 import org.team9432.lib.wpilib.ChassisSpeeds
-import org.team9432.robot.Controls
 import org.team9432.robot.subsystems.vision.Vision
 import kotlin.math.abs
-import kotlin.math.hypot
 
 
 object Drivetrain: KSubsystem() {
-    private const val MAX_ANGULAR_SPEED_DEGREES_PER_SECOND = 360.0
-    private const val MAX_VELOCITY_METERS_PER_SECOND = 5.0
-
     private val modules = ModuleIO.Module.entries.map { Module(it) }
 
     private val gyroInputs = LoggedGyroIOInputs()
@@ -50,13 +45,6 @@ object Drivetrain: KSubsystem() {
     private val poseEstimator: SwerveDrivePoseEstimator
 
     private var rawGyroRotation = Rotation2d()
-
-    var mode = DrivetrainMode.MANUAL
-        set(value) {
-            if (value == DrivetrainMode.SHOOT_DRIVE) angleController.reset(yaw)
-            if (value == DrivetrainMode.STATIC_AIM) angleController.reset(yaw)
-            field = value
-        }
 
     private val lastModulePositions = MutableList(4) { SwerveModulePosition() }
 
@@ -90,21 +78,21 @@ object Drivetrain: KSubsystem() {
 
         // Read wheel positions and deltas from each module
         val modulePositions = getModulePositions()
-        val moduleDeltas = arrayOfNulls<SwerveModulePosition>(4)
-
-        for (i in modules.indices) {
-            moduleDeltas[i] = SwerveModulePosition(
-                modulePositions[i].distanceMeters - lastModulePositions[i].distanceMeters,
-                modulePositions[i].angle
-            )
-            lastModulePositions[i] = modulePositions[i]
-        }
 
         // Update gyro angle
         if (gyroInputs.connected) {
-            // Use the real gyro angle
             rawGyroRotation = gyroInputs.yaw
         } else {
+            val moduleDeltas = arrayOfNulls<SwerveModulePosition>(4)
+
+            for (i in modules.indices) {
+                moduleDeltas[i] = SwerveModulePosition(
+                    modulePositions[i].distanceMeters - lastModulePositions[i].distanceMeters,
+                    modulePositions[i].angle
+                )
+                lastModulePositions[i] = modulePositions[i]
+            }
+
             // Use the angle delta from the kinematics and module deltas
             val twist = kinematics.toTwist2d(*moduleDeltas)
             rawGyroRotation = rawGyroRotation.plus(Rotation2d(twist.dtheta))
@@ -116,49 +104,14 @@ object Drivetrain: KSubsystem() {
 
         poseEstimator.update(rawGyroRotation, modulePositions.toTypedArray())
 
-        when (mode) {
-            DrivetrainMode.PID -> {
-                val currentPose = getPose()
-                val vx = xController.calculate(currentPose.x)
-                val vy = yController.calculate(currentPose.y)
-                val va = Math.toRadians(angleController.calculate(yaw))
-
-                setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vx, vy, va, yaw))
-            }
-
-            DrivetrainMode.MANUAL -> {
-                setSpeeds(ChassisSpeeds.toFieldRelativeSpeeds(Controls.getDrivetrainSpeeds(), -yaw))
-            }
-
-            DrivetrainMode.SHOOT_DRIVE -> {
-                val manualSpeeds = Controls.getDrivetrainSpeeds()
-                val vx = manualSpeeds.vxMetersPerSecond
-                val vy = manualSpeeds.vyMetersPerSecond
-                val va = Math.toRadians(angleController.calculate(yaw))
-
-                setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vx, vy, va, yaw))
-            }
-
-            DrivetrainMode.STATIC_AIM -> {
-                val va = Math.toRadians(angleController.calculate(yaw))
-
-                if (atAutoAlignGoal()) stopAndX()
-                else setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0.0, 0.0, va, yaw))
-            }
-        }
-
-        Logger.recordOutput("Odometry", getPose())
-        Logger.recordOutput("CurrentSpeed", getRobotRelativeSpeeds().vxMetersPerSecond)
-
-        val fieldPose = getFieldRelativeSpeeds()
-        Logger.recordOutput("FieldRelativeSpeed", Pose2d(fieldPose.vxMetersPerSecond, fieldPose.vyMetersPerSecond, Rotation2d(fieldPose.omegaRadiansPerSecond)))
+        Logger.recordOutput("Drive/Odometry", getPose())
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
     }
 
-    private fun setSpeeds(speeds: ChassisSpeeds) {
+    fun setSpeeds(speeds: ChassisSpeeds) {
         val discreteSpeeds = SwerveUtil.correctForDynamics(speeds, LOOP_PERIOD_SECS)
         val targetStates = kinematics.toSwerveModuleStates(discreteSpeeds)
-        SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, MAX_VELOCITY_METERS_PER_SECOND)
+        SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, 6.0)
 
         // Send setpoints to modules
         val optimizedSetpointStates = arrayOfNulls<SwerveModuleState>(4)
@@ -167,28 +120,31 @@ object Drivetrain: KSubsystem() {
             optimizedSetpointStates[i] = modules[i].runSetpoint(targetStates[i])
         }
 
-        // Log setpoint states
-        Logger.recordOutput("SwerveStates/Setpoints", *targetStates)
-        Logger.recordOutput("SwerveStates/SetpointsOptimized", *optimizedSetpointStates)
+        Logger.recordOutput("Drive/Setpoints", *targetStates)
+        Logger.recordOutput("Drive/SetpointsOptimized", *optimizedSetpointStates)
     }
 
-    fun setPositionGoal(pose2d: Pose2d) {
-        Logger.recordOutput("Drive/PositionGoal", pose2d)
-        xController.setpoint = pose2d.x
-        yController.setpoint = pose2d.y
-        angleController.setGoal(pose2d.rotation.degrees)
+    private const val POSITIONAL_TOLERANCE = 0.05 // Meters
+    private const val ROTATIONAL_TOLERANCE = 3.0 // Degrees
+
+    fun setPositionGoal(pose: Pose2d) {
+        Logger.recordOutput("Drive/PositionGoal", pose); setXGoal(pose.x); setYGoal(pose.y); setAngleGoal(pose.rotation)
     }
 
-    fun atPositionGoal(rotationalTolerance: Double = 3.0, positionalTolerance: Double = 0.05): Boolean {
-        val pose = getPose()
-        return abs(xController.setpoint - pose.x) < positionalTolerance && abs(yController.setpoint - pose.y) < positionalTolerance && abs(angleController.setpoint.position - pose.rotation.degrees) < rotationalTolerance
-    }
+    fun calculatePositionSpeed(): ChassisSpeeds = ChassisSpeeds(calculateXSpeed(), calculateYSpeed(), calculateAngleSpeed())
+    fun atPositionGoal() = atXGoal() && atYGoal() && atAngleGoal()
 
-    fun setAutoAlignGoal(angle: Rotation2d) {
-        angleController.setGoal(angle.degrees)
-    }
+    fun setXGoal(pose: Double) = xController.setSetpoint(pose)
+    fun calculateXSpeed() = xController.calculate(getPose().x)
+    fun atXGoal() = abs(xController.positionError) < POSITIONAL_TOLERANCE
 
-    fun atAutoAlignGoal(tolerance: Double = 3.0) = abs(angleController.setpoint.position - getPose().rotation.degrees) < tolerance
+    fun setYGoal(pose: Double) = yController.setSetpoint(pose)
+    fun calculateYSpeed() = yController.calculate(getPose().y)
+    fun atYGoal() = abs(yController.positionError) < POSITIONAL_TOLERANCE
+
+    fun setAngleGoal(angle: Rotation2d) = angleController.setGoal(angle.degrees)
+    fun calculateAngleSpeed() = angleController.calculate(yaw)
+    fun atAngleGoal() = abs(angleController.positionError) < ROTATIONAL_TOLERANCE
 
     fun stop() = setSpeeds(ChassisSpeeds())
     fun stopAndX() {
@@ -198,10 +154,9 @@ object Drivetrain: KSubsystem() {
     }
 
     fun resetGyro() = gyro.setYaw(0.0)
-    fun getPose() = poseEstimator.estimatedPosition
-    fun isNear(pose: Pose2d, epsilon: Double) = hypot(getPose().x - pose.x, getPose().y - pose.y) < epsilon
-    fun getRobotRelativeSpeeds() = ChassisSpeeds.fromWPIChassisSpeeds(kinematics.toChassisSpeeds(*getModuleStates().toTypedArray()))
-    fun getFieldRelativeSpeeds() = ChassisSpeeds.toFieldRelativeSpeeds(ChassisSpeeds.fromWPIChassisSpeeds(kinematics.toChassisSpeeds(*getModuleStates().toTypedArray())), yaw)
+    fun getPose(): Pose2d = poseEstimator.estimatedPosition
+
+    fun getSpeeds() = ChassisSpeeds.fromWPIChassisSpeeds(kinematics.toChassisSpeeds(*getModuleStates().toTypedArray()))
 
     var yaw: Double
         get() = rawGyroRotation.degrees
@@ -221,8 +176,4 @@ object Drivetrain: KSubsystem() {
             val backRight = Translation2d(-moduleDistance, -moduleDistance)
             return arrayOf(frontLeft, frontRight, backLeft, backRight)
         }
-
-    enum class DrivetrainMode {
-        PID, MANUAL, SHOOT_DRIVE, STATIC_AIM
-    }
 }
