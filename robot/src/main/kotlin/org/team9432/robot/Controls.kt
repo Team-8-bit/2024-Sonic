@@ -25,7 +25,7 @@ object Controls {
     val xSpeed get() = -controller.leftY
     val ySpeed get() = -controller.leftX
     val angle get() = -controller.rightX
-    val fastDrive get() = controller.rightBumper.asBoolean
+    val slowDrive get() = controller.rightBumper.asBoolean
 
     private var currentMode = ControllerMode.DEFAULT
         set(value) {
