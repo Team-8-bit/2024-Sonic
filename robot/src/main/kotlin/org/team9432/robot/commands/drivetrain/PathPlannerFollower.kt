@@ -1,13 +1,13 @@
 package org.team9432.robot.commands.drivetrain
 
 import com.pathplanner.lib.path.PathPlannerTrajectory
+import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj.DriverStation.Alliance
 import edu.wpi.first.wpilibj.Timer
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.util.PoseUtil
-import org.team9432.lib.wpilib.ChassisSpeeds
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
@@ -33,7 +33,7 @@ class PathPlannerFollower(private val trajectory: PathPlannerTrajectory, private
             Drivetrain.setPositionGoal(PoseUtil.flip(state.targetHolonomicPose))
         }
 
-        val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(Drivetrain.calculatePositionSpeed(), Gyro.getYaw().degrees)
+        val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(Drivetrain.calculatePositionSpeed(), Gyro.getYaw())
         Drivetrain.setSpeeds(speeds)
     }
 

@@ -2,8 +2,7 @@ package org.team9432.lib.util
 
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
-import edu.wpi.first.math.kinematics.SwerveModuleState
-import org.team9432.lib.wpilib.ChassisSpeeds
+import edu.wpi.first.math.kinematics.ChassisSpeeds
 import kotlin.math.abs
 import kotlin.math.cos
 

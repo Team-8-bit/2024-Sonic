@@ -7,6 +7,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.math.trajectory.TrapezoidProfile
@@ -16,7 +17,6 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.LOOP_PERIOD_SECS
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.util.SwerveUtil
-import org.team9432.lib.wpilib.ChassisSpeeds
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.vision.Vision
 import kotlin.math.abs
@@ -94,7 +94,7 @@ object Drivetrain: KSubsystem() {
         Logger.recordOutput("Drive/PositionGoal", pose); setXGoal(pose.x); setYGoal(pose.y); setAngleGoal(pose.rotation)
     }
 
-    fun calculatePositionSpeed(): ChassisSpeeds = ChassisSpeeds(calculateXSpeed(), calculateYSpeed(), calculateAngleSpeed())
+    fun calculatePositionSpeed() = ChassisSpeeds.fromFieldRelativeSpeeds(calculateXSpeed(), calculateYSpeed(), calculateAngleSpeed(), Gyro.getYaw())
     fun atPositionGoal() = atXGoal() && atYGoal() && atAngleGoal()
 
     fun setXGoal(pose: Double) = xController.setSetpoint(pose)
@@ -118,7 +118,7 @@ object Drivetrain: KSubsystem() {
 
     fun getPose(): Pose2d = poseEstimator.estimatedPosition
 
-    fun getSpeeds() = ChassisSpeeds.fromWPIChassisSpeeds(kinematics.toChassisSpeeds(*getModuleStates().toTypedArray()))
+    fun getSpeeds() = kinematics.toChassisSpeeds(*getModuleStates().toTypedArray())
 
     fun getModulePositions() = modules.map { it.position }
     fun getModuleStates() = modules.map { it.state }

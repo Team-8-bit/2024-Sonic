@@ -2,7 +2,7 @@ package org.team9432.robot.auto
 
 import com.pathplanner.lib.path.PathPlannerPath
 import com.pathplanner.lib.path.PathPlannerTrajectory
-import org.team9432.lib.wpilib.ChassisSpeeds
+import edu.wpi.first.math.kinematics.ChassisSpeeds
 
 object Trajectories {
     val FIRST_NOTE = getTrajectory("First Note")
