@@ -1,6 +1,7 @@
 package org.team9432.robot
 
 
+import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.commands.withTimeout
@@ -14,6 +15,7 @@ import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
+import org.team9432.robot.subsystems.hood.CommandHood
 import org.team9432.robot.subsystems.intake.CommandIntake
 
 object Controls {
@@ -37,7 +39,7 @@ object Controls {
         controller.x.whileTrue(Outtake())
 
         // Shoot Speaker
-        controller.rightTrigger.onTrue(ShootStatic(6000.0, 6000.0).withTimeout(10.0))
+        controller.rightTrigger.onTrue(ShootStatic(6000.0, 8000.0).withTimeout(10.0))
 
         // Shoot Amplifier
         controller.leftTrigger.onTrue(ShootStatic(2500.0, 2500.0).withTimeout(10.0))
@@ -45,36 +47,12 @@ object Controls {
         // Reset Drivetrain Heading
         controller.a.onTrue(InstantCommand { Drivetrain.resetGyro() })
 
+        controller.y.onTrue(CommandHood.setAngle(Rotation2d.fromDegrees(0.0)))
+        controller.b.onTrue(CommandHood.setAngle(Rotation2d.fromDegrees(15.0)))
+        controller.start.onTrue(CommandHood.setAngle(Rotation2d.fromDegrees(30.0)))
+
 
         /* --------------- TEST BUTTONS --------------- */
-
-        // Clear note position
-        controller.y.onTrue(InstantCommand {
-            BeambreakIOSim.setNoteInIntakeAmpSide(false)
-            BeambreakIOSim.setNoteInIntakeSpeakerSide(false)
-            BeambreakIOSim.setNoteInHopperAmpSide(false)
-            BeambreakIOSim.setNoteInHopperSpeakerSide(false)
-            BeambreakIOSim.setNoteInCenter(false)
-            RobotState.notePosition = RobotState.NotePosition.NONE
-        })
-
-        // Raise Climbers
-        controller.start.onTrue(InstantCommand(LeftClimber, RightClimber) {
-            LeftClimber.setVoltage(6.0)
-            RightClimber.setVoltage(6.0)
-        }).onFalse(InstantCommand(LeftClimber, RightClimber) {
-            LeftClimber.stop()
-            RightClimber.stop()
-        })
-
-        // Lower Climbers
-        controller.back.onTrue(InstantCommand(LeftClimber, RightClimber) {
-            LeftClimber.setVoltage(-6.0)
-            RightClimber.setVoltage(-6.0)
-        }).onFalse(InstantCommand(LeftClimber, RightClimber) {
-            LeftClimber.stop()
-            RightClimber.stop()
-        })
     }
 
     fun getDrivetrainSpeeds(): ChassisSpeeds {

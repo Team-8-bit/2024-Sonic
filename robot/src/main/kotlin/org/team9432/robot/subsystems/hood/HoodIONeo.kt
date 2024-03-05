@@ -2,9 +2,11 @@ package org.team9432.robot.subsystems.hood
 
 import com.revrobotics.CANSparkBase.ControlType
 import com.revrobotics.CANSparkBase.IdleMode
+import com.revrobotics.SparkLimitSwitch
 import com.revrobotics.SparkPIDController.ArbFFUnits
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
+import org.littletonrobotics.junction.Logger
 import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Devices
 
@@ -19,22 +21,25 @@ class HoodIONeo: HoodIO {
     private val motorToHoodRatio = 2.0 * (150 / 15)
     private val encoderToHoodRatio = 150 / 15
 
-    private val encoderOffset = Rotation2d.fromDegrees(0.0)
+    private val encoderOffset = Rotation2d(0.07)
 
     init {
         spark.restoreFactoryDefaults()
-        spark.setCANTimeout(250)
 
-        spark.inverted = false
+        spark.idleMode = IdleMode.kBrake
+
+        spark.inverted = true
         spark.setSmartCurrentLimit(20)
         spark.enableVoltageCompensation(12.0)
 
         relativeEncoder.position = 0.0
-        absoluteEncoder.inverted = false
+        absoluteEncoder.inverted = true
+
+        spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+        spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
 
         pid.setFeedbackDevice(absoluteEncoder)
 
-        spark.setCANTimeout(0)
         spark.burnFlash()
     }
 
@@ -44,17 +49,16 @@ class HoodIONeo: HoodIO {
         inputs.velocityDegPerSec = Units.rotationsPerMinuteToRadiansPerSecond(relativeEncoder.velocity) / motorToHoodRatio
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
         inputs.currentAmps = spark.outputCurrent
+
+        Logger.recordOutput("HoodDegrees", inputs.absoluteAngle.degrees)
     }
 
     override fun setVoltage(volts: Double) = spark.setVoltage(volts)
 
     override fun setAngle(angle: Rotation2d, feedforwardVolts: Double) {
         pid.setReference(
-            angle.rotations,
-            ControlType.kPosition,
-            0, // PID slot
-            feedforwardVolts,
-            ArbFFUnits.kVoltage
+            angle.plus(encoderOffset).rotations * encoderToHoodRatio,
+            ControlType.kPosition
         )
     }
 
