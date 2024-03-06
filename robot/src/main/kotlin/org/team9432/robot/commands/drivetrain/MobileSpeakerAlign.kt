@@ -1,36 +1,29 @@
 package org.team9432.robot.commands.drivetrain
 
 import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KCommand
-import org.team9432.lib.util.PoseUtil
-import org.team9432.robot.FieldConstants
+import org.team9432.robot.Controls
+import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import kotlin.math.atan2
+import org.team9432.robot.subsystems.gyro.Gyro
 
-// This doesn't take robot speed into account yet
-class MobileSpeakerAlign: KCommand() {
+class TargetDrive(private val target: () -> Pose2d): KCommand() {
     override val requirements = setOf(Drivetrain)
 
-    override fun initialize() {
-        Drivetrain.mode = Drivetrain.DrivetrainMode.SHOOT_DRIVE
-    }
-
     override fun execute() {
-        val drivetrainPose = Drivetrain.getPose()
-        val speakerPose = FieldConstants.speakerPose
+        val currentTarget = target.invoke()
+        Logger.recordOutput("Drive/AngleTarget", currentTarget)
 
-        Logger.recordOutput("TargetPose", FieldConstants.speakerPose)
+        val maxSpeedMetersPerSecond = if (Controls.slowDrive) 2.0 else 6.5
+        val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond
+        val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond
 
-        Drivetrain.setAutoAlignGoal(PoseUtil.angleBetween(drivetrainPose, speakerPose))
-    }
+        Drivetrain.setAngleGoal(RobotPosition.angleTo(currentTarget))
+        val rSpeed = Drivetrain.calculateAngleSpeed()
 
-    override fun end(interrupted: Boolean) {
-        Logger.recordOutput("TargetPose", *emptyArray<Pose2d>())
-    }
-
-    override fun isFinished(): Boolean {
-        return Drivetrain.mode != Drivetrain.DrivetrainMode.SHOOT_DRIVE
+        val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Gyro.getYaw())
+        Drivetrain.setSpeeds(speeds)
     }
 }

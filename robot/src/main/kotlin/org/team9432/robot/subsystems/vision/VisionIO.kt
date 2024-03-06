@@ -16,4 +16,5 @@ interface VisionIO {
     }
 
     fun updateInputs(inputs: VisionIOInputs) {}
+    fun setLED(enable: Boolean) {}
 }

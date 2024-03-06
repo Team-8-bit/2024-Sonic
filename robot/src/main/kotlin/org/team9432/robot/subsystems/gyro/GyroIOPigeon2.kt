@@ -1,6 +1,6 @@
 // https://github.com/Mechanical-Advantage/AdvantageKit/blob/main/example_projects/swerve_drive/src/main/java/frc/robot/subsystems/drive/GyroIOPigeon2.java
 
-package org.team9432.lib.drivers.gyro
+package org.team9432.robot.subsystems.gyro
 
 import com.ctre.phoenix6.BaseStatusSignal
 import com.ctre.phoenix6.StatusCode

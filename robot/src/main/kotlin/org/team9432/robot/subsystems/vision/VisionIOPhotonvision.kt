@@ -5,11 +5,12 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import org.photonvision.PhotonCamera
 import org.photonvision.PhotonPoseEstimator
+import org.photonvision.common.hardware.VisionLEDMode
 import org.photonvision.targeting.PhotonTrackedTarget
 import org.team9432.robot.subsystems.limelight.Limelight
 import kotlin.jvm.optionals.getOrNull
 
-class VisionIOPhotonvision: VisionIO {
+class VisionIOPhotonvision : VisionIO {
     private val camera = PhotonCamera("Limelight")
     private val aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField()
     private val photonPoseEstimator = PhotonPoseEstimator(
@@ -40,5 +41,11 @@ class VisionIOPhotonvision: VisionIO {
         inputs.poseTimestamp = estimatedPose?.timestampSeconds?.let { doubleArrayOf(it) } ?: doubleArrayOf()
         inputs.estimatedRobotPose = estimatedPose?.estimatedPose?.let { arrayOf(it) } ?: emptyArray()
     }
-    private fun List<PhotonTrackedTarget>.getCornerArray() = this.flatMap { t -> t.detectedCorners.map { Pose2d(it.x, it.y, Rotation2d()) } }.toTypedArray()
+
+    private fun List<PhotonTrackedTarget>.getCornerArray() =
+        this.flatMap { t -> t.detectedCorners.map { Pose2d(it.x, it.y, Rotation2d()) } }.toTypedArray()
+
+    override fun setLED(enable: Boolean) {
+        camera.setLED(if (enable) VisionLEDMode.kOn else VisionLEDMode.kOff)
+    }
 }

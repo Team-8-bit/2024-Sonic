@@ -20,10 +20,10 @@ fun TeleIntake() = SequentialCommand(
 
             SequentialCommand(
                 // Intake slowly until the note is fully in the intake
-                CommandIntake.intakeSide(side, 3.0),
+                CommandIntake.intakeSide(side, 4.0),
                 WaitUntilCommand { !RobotState.noteInIntakeSide(side) }.afterSimDelay(0.25) { BeambreakIOSim.setNoteInIntakeSide(side, false) },
                 // Push the note back into the intake beam break to leave more room before the hopper
-                CommandIntake.outtakeSide(side, 3.0),
+                CommandIntake.outtakeSide(side, 4.0),
                 WaitUntilCommand { RobotState.noteInIntakeSide(side) }.afterSimDelay(0.25) { BeambreakIOSim.setNoteInIntakeSide(side, true) },
                 // Stop the intake
                 CommandIntake.stop(),

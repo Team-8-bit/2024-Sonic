@@ -2,13 +2,11 @@ package org.team9432.robot
 
 
 import org.littletonrobotics.junction.Logger
-import org.team9432.lib.commandbased.commands.InstantCommand
-import org.team9432.lib.commandbased.commands.afterSimDelay
-import org.team9432.lib.commandbased.commands.withTimeout
+import org.team9432.lib.commandbased.commands.*
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
-import org.team9432.lib.wpilib.ChassisSpeeds
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
+import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.ShootStatic
@@ -16,15 +14,19 @@ import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
+import org.team9432.robot.subsystems.gyro.Gyro
+import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.led.LEDCommands
+import org.team9432.robot.subsystems.vision.Vision
 
 object Controls {
     private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
 
-    private val xSpeedSupplier = { -controller.leftY }
-    private val ySpeedSupplier = { -controller.leftX }
-    private val angleSupplier = { -controller.rightX }
+    val xSpeed get() = -controller.leftY
+    val ySpeed get() = -controller.leftX
+    val angle get() = -controller.rightX
+    val slowDrive get() = controller.rightBumper.asBoolean
 
     private var currentMode = ControllerMode.DEFAULT
         set(value) {
@@ -61,11 +63,15 @@ object Controls {
 
         // Shoot Amplifier
         controller.leftTrigger.and(isDefaultMode)
-            .onTrue(ShootStatic(2500.0, 2500.0).withTimeout(10.0))
+            .onTrue(ShootStatic(2250.0, 2250.0).withTimeout(10.0))
 
         // Reset Drivetrain Heading
         controller.a.and(isDefaultMode)
-            .onTrue(InstantCommand { Drivetrain.resetGyro() })
+            .onTrue(InstantCommand { Gyro.resetYaw() })
+
+        // Load to the amp side
+        controller.b.and(isDefaultMode)
+            .onTrue(MoveToSide(MechanismSide.AMP).withTimeout(4.0))
 
         // Clear note position
         controller.y.onTrue(InstantCommand {
@@ -84,6 +90,12 @@ object Controls {
 
         controller.a.and(isLedMode)
             .whileTrue(LEDCommands.testBottom())
+
+        controller.rightBumper.and(isLedMode)
+            .onTrue(InstantCommand { Vision.setLED(true) })
+
+        controller.leftBumper.and(isLedMode)
+            .onTrue(InstantCommand { Vision.setLED(false) })
 
         /* -------------- CLIMB BUTTONS -------------- */
 
@@ -124,13 +136,5 @@ object Controls {
 
     private enum class ControllerMode {
         DEFAULT, CLIMB, LED
-    }
-
-    fun getDrivetrainSpeeds(): ChassisSpeeds {
-        val maxSpeedMetersPerSecond = if (controller.rightBumper.asBoolean) 6.0 else 2.5
-        val xSpeed = xSpeedSupplier.invoke() * maxSpeedMetersPerSecond
-        val ySpeed = ySpeedSupplier.invoke() * maxSpeedMetersPerSecond
-        val radiansPerSecond = Math.toRadians(angleSupplier.invoke() * 360.0)
-        return ChassisSpeeds(xSpeed, ySpeed, radiansPerSecond)
     }
 }

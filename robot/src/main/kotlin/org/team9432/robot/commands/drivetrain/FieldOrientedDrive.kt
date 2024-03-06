@@ -1,18 +1,21 @@
 package org.team9432.robot.commands.drivetrain
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team9432.lib.commandbased.KCommand
+import org.team9432.robot.Controls
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
+import org.team9432.robot.subsystems.gyro.Gyro
 
 class FieldOrientedDrive: KCommand() {
     override val requirements = setOf(Drivetrain)
 
-    override fun initialize() {
-        Drivetrain.mode = Drivetrain.DrivetrainMode.MANUAL
-    }
+    override fun execute() {
+        val maxSpeedMetersPerSecond = if (Controls.slowDrive) 2.0 else 6.0
+        val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond
+        val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond
 
-    override fun end(interrupted: Boolean) {
-        Drivetrain.stop()
-    }
+        val rSpeed = Math.toRadians(Controls.angle * 360.0)
 
-    override fun isFinished() = false
+        Drivetrain.setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Gyro.getYaw()))
+    }
 }
