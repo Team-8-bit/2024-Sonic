@@ -52,7 +52,7 @@ object Limelight: KSubsystem() {
             ),
             Rotation3d(
                 Math.toRadians(0.0),
-                Math.toRadians(-40.0),
+                Math.toRadians(-20.0),
                 Math.toRadians(0.0)
             )
         )
