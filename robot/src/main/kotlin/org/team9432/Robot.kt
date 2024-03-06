@@ -50,7 +50,7 @@ object Robot: LoggedRobot() {
         }
 
         if (isReal() || mode == Mode.SIM) {
-       //     Logger.addDataReceiver(WPILOGWriter()) // Log to a USB stick ("/U/logs")
+            Logger.addDataReceiver(WPILOGWriter()) // Log to a USB stick ("/U/logs")
             Logger.addDataReceiver(NT4Publisher()) // Publish data to NetworkTables
             PowerDistribution(1, PowerDistribution.ModuleType.kRev) // Enables power distribution logging
         } else if (mode == Mode.REPLAY) {

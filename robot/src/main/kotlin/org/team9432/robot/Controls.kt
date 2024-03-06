@@ -2,12 +2,11 @@ package org.team9432.robot
 
 
 import org.littletonrobotics.junction.Logger
-import org.team9432.lib.commandbased.commands.InstantCommand
-import org.team9432.lib.commandbased.commands.afterSimDelay
-import org.team9432.lib.commandbased.commands.withTimeout
+import org.team9432.lib.commandbased.commands.*
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
+import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.ShootStatic
@@ -16,8 +15,10 @@ import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
+import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.led.LEDCommands
+import org.team9432.robot.subsystems.vision.Vision
 
 object Controls {
     private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
@@ -62,11 +63,15 @@ object Controls {
 
         // Shoot Amplifier
         controller.leftTrigger.and(isDefaultMode)
-            .onTrue(ShootStatic(2500.0, 2500.0).withTimeout(10.0))
+            .onTrue(ShootStatic(2250.0, 2250.0).withTimeout(10.0))
 
         // Reset Drivetrain Heading
         controller.a.and(isDefaultMode)
             .onTrue(InstantCommand { Gyro.resetYaw() })
+
+        // Load to the amp side
+        controller.b.and(isDefaultMode)
+            .onTrue(MoveToSide(MechanismSide.AMP).withTimeout(4.0))
 
         // Clear note position
         controller.y.onTrue(InstantCommand {
@@ -85,6 +90,12 @@ object Controls {
 
         controller.a.and(isLedMode)
             .whileTrue(LEDCommands.testBottom())
+
+        controller.rightBumper.and(isLedMode)
+            .onTrue(InstantCommand { Vision.setLED(true) })
+
+        controller.leftBumper.and(isLedMode)
+            .onTrue(InstantCommand { Vision.setLED(false) })
 
         /* -------------- CLIMB BUTTONS -------------- */
 

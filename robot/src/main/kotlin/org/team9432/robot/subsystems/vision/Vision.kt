@@ -28,4 +28,8 @@ object Vision: KSubsystem() {
         return if (pose.isNotEmpty() && timestamp.isNotEmpty()) pose.first().toPose2d() to timestamp.first()
         else null
     }
+
+    fun setLED(enable: Boolean) {
+        io.setLED(enable)
+    }
 }
