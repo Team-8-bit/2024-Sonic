@@ -2,6 +2,7 @@ package org.team9432.robot.subsystems.hood
 
 import com.revrobotics.CANSparkBase.ControlType
 import com.revrobotics.CANSparkBase.IdleMode
+import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import com.revrobotics.SparkPIDController.ArbFFUnits
 import edu.wpi.first.math.geometry.Rotation2d
@@ -26,21 +27,26 @@ class HoodIONeo: HoodIO {
     init {
         spark.restoreFactoryDefaults()
 
-        spark.idleMode = IdleMode.kBrake
+        for (i in 0..88) {
+            spark.inverted = true
+            if (spark.inverted == true) break
+        }
 
-        spark.inverted = true
-        spark.setSmartCurrentLimit(20)
-        spark.enableVoltageCompensation(12.0)
+        for (i in 0..88) {
+            val errors = mutableListOf<REVLibError>()
+            errors += spark.setIdleMode(IdleMode.kBrake)
+            errors += spark.setSmartCurrentLimit(20)
+            errors += spark.enableVoltageCompensation(12.0)
+            errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            if (errors.all { it == REVLibError.kOk }) break
+        }
+        spark.burnFlash()
 
         relativeEncoder.position = 0.0
         absoluteEncoder.inverted = true
 
-        spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-        spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-
         pid.setFeedbackDevice(absoluteEncoder)
-
-        spark.burnFlash()
     }
 
     override fun updateInputs(inputs: HoodIO.HoodIOInputs) {

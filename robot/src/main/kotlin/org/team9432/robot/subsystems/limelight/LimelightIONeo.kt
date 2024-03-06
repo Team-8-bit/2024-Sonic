@@ -2,6 +2,8 @@ package org.team9432.robot.subsystems.limelight
 
 import com.revrobotics.CANSparkBase.ControlType
 import com.revrobotics.CANSparkBase.IdleMode
+import com.revrobotics.REVLibError
+import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
 import org.team9432.lib.drivers.motors.KSparkMAX
@@ -21,18 +23,26 @@ class LimelightIONeo: LimelightIO {
 
     init {
         spark.restoreFactoryDefaults()
-        spark.setCANTimeout(250)
 
-        spark.inverted = false
-        spark.setSmartCurrentLimit(20)
-        spark.enableVoltageCompensation(12.0)
+        for (i in 0..88) {
+            spark.inverted = false
+            if (spark.inverted == false) break
+        }
+
+        for (i in 0..88) {
+            val errors = mutableListOf<REVLibError>()
+            errors += spark.setSmartCurrentLimit(20)
+            errors += spark.enableVoltageCompensation(12.0)
+            errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            if (errors.all { it == REVLibError.kOk }) break
+        }
 
         relativeEncoder.position = 0.0
         absoluteEncoder.inverted = false
 
         pid.setFeedbackDevice(absoluteEncoder)
 
-        spark.setCANTimeout(0)
         spark.burnFlash()
     }
 

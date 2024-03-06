@@ -1,12 +1,10 @@
 package org.team9432.robot.subsystems.amp
 
-import com.revrobotics.CANSparkBase
-import com.revrobotics.CANSparkLowLevel
-import com.revrobotics.SparkPIDController
+import com.revrobotics.*
 import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Devices
 
-class AmpIOReal: AmpIO {
+class AmpIOReal : AmpIO {
     private val spark = KSparkMAX(Devices.AMP_ID, CANSparkLowLevel.MotorType.kBrushless)
 
     private val encoder = spark.encoder
@@ -15,11 +13,20 @@ class AmpIOReal: AmpIO {
     init {
         spark.restoreFactoryDefaults()
 
-        spark.idleMode = CANSparkBase.IdleMode.kCoast
+        for (i in 0..88) {
+            spark.inverted = false
+            if (spark.inverted == false) break
+        }
 
-        spark.enableVoltageCompensation(12.0)
-
-        spark.setSmartCurrentLimit(30)
+        for (i in 0..88) {
+            val errors = mutableListOf<REVLibError>()
+            errors += spark.setIdleMode(CANSparkBase.IdleMode.kCoast)
+            errors += spark.enableVoltageCompensation(12.0)
+            errors += spark.setSmartCurrentLimit(30)
+            errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            if (errors.all { it == REVLibError.kOk }) break
+        }
 
         spark.burnFlash()
     }
@@ -30,9 +37,11 @@ class AmpIOReal: AmpIO {
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
         inputs.currentAmps = spark.outputCurrent
     }
+
     override fun setVoltage(volts: Double) {
         spark.setVoltage(volts)
     }
+
     override fun setSpeed(rpm: Double, ffVolts: Double) {
         pid.setReference(
             rpm,

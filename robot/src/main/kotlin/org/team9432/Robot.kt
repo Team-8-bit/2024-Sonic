@@ -32,12 +32,14 @@ import org.team9432.robot.subsystems.vision.Vision
 
 val LOOP_PERIOD_SECS = Robot.period
 
-object Robot: LoggedRobot() {
+object Robot : LoggedRobot() {
     val mode = if (isReal()) Mode.REAL else Mode.SIM
 
     var alliance: Alliance? = null
 
     override fun robotInit() {
+        LEDs
+
         Logger.recordMetadata("ProjectName", "2024 - Sonic")
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE)
         Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA)
@@ -57,14 +59,24 @@ object Robot: LoggedRobot() {
             setUseTiming(false) // Run as fast as possible
             val logPath = LogFileUtil.findReplayLog() // Pull the replay log from AdvantageScope (or prompt the user)
             Logger.setReplaySource(WPILOGReader(logPath)) // Read replay log
-            Logger.addDataReceiver(WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))) // Save outputs to a new log
+            Logger.addDataReceiver(
+                WPILOGWriter(
+                    LogFileUtil.addPathSuffix(
+                        logPath,
+                        "_sim"
+                    )
+                )
+            ) // Save outputs to a new log
         }
 
         // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
         Logger.start()
 
         Logger.recordOutput("Subsystems/Climber", Pose3d(Translation3d(0.0, 0.0, 0.0), Rotation3d()))
-        Logger.recordOutput("Subsystems/Limelight", Pose3d(Translation3d(-0.063500, 0.0, 0.420370 + 0.124460), Rotation3d(0.0, 0.0, Math.toRadians(180.0))))
+        Logger.recordOutput(
+            "Subsystems/Limelight",
+            Pose3d(Translation3d(-0.063500, 0.0, 0.420370 + 0.124460), Rotation3d(0.0, 0.0, Math.toRadians(180.0)))
+        )
 
         PortForwarder.add(5800, "photonvision.local", 5800);
 
@@ -81,7 +93,6 @@ object Robot: LoggedRobot() {
         LeftClimber
         RightClimber
         Limelight
-        LEDs
     }
 
     override fun robotPeriodic() {

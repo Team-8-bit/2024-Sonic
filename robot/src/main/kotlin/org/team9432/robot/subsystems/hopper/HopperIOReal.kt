@@ -2,6 +2,8 @@ package org.team9432.robot.subsystems.hopper
 
 import com.revrobotics.CANSparkBase
 import com.revrobotics.CANSparkBase.IdleMode
+import com.revrobotics.REVLibError
+import com.revrobotics.SparkLimitSwitch
 import com.revrobotics.SparkPIDController
 import edu.wpi.first.wpilibj.DigitalInput
 import org.team9432.lib.drivers.motors.KSparkMAX
@@ -15,10 +17,22 @@ class HopperIOReal: HopperIO {
 
     init {
         spark.restoreFactoryDefaults()
-        spark.inverted = true
-        spark.idleMode = IdleMode.kBrake
-        spark.enableVoltageCompensation(12.0)
-        spark.setSmartCurrentLimit(40)
+
+        for (i in 0..88) {
+            spark.inverted = true
+            if (spark.inverted == true) break
+        }
+
+        for (i in 0..88) {
+            val errors = mutableListOf<REVLibError>()
+            errors += spark.setIdleMode(IdleMode.kBrake)
+            errors += spark.enableVoltageCompensation(12.0)
+            errors += spark.setSmartCurrentLimit(40)
+            errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            if (errors.all { it == REVLibError.kOk }) break
+        }
+
         spark.burnFlash()
     }
 

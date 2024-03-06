@@ -2,6 +2,8 @@ package org.team9432.robot.subsystems.climber
 
 import com.revrobotics.CANSparkBase.ControlType
 import com.revrobotics.CANSparkBase.IdleMode
+import com.revrobotics.REVLibError
+import com.revrobotics.SparkLimitSwitch
 import com.revrobotics.SparkPIDController.ArbFFUnits
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
@@ -19,10 +21,22 @@ class ClimberSideIONeo(override val climberSide: ClimberSideIO.ClimberSide): Cli
 
     init {
         spark.restoreFactoryDefaults()
-        spark.inverted = climberSide.inverted
-        spark.idleMode = IdleMode.kBrake
-        spark.enableVoltageCompensation(12.0)
-        spark.setSmartCurrentLimit(40)
+
+        for (i in 0..88) {
+            spark.inverted = climberSide.inverted
+            if (spark.inverted == climberSide.inverted) break
+        }
+
+        for (i in 0..88) {
+            val errors = mutableListOf<REVLibError>()
+            errors += spark.setIdleMode(IdleMode.kBrake)
+            errors += spark.enableVoltageCompensation(12.0)
+            errors += spark.setSmartCurrentLimit(40)
+            errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            if (errors.all { it == REVLibError.kOk }) break
+        }
+
         spark.burnFlash()
     }
 

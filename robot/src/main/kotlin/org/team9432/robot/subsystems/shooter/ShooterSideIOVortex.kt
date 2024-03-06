@@ -1,6 +1,8 @@
 package org.team9432.robot.subsystems.shooter
 
 import com.revrobotics.CANSparkBase.*
+import com.revrobotics.REVLibError
+import com.revrobotics.SparkLimitSwitch
 import com.revrobotics.SparkPIDController.ArbFFUnits
 import org.team9432.lib.drivers.motors.KSparkFlex
 
@@ -14,10 +16,22 @@ class ShooterSideIOVortex(override val shooterSide: ShooterSideIO.ShooterSide): 
 
     init {
         spark.restoreFactoryDefaults()
-        spark.inverted = shooterSide.inverted
-        spark.idleMode = IdleMode.kCoast
-        spark.enableVoltageCompensation(12.0)
-        spark.setSmartCurrentLimit(80)
+
+        for (i in 0..88) {
+            spark.inverted = shooterSide.inverted
+            if (spark.inverted == shooterSide.inverted) break
+        }
+
+        for (i in 0..88) {
+            val errors = mutableListOf<REVLibError>()
+            errors += spark.setIdleMode(IdleMode.kCoast)
+            errors += spark.enableVoltageCompensation(12.0)
+            errors += spark.setSmartCurrentLimit(80)
+            errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+            if (errors.all { it == REVLibError.kOk }) break
+        }
+
         spark.burnFlash()
     }
 
