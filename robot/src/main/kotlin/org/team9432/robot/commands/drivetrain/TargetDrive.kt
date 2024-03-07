@@ -1,6 +1,7 @@
 package org.team9432.robot.commands.drivetrain
 
 import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KCommand
@@ -20,7 +21,7 @@ class TargetDrive(private val target: () -> Pose2d): KCommand() {
         val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond
         val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond
 
-        Drivetrain.setAngleGoal(RobotPosition.angleTo(currentTarget))
+        Drivetrain.setAngleGoal(RobotPosition.angleTo(currentTarget).plus(Rotation2d.fromDegrees(180.0)))
         val rSpeed = Drivetrain.calculateAngleSpeed()
 
         val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Gyro.getYaw())

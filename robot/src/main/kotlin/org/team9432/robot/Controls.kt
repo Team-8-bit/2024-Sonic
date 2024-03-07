@@ -2,6 +2,7 @@ package org.team9432.robot
 
 
 import org.littletonrobotics.junction.Logger
+import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
@@ -59,7 +60,7 @@ object Controls {
 
         // Shoot Speaker
         controller.rightTrigger.and(isDefaultMode)
-            .onTrue(ShootStatic(6000.0, 8000.0).withTimeout(10.0))
+            .onTrue(ShootStatic(4000.0, 6000.0).withTimeout(10.0))
 
         // Shoot Amplifier
         controller.leftTrigger.and(isDefaultMode)
@@ -69,9 +70,11 @@ object Controls {
         controller.a.and(isDefaultMode)
             .onTrue(InstantCommand { Gyro.resetYaw() })
 
-        // Load to the amp side
+//        // Load to the amp side
+//        controller.b.and(isDefaultMode)
+//            .onTrue(MoveToSide(MechanismSide.AMP).withTimeout(4.0))
         controller.b.and(isDefaultMode)
-            .onTrue(MoveToSide(MechanismSide.AMP).withTimeout(4.0))
+            .onTrue(InstantCommand { KCommandScheduler.cancelAll() })
 
         // Clear note position
         controller.y.onTrue(InstantCommand {

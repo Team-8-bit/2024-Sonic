@@ -30,8 +30,8 @@ object Devices {
 
     // Speaker shooter
     const val LEFT_SHOOTER_ID = 51
-
     const val RIGHT_SHOOTER_ID = 52
+
     // Hood
     const val HOOD_ID = 53
 

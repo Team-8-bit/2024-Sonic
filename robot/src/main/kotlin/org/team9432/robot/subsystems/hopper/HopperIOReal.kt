@@ -27,7 +27,7 @@ class HopperIOReal: HopperIO {
             val errors = mutableListOf<REVLibError>()
             errors += spark.setIdleMode(IdleMode.kBrake)
             errors += spark.enableVoltageCompensation(12.0)
-            errors += spark.setSmartCurrentLimit(40)
+            errors += spark.setSmartCurrentLimit(60)
             errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
             errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
             if (errors.all { it == REVLibError.kOk }) break

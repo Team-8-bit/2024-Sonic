@@ -1,6 +1,9 @@
 package org.team9432.robot
 
 import org.littletonrobotics.junction.Logger
+import org.team9432.Robot
+import org.team9432.robot.subsystems.RobotPosition
+import org.team9432.robot.subsystems.ShooterInterpolator
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
@@ -39,6 +42,7 @@ object RobotState {
 
     fun log() {
         Logger.recordOutput("RobotState/NotePosition", notePosition.name)
+        Logger.recordOutput("Drivetrain/SpeakerDistance", RobotPosition.distanceToSpeaker())
     }
 
     enum class NotePosition {
