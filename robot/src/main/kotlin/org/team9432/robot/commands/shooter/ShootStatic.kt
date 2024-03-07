@@ -17,7 +17,7 @@ import org.team9432.robot.subsystems.shooter.CommandShooter
 
 fun ShootStatic(rpmLeft: Double, rpmRight: Double) = SuppliedCommand {
     ParallelDeadlineCommand(
-        TargetDrive { FieldConstants.speakerPose },
+        // TargetDrive { FieldConstants.speakerPose },
 
         CommandHood.followAngle {
             Rotation2d.fromDegrees(ShooterInterpolator.getHoodAngle(RobotPosition.distanceToSpeaker())).also {

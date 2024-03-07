@@ -3,6 +3,7 @@ package org.team9432.robot.commands.drivetrain
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.robot.Controls
+import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
 
@@ -11,8 +12,8 @@ class FieldOrientedDrive: KCommand() {
 
     override fun execute() {
         val maxSpeedMetersPerSecond = if (Controls.slowDrive) 2.0 else 6.0
-        val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond
-        val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond
+        val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond * Drivetrain.coordinateFlip
+        val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond * Drivetrain.coordinateFlip
 
         val rSpeed = Math.toRadians(Controls.angle * 360.0)
 
