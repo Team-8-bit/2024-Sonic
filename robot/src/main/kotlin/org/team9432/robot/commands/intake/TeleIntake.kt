@@ -13,8 +13,10 @@ import org.team9432.robot.subsystems.led.LEDSubsystems
 
 fun TeleIntake() = SequentialCommand(
     // This part just gets the note touching the first intake beam break
-    CommandIntake.runTeleIntake(6.0),
-    WaitUntilCommand { RobotState.noteInAnyIntake() },
+    ParallelDeadlineCommand(
+        CommandIntake.runTeleIntake(6.0),
+        deadline = WaitUntilCommand { RobotState.noteInAnyIntake() }
+    ),
 
     InstantCommand { LEDSubsystems.BOTTOM.forEach { BaseLEDCommands.strobeCommand(Color.kPurple, 0.25, it).schedule() } },
 
@@ -26,10 +28,10 @@ fun TeleIntake() = SequentialCommand(
 
             SequentialCommand(
                 // Intake slowly until the note is fully in the intake
-                CommandIntake.intakeSide(side, 4.0),
+                CommandIntake.startIntakeSide(side, 4.0),
                 WaitUntilCommand { !RobotState.noteInIntakeSide(side) }.afterSimDelay(0.25) { BeambreakIOSim.setNoteInIntakeSide(side, false) },
                 // Push the note back into the intake beam break to leave more room before the hopper
-                CommandIntake.outtakeSide(side, 4.0),
+                CommandIntake.startOuttakeSide(side, 4.0),
                 WaitUntilCommand { RobotState.noteInIntakeSide(side) }.afterSimDelay(0.25) { BeambreakIOSim.setNoteInIntakeSide(side, true) },
                 // Stop the intake
                 CommandIntake.stop(),

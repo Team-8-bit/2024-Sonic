@@ -9,20 +9,16 @@ object Intake: KSubsystem() {
     private val ampSide = IntakeSide(IntakeSideIO.IntakeSide.AMP)
     private val speakerSide = IntakeSide(IntakeSideIO.IntakeSide.SPEAKER)
 
-    private var teleIntakeVolts: Double? = null // Null means that tele mode is not enabled
-
     private fun setVoltage(ampVolts: Double, speakerVolts: Double) {
         ampSide.setVoltage(ampVolts)
         speakerSide.setVoltage(speakerVolts)
     }
 
     fun intake(ampVolts: Double, speakerVolts: Double) {
-        teleIntakeVolts = null
         setVoltage(abs(ampVolts), abs(speakerVolts))
     }
 
     fun outtake(ampVolts: Double, speakerVolts: Double) {
-        teleIntakeVolts = null
         setVoltage(-abs(ampVolts), -abs(speakerVolts))
     }
 
@@ -41,26 +37,22 @@ object Intake: KSubsystem() {
     }
 
     fun stop() {
-        teleIntakeVolts = null
-        ampSide.stop()
+            ampSide.stop()
         speakerSide.stop()
     }
 
     fun runTeleIntake(volts: Double) {
-        teleIntakeVolts = abs(volts)
+        val absVolts = abs(volts)
+        if (RobotState.shouldRunOneIntake()) {
+            when (RobotState.getMovementDirection()) {
+                MechanismSide.SPEAKER -> intake(0.0, absVolts)
+                MechanismSide.AMP -> intake(absVolts, 0.0)
+            }
+        } else intake(absVolts, absVolts)
     }
 
     override fun periodic() {
         ampSide.periodic()
         speakerSide.periodic()
-
-        teleIntakeVolts?.let { volts ->
-            if (RobotState.shouldRunOneIntake()) {
-                when (RobotState.getMovementDirection()) {
-                    MechanismSide.SPEAKER -> intake(0.0, volts)
-                    MechanismSide.AMP -> intake(volts, 0.0)
-                }
-            } else intake(volts, volts)
-        }
     }
 }

@@ -20,28 +20,28 @@ fun ShootStatic(rpmLeft: Double, rpmRight: Double) = SuppliedCommand {
         TargetDrive { FieldConstants.speakerPose },
 
         CommandHood.followAngle {
-            val angle = Rotation2d.fromDegrees(ShooterInterpolator.getHoodAngle(RobotPosition.distanceToSpeaker()))
-            Logger.recordOutput("Hood/ShootTarget", angle.degrees)
-            return@followAngle angle
+            Rotation2d.fromDegrees(ShooterInterpolator.getHoodAngle(RobotPosition.distanceToSpeaker())).also {
+                Logger.recordOutput("Hood/ShootTarget", it.degrees)
+            }
         },
+
+        CommandShooter.runSpeed { rpmLeft to rpmRight },
 
         deadline = SequentialCommand(
             ParallelCommand(
-                // Spin up the shooter
-                CommandShooter.setSpeed(rpmLeft, rpmRight),
                 // Move the note to the speaker side of the hopper
                 MoveToSide(MechanismSide.SPEAKER),
-                // Minimum of one second to spin up the shooter
-                WaitCommand(1.0),
+                // Spin up the shooter for a minimum of half a second, plus one second per 4000 rpm
+                WaitCommand(0.5 + (maxOf(rpmLeft, rpmRight) / 4000)),
             ),
-            // Shoot the note
-            CommandHopper.loadTo(MechanismSide.SPEAKER, 5.0),
-            CommandIntake.intakeSide(MechanismSide.SPEAKER, 5.0),
-            // Wait a second, then stop the motors
-            WaitCommand(1.0),
-            CommandShooter.stop(),
-            CommandHopper.stop(),
-            CommandIntake.stop(),
+            ParallelDeadlineCommand(
+                // Shoot the note
+                CommandHopper.runLoadTo(MechanismSide.SPEAKER, 5.0),
+                CommandIntake.runIntakeSide(MechanismSide.SPEAKER, 5.0),
+                // Do this for one second
+                deadline = WaitCommand(1.0)
+            ),
+
             // Update the note position
             InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE }
         )

@@ -3,11 +3,13 @@ package org.team9432.robot
 
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KCommandScheduler
-import org.team9432.lib.commandbased.commands.*
+import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.ParallelCommand
+import org.team9432.lib.commandbased.commands.afterSimDelay
+import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
-import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.ShootStatic
@@ -18,7 +20,9 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
+import org.team9432.robot.subsystems.intake.Intake
 import org.team9432.robot.subsystems.led.LEDCommands
+import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.vision.Vision
 
 object Controls {
@@ -47,12 +51,8 @@ object Controls {
         // Run Intake
         controller.leftBumper.and(isDefaultMode)
             .whileTrue(TeleIntake().afterSimDelay(2.0) {
-                BeambreakIOSim.setNoteInIntakeSide(
-                    RobotState.getMovementDirection(),
-                    true
-                )
+                BeambreakIOSim.setNoteInIntakeSide(RobotState.getMovementDirection(), true)
             }) // Pretend to get a note after 2 seconds in sim
-            .onFalse(CommandIntake.stop()) // This should be blocked if the intake is still aligning the note
 
         // Outtake Intake
         controller.x.and(isDefaultMode)
@@ -60,21 +60,27 @@ object Controls {
 
         // Shoot Speaker
         controller.rightTrigger.and(isDefaultMode)
-            .onTrue(ShootStatic(4000.0, 6000.0).withTimeout(10.0))
+            .onTrue(ShootStatic(4000.0, 6000.0))
 
         // Shoot Amplifier
         controller.leftTrigger.and(isDefaultMode)
-            .onTrue(ShootStatic(2250.0, 2250.0).withTimeout(10.0))
+            .onTrue(ShootStatic(2250.0, 2250.0))
 
         // Reset Drivetrain Heading
         controller.a.and(isDefaultMode)
             .onTrue(InstantCommand { Gyro.resetYaw() })
 
-//        // Load to the amp side
-//        controller.b.and(isDefaultMode)
-//            .onTrue(MoveToSide(MechanismSide.AMP).withTimeout(4.0))
+        // Reset
         controller.b.and(isDefaultMode)
-            .onTrue(InstantCommand { KCommandScheduler.cancelAll() })
+            .onTrue(ParallelCommand(
+                CommandIntake.stop(),
+                CommandHopper.stop(),
+                CommandShooter.stop(),
+                InstantCommand {
+                    RobotState.notePosition = RobotState.NotePosition.NONE
+                    KCommandScheduler.cancelAll()
+                }
+            ))
 
         // Clear note position
         controller.y.onTrue(InstantCommand {
