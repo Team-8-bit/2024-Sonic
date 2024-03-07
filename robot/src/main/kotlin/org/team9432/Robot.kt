@@ -1,5 +1,7 @@
 package org.team9432
 
+import edu.wpi.first.hal.FRCNetComm
+import edu.wpi.first.hal.HAL
 import edu.wpi.first.math.geometry.Pose3d
 import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Translation3d
@@ -32,7 +34,7 @@ import org.team9432.robot.subsystems.vision.Vision
 
 val LOOP_PERIOD_SECS = Robot.period
 
-object Robot : LoggedRobot() {
+object Robot: LoggedRobot() {
     val mode = if (isReal()) Mode.REAL else Mode.SIM
 
     var alliance: Alliance? = null
@@ -78,7 +80,9 @@ object Robot : LoggedRobot() {
             Pose3d(Translation3d(-0.063500, 0.0, 0.420370 + 0.124460), Rotation3d(0.0, 0.0, Math.toRadians(180.0)))
         )
 
-        PortForwarder.add(5800, "photonvision.local", 5800);
+        PortForwarder.add(5800, "photonvision.local", 5800)
+
+        HAL.report(FRCNetComm.tResourceType.kResourceType_Language, FRCNetComm.tInstances.kLanguage_Kotlin)
 
         Controls
         Vision
