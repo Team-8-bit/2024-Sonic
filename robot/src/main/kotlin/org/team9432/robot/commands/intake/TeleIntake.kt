@@ -9,7 +9,6 @@ import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.intake.Intake
 import org.team9432.robot.subsystems.led.BaseLEDCommands
-import org.team9432.robot.subsystems.led.LEDCommands
 import org.team9432.robot.subsystems.led.LEDSubsystems
 
 fun TeleIntake() = SequentialCommand(

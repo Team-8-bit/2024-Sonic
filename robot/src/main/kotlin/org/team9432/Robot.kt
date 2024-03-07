@@ -61,14 +61,7 @@ object Robot: LoggedRobot() {
             setUseTiming(false) // Run as fast as possible
             val logPath = LogFileUtil.findReplayLog() // Pull the replay log from AdvantageScope (or prompt the user)
             Logger.setReplaySource(WPILOGReader(logPath)) // Read replay log
-            Logger.addDataReceiver(
-                WPILOGWriter(
-                    LogFileUtil.addPathSuffix(
-                        logPath,
-                        "_sim"
-                    )
-                )
-            ) // Save outputs to a new log
+            Logger.addDataReceiver(WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))) // Save outputs to a new log
         }
 
         // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
