@@ -5,7 +5,6 @@ import org.team9432.lib.commandbased.KCommand.InterruptionBehavior
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.RobotState
-import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.intake.Intake
@@ -19,7 +18,7 @@ fun TeleIntake() = SequentialCommand(
         deadline = WaitUntilCommand { RobotState.noteInAnyIntake() }
     ),
 
-    InstantCommand { LEDSubsystems.BOTTOM.forEach { BaseLEDCommands.strobeCommand(Color.kPurple, 0.25, it).schedule() } },
+    InstantCommand { LEDState.intakeLightOn = true },
 
     // Then it will finish collecting it at a slower speed and align the note
     // Instant command breaks off from the command group so letting go of the button doesn't interrupt the command in the middle of collecting/aligning a note

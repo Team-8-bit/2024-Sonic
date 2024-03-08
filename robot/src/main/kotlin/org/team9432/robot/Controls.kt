@@ -7,6 +7,7 @@ import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
+import org.team9432.lib.commandbased.commands.runsWhenDisabled
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
@@ -21,6 +22,8 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
+import org.team9432.robot.subsystems.led.LEDState
+import org.team9432.robot.subsystems.led.animations.Chase
 import org.team9432.robot.subsystems.led.LEDCommands
 import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.vision.Vision
@@ -36,6 +39,7 @@ object Controls {
     private var currentMode = ControllerMode.DEFAULT
         set(value) {
             Logger.recordOutput("ControllerMode", value)
+            LEDState.climbMode = value == ControllerMode.CLIMB
             field = value
         }
 
@@ -94,17 +98,18 @@ object Controls {
 
         /* ------------- LED MODE BUTTONS ------------- */
 
-        controller.b.and(isLedMode)
-            .whileTrue(LEDCommands.testMode())
-
-        controller.a.and(isLedMode)
-            .whileTrue(LEDCommands.testBottom())
-
         controller.rightBumper.and(isLedMode)
-            .onTrue(InstantCommand { Vision.setLED(true) })
+            .onTrue(InstantCommand { Vision.setLED(true) }.runsWhenDisabled(true))
 
         controller.leftBumper.and(isLedMode)
-            .onTrue(InstantCommand { Vision.setLED(false) })
+            .onTrue(InstantCommand { Vision.setLED(false) }.runsWhenDisabled(true))
+
+        // Toggle chase mode
+        controller.a.and(isLedMode)
+            .onTrue(InstantCommand {
+                if (LEDState.animation == null) LEDState.animation = Chase
+                else LEDState.animation = null
+            }.runsWhenDisabled(true))
 
         /* -------------- CLIMB BUTTONS -------------- */
 
@@ -132,15 +137,15 @@ object Controls {
 
         // Enter LED Mode
         isDefaultMode.and(controller.back)
-            .onFalse(InstantCommand { currentMode = ControllerMode.LED })
+            .onFalse(InstantCommand { currentMode = ControllerMode.LED }.runsWhenDisabled(true))
 
         // Enter Climb Mode
         isDefaultMode.and(controller.start)
-            .onFalse(InstantCommand { currentMode = ControllerMode.CLIMB })
+            .onFalse(InstantCommand { currentMode = ControllerMode.CLIMB }.runsWhenDisabled(true))
 
         // Reenter Default Mode
         isDefaultMode.negate().and((controller.start).or(controller.back))
-            .onFalse(InstantCommand { currentMode = ControllerMode.DEFAULT })
+            .onFalse(InstantCommand { currentMode = ControllerMode.DEFAULT }.runsWhenDisabled(true))
     }
 
     private enum class ControllerMode {

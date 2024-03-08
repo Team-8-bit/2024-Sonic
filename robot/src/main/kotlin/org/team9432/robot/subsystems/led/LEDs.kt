@@ -4,60 +4,66 @@ import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
 import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.util.Color
+import org.team9432.LOOP_PERIOD_SECS
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.robot.Devices
-import org.team9432.robot.subsystems.led.BaseLEDCommands.breath
 
 
 object LEDs: KSubsystem() {
-    private const val LENGTH = 88 // Two 8s!
+    private const val LENGTH = 119
 
-    private val leds = AddressableLED(Devices.LED_PORT)
+    private val ledController = AddressableLED(Devices.LED_PORT)
     val buffer = AddressableLEDBuffer(LENGTH)
-    private var loadingNotifier: Notifier? = null
+    private val loadingNotifier: Notifier
 
-    enum class Strip(val indices: List<Int>) {
-        SPEAKER_LEFT_TOP((0..11).toList()),
-        SPEAKER_LEFT_BOTTOM((12..21).toList()),
+    object Section {
+        val SPEAKER_LEFT_TOP = (0..11).toSet()
+        val SPEAKER_LEFT_BOTTOM = (12..21).toSet()
 
-        SPEAKER_RIGHT_BOTTOM((22..33).toList()),
-        SPEAKER_RIGHT_TOP((34..43).toList()),
+        val SPEAKER_RIGHT_BOTTOM = (22..33).toSet()
+        val SPEAKER_RIGHT_TOP = (34..43).toSet()
 
-        AMP_LEFT_TOP((44..55).toList()),
-        AMP_LEFT_BOTTOM((56..65).toList()),
+        val AMP_LEFT_TOP = (44..55).toSet()
+        val AMP_LEFT_BOTTOM = (56..65).toSet()
 
-        AMP_RIGHT_BOTTOM((66..77).toList()),
-        AMP_RIGHT_TOP((78..87).toList()),
+        val AMP_RIGHT_BOTTOM = (66..77).toSet()
+        val AMP_RIGHT_TOP = (78..88).toSet()
 
-        SPEAKER_LEFT(SPEAKER_LEFT_BOTTOM.indices + SPEAKER_LEFT_TOP.indices),
-        SPEAKER_RIGHT(SPEAKER_RIGHT_BOTTOM.indices + SPEAKER_RIGHT_TOP.indices),
-        AMP_LEFT(AMP_LEFT_BOTTOM.indices + AMP_LEFT_TOP.indices),
-        AMP_RIGHT(AMP_RIGHT_BOTTOM.indices + AMP_RIGHT_TOP.indices),
+        val TOP_BAR = (89..118).toSet()
 
-        SPEAKER(SPEAKER_LEFT.indices + SPEAKER_RIGHT.indices),
-        AMP(AMP_LEFT.indices + AMP_RIGHT.indices),
+        val SPEAKER_LEFT = SPEAKER_LEFT_TOP + SPEAKER_LEFT_BOTTOM
+        val SPEAKER_RIGHT = SPEAKER_RIGHT_BOTTOM + SPEAKER_RIGHT_TOP
+        val AMP_LEFT = AMP_LEFT_TOP + AMP_LEFT_BOTTOM
+        val AMP_RIGHT = AMP_RIGHT_BOTTOM + AMP_RIGHT_TOP
 
-        ALL(SPEAKER.indices + AMP.indices),
+        val TOP = SPEAKER_LEFT_BOTTOM + SPEAKER_RIGHT_BOTTOM + AMP_LEFT_BOTTOM + AMP_RIGHT_BOTTOM
+        val BOTTOM = SPEAKER_LEFT_TOP + SPEAKER_RIGHT_TOP + AMP_LEFT_TOP + AMP_RIGHT_TOP
+
+        val SPEAKER = SPEAKER_LEFT + SPEAKER_RIGHT
+        val AMP = AMP_LEFT + AMP_RIGHT
+
+        val ALL_BUT_TOP = SPEAKER + AMP
+        val ALL = ALL_BUT_TOP + TOP_BAR
     }
 
     init {
-        leds.setLength(LENGTH)
-        leds.setData(buffer)
-        leds.start()
+        ledController.setLength(LENGTH)
+        ledController.setData(buffer)
+        ledController.start()
 
         loadingNotifier = Notifier {
             synchronized(this) {
-                breath(
+                LEDModes.breath(
                     Color.kWhite,
                     Color.kBlack,
-                    Strip.ALL,
+                    Section.ALL,
                     timestamp = System.currentTimeMillis() / 1000.0
                 )
-                leds.setData(buffer)
+                ledController.setData(buffer)
             }
-        }.also { it.startPeriodic(0.02) }
+        }
 
-        LEDSubsystems
+        loadingNotifier.startPeriodic(LOOP_PERIOD_SECS)
     }
 
     private const val INIT_AFTER_LOOP_CYCLE = 10
@@ -69,8 +75,10 @@ object LEDs: KSubsystem() {
             return
         }
 
-        loadingNotifier?.stop()
+        loadingNotifier.stop()
 
-        leds.setData(buffer)
+        LEDState.updateBuffer()
+
+        ledController.setData(buffer)
     }
 }
