@@ -16,33 +16,34 @@ object LEDs: KSubsystem() {
     val buffer = AddressableLEDBuffer(LENGTH)
     private val loadingNotifier: Notifier
 
-    enum class Strip(val indices: List<Int>) {
-        SPEAKER_LEFT_TOP((0..11).toList()),
-        SPEAKER_LEFT_BOTTOM((12..21).toList()),
+    object Section {
+        val SPEAKER_LEFT_TOP = (0..11).toList()
+        val SPEAKER_LEFT_BOTTOM = (12..21).toList()
 
-        SPEAKER_RIGHT_BOTTOM((22..33).toList()),
-        SPEAKER_RIGHT_TOP((34..43).toList()),
+        val SPEAKER_RIGHT_BOTTOM = (22..33).toList()
+        val SPEAKER_RIGHT_TOP = (34..43).toList()
 
-        AMP_LEFT_TOP((44..55).toList()),
-        AMP_LEFT_BOTTOM((56..65).toList()),
+        val AMP_LEFT_TOP = (44..55).toList()
+        val AMP_LEFT_BOTTOM = (56..65).toList()
 
-        AMP_RIGHT_BOTTOM((66..77).toList()),
-        AMP_RIGHT_TOP((78..87).toList()),
+        val AMP_RIGHT_BOTTOM = (66..77).toList()
+        val AMP_RIGHT_TOP = (78..87).toList()
 
-        TOP_BAR((88..100).toList()),
+        val TOP_BAR = (88..100).toList()
 
-        SPEAKER_LEFT(SPEAKER_LEFT_BOTTOM.indices + SPEAKER_LEFT_TOP.indices),
-        SPEAKER_RIGHT(SPEAKER_RIGHT_BOTTOM.indices + SPEAKER_RIGHT_TOP.indices),
-        AMP_LEFT(AMP_LEFT_BOTTOM.indices + AMP_LEFT_TOP.indices),
-        AMP_RIGHT(AMP_RIGHT_BOTTOM.indices + AMP_RIGHT_TOP.indices),
+        val SPEAKER_LEFT = SPEAKER_LEFT_BOTTOM + SPEAKER_LEFT_TOP
+        val SPEAKER_RIGHT = SPEAKER_RIGHT_BOTTOM + SPEAKER_RIGHT_TOP
+        val AMP_LEFT = AMP_LEFT_BOTTOM + AMP_LEFT_TOP
+        val AMP_RIGHT = AMP_RIGHT_BOTTOM + AMP_RIGHT_TOP
 
-        TOP(SPEAKER_LEFT_BOTTOM.indices + SPEAKER_RIGHT_BOTTOM.indices + AMP_LEFT_BOTTOM.indices + AMP_RIGHT_BOTTOM.indices),
-        BOTTOM(SPEAKER_LEFT_TOP.indices + SPEAKER_RIGHT_TOP.indices + AMP_LEFT_TOP.indices + AMP_RIGHT_TOP.indices),
+        val TOP = SPEAKER_LEFT_BOTTOM + SPEAKER_RIGHT_BOTTOM + AMP_LEFT_BOTTOM + AMP_RIGHT_BOTTOM
+        val BOTTOM = SPEAKER_LEFT_TOP + SPEAKER_RIGHT_TOP + AMP_LEFT_TOP + AMP_RIGHT_TOP
 
-        SPEAKER(SPEAKER_LEFT.indices + SPEAKER_RIGHT.indices),
-        AMP(AMP_LEFT.indices + AMP_RIGHT.indices),
+        val SPEAKER = SPEAKER_LEFT + SPEAKER_RIGHT
+        val AMP = AMP_LEFT + AMP_RIGHT
 
-        ALL(SPEAKER.indices + AMP.indices + TOP_BAR.indices),
+        val ALL_BUT_TOP = SPEAKER + AMP
+        val ALL = ALL_BUT_TOP + TOP_BAR
     }
 
     init {
@@ -55,7 +56,7 @@ object LEDs: KSubsystem() {
                 LEDModes.breath(
                     Color.kWhite,
                     Color.kBlack,
-                    Strip.ALL,
+                    Section.ALL,
                     timestamp = System.currentTimeMillis() / 1000.0
                 )
                 ledController.setData(buffer)

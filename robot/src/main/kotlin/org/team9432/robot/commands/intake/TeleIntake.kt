@@ -15,7 +15,7 @@ fun TeleIntake() = SequentialCommand(
         deadline = WaitUntilCommand { RobotState.noteInAnyIntake() }
     ),
 
-    InstantCommand { LEDState.isIntakeLightOn = true },
+    InstantCommand { LEDState.intakeLightOn = true },
 
     // Then it will finish collecting it at a slower speed and align the note
     // Instant command breaks off from the command group so letting go of the button doesn't interrupt the command in the middle of collecting/aligning a note
@@ -35,7 +35,7 @@ fun TeleIntake() = SequentialCommand(
                 // Update the note position in the robot
                 InstantCommand { RobotState.notePosition = side.getNotePositionIntake() },
 
-                InstantCommand { LEDState.isIntakeLightOn = false }
+                InstantCommand { LEDState.intakeLightOn = false }
             )
         }
             .withTimeout(6.0) // Maximum time to finish intaking and align the note

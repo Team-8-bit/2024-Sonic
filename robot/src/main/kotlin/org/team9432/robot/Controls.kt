@@ -32,9 +32,10 @@ object Controls {
     val angle get() = -controller.rightX
     val slowDrive get() = controller.rightBumper.asBoolean
 
-    var currentMode = ControllerMode.DEFAULT
+    private var currentMode = ControllerMode.DEFAULT
         set(value) {
             Logger.recordOutput("ControllerMode", value)
+            LEDState.climbMode = value == ControllerMode.CLIMB
             field = value
         }
 
@@ -143,7 +144,7 @@ object Controls {
             .onFalse(InstantCommand { currentMode = ControllerMode.DEFAULT })
     }
 
-    enum class ControllerMode {
+    private enum class ControllerMode {
         DEFAULT, CLIMB, LED
     }
 }
