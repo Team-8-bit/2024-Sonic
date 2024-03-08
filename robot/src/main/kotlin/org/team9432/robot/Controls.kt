@@ -6,6 +6,7 @@ import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
+import org.team9432.lib.commandbased.commands.runsWhenDisabled
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
@@ -95,17 +96,17 @@ object Controls {
         /* ------------- LED MODE BUTTONS ------------- */
 
         controller.rightBumper.and(isLedMode)
-            .onTrue(InstantCommand { Vision.setLED(true) })
+            .onTrue(InstantCommand { Vision.setLED(true) }.runsWhenDisabled(true))
 
         controller.leftBumper.and(isLedMode)
-            .onTrue(InstantCommand { Vision.setLED(false) })
+            .onTrue(InstantCommand { Vision.setLED(false) }.runsWhenDisabled(true))
 
         // Toggle chase mode
         controller.a.and(isLedMode)
             .onTrue(InstantCommand {
                 if (LEDState.animation == null) LEDState.animation = Chase
                 else LEDState.animation = null
-            })
+            }.runsWhenDisabled(true))
 
         /* -------------- CLIMB BUTTONS -------------- */
 
@@ -133,15 +134,15 @@ object Controls {
 
         // Enter LED Mode
         isDefaultMode.and(controller.back)
-            .onFalse(InstantCommand { currentMode = ControllerMode.LED })
+            .onFalse(InstantCommand { currentMode = ControllerMode.LED }.runsWhenDisabled(true))
 
         // Enter Climb Mode
         isDefaultMode.and(controller.start)
-            .onFalse(InstantCommand { currentMode = ControllerMode.CLIMB })
+            .onFalse(InstantCommand { currentMode = ControllerMode.CLIMB }.runsWhenDisabled(true))
 
         // Reenter Default Mode
         isDefaultMode.negate().and((controller.start).or(controller.back))
-            .onFalse(InstantCommand { currentMode = ControllerMode.DEFAULT })
+            .onFalse(InstantCommand { currentMode = ControllerMode.DEFAULT }.runsWhenDisabled(true))
     }
 
     private enum class ControllerMode {

@@ -7,16 +7,16 @@ import kotlin.math.pow
 import kotlin.math.sin
 
 object LEDModes {
-    fun solid(color: Color, indices: List<Int>) {
+    fun solid(color: Color, indices: Set<Int>) {
         indices.forEach { LEDs.buffer.setLED(it, color) }
     }
 
-    fun strobe(color: Color, duration: Double, indices: List<Int>) {
+    fun strobe(color: Color, duration: Double, indices: Set<Int>) {
         val on = Timer.getFPGATimestamp() % duration / duration > 0.5
         solid(if (on) color else Color.kBlack, indices)
     }
 
-    fun breath(c1: Color, c2: Color, indices: List<Int>, duration: Double = 1.0, timestamp: Double = Timer.getFPGATimestamp()) {
+    fun breath(c1: Color, c2: Color, indices: Set<Int>, duration: Double = 1.0, timestamp: Double = Timer.getFPGATimestamp()) {
         val x = timestamp % duration / duration * 2.0 * Math.PI
         val ratio = (sin(x) + 1.0) / 2.0
         val red = c1.red * (1 - ratio) + c2.red * ratio
@@ -25,7 +25,7 @@ object LEDModes {
         solid(Color(red, green, blue), indices)
     }
 
-    fun rainbow(cycleLength: Double, duration: Double, indices: List<Int>) {
+    fun rainbow(cycleLength: Double, duration: Double, indices: Set<Int>) {
         var x = (1 - Timer.getFPGATimestamp() / duration % 1.0) * 180.0
         val xDiffPerLed = 180.0 / cycleLength
         for (index in indices) {
@@ -35,7 +35,7 @@ object LEDModes {
         }
     }
 
-    fun wave(c1: Color, c2: Color, cycleLength: Double, duration: Double, indices: List<Int>) {
+    fun wave(c1: Color, c2: Color, cycleLength: Double, duration: Double, indices: Set<Int>) {
         val WAVE_EXPONENT = 0.4
 
         var x = (1 - Timer.getFPGATimestamp() % duration / duration) * 2.0 * Math.PI
@@ -56,7 +56,7 @@ object LEDModes {
         }
     }
 
-    fun stripes(colors: List<Color>, length: Int, duration: Double, indices: List<Int>) {
+    fun stripes(colors: List<Color>, length: Int, duration: Double, indices: Set<Int>) {
         for (index in indices) {
             var colorIndex = (floor((index - (Timer.getFPGATimestamp() % duration / duration * length * colors.size)) / length) + colors.size).toInt() % colors.size
             colorIndex = colors.size - 1 - colorIndex
