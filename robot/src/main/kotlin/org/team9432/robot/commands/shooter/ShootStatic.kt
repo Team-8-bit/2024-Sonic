@@ -16,38 +16,34 @@ import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.shooter.CommandShooter
 
 fun ShootStatic(rpmLeft: Double, rpmRight: Double) = SuppliedCommand {
-    // Don't run this if there's not a note in the intake
-    if (!RobotState.notePosition.isIntake) InstantCommand {}
-    else {
-        ParallelRaceCommand(
-            TargetDrive { FieldConstants.speakerPose },
+    ParallelDeadlineCommand(
+        // TargetDrive { FieldConstants.speakerPose },
 
-            CommandHood.followAngle {
-                val angle = Rotation2d.fromDegrees(ShooterInterpolator.getHoodAngle(RobotPosition.distanceToSpeaker()))
-                Logger.recordOutput("Hood/ShootTarget", angle.degrees)
-                return@followAngle angle
-            },
+        CommandHood.followAngle {
+            Rotation2d.fromDegrees(ShooterInterpolator.getHoodAngle(RobotPosition.distanceToSpeaker())).also {
+                Logger.recordOutput("Hood/ShootTarget", it.degrees)
+            }
+        },
 
-            SequentialCommand(
-                ParallelCommand(
-                    // Spin up the shooter
-                    CommandShooter.setSpeed(rpmLeft, rpmRight),
-                    // Move the note to the speaker side of the hopper
-                    MoveToSide(MechanismSide.SPEAKER),
-                    // Minimum of one second to spin up the shooter
-                    WaitCommand(1.0),
-                ),
+        CommandShooter.runSpeed { rpmLeft to rpmRight },
+
+        deadline = SequentialCommand(
+            ParallelCommand(
+                // Move the note to the speaker side of the hopper
+                MoveToSide(MechanismSide.SPEAKER),
+                // Spin up the shooter for a minimum of half a second, plus one second per 4000 rpm
+                WaitCommand(0.5 + (maxOf(rpmLeft, rpmRight) / 4000)),
+            ),
+            ParallelDeadlineCommand(
                 // Shoot the note
-                CommandHopper.loadTo(MechanismSide.SPEAKER, 5.0),
-                CommandIntake.intakeSide(MechanismSide.SPEAKER, 5.0),
-                // Wait a second, then stop the motors
-                WaitCommand(1.0),
-                CommandShooter.stop(),
-                CommandHopper.stop(),
-                CommandIntake.stop(),
-                // Update the note position
-                InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE }
-            )
+                CommandHopper.runLoadTo(MechanismSide.SPEAKER, 5.0),
+                CommandIntake.runIntakeSide(MechanismSide.SPEAKER, 5.0),
+                // Do this for one second
+                deadline = WaitCommand(1.0)
+            ),
+
+            // Update the note position
+            InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE }
         )
-    }
+    )
 }

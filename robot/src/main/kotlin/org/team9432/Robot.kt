@@ -31,6 +31,7 @@ import org.team9432.robot.subsystems.led.LEDs
 import org.team9432.robot.subsystems.limelight.Limelight
 import org.team9432.robot.subsystems.shooter.Shooter
 import org.team9432.robot.subsystems.vision.Vision
+import kotlin.jvm.optionals.getOrNull
 
 val LOOP_PERIOD_SECS = Robot.period
 
@@ -96,9 +97,7 @@ object Robot: LoggedRobot() {
         KCommandScheduler.run()
         RobotState.log()
 
-        if (alliance == null) {
-            alliance = DriverStation.getAlliance().orElse(null)
-        }
+        DriverStation.getAlliance().getOrNull()?.let { alliance = it }
     }
 
     override fun disabledInit() {
