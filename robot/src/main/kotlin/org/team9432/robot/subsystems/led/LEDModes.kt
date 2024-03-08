@@ -2,42 +2,11 @@ package org.team9432.robot.subsystems.led
 
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.util.Color
-import org.team9432.lib.commandbased.commands.SimpleCommand
 import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.sin
 
-object BaseLEDCommands {
-    fun solidCommand(color: Color, strip: LEDSubsystem) = SimpleCommand(
-        requirements = setOf(strip),
-        execute = { solid(color, strip.strip) }
-    )
-
-    fun strobeCommand(color: Color, duration: Double, strip: LEDSubsystem) = SimpleCommand(
-        requirements = setOf(strip),
-        execute = { strobe(color, duration, strip.strip) }
-    )
-
-    fun breathCommand(c1: Color, c2: Color, strip: LEDSubsystem, duration: Double = 1.0, timestamp: Double = Timer.getFPGATimestamp()) = SimpleCommand(
-        requirements = setOf(strip),
-        execute = { breath(c1, c2, strip.strip, duration, timestamp) }
-    )
-
-    fun rainbowCommand(cycleLength: Double, duration: Double, strip: LEDSubsystem) = SimpleCommand(
-        requirements = setOf(strip),
-        execute = { rainbow(cycleLength, duration, strip.strip) }
-    )
-
-    fun waveCommand(c1: Color, c2: Color, cycleLength: Double, duration: Double, strip: LEDSubsystem) = SimpleCommand(
-        requirements = setOf(strip),
-        execute = { wave(c1, c2, cycleLength, duration, strip.strip) }
-    )
-
-    fun stripesCommand(colors: List<Color>, length: Int, duration: Double, strip: LEDSubsystem) = SimpleCommand(
-        requirements = setOf(strip),
-        execute = { stripes(colors, length, duration, strip.strip) }
-    )
-
+object LEDModes {
     fun solid(color: Color, strip: LEDs.Strip) {
         for (index in strip.indices) {
             LEDs.buffer.setLED(index, color)

@@ -6,7 +6,6 @@ import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
-import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
@@ -20,8 +19,6 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
-import org.team9432.robot.subsystems.intake.Intake
-import org.team9432.robot.subsystems.led.LEDCommands
 import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.vision.Vision
 
@@ -93,12 +90,6 @@ object Controls {
         })
 
         /* ------------- LED MODE BUTTONS ------------- */
-
-        controller.b.and(isLedMode)
-            .whileTrue(LEDCommands.testMode())
-
-        controller.a.and(isLedMode)
-            .whileTrue(LEDCommands.testBottom())
 
         controller.rightBumper.and(isLedMode)
             .onTrue(InstantCommand { Vision.setLED(true) })
