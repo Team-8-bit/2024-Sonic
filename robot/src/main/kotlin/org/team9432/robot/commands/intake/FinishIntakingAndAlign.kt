@@ -6,7 +6,7 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.intake.Intake
-import org.team9432.robot.subsystems.led.LEDSubsystems
+import org.team9432.robot.subsystems.led.LEDState
 
 fun FinishIntakingAndAlign() = SuppliedCommand(Intake) {
     val side = RobotState.getOneIntakeBeambreak() ?: return@SuppliedCommand InstantCommand {}
@@ -23,6 +23,6 @@ fun FinishIntakingAndAlign() = SuppliedCommand(Intake) {
         // Update the note position in the robot
         InstantCommand { RobotState.notePosition = side.getNotePositionIntake() },
 
-        InstantCommand { LEDSubsystems.BOTTOM.forEach { KCommandScheduler.requiring(it)?.cancel() } }
+        InstantCommand { LEDState.intakeLightOn = false }
     )
 }

@@ -1,15 +1,11 @@
 package org.team9432.robot.commands.intake
 
-import edu.wpi.first.wpilibj.util.Color
 import org.team9432.lib.commandbased.KCommand.InterruptionBehavior
-import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.RobotState
-import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
+import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.subsystems.intake.CommandIntake
-import org.team9432.robot.subsystems.intake.Intake
-import org.team9432.robot.subsystems.led.BaseLEDCommands
-import org.team9432.robot.subsystems.led.LEDSubsystems
+import org.team9432.robot.subsystems.led.LEDState
 
 fun TeleIntake() = SequentialCommand(
     // This part just gets the note touching the first intake beam break
