@@ -1,6 +1,7 @@
 package org.team9432.robot
 
 
+import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.InstantCommand
@@ -12,6 +13,7 @@ import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.Shoot
+import org.team9432.robot.commands.shooter.ShootAngle
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
@@ -62,7 +64,7 @@ object Controls {
 
         // Shoot Amplifier
         controller.leftTrigger.and(isDefaultMode)
-            .onTrue(Shoot(2250.0, 2250.0))
+            .onTrue(ShootAngle(2250.0, 2250.0, Rotation2d.fromDegrees(10.0)))
 
         // Reset Drivetrain Heading
         controller.a.and(isDefaultMode)
