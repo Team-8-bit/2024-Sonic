@@ -8,9 +8,7 @@ import kotlin.math.sin
 
 object LEDModes {
     fun solid(color: Color, strip: LEDs.Strip) {
-        for (index in strip.indices) {
-            LEDs.buffer.setLED(index, color)
-        }
+        strip.indices.forEach { LEDs.buffer.setLED(it, color) }
     }
 
     fun strobe(color: Color, duration: Double, strip: LEDs.Strip) {

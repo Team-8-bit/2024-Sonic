@@ -5,22 +5,35 @@ import edu.wpi.first.wpilibj.util.Color
 import org.team9432.robot.subsystems.led.LEDModes.breath
 import org.team9432.robot.subsystems.led.LEDModes.rainbow
 import org.team9432.robot.subsystems.led.LEDModes.strobe
+import org.team9432.robot.subsystems.led.animations.LEDAnimation
 
 object LEDState {
     var isIntakeLightOn = false
+    var animation: LEDAnimation? = null
+        set(value) {
+            value?.reset()
+            field = value
+        }
 
     fun updateBuffer() {
-        if (DriverStation.isDisabled()) {
-            breath(LEDColors.MAIN_GREEN, Color.kBlack, LEDs.Strip.ALL, 3.0)
+        if (animation != null) {
+            animation?.let { animation ->
+                val isFinished = animation.updateBuffer()
+                if (isFinished) this.animation = null
+            }
+        } else {
+            if (DriverStation.isDisabled()) {
+                breath(LEDColors.MAIN_GREEN, Color.kBlack, LEDs.Strip.ALL, 3.0)
 
-        } else if (DriverStation.isAutonomous()) {
-            strobe(Color.kRed, 0.25, LEDs.Strip.ALL)
+            } else if (DriverStation.isAutonomous()) {
+                strobe(Color.kRed, 0.25, LEDs.Strip.ALL)
 
-        } else { // Teleop
-            rainbow(30.0, 0.5, LEDs.Strip.ALL) // This will be the default unless overwritten later
+            } else { // Teleop
+                rainbow(30.0, 0.5, LEDs.Strip.ALL) // This will be the default unless overwritten later
 
-            if (isIntakeLightOn) { // Blink purple while intaking
-                strobe(Color.kPurple, 0.1, LEDs.Strip.BOTTOM)
+                if (isIntakeLightOn) { // Blink purple while intaking
+                    strobe(Color.kPurple, 0.1, LEDs.Strip.BOTTOM)
+                }
             }
         }
     }

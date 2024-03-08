@@ -12,7 +12,7 @@ import org.team9432.robot.Devices
 object LEDs: KSubsystem() {
     private const val LENGTH = 88 // Two 8s!
 
-    private val leds = AddressableLED(Devices.LED_PORT)
+    private val ledController = AddressableLED(Devices.LED_PORT)
     val buffer = AddressableLEDBuffer(LENGTH)
     private val loadingNotifier: Notifier
 
@@ -46,9 +46,9 @@ object LEDs: KSubsystem() {
     }
 
     init {
-        leds.setLength(LENGTH)
-        leds.setData(buffer)
-        leds.start()
+        ledController.setLength(LENGTH)
+        ledController.setData(buffer)
+        ledController.start()
 
         loadingNotifier = Notifier {
             synchronized(this) {
@@ -58,7 +58,7 @@ object LEDs: KSubsystem() {
                     Strip.ALL,
                     timestamp = System.currentTimeMillis() / 1000.0
                 )
-                leds.setData(buffer)
+                ledController.setData(buffer)
             }
         }
 
@@ -78,6 +78,6 @@ object LEDs: KSubsystem() {
 
         LEDState.updateBuffer()
 
-        leds.setData(buffer)
+        ledController.setData(buffer)
     }
 }

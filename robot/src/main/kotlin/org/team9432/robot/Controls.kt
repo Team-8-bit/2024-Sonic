@@ -19,6 +19,8 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
+import org.team9432.robot.subsystems.led.LEDState
+import org.team9432.robot.subsystems.led.animations.Chase
 import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.vision.Vision
 
@@ -30,7 +32,7 @@ object Controls {
     val angle get() = -controller.rightX
     val slowDrive get() = controller.rightBumper.asBoolean
 
-    private var currentMode = ControllerMode.DEFAULT
+    var currentMode = ControllerMode.DEFAULT
         set(value) {
             Logger.recordOutput("ControllerMode", value)
             field = value
@@ -97,6 +99,13 @@ object Controls {
         controller.leftBumper.and(isLedMode)
             .onTrue(InstantCommand { Vision.setLED(false) })
 
+        // Toggle chase mode
+        controller.a.and(isLedMode)
+            .onTrue(InstantCommand {
+                if (LEDState.animation == null) LEDState.animation = Chase
+                else LEDState.animation = null
+            })
+
         /* -------------- CLIMB BUTTONS -------------- */
 
         // Raise Left Climber
@@ -134,7 +143,7 @@ object Controls {
             .onFalse(InstantCommand { currentMode = ControllerMode.DEFAULT })
     }
 
-    private enum class ControllerMode {
+    enum class ControllerMode {
         DEFAULT, CLIMB, LED
     }
 }
