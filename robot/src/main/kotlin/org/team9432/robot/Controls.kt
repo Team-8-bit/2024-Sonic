@@ -6,13 +6,12 @@ import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
-import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
-import org.team9432.robot.commands.shooter.ShootStatic
+import org.team9432.robot.commands.shooter.Shoot
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
@@ -20,7 +19,6 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
-import org.team9432.robot.subsystems.intake.Intake
 import org.team9432.robot.subsystems.led.LEDCommands
 import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.vision.Vision
@@ -60,11 +58,11 @@ object Controls {
 
         // Shoot Speaker
         controller.rightTrigger.and(isDefaultMode)
-            .onTrue(ShootStatic(4000.0, 6000.0))
+            .onTrue(Shoot(4000.0, 6000.0))
 
         // Shoot Amplifier
         controller.leftTrigger.and(isDefaultMode)
-            .onTrue(ShootStatic(2250.0, 2250.0))
+            .onTrue(Shoot(2250.0, 2250.0))
 
         // Reset Drivetrain Heading
         controller.a.and(isDefaultMode)
