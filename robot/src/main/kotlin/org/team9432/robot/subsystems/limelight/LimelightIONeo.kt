@@ -20,7 +20,7 @@ class LimelightIONeo: LimelightIO {
 
     private val gearRatio = 36 / 8
 
-    private val encoderOffset = Rotation2d.fromDegrees(0.0)
+    private val encoderOffset = Rotation2d.fromDegrees(-15.0)
 
     init {
         spark.restoreFactoryDefaults()
@@ -37,12 +37,9 @@ class LimelightIONeo: LimelightIO {
             errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
             errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
 
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 1000)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus1, 1000)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus2, 1000)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
             errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
             errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus4, 1000)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus5, 1000)
             errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus6, 1000)
 
             if (errors.all { it == REVLibError.kOk }) break
