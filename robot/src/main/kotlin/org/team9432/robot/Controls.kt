@@ -28,6 +28,7 @@ import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.led.LEDState
 import org.team9432.robot.subsystems.led.animations.ChargeUp
 import org.team9432.robot.subsystems.led.animations.Chase
+import org.team9432.robot.subsystems.led.animations.Confetti
 import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.vision.Vision
 import kotlin.math.truncate
@@ -113,6 +114,12 @@ object Controls {
         controller.y.and(isLedMode)
             .onTrue(InstantCommand {
                 LEDState.animation = ChargeUp(1.0, 1.0)
+            }.runsWhenDisabled(true))
+
+        // Run confetti
+        controller.b.and(isLedMode)
+            .onTrue(InstantCommand {
+                LEDState.animation = Confetti(6.0)
             }.runsWhenDisabled(true))
 
         /* -------------- CLIMB BUTTONS -------------- */
