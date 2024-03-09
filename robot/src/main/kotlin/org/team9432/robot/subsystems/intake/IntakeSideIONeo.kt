@@ -2,6 +2,7 @@ package org.team9432.robot.subsystems.intake
 
 import com.revrobotics.CANSparkBase.ControlType
 import com.revrobotics.CANSparkBase.IdleMode
+import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import com.revrobotics.SparkPIDController.ArbFFUnits
@@ -29,6 +30,12 @@ class IntakeSideIONeo(override val intakeSide: IntakeSideIO.IntakeSide): IntakeS
             errors += spark.setSmartCurrentLimit(80)
             errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
             errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus4, 1000)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus5, 1000)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus6, 1000)
             if (errors.all { it == REVLibError.kOk }) break
         }
 

@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration
 import com.ctre.phoenix6.hardware.CANcoder
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue
 import com.revrobotics.CANSparkBase.IdleMode
+import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.math.geometry.Rotation2d
@@ -61,6 +62,18 @@ class ModuleIONeo(override val module: ModuleIO.Module) : ModuleIO {
 
             errors += drive.setIdleMode(IdleMode.kBrake)
             errors += steer.setIdleMode(IdleMode.kBrake)
+
+            errors += drive.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
+            errors += drive.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
+            errors += drive.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus4, 1000)
+            errors += drive.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus5, 1000)
+            errors += drive.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus6, 1000)
+
+            errors += steer.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
+            errors += steer.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
+            errors += steer.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus4, 1000)
+            errors += steer.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus5, 1000)
+            errors += steer.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus6, 1000)
 
             if (errors.all { it == REVLibError.kOk }) break
         }
