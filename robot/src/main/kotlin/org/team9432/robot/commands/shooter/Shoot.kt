@@ -10,6 +10,8 @@ import org.team9432.robot.commands.hood.HoodAimAtSpeaker
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
+import org.team9432.robot.subsystems.led.LEDState
+import org.team9432.robot.subsystems.led.animations.ChargeUp
 import org.team9432.robot.subsystems.shooter.CommandShooter
 
 fun Shoot(
@@ -21,6 +23,8 @@ fun Shoot(
     // Aim the hood and spin up the shooter
     HoodAimAtSpeaker(),
     CommandShooter.runSpeed { rpmLeft to rpmRight },
+
+    InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 
     deadline = SequentialCommand(
         ParallelCommand(

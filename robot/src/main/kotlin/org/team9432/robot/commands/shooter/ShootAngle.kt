@@ -5,29 +5,26 @@ import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
-import org.team9432.robot.commands.hood.HoodAimAtSpeaker
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.subsystems.hood.CommandHood
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
+import org.team9432.robot.subsystems.led.LEDState
+import org.team9432.robot.subsystems.led.animations.ChargeUp
 import org.team9432.robot.subsystems.shooter.CommandShooter
 
-fun ShootAngle(
-    rpmLeft: Double,
-    rpmRight: Double,
-    angle: Rotation2d,
-    // Spin up the shooter for a minimum of half a second, plus one second per 4000 rpm
-    minSpinup: Double = 0.5 + (maxOf(rpmLeft, rpmRight) / 4000),
-) = ParallelDeadlineCommand(
+fun ShootAngle(rpmLeft: Double, rpmRight: Double, angle: Rotation2d) = ParallelDeadlineCommand(
     // Aim the hood and spin up the shooter
     CommandHood.followAngle { angle },
     CommandShooter.runSpeed { rpmLeft to rpmRight },
+
+    InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 
     deadline = SequentialCommand(
         ParallelCommand(
             // Move the note to the speaker side of the hopper
             MoveToSide(MechanismSide.SPEAKER),
-            WaitCommand(minSpinup),
+            WaitCommand(1.0),
         ),
         ParallelDeadlineCommand(
             // Shoot the note
