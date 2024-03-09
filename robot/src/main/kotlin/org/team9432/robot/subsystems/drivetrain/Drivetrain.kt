@@ -26,7 +26,7 @@ import kotlin.math.abs
 object Drivetrain: KSubsystem() {
     val modules = ModuleIO.Module.entries.map { Module(it) }
 
-    private val angleController = ProfiledPIDController(0.087266, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
+    private val angleController = ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
 
     private val xController = PIDController(3.0, 0.0, 0.0)
     private val yController = PIDController(3.0, 0.0, 0.0)

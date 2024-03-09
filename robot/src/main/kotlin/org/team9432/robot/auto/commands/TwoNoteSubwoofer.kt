@@ -12,7 +12,7 @@ import org.team9432.robot.commands.shooter.Shoot
 import org.team9432.robot.subsystems.intake.CommandIntake
 
 fun TwoNoteSubwoofer() = SequentialCommand(
-    Shoot(4000.0, 6000.0, minSpinup = 1.5),
+    Shoot(4000.0, 6000.0),
     ParallelDeadlineCommand(
         // Drive to the position and then slowly move forwards
         SequentialCommand(
@@ -27,5 +27,5 @@ fun TwoNoteSubwoofer() = SequentialCommand(
         FinishIntakingAndAlign(),
         DriveToPosition(AutoConstants.directScoringPose)
     ),
-    Shoot(4000.0, 6000.0, minSpinup = 1.5)
+    Shoot(4000.0, 6000.0)
 )

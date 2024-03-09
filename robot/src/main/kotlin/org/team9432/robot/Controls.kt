@@ -10,11 +10,14 @@ import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.commands.runsWhenDisabled
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
+import org.team9432.robot.commands.amp.Amp
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
+import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.Shoot
 import org.team9432.robot.commands.shooter.ShootAngle
+import org.team9432.robot.subsystems.amp.CommandAmp
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
@@ -79,21 +82,15 @@ object Controls {
                 CommandIntake.stop(),
                 CommandHopper.stop(),
                 CommandShooter.stop(),
+                CommandAmp.stop(),
                 InstantCommand {
                     RobotState.notePosition = RobotState.NotePosition.NONE
                     KCommandScheduler.cancelAll()
                 }
             ))
 
-        // Clear note position
-        controller.y.onTrue(InstantCommand {
-            BeambreakIOSim.setNoteInIntakeAmpSide(false)
-            BeambreakIOSim.setNoteInIntakeSpeakerSide(false)
-            BeambreakIOSim.setNoteInHopperAmpSide(false)
-            BeambreakIOSim.setNoteInHopperSpeakerSide(false)
-            BeambreakIOSim.setNoteInCenter(false)
-            RobotState.notePosition = RobotState.NotePosition.NONE
-        })
+        // Load to amp
+        controller.y.onTrue(Amp(-6.0))
 
         /* ------------- LED MODE BUTTONS ------------- */
 
