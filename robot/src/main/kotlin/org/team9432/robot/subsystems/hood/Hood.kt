@@ -1,5 +1,6 @@
 package org.team9432.robot.subsystems.hood
 
+import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.geometry.Pose3d
 import edu.wpi.first.math.geometry.Rotation2d
@@ -40,7 +41,7 @@ object Hood: KSubsystem() {
     }
 
     fun setAngle(angle: Rotation2d) {
-        io.setAngle(angle, feedforward.calculate(angle.degrees))
+        io.setAngle(angle, feedforward.calculate(MathUtil.clamp(angle.degrees, 0.0, 29.0)))
 
         Logger.recordOutput("Hood/AngleSetpointDegrees", angle.degrees)
     }
