@@ -26,9 +26,11 @@ import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.led.LEDState
+import org.team9432.robot.subsystems.led.animations.ChargeUp
 import org.team9432.robot.subsystems.led.animations.Chase
 import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.vision.Vision
+import kotlin.math.truncate
 
 object Controls {
     private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
@@ -105,6 +107,12 @@ object Controls {
             .onTrue(InstantCommand {
                 if (LEDState.animation == null) LEDState.animation = Chase
                 else LEDState.animation = null
+            }.runsWhenDisabled(true))
+
+        // Run charge up animation
+        controller.y.and(isLedMode)
+            .onTrue(InstantCommand {
+                LEDState.animation = ChargeUp(1.0, 1.0)
             }.runsWhenDisabled(true))
 
         /* -------------- CLIMB BUTTONS -------------- */
