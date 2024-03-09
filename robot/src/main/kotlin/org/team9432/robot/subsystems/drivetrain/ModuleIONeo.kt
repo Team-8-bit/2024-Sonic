@@ -59,6 +59,9 @@ class ModuleIONeo(override val module: ModuleIO.Module) : ModuleIO {
             errors += steer.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
             errors += steer.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
 
+            errors += drive.setIdleMode(IdleMode.kBrake)
+            errors += steer.setIdleMode(IdleMode.kBrake)
+
             if (errors.all { it == REVLibError.kOk }) break
         }
 
