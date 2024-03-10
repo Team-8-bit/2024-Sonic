@@ -6,7 +6,6 @@ import org.team9432.robot.subsystems.led.LEDModes
 import org.team9432.robot.subsystems.led.LEDs
 
 class Confetti(private val duration: Double) : LEDAnimation {
-    private val confettiMaxDistance = 7
 
     private val stepTime = 0.5
 

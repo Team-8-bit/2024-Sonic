@@ -17,19 +17,19 @@ object LEDs: KSubsystem() {
     private val loadingNotifier: Notifier
 
     object Section {
-        val SPEAKER_LEFT_TOP = (0..11).toSet()
-        val SPEAKER_LEFT_BOTTOM = (12..21).toSet()
+        val SPEAKER_LEFT_TOP = (0..11).toList()
+        val SPEAKER_LEFT_BOTTOM = (12..21).toList()
 
-        val SPEAKER_RIGHT_BOTTOM = (22..33).toSet()
-        val SPEAKER_RIGHT_TOP = (34..43).toSet()
+        val SPEAKER_RIGHT_BOTTOM = (22..33).toList()
+        val SPEAKER_RIGHT_TOP = (34..43).toList()
 
-        val AMP_LEFT_TOP = (44..55).toSet()
-        val AMP_LEFT_BOTTOM = (56..65).toSet()
+        val AMP_LEFT_TOP = (44..55).toList()
+        val AMP_LEFT_BOTTOM = (56..65).toList()
 
-        val AMP_RIGHT_BOTTOM = (66..77).toSet()
-        val AMP_RIGHT_TOP = (78..88).toSet()
+        val AMP_RIGHT_BOTTOM = (66..77).toList()
+        val AMP_RIGHT_TOP = (78..88).toList()
 
-        val TOP_BAR = (89..118).toSet()
+        val TOP_BAR = (89..118).toList()
 
         val SPEAKER_LEFT = SPEAKER_LEFT_TOP + SPEAKER_LEFT_BOTTOM
         val SPEAKER_RIGHT = SPEAKER_RIGHT_BOTTOM + SPEAKER_RIGHT_TOP
