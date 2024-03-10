@@ -28,8 +28,8 @@ object Drivetrain: KSubsystem() {
 
     private val angleController = ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
 
-    private val xController = PIDController(3.0, 0.0, 0.0)
-    private val yController = PIDController(3.0, 0.0, 0.0)
+    private val xController = PIDController(5.0, 0.0, 0.0)
+    private val yController = PIDController(5.0, 0.0, 0.0)
 
     val kinematics: SwerveDriveKinematics
     private val poseEstimator: SwerveDrivePoseEstimator

@@ -44,7 +44,6 @@ class Rocket(private val duration: Double, private val cooldown: Double = 1.0) :
         timer.start()
 
         val toInt = (Math.random() * 3).toInt()
-        println(toInt)
 
         when(toInt) {
             0 -> {

@@ -1,4 +1,4 @@
-package org.team9432.robot.auto.commands
+package org.team9432.robot.auto.autos
 
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.robot.auto.Trajectories

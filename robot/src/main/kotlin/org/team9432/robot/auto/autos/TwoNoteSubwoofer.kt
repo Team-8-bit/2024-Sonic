@@ -1,14 +1,12 @@
-package org.team9432.robot.auto.commands
+package org.team9432.robot.auto.autos
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
-import org.team9432.robot.auto.AutoConstants
 import org.team9432.robot.auto.PullFromSpeakerShooter
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.DriveSpeeds
-import org.team9432.robot.commands.drivetrain.DriveToPosition
 import org.team9432.robot.commands.intake.FinishIntakingAndAlign
 import org.team9432.robot.commands.shooter.Shoot
 import org.team9432.robot.commands.shooter.ShootFromHopper

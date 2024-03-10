@@ -15,29 +15,17 @@ import org.team9432.robot.subsystems.led.animations.ChargeUp
 import org.team9432.robot.subsystems.led.animations.Rocket
 import org.team9432.robot.subsystems.shooter.CommandShooter
 
-fun Shoot(
+fun PretendShoot(
     rpmLeft: Double = 4000.0,
     rpmRight: Double = 6000.0,
 ) = ParallelDeadlineCommand(
     TargetDrive { FieldConstants.speakerPose },
 
-    // Aim the hood and spin up the shooter
-    HoodAimAtSpeaker(),
-    CommandShooter.runSpeed { rpmLeft to rpmRight },
-
     InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 
     deadline = SequentialCommand(
-        ParallelCommand(
-            // Move the note to the speaker side of the hopper
-            MoveToSide(MechanismSide.SPEAKER),
-            WaitCommand(1.0),
-        ),
+        WaitCommand(1.0),
         ParallelDeadlineCommand(
-            // Shoot the note
-            CommandHopper.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
-            CommandIntake.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
-
             SimpleCommand(
                 isFinished = { !RobotState.noteInSpeakerSideHopperBeambreak() },
                 end = { LEDState.animation = Rocket(0.5) }
@@ -45,9 +33,6 @@ fun Shoot(
 
             // Do this for one second
             deadline = WaitCommand(1.0)
-        ),
-
-        // Update the note position
-        InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE }
+        )
     )
 )
