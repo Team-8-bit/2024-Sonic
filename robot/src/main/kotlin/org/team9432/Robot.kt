@@ -18,6 +18,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.robot.Controls
 import org.team9432.robot.RobotState
+import org.team9432.robot.auto.commands.TwoNoteSubwoofer
 import org.team9432.robot.subsystems.amp.Amp
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.climber.LeftClimber
@@ -102,6 +103,10 @@ object Robot: LoggedRobot() {
 
     override fun disabledInit() {
         KCommandScheduler.cancelAll()
+    }
+
+    override fun autonomousInit() {
+        TwoNoteSubwoofer().schedule()
     }
 
     enum class Mode {

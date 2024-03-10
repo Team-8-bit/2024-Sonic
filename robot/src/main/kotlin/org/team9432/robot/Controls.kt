@@ -10,9 +10,9 @@ import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.commands.runsWhenDisabled
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
-import org.team9432.robot.commands.amp.Amp
+import org.team9432.robot.commands.amp.AutoAmp
+import org.team9432.robot.commands.amp.ScoreAmp
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
-import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.Shoot
@@ -71,8 +71,8 @@ object Controls {
         controller.rightTrigger.and(isDefaultMode)
             .onTrue(Shoot(4000.0, 6000.0))
 
-        // Shoot Amplifier
-        controller.leftTrigger.and(isDefaultMode)
+        // Shoot Amplifier from speaker
+        controller.b.and(isDefaultMode)
             .onTrue(ShootAngle(2250.0, 2250.0, Rotation2d.fromDegrees(10.0)))
 
         // Reset Drivetrain Heading
@@ -80,7 +80,7 @@ object Controls {
             .onTrue(InstantCommand { Gyro.resetYaw() })
 
         // Reset
-        controller.b.and(isDefaultMode)
+        controller.y.and(isDefaultMode)
             .onTrue(ParallelCommand(
                 CommandIntake.stop(),
                 CommandHopper.stop(),
@@ -93,7 +93,7 @@ object Controls {
             ))
 
         // Load to amp
-        controller.y.onTrue(Amp(-6.0))
+        controller.leftTrigger.onTrue(ScoreAmp(4.5))
 
         /* ------------- LED MODE BUTTONS ------------- */
 

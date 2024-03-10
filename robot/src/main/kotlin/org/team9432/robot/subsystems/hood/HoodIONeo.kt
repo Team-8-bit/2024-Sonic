@@ -44,6 +44,7 @@ class HoodIONeo: HoodIO {
             errors += relativeEncoder.setPosition(0.0)
             errors += absoluteEncoder.setInverted(true)
             errors += pid.setFeedbackDevice(absoluteEncoder)
+            errors += pid.setOutputRange(-0.5, 0.5)
 
             errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
             errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)

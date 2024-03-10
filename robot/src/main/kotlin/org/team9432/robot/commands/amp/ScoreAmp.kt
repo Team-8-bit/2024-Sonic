@@ -9,7 +9,7 @@ import org.team9432.robot.subsystems.amp.CommandAmp
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 
-fun Amp(volts: Double) = SequentialCommand(
+fun ScoreAmp(volts: Double) = SequentialCommand(
     CommandAmp.setVoltage(volts),
 
     ParallelCommand(

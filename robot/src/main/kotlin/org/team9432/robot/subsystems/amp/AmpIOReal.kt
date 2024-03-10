@@ -14,8 +14,8 @@ class AmpIOReal : AmpIO {
         spark.restoreFactoryDefaults()
 
         for (i in 0..88) {
-            spark.inverted = false
-            if (spark.inverted == false) break
+            spark.inverted = true
+            if (spark.inverted == true) break
         }
 
         for (i in 0..88) {
