@@ -6,6 +6,8 @@ import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import com.revrobotics.SparkPIDController.ArbFFUnits
+import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
@@ -18,13 +20,16 @@ class HoodIONeo: HoodIO {
     private val absoluteEncoder = spark.absoluteEncoder
     private val relativeEncoder = spark.encoder
 
-    private val pid = spark.pidController
+    private val pid = PIDController(0.0, 0.0, 0.0)
 
     private val motorToHoodRatio = 2.0 * (150 / 15)
     private val encoderToHoodRatio = 150 / 15
 
-    private val encoderOffset = Rotation2d.fromDegrees(2.35
-    )
+    private val encoderOffset = Rotation2d.fromDegrees(2.35)
+
+    private var ffVolts = 0.0
+    private var isClosedLoop = false
+    private var relativeOffset: Rotation2d? = null
 
     init {
         spark.restoreFactoryDefaults()
@@ -43,8 +48,6 @@ class HoodIONeo: HoodIO {
             errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
             errors += relativeEncoder.setPosition(0.0)
             errors += absoluteEncoder.setInverted(true)
-            errors += pid.setFeedbackDevice(absoluteEncoder)
-            errors += pid.setOutputRange(-0.5, 0.5)
 
             errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
             errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
@@ -57,6 +60,11 @@ class HoodIONeo: HoodIO {
     }
 
     override fun updateInputs(inputs: HoodIO.HoodIOInputs) {
+        if (isClosedLoop) {
+            val r = Rotation2d.fromRotations(absoluteEncoder.position)
+        //    spark.set(MathUtil.clamp(pid.calculate(r.rotations) + ffVolts, -12.0, 12.0))
+        }
+
         inputs.absoluteAngle = Rotation2d.fromRotations(absoluteEncoder.position / encoderToHoodRatio)
         inputs.relativeAngle = Rotation2d.fromRotations(relativeEncoder.position / motorToHoodRatio)
         inputs.velocityDegPerSec = Units.rotationsPerMinuteToRadiansPerSecond(relativeEncoder.velocity) / motorToHoodRatio
@@ -64,27 +72,31 @@ class HoodIONeo: HoodIO {
         inputs.currentAmps = spark.outputCurrent
 
         Logger.recordOutput("HoodDegrees", inputs.absoluteAngle.degrees)
+
+        // On first cycle, reset relative turn encoder
+        // Wait until absolute angle is nonzero in case it wasn't initialized yet
+        if (relativeOffset == null && inputs.absoluteAngle.radians != 0.0) {
+            relativeOffset = inputs.absoluteAngle.minus(inputs.relativeAngle)
+        }
     }
 
-    override fun setVoltage(volts: Double) = spark.setVoltage(volts)
+    override fun setVoltage(volts: Double) {
+        isClosedLoop = false
+        spark.setVoltage(volts)
+    }
 
     override fun setAngle(angle: Rotation2d, feedforwardVolts: Double) {
-        pid.setReference(
-            angle.plus(encoderOffset).rotations * encoderToHoodRatio,
-            ControlType.kPosition
-        )
+        isClosedLoop = true
+        pid.setpoint = angle.plus(encoderOffset).rotations * encoderToHoodRatio
     }
 
     override fun setPID(p: Double, i: Double, d: Double) {
-        pid.setP(p, 0)
-        pid.setI(i, 0)
-        pid.setD(d, 0)
-        pid.setFF(0.0, 0)
+        pid.setPID(p, i, d)
     }
 
     override fun setBrakeMode(enabled: Boolean) {
         spark.idleMode = if (enabled) IdleMode.kBrake else IdleMode.kCoast
     }
 
-    override fun stop() = spark.stopMotor()
+    override fun stop() = setVoltage(0.0)
 }

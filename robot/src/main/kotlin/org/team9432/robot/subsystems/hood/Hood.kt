@@ -21,7 +21,7 @@ object Hood: KSubsystem() {
         when (Robot.mode) {
             REAL, REPLAY -> {
                 io = HoodIONeo()
-                io.setPID(2.0, 0.0, 3.0)
+                io.setPID(1.0, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0)
             }
 
