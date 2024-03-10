@@ -101,6 +101,8 @@ object Robot: LoggedRobot() {
         RobotState.log()
 
         DriverStation.getAlliance().getOrNull()?.let { alliance = it }
+
+
     }
 
     override fun disabledInit() {

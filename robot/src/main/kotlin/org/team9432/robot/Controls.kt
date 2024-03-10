@@ -96,7 +96,8 @@ object Controls {
             ))
 
         // Load to amp
-        controller.leftTrigger.onTrue(ScoreAmp(4.5))
+        controller.leftTrigger.and(isDefaultMode)
+            .onTrue(ScoreAmp(4.5))
 
         /* ------------- LED MODE BUTTONS ------------- */
 
