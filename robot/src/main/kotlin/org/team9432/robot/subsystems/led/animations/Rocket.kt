@@ -1,5 +1,6 @@
 package org.team9432.robot.subsystems.led.animations
 
+import edu.wpi.first.math.MathUtil
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.util.Color
 import org.team9432.robot.subsystems.led.LEDModes
@@ -9,7 +10,7 @@ import org.team9432.robot.subsystems.led.LEDs
 class Rocket(private val duration: Double, private val cooldown: Double = 1.0) : LEDAnimation {
     data class HSVColor(val h: Int, val s: Int, val v: Int)
 
-    private val stepTime = 0.1
+    private val stepTime = 0.04
 
     private var timer = Timer()
 
@@ -28,10 +29,10 @@ class Rocket(private val duration: Double, private val cooldown: Double = 1.0) :
                 var distanceFromLead = currentLength
 
                 section.take(currentLength).forEach {
-                    LEDs.buffer.setHSV(it, mainColor.h, mainColor.s, mainColor.v - ((currentLength * 15) + (distanceFromLead * 10)))
+                    LEDs.buffer.setHSV(it, mainColor.h, mainColor.s, maxOf(mainColor.v - (distanceFromLead * 35), 0))
                     distanceFromLead--
                 }
-                LEDs.buffer.setHSV(section[currentLength], leadColor.h, leadColor.s, leadColor.v - (currentLength * 15))
+                LEDs.buffer.setHSV(section[MathUtil.clamp(currentLength, 0, 21)], leadColor.h, leadColor.s, leadColor.v)
             }
         }
 

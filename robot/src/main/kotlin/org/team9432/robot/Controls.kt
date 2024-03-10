@@ -119,7 +119,7 @@ object Controls {
                 LEDState.animation = ChargeUp(1.0, 1.0)
             }.runsWhenDisabled(true))
             .onFalse(InstantCommand {
-                LEDState.animation = Rocket(1.0)
+                LEDState.animation = Rocket(0.5)
             }.runsWhenDisabled(true))
 
         // Run confetti
