@@ -36,10 +36,12 @@ import kotlin.math.truncate
 object Controls {
     private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
 
+    private val slowButton = controller.rightBumper
+
     val xSpeed get() = -controller.leftY
     val ySpeed get() = -controller.leftX
     val angle get() = -controller.rightX
-    val slowDrive get() = controller.rightBumper.asBoolean
+    val slowDrive get() = slowButton.asBoolean
 
     private var currentMode = ControllerMode.DEFAULT
         set(value) {
