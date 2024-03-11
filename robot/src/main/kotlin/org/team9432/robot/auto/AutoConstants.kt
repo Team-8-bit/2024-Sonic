@@ -7,13 +7,26 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.lib.util.PoseUtil
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.FieldConstants.applyFlip
+import org.team9432.robot.subsystems.RobotPosition
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 object AutoConstants {
     fun logIntakePoses() {
-        Logger.recordOutput("IntakePosesBlue", *arrayOf(blueAmpNoteIntakePose, blueCenterNoteIntakePose, blueStageNoteIntakePose))
-        Logger.recordOutput("IntakePosesRed", *arrayOf(PoseUtil.flip(blueAmpNoteIntakePose), PoseUtil.flip(blueCenterNoteIntakePose), PoseUtil.flip(blueStageNoteIntakePose)))
+        Logger.recordOutput("IntakePosesBlue", *arrayOf(
+            blueAmpNoteIntakePose,
+            blueAmpAngledNoteIntakePose,
+            blueCenterNoteIntakePose,
+            blueStageAngledNoteIntakePose,
+            blueStageNoteIntakePose,
+        ))
+        Logger.recordOutput("IntakePosesRed", *arrayOf(
+            PoseUtil.flip(blueAmpNoteIntakePose),
+            PoseUtil.flip(blueAmpAngledNoteIntakePose),
+            PoseUtil.flip(blueCenterNoteIntakePose),
+            PoseUtil.flip(blueStageAngledNoteIntakePose),
+            PoseUtil.flip(blueStageNoteIntakePose),
+        ))
     }
 
     // Math to make the distance to the note the same when aligned diagonally
@@ -28,19 +41,24 @@ object AutoConstants {
     private val targetNoteOffsetDistance = 0.75
     private val angledIntakeDistance = sqrt(targetNoteOffsetDistance.pow(2.0) / 2)
 
-    private val blueAmpNoteIntakePose = FieldConstants.blueAmpNotePose.transformBy(Transform2d(Translation2d(-angledIntakeDistance, -angledIntakeDistance), Rotation2d.fromDegrees(-135.0)))
+    private val blueAmpAngledNoteIntakePose = FieldConstants.blueAmpNotePose.transformBy(Transform2d(Translation2d(-angledIntakeDistance, -angledIntakeDistance), Rotation2d.fromDegrees(-135.0)))
+    private val blueAmpNoteIntakePose = FieldConstants.blueAmpNotePose.transformBy(Transform2d(Translation2d(-targetNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
     private val blueCenterNoteIntakePose = FieldConstants.blueCenterNotePose.transformBy(Transform2d(Translation2d(-targetNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
-    private val blueStageNoteIntakePose = FieldConstants.blueStageNotePose.transformBy(Transform2d(Translation2d(-angledIntakeDistance, angledIntakeDistance), Rotation2d.fromDegrees(135.0)))
+    private val blueStageAngledNoteIntakePose = FieldConstants.blueStageNotePose.transformBy(Transform2d(Translation2d(-angledIntakeDistance, angledIntakeDistance), Rotation2d.fromDegrees(135.0)))
+    private val blueStageNoteIntakePose = FieldConstants.blueStageNotePose.transformBy(Transform2d(Translation2d(-targetNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
 
+    val ampNoteAngledIntakePose get() = blueAmpAngledNoteIntakePose.applyFlip()
     val ampNoteIntakePose get() = blueAmpNoteIntakePose.applyFlip()
     val centerNoteIntakePose get() = blueCenterNoteIntakePose.applyFlip()
+    val stageNoteAngledIntakePose get() = blueStageAngledNoteIntakePose.applyFlip()
     val stageNoteIntakePose get() = blueStageNoteIntakePose.applyFlip()
 
     fun getIntakePosition(note: AllianceNote) = when (note) {
-        AllianceNote.AMP -> ampNoteIntakePose
+        AllianceNote.AMP -> listOf(ampNoteAngledIntakePose, ampNoteIntakePose).minBy { RobotPosition.distanceTo(it) }
         AllianceNote.CENTER -> centerNoteIntakePose
-        AllianceNote.STAGE -> stageNoteIntakePose
+        AllianceNote.STAGE -> listOf(stageNoteAngledIntakePose, stageNoteIntakePose).minBy { RobotPosition.distanceTo(it) }
     }
+
     fun getNotePosition(note: AllianceNote) = when (note) {
         AllianceNote.AMP -> FieldConstants.ampNotePose
         AllianceNote.CENTER -> FieldConstants.centerNotePose

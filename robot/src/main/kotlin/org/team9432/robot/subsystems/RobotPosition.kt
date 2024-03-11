@@ -18,8 +18,12 @@ object RobotPosition {
         return hypot(robotPose.x - pose.x, robotPose.y - pose.y) < epsilon
     }
 
-    fun distanceToSpeaker(): Double {
+    fun distanceTo(pose: Pose2d): Double {
         val robotPose = Drivetrain.getPose()
-        return robotPose.translation.getDistance(FieldConstants.speakerPose.translation)
+        return robotPose.translation.getDistance(pose.translation)
+    }
+
+    fun distanceToSpeaker(): Double {
+        return distanceTo(FieldConstants.speakerPose)
     }
 }

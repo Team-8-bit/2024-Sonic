@@ -8,6 +8,7 @@ import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.DriveSpeeds
 import org.team9432.robot.commands.drivetrain.TargetAim
 import org.team9432.robot.commands.hopper.MoveToSide
+import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.led.LEDState
@@ -25,7 +26,7 @@ fun AutoShoot() = ParallelDeadlineCommand(
             MoveToSide(MechanismSide.SPEAKER),
             ParallelRaceCommand(
                 DriveSpeeds(vx = 1.5, fieldOriented = false),
-                WaitCommand(0.75)
+                WaitCommand(0.5)
             )
         ),
         ParallelDeadlineCommand(
@@ -33,13 +34,11 @@ fun AutoShoot() = ParallelDeadlineCommand(
             CommandHopper.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
             CommandIntake.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
 
-            SimpleCommand(
+            // Do this until the note has left the hopper
+            deadline = SimpleCommand(
                 isFinished = { !RobotState.noteInSpeakerSideHopperBeambreak() },
                 end = { LEDState.animation = Rocket(0.5) }
-            ),
-
-            // Do this for one second
-            deadline = WaitCommand(0.5)
+            ).afterSimDelay(0.25) { BeambreakIOSim.setNoteInHopperSpeakerSide(false) },
         ),
 
         // Update the note position
