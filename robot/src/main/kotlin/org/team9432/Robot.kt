@@ -98,8 +98,7 @@ object Robot: LoggedRobot() {
         RightClimber
         Limelight
         AdditionalTriggers
-
-      //  AutoBuilder.initDashboard()
+        AutoBuilder
     }
 
     override fun robotPeriodic() {
@@ -122,7 +121,8 @@ object Robot: LoggedRobot() {
             ScoreNote(AllianceNote.CENTER),
             ScoreNote(AllianceNote.AMP),
             ExitAuto()
-        ).schedule()
+        )
+        AutoBuilder.getAuto().schedule()
     }
 
     enum class Mode {
