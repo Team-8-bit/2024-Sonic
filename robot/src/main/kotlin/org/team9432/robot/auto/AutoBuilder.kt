@@ -2,11 +2,12 @@ package org.team9432.robot.auto
 
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
-import edu.wpi.first.wpilibj2.command.ScheduleCommand
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
+import org.team9432.robot.auto.subsections.ScoreNote
+import org.team9432.robot.auto.subsections.StartNote
 
 object AutoBuilder {
     private val initChooser = SendableChooser<KCommand>()
@@ -41,16 +42,16 @@ object AutoBuilder {
 
     private fun SendableChooser<KCommand>.initStart() {
         setDefaultOption("None", InstantCommand {})
-        addOption("Amp Note", StartAmpNote())
-        addOption("Center Note", StartCenterNote())
-        addOption("Stage Note", StartStageNote())
+        addOption("Amp Note", StartNote(AllianceNote.AMP))
+        addOption("Center Note", StartNote(AllianceNote.CENTER))
+        addOption("Stage Note", StartNote(AllianceNote.STAGE))
     }
 
     private fun SendableChooser<KCommand>.initStep() {
         setDefaultOption("None", InstantCommand {})
-        addOption("Amp Note", ScoreAmpNote())
-        addOption("Center Note", ScoreCenterNote())
-        addOption("Stage Note", ScoreStageNote())
+        addOption("Amp Note", ScoreNote(AllianceNote.AMP))
+        addOption("Center Note", ScoreNote(AllianceNote.CENTER))
+        addOption("Stage Note", ScoreNote(AllianceNote.STAGE))
     }
 
     private fun SendableChooser<KCommand>.initInit() {

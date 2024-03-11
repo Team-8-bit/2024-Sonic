@@ -22,6 +22,8 @@ import org.team9432.robot.AdditionalTriggers
 import org.team9432.robot.Controls
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.*
+import org.team9432.robot.auto.subsections.ScoreNote
+import org.team9432.robot.auto.subsections.StartNote
 import org.team9432.robot.subsystems.amp.Amp
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.climber.LeftClimber
@@ -104,6 +106,8 @@ object Robot: LoggedRobot() {
         KCommandScheduler.run()
         RobotState.log()
 
+        AutoConstants.logIntakePoses()
+
         DriverStation.getAlliance().getOrNull()?.let { alliance = it }
     }
 
@@ -114,8 +118,9 @@ object Robot: LoggedRobot() {
     override fun autonomousInit() {
         SequentialCommand(
             InitAuto(Rotation2d(Math.PI)),
-            StartStageNote(),
-            ScoreCenterNote(),
+            StartNote(AllianceNote.STAGE),
+            ScoreNote(AllianceNote.CENTER),
+            ScoreNote(AllianceNote.AMP),
             ExitAuto()
         ).schedule()
     }
