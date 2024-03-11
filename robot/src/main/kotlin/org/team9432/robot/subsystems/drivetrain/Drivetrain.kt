@@ -120,6 +120,8 @@ object Drivetrain: KSubsystem() {
         stop()
     }
 
+    fun resetAngleController(angle: Rotation2d = Gyro.getYaw()) = angleController.reset(angle.degrees)
+
     fun getPose(): Pose2d = poseEstimator.estimatedPosition
 
     fun getSpeeds() = kinematics.toChassisSpeeds(*getModuleStates().toTypedArray())

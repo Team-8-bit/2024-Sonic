@@ -21,8 +21,6 @@ object Gyro : KSubsystem() {
             REAL, REPLAY -> GyroIOPigeon2()
             SIM -> object : GyroIO {}
         }
-
-        resetYaw()
     }
 
     override fun periodic() {
@@ -58,9 +56,11 @@ object Gyro : KSubsystem() {
 
     fun resetYaw() {
         setYaw(Rotation2d())
+        Drivetrain.resetAngleController()
     }
 
     fun setYaw(angle: Rotation2d) {
         io.setYaw(angle.degrees + Drivetrain.rotationOffset)
+        Drivetrain.resetAngleController()
     }
 }
