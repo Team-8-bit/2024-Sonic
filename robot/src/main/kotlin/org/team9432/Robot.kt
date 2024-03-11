@@ -22,6 +22,7 @@ import org.team9432.robot.AdditionalTriggers
 import org.team9432.robot.Controls
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.*
+import org.team9432.robot.auto.autos.FourAllianceNote
 import org.team9432.robot.auto.subsections.ScoreNote
 import org.team9432.robot.auto.subsections.StartNote
 import org.team9432.robot.subsystems.amp.Amp
@@ -115,14 +116,8 @@ object Robot: LoggedRobot() {
     }
 
     override fun autonomousInit() {
-        SequentialCommand(
-            InitAuto(Rotation2d(Math.PI)),
-            StartNote(AllianceNote.STAGE),
-            ScoreNote(AllianceNote.CENTER),
-            ScoreNote(AllianceNote.AMP),
-            ExitAuto()
-        )
-        AutoBuilder.getAuto().schedule()
+        FourAllianceNote().schedule()
+//        AutoBuilder.getAuto().schedule()
     }
 
     enum class Mode {

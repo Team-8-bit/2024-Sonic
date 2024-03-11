@@ -15,7 +15,7 @@ import org.team9432.robot.subsystems.led.LEDState
 import org.team9432.robot.subsystems.led.animations.ChargeUp
 import org.team9432.robot.subsystems.led.animations.Rocket
 
-fun AutoShoot() = ParallelDeadlineCommand(
+fun AutoShoot(driveCloser: Boolean = true) = ParallelDeadlineCommand(
     InstantCommand { RobotState.isUsingApriltags = false },
     InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 
@@ -24,10 +24,14 @@ fun AutoShoot() = ParallelDeadlineCommand(
         ParallelCommand(
             // Move the note to the speaker side of the hopper and drive forwards
             MoveToSide(MechanismSide.SPEAKER),
-            ParallelRaceCommand(
-                DriveSpeeds(vx = 1.5, fieldOriented = false),
-                WaitCommand(0.5)
-            )
+            SuppliedCommand {
+                if (driveCloser) {
+                    ParallelRaceCommand(
+                        DriveSpeeds(vx = 1.5, fieldOriented = false),
+                        WaitCommand(0.5)
+                    )
+                } else InstantCommand {}
+            }
         ),
         ParallelDeadlineCommand(
             // Shoot the note
