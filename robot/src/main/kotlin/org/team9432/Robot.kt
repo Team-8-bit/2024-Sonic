@@ -25,8 +25,11 @@ import org.team9432.robot.auto.*
 import org.team9432.robot.auto.autos.FourAllianceNote
 import org.team9432.robot.auto.subsections.ScoreNote
 import org.team9432.robot.auto.subsections.StartNote
+import org.team9432.robot.commands.CommandConstants
+import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.amp.Amp
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
+import org.team9432.robot.subsystems.climber.CommandClimber
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
@@ -107,6 +110,7 @@ object Robot: LoggedRobot() {
         RobotState.log()
 
         AutoConstants.logIntakePoses()
+        Logger.recordOutput("Drive/FuturePose", RobotPosition.getFuturePose(CommandConstants.SHOOT_ON_MOVE_SECS ?: 0.0))
 
         DriverStation.getAlliance().getOrNull()?.let { alliance = it }
     }
