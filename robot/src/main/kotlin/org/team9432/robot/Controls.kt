@@ -140,23 +140,23 @@ object Controls {
 
         // Lower Left Climber
         operator.leftTrigger
-            .whileTrue(CommandClimber.runLeftClimber(-9.0))
+            .whileTrue(CommandClimber.runLeftClimber(-12.0))
 
         // Raise Right Climber
         operator.rightBumper
-            .whileTrue(CommandClimber.runRightClimber(9.0))
+            .whileTrue(CommandClimber.runRightClimber(12.0))
 
         // Lower Right Climber
         operator.rightTrigger
-            .whileTrue(CommandClimber.runRightClimber(-9.0))
+            .whileTrue(CommandClimber.runRightClimber(-12.0))
 
         // Raise Both Climbers
         operator.y
-            .whileTrue(CommandClimber.runClimbers(9.0))
+            .whileTrue(CommandClimber.runClimbers(12.0))
 
         // Lower Both Climbers
         operator.a
-            .whileTrue(CommandClimber.runClimbers(-9.0))
+            .whileTrue(CommandClimber.runClimbers(-12.0))
 
         /* -------------- MODE SWITCHING -------------- */
 
