@@ -7,7 +7,7 @@ import org.team9432.Robot
 import org.team9432.lib.util.PoseUtil
 
 object FieldConstants {
-    private val blueSpeakerPose = Pose2d(0.0, 5.575, Rotation2d())
+    private val blueSpeakerPose = Pose2d(0.35, 5.40, Rotation2d())
     private val redSpeakerPose = PoseUtil.flip(blueSpeakerPose)
 
     private val blueAmpPose = Pose2d(1.86, 7.78, Rotation2d.fromDegrees(-90.0))

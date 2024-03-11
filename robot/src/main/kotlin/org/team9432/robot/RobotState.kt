@@ -38,9 +38,12 @@ object RobotState {
 
     var notePosition = NotePosition.NONE
 
+    var isUsingApriltags = true
+
     fun log() {
         Logger.recordOutput("RobotState/NotePosition", notePosition.name)
         Logger.recordOutput("Drivetrain/SpeakerDistance", RobotPosition.distanceToSpeaker())
+        Logger.recordOutput("SpeakerPose", FieldConstants.speakerPose)
     }
 
     enum class NotePosition {

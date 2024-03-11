@@ -18,6 +18,7 @@ import org.team9432.LOOP_PERIOD_SECS
 import org.team9432.Robot
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.util.SwerveUtil
+import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.vision.Vision
 import kotlin.math.abs
@@ -28,8 +29,8 @@ object Drivetrain: KSubsystem() {
 
     private val angleController = ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
 
-    private val xController = PIDController(5.0, 0.0, 0.0)
-    private val yController = PIDController(5.0, 0.0, 0.0)
+    private val xController = PIDController(3.0, 0.0, 0.0)
+    private val yController = PIDController(3.0, 0.0, 0.0)
 
     val kinematics: SwerveDriveKinematics
     private val poseEstimator: SwerveDrivePoseEstimator
@@ -44,7 +45,7 @@ object Drivetrain: KSubsystem() {
         poseEstimator = SwerveDrivePoseEstimator(
             kinematics, Rotation2d(), getModulePositions().toTypedArray(), Pose2d(),
             VecBuilder.fill(Units.inchesToMeters(3.0), Units.inchesToMeters(3.0), Math.toDegrees(4.0)),
-            VecBuilder.fill(Units.inchesToMeters(6.0), Units.inchesToMeters(6.0), Math.toDegrees(10.0))
+            VecBuilder.fill(Units.inchesToMeters(8.0), Units.inchesToMeters(8.0), Math.toDegrees(20.0))
         )
         for (m in modules) m.setBrakeMode(true)
     }
@@ -62,8 +63,10 @@ object Drivetrain: KSubsystem() {
         // Read wheel positions and deltas from each module
         val modulePositions = getModulePositions()
 
-        Vision.getEstimatedPose2d()?.let {
-            poseEstimator.addVisionMeasurement(it.first, it.second)
+        if (RobotState.isUsingApriltags) {
+            Vision.getEstimatedPose2d()?.let {
+                poseEstimator.addVisionMeasurement(it.first, it.second)
+            }
         }
 
         poseEstimator.update(Gyro.getYaw(), modulePositions.toTypedArray())

@@ -15,20 +15,16 @@ object Hood: KSubsystem() {
     private val io: HoodIO
     private val inputs = LoggedHoodIOInputs()
 
-    private val feedforward: SimpleMotorFeedforward
-
     init {
         when (Robot.mode) {
             REAL, REPLAY -> {
                 io = HoodIONeo()
-                io.setPID(1.0, 0.0, 0.0)
-                feedforward = SimpleMotorFeedforward(0.0, 0.0)
+                io.setPID(2.25, 0.0, 0.0)
             }
 
             SIM -> {
                 io = HoodIOSim()
                 io.setPID(1.0, 0.0, 0.0)
-                feedforward = SimpleMotorFeedforward(0.0, 0.0)
             }
         }
     }
@@ -41,7 +37,7 @@ object Hood: KSubsystem() {
     }
 
     fun setAngle(angle: Rotation2d) {
-        io.setAngle(angle, feedforward.calculate(MathUtil.clamp(angle.degrees, 0.0, 29.0)))
+        io.setAngle(Rotation2d.fromDegrees(MathUtil.clamp(angle.degrees, 0.0, 30.0)))
 
         Logger.recordOutput("Hood/AngleSetpointDegrees", angle.degrees)
     }

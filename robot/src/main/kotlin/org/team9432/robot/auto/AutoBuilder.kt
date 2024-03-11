@@ -23,15 +23,13 @@ object AutoBuilder {
         fourthChooser.initStep()
     }
 
-    fun getAuto(): KCommand {
-        return SequentialCommand(
-            initChooser.selected,
-            firstChooser.selected,
-            secondChooser.selected,
-            thirdChooser.selected,
-            fourthChooser.selected
-        )
-    }
+    fun getAuto() = SequentialCommand(
+        initChooser.selected,
+        firstChooser.selected,
+        secondChooser.selected,
+        thirdChooser.selected,
+        fourthChooser.selected
+    )
 
     fun initDashboard() {
         LoggedDashboardChooser("Starting Rotation", initChooser)

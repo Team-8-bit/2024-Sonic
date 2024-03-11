@@ -1,14 +1,13 @@
 package org.team9432.robot.subsystems.hood
 
-import com.revrobotics.CANSparkBase.ControlType
 import com.revrobotics.CANSparkBase.IdleMode
 import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
-import com.revrobotics.SparkPIDController.ArbFFUnits
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.drivers.motors.KSparkMAX
@@ -25,11 +24,12 @@ class HoodIONeo: HoodIO {
     private val motorToHoodRatio = 2.0 * (150 / 15)
     private val encoderToHoodRatio = 150 / 15
 
-    private val encoderOffset = Rotation2d.fromDegrees(2.35)
+    private val encoderOffset = Rotation2d.fromDegrees(3.33)
 
-    private var ffVolts = 0.0
     private var isClosedLoop = false
     private var relativeOffset: Rotation2d? = null
+
+    private val ffTable = InterpolatingDoubleTreeMap()
 
     init {
         spark.restoreFactoryDefaults()
@@ -56,13 +56,19 @@ class HoodIONeo: HoodIO {
 
             if (errors.all { it == REVLibError.kOk }) break
         }
+        pid.setTolerance(0.0)
+
         spark.burnFlash()
+
+        ffTable.put(0.0, 0.0)
+        ffTable.put(15.0, 10.0)
+        ffTable.put(30.0, 0.0)
     }
 
     override fun updateInputs(inputs: HoodIO.HoodIOInputs) {
         if (isClosedLoop) {
             val r = Rotation2d.fromRotations(absoluteEncoder.position)
-        //    spark.set(MathUtil.clamp(pid.calculate(r.rotations) + ffVolts, -12.0, 12.0))
+            spark.setVoltage(MathUtil.clamp(pid.calculate(r.rotations) + ffTable.get(pid.setpoint), -12.0, 12.0))
         }
 
         inputs.absoluteAngle = Rotation2d.fromRotations(absoluteEncoder.position / encoderToHoodRatio)
@@ -71,7 +77,7 @@ class HoodIONeo: HoodIO {
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
         inputs.currentAmps = spark.outputCurrent
 
-        Logger.recordOutput("HoodDegrees", inputs.absoluteAngle.degrees)
+        Logger.recordOutput("HoodDegrees", inputs.absoluteAngle.minus(encoderOffset).degrees)
 
         // On first cycle, reset relative turn encoder
         // Wait until absolute angle is nonzero in case it wasn't initialized yet
@@ -85,7 +91,7 @@ class HoodIONeo: HoodIO {
         spark.setVoltage(volts)
     }
 
-    override fun setAngle(angle: Rotation2d, feedforwardVolts: Double) {
+    override fun setAngle(angle: Rotation2d) {
         isClosedLoop = true
         pid.setpoint = angle.plus(encoderOffset).rotations * encoderToHoodRatio
     }

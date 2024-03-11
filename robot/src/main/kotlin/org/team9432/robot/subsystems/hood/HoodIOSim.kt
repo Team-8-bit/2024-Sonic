@@ -17,13 +17,12 @@ class HoodIOSim: HoodIO {
     private val encoderInitPosition = Rotation2d(Math.random() * 2.0 * Math.PI)
 
     private var appliedVolts = 0.0
-    private var ffVolts = 0.0
     private var isClosedLoop = false
     private var relativeOffset: Rotation2d? = null
 
     override fun updateInputs(inputs: HoodIO.HoodIOInputs) {
         if (isClosedLoop) {
-            appliedVolts = MathUtil.clamp(pid.calculate(sim.angularPositionRad) + ffVolts, -12.0, 12.0)
+            appliedVolts = MathUtil.clamp(pid.calculate(sim.angularPositionRad), -12.0, 12.0)
             sim.setInputVoltage(appliedVolts)
         }
 
@@ -48,10 +47,9 @@ class HoodIOSim: HoodIO {
         sim.setInputVoltage(appliedVolts)
     }
 
-    override fun setAngle(angle: Rotation2d, feedforwardVolts: Double) {
+    override fun setAngle(angle: Rotation2d) {
         isClosedLoop = true
         pid.setpoint = angle.minus(relativeOffset ?: Rotation2d()).radians
-        ffVolts = feedforwardVolts
     }
 
     override fun setPID(p: Double, i: Double, d: Double) {

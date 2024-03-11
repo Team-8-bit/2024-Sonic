@@ -8,5 +8,5 @@ fun ScoreCenterNote() = ScoreNote(AutoConstants.centerNoteIntakePose)
 fun ScoreStageNote() = ScoreNote(AutoConstants.stageNoteIntakePose)
 
 fun StartAmpNote() = StartNote(AutoConstants.ampNoteIntakePose)
-fun StartCenterNote() = ScoreNote(AutoConstants.centerNoteIntakePose)
-fun StartStageNote() = ScoreNote(AutoConstants.stageNoteIntakePose)
+fun StartCenterNote() = StartNote(AutoConstants.centerNoteIntakePose)
+fun StartStageNote() = StartNote(AutoConstants.stageNoteIntakePose)

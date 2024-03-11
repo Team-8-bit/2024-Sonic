@@ -1,31 +1,34 @@
-package org.team9432.robot.auto.autos
+package org.team9432.robot.auto.subsections
 
+import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AutoShoot
-import org.team9432.robot.auto.PullFromSpeakerShooter
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.DriveSpeeds
+import org.team9432.robot.commands.drivetrain.DriveSpeedsAndAim
+import org.team9432.robot.commands.drivetrain.DriveToPosition
 import org.team9432.robot.commands.intake.FinishIntakingAndAlign
 import org.team9432.robot.commands.shooter.TeleShoot
 import org.team9432.robot.auto.ShootFromHopper
+import org.team9432.robot.commands.drivetrain.AngleAim
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.intake.CommandIntake
 
-fun TwoNoteSubwoofer() = SequentialCommand(
-    InstantCommand { RobotState.notePosition = RobotState.NotePosition.SPEAKER_HOPPER },
-    InstantCommand { Gyro.setYaw(Rotation2d.fromDegrees(180.0)) },
-    PullFromSpeakerShooter(),
+fun StartNote(intakePosition: Pose2d) = SequentialCommand(
+    DriveToPosition(intakePosition),
     ShootFromHopper(),
     ParallelDeadlineCommand(
-        // Drive to the position and then slowly move forwards
-        DriveSpeeds(vx = 2.0 * Drivetrain.coordinateFlip),
         CommandIntake.runIntakeSide(MechanismSide.AMP, CommandConstants.INITIAL_INTAKE_VOLTS),
 
-        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.withTimeout(3.0)
+        SequentialCommand(
+            AngleAim { Rotation2d() },
+            // Drive to the position and then slowly move forwards
+            DriveSpeedsAndAim({ Rotation2d(0.0) }, vx = 0.5 * Drivetrain.coordinateFlip),
+        ),
+        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.withTimeout(2.0)
     ),
     FinishIntakingAndAlign(),
     AutoShoot()

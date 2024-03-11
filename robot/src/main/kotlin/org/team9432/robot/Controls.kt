@@ -10,12 +10,11 @@ import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.commands.runsWhenDisabled
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
-import org.team9432.robot.commands.amp.AutoAmp
 import org.team9432.robot.commands.amp.ScoreAmp
 import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
-import org.team9432.robot.commands.shooter.Shoot
+import org.team9432.robot.commands.shooter.TeleShoot
 import org.team9432.robot.commands.shooter.ShootAngle
 import org.team9432.robot.subsystems.amp.CommandAmp
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
@@ -23,6 +22,7 @@ import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
+import org.team9432.robot.subsystems.hood.CommandHood
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.led.LEDState
@@ -32,7 +32,6 @@ import org.team9432.robot.subsystems.led.animations.Confetti
 import org.team9432.robot.subsystems.led.animations.Rocket
 import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.vision.Vision
-import kotlin.math.truncate
 
 object Controls {
     private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
@@ -72,7 +71,7 @@ object Controls {
 
         // Shoot Speaker
         controller.rightTrigger.and(isDefaultMode)
-            .onTrue(Shoot(4000.0, 6000.0))
+            .onTrue(TeleShoot(4000.0, 6000.0))
 
         // Shoot Amplifier from speaker
         controller.b.and(isDefaultMode)
@@ -150,6 +149,13 @@ object Controls {
         controller.rightTrigger.and(isClimbMode)
             .onTrue(InstantCommand(RightClimber) { RightClimber.setVoltage(-6.0) })
             .onFalse(InstantCommand(RightClimber) { RightClimber.stop() })
+
+        controller.a.and(isClimbMode)
+            .onTrue(CommandHood.setAngleOnce(Rotation2d.fromDegrees(0.0)))
+        controller.x.and(isClimbMode)
+            .onTrue(CommandHood.setAngleOnce(Rotation2d.fromDegrees(15.0)))
+        controller.y.and(isClimbMode)
+            .onTrue(CommandHood.setAngleOnce(Rotation2d.fromDegrees(30.0)))
 
         /* -------------- MODE SWITCHING -------------- */
 
