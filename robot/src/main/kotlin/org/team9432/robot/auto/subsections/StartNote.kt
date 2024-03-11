@@ -24,11 +24,11 @@ fun StartNote(intakePosition: Pose2d) = SequentialCommand(
         CommandIntake.runIntakeSide(MechanismSide.AMP, CommandConstants.INITIAL_INTAKE_VOLTS),
 
         SequentialCommand(
-            AngleAim { Rotation2d() },
+            AngleAim { Rotation2d.fromDegrees(Drivetrain.rotationOffset + 180.0) },
             // Drive to the position and then slowly move forwards
-            DriveSpeedsAndAim({ Rotation2d(0.0) }, vx = 0.5 * Drivetrain.coordinateFlip),
+            DriveSpeedsAndAim({ Rotation2d.fromDegrees(Drivetrain.rotationOffset + 180.0) }, vx = 0.5 * Drivetrain.coordinateFlip),
         ),
-        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.withTimeout(2.0)
+        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.withTimeout(1.5)
     ),
     FinishIntakingAndAlign(),
     AutoShoot()

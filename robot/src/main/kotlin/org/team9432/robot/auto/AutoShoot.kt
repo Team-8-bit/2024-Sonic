@@ -19,10 +19,10 @@ import org.team9432.robot.subsystems.shooter.CommandShooter
 
 fun AutoShoot() = ParallelDeadlineCommand(
     InstantCommand { RobotState.isUsingApriltags = false },
-
     InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 
     deadline = SequentialCommand(
+        TargetAim { FieldConstants.speakerPose },
         ParallelCommand(
             // Move the note to the speaker side of the hopper and drive forwards
             MoveToSide(MechanismSide.SPEAKER),
@@ -31,7 +31,6 @@ fun AutoShoot() = ParallelDeadlineCommand(
                 WaitCommand(1.0)
             )
         ),
-        TargetAim { FieldConstants.speakerPose },
         ParallelDeadlineCommand(
             // Shoot the note
             CommandHopper.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
