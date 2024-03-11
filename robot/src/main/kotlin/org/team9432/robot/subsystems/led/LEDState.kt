@@ -9,7 +9,6 @@ import org.team9432.robot.subsystems.led.animations.LEDAnimation
 
 object LEDState {
     var intakeLightOn = false
-    var climbMode = false
 
     var animation: LEDAnimation? = null
         set(value) {
@@ -34,10 +33,6 @@ object LEDState {
 
                 if (intakeLightOn) { // Blink purple while intaking
                     strobe(Color.kPurple, 0.1, LEDs.Section.BOTTOM + LEDs.Section.TOP_BAR)
-                }
-
-                if (climbMode) {
-                    strobe(Color.kGold, 1.0, LEDs.Section.ALL_BUT_TOP)
                 }
             }
         }

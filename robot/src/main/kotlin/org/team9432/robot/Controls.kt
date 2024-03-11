@@ -18,6 +18,7 @@ import org.team9432.robot.commands.shooter.TeleShoot
 import org.team9432.robot.commands.shooter.ShootAngle
 import org.team9432.robot.subsystems.amp.CommandAmp
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
+import org.team9432.robot.subsystems.climber.CommandClimber
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
@@ -34,24 +35,23 @@ import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.vision.Vision
 
 object Controls {
-    private val controller = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
+    private val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
+    private val operator = KXboxController(1)
 
-    private val slowButton = controller.rightBumper
+    private val slowButton = driver.rightBumper
 
-    val xSpeed get() = -controller.leftY
-    val ySpeed get() = -controller.leftX
-    val angle get() = -controller.rightX
+    val xSpeed get() = -driver.leftY
+    val ySpeed get() = -driver.leftX
+    val angle get() = -driver.rightX
     val slowDrive get() = slowButton.asBoolean
 
     private var currentMode = ControllerMode.DEFAULT
         set(value) {
             Logger.recordOutput("ControllerMode", value)
-            LEDState.climbMode = value == ControllerMode.CLIMB
             field = value
         }
 
     private val isDefaultMode = KTrigger { currentMode == ControllerMode.DEFAULT }
-    private val isClimbMode = KTrigger { currentMode == ControllerMode.CLIMB }
     private val isLedMode = KTrigger { currentMode == ControllerMode.LED }
 
     init {
@@ -60,61 +60,65 @@ object Controls {
         /* ------------- DEFAULT BUTTONS ------------- */
 
         // Run Intake
-        controller.leftBumper.and(isDefaultMode)
+        driver.leftBumper.and(isDefaultMode)
             .whileTrue(TeleIntake().afterSimDelay(2.0) {
                 BeambreakIOSim.setNoteInIntakeSide(RobotState.getMovementDirection(), true)
             }) // Pretend to get a note after 2 seconds in sim
 
         // Outtake Intake
-        controller.x.and(isDefaultMode)
+        driver.x.and(isDefaultMode)
             .whileTrue(Outtake())
 
         // Shoot Speaker
-        controller.rightTrigger.and(isDefaultMode)
+        driver.rightTrigger.and(isDefaultMode)
             .onTrue(TeleShoot(4000.0, 6000.0))
 
         // Shoot Amplifier from speaker
-        controller.b.and(isDefaultMode)
+        driver.b.and(isDefaultMode)
             .onTrue(ShootAngle(2250.0, 2250.0, Rotation2d.fromDegrees(10.0)))
 
         // Reset Drivetrain Heading
-        controller.a.and(isDefaultMode)
+        driver.a.and(isDefaultMode)
             .onTrue(InstantCommand { Gyro.resetYaw() })
 
         // Reset
-        controller.y.and(isDefaultMode)
-            .onTrue(ParallelCommand(
-                CommandIntake.stop(),
-                CommandHopper.stop(),
-                CommandShooter.stop(),
-                CommandAmp.stop(),
-                InstantCommand {
-                    RobotState.notePosition = RobotState.NotePosition.NONE
-                    KCommandScheduler.cancelAll()
-                }
-            ))
+        driver.y.and(isDefaultMode)
+            .onTrue(
+                ParallelCommand(
+                    InstantCommand {
+                        RobotState.notePosition = RobotState.NotePosition.NONE
+                        KCommandScheduler.cancelAll()
+                    },
+                    CommandIntake.stop(),
+                    CommandHopper.stop(),
+                    CommandShooter.stop(),
+                    CommandAmp.stop(),
+                    CommandClimber.stop(),
+                    CommandHood.stop()
+                )
+            )
 
         // Load to amp
-        controller.leftTrigger.and(isDefaultMode)
+        driver.leftTrigger.and(isDefaultMode)
             .onTrue(ScoreAmp(4.5))
 
         /* ------------- LED MODE BUTTONS ------------- */
 
-        controller.rightBumper.and(isLedMode)
+        driver.rightBumper.and(isLedMode)
             .onTrue(InstantCommand { Vision.setLED(true) }.runsWhenDisabled(true))
 
-        controller.leftBumper.and(isLedMode)
+        driver.leftBumper.and(isLedMode)
             .onTrue(InstantCommand { Vision.setLED(false) }.runsWhenDisabled(true))
 
         // Toggle chase mode
-        controller.a.and(isLedMode)
+        driver.a.and(isLedMode)
             .onTrue(InstantCommand {
                 if (LEDState.animation == null) LEDState.animation = Chase
                 else LEDState.animation = null
             }.runsWhenDisabled(true))
 
         // Run charge up animation
-        controller.y.and(isLedMode)
+        driver.y.and(isLedMode)
             .onTrue(InstantCommand {
                 LEDState.animation = ChargeUp(1.0, 1.0)
             }.runsWhenDisabled(true))
@@ -123,7 +127,7 @@ object Controls {
             }.runsWhenDisabled(true))
 
         // Run confetti
-        controller.b.and(isLedMode)
+        driver.b.and(isLedMode)
             .onTrue(InstantCommand {
                 LEDState.animation = Confetti(6.0)
             }.runsWhenDisabled(true))
@@ -131,48 +135,41 @@ object Controls {
         /* -------------- CLIMB BUTTONS -------------- */
 
         // Raise Left Climber
-        controller.leftBumper.and(isClimbMode)
-            .onTrue(InstantCommand(LeftClimber) { LeftClimber.setVoltage(6.0) })
-            .onFalse(InstantCommand(LeftClimber) { LeftClimber.stop() })
+        operator.leftBumper
+            .whileTrue(CommandClimber.runLeftClimber(9.0))
 
         // Lower Left Climber
-        controller.leftTrigger.and(isClimbMode)
-            .onTrue(InstantCommand(LeftClimber) { LeftClimber.setVoltage(-6.0) })
-            .onFalse(InstantCommand(LeftClimber) { LeftClimber.stop() })
+        operator.leftTrigger
+            .whileTrue(CommandClimber.runLeftClimber(-9.0))
 
         // Raise Right Climber
-        controller.rightBumper.and(isClimbMode)
-            .onTrue(InstantCommand(RightClimber) { RightClimber.setVoltage(6.0) })
-            .onFalse(InstantCommand(RightClimber) { RightClimber.stop() })
+        operator.rightBumper
+            .whileTrue(CommandClimber.runRightClimber(9.0))
 
         // Lower Right Climber
-        controller.rightTrigger.and(isClimbMode)
-            .onTrue(InstantCommand(RightClimber) { RightClimber.setVoltage(-6.0) })
-            .onFalse(InstantCommand(RightClimber) { RightClimber.stop() })
+        operator.rightTrigger
+            .whileTrue(CommandClimber.runRightClimber(-9.0))
 
-        controller.a.and(isClimbMode)
-            .onTrue(CommandHood.setAngleOnce(Rotation2d.fromDegrees(0.0)))
-        controller.x.and(isClimbMode)
-            .onTrue(CommandHood.setAngleOnce(Rotation2d.fromDegrees(15.0)))
-        controller.y.and(isClimbMode)
-            .onTrue(CommandHood.setAngleOnce(Rotation2d.fromDegrees(30.0)))
+        // Raise Both Climbers
+        operator.y
+            .whileTrue(CommandClimber.runClimbers(9.0))
+
+        // Lower Both Climbers
+        operator.a
+            .whileTrue(CommandClimber.runClimbers(-9.0))
 
         /* -------------- MODE SWITCHING -------------- */
 
         // Enter LED Mode
-        isDefaultMode.and(controller.back)
+        isDefaultMode.and(driver.back)
             .onFalse(InstantCommand { currentMode = ControllerMode.LED }.runsWhenDisabled(true))
 
-        // Enter Climb Mode
-        isDefaultMode.and(controller.start)
-            .onFalse(InstantCommand { currentMode = ControllerMode.CLIMB }.runsWhenDisabled(true))
-
-        // Reenter Default Mode
-        isDefaultMode.negate().and((controller.start).or(controller.back))
+        // Enter Default Mode
+        isDefaultMode.negate().and((driver.start).or(driver.back))
             .onFalse(InstantCommand { currentMode = ControllerMode.DEFAULT }.runsWhenDisabled(true))
     }
 
     private enum class ControllerMode {
-        DEFAULT, CLIMB, LED
+        DEFAULT, LED
     }
 }
