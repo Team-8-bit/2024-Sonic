@@ -65,20 +65,21 @@ object Limelight : KSubsystem() {
                 Math.toRadians(20.0),
                 0.0
             )
-        ).plus(
-            Transform3d(
-                Translation3d(),
-                Rotation3d(
-                    0.0,
-                    0.0,
-                    -inputs.absoluteAngle.radians
-                )
-            )
         )
+//          .plus(
+//            Transform3d(
+//                Translation3d(),
+//                Rotation3d(
+//                    0.0,
+//                    0.0,
+//                    -inputs.absoluteAngle.radians
+//                )
+//            )
+//        )
+//
+//        val transform = baseTransform.plus(limelightRotationTransform)
 
-        val transform = baseTransform.plus(limelightRotationTransform)
-
-        Logger.recordOutput("Limelight/LLPose", transform)
-        return transform
+//        Logger.recordOutput("Limelight/LLPose", transform)
+        return baseTransform.plus(limelightRotationTransform)
     }
 }
