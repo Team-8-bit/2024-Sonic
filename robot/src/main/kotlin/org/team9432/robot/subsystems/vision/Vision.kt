@@ -29,6 +29,8 @@ object Vision: KSubsystem() {
         else null
     }
 
+    fun hasVisionTarget() = inputs.trackedTags.isNotEmpty()
+
     fun setLED(enable: Boolean) {
         io.setLED(enable)
     }

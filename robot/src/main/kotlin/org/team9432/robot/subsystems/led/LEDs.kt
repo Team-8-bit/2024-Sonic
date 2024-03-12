@@ -56,12 +56,8 @@ object LEDs: KSubsystem() {
 
         loadingNotifier = Notifier {
             synchronized(this) {
-                LEDModes.breath(
-                    Color.kWhite,
-                    Color.kBlack,
-                    Section.ALL,
-                    timestamp = System.currentTimeMillis() / 1000.0
-                )
+                // We need to provide a timestamp while robot code is loading
+                Chase.updateBuffer(timestamp = System.currentTimeMillis() / 1000.0)
                 ledController.setData(buffer)
             }
         }

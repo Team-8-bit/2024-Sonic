@@ -22,7 +22,7 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.led.LEDState
 import org.team9432.robot.subsystems.led.animations.ChargeUp
-import org.team9432.robot.subsystems.led.animations.Chase
+import org.team9432.robot.subsystems.led.Chase
 import org.team9432.robot.subsystems.led.animations.Confetti
 import org.team9432.robot.subsystems.led.animations.Rocket
 import org.team9432.robot.subsystems.vision.Vision
@@ -89,13 +89,6 @@ object Controls {
 
         driver.leftBumper.and(isLedMode)
             .onTrue(InstantCommand { Vision.setLED(false) }.runsWhenDisabled(true))
-
-        // Toggle chase mode
-        driver.a.and(isLedMode)
-            .onTrue(InstantCommand {
-                if (LEDState.animation == null) LEDState.animation = Chase
-                else LEDState.animation = null
-            }.runsWhenDisabled(true))
 
         // Run charge up animation
         driver.y.and(isLedMode)

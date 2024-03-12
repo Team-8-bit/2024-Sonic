@@ -2,6 +2,7 @@ package org.team9432.robot.subsystems.led
 
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.util.Color
+import org.team9432.Robot
 import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
@@ -10,12 +11,17 @@ import org.team9432.robot.subsystems.led.LEDModes.rainbow
 import org.team9432.robot.subsystems.led.LEDModes.solid
 import org.team9432.robot.subsystems.led.LEDModes.strobe
 import org.team9432.robot.subsystems.led.animations.LEDAnimation
+import org.team9432.robot.subsystems.vision.Vision
 
 object LEDState {
+    var allianceColor = Color.kBlack
+
     var noteInIntake = false
 
     var leftClimberAtLimit = false
     var rightClimberAtLimit = false
+
+    var hasVisionTarget = false
 
     var animation: LEDAnimation? = null
         set(value) {
@@ -30,8 +36,16 @@ object LEDState {
                 if (isFinished) this.animation = null
             }
         } else {
+            solid(Color.kBlack, LEDs.Section.ALL) // Start with everything off
+
             if (DriverStation.isDisabled()) {
-                breath(LEDColors.MAIN_GREEN, Color.kBlack, LEDs.Section.ALL, 3.0)
+                // Set the top to the alliance color, this also shows when the fms is connected
+                solid(allianceColor, LEDs.Section.TOP)
+
+                if (hasVisionTarget) { // Turn silver when the robot can see an apriltag
+                    solid(Color.kSilver, LEDs.Section.BOTTOM)
+                }
+
             } else if (DriverStation.isAutonomous()) {
                 strobe(Color.kRed, 0.25, LEDs.Section.ALL)
             } else { // Teleop
@@ -41,7 +55,7 @@ object LEDState {
                     strobe(Color.kPurple, 0.1, LEDs.Section.TOP + LEDs.Section.TOP_BAR)
                 }
 
-                if (leftClimberAtLimit) {
+                if (leftClimberAtLimit) { // When a climber is running into the limit, set that side to red
                     solid(Color.kRed, LEDs.Section.LEFT)
                 }
                 if (rightClimberAtLimit) {
@@ -55,5 +69,13 @@ object LEDState {
         noteInIntake = RobotState.notePosition.isIntake
         leftClimberAtLimit = LeftClimber.atLimit && LeftClimber.hasVoltageApplied
         rightClimberAtLimit = RightClimber.atLimit && RightClimber.hasVoltageApplied
+
+        hasVisionTarget = Vision.hasVisionTarget()
+
+        allianceColor = when (Robot.alliance) {
+            DriverStation.Alliance.Red -> Color.kFirstRed
+            DriverStation.Alliance.Blue -> Color.kFirstBlue
+            null -> Color.kWhite
+        }
     }
 }

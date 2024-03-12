@@ -7,7 +7,7 @@ import org.team9432.robot.subsystems.led.LEDModes
 import org.team9432.robot.subsystems.led.LEDState
 import org.team9432.robot.subsystems.led.LEDs
 
-class Rocket(private val duration: Double, private val cooldown: Double = 1.0) : LEDAnimation {
+class Rocket(private val duration: Double, private val cooldown: Double = 1.0, private val color: HSVColor? = null) : LEDAnimation {
     data class HSVColor(val h: Int, val s: Int, val v: Int)
 
     private val stepTime = 0.04
@@ -43,21 +43,18 @@ class Rocket(private val duration: Double, private val cooldown: Double = 1.0) :
         timer.reset()
         timer.start()
 
-        val toInt = (Math.random() * 3).toInt()
+        if (color == null) {
+            val toInt = (Math.random() * 3).toInt()
 
-        when(toInt) {
-            0 -> {
-                mainColor = HSVColor(0, 255, 255)
-                leadColor = HSVColor(0, 100, 255)
+            when (toInt) {
+                0 -> mainColor = HSVColor(0, 255, 255)
+                1 -> mainColor = HSVColor(120, 255, 255)
+                2 -> mainColor = HSVColor(240, 255, 255)
             }
-            1 -> {
-                mainColor = HSVColor(120, 255, 255)
-                leadColor = HSVColor(120, 100, 255)
-            }
-            2 -> {
-                mainColor = HSVColor(240, 255, 255)
-                leadColor = HSVColor(240, 100, 255)
-            }
+            leadColor = mainColor.copy(s = 100)
+        } else {
+            mainColor = color
+            leadColor = mainColor.copy(s = 100)
         }
     }
 
