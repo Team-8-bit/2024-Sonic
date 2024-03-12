@@ -21,7 +21,7 @@ fun FourAllianceNoteTwo() = SequentialCommand(
     ),
     ShootFromHopper(),
     IntakeNote(AllianceNote.STAGE),
-    FinishIntakingThen(AlignToIntakeNote(AllianceNote.CENTER)),
+    FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
     AutoShoot(driveCloser = false),
     IntakeNote(AllianceNote.CENTER),
     FinishIntakingThen(AlignToIntakeNote(AllianceNote.AMP)),
