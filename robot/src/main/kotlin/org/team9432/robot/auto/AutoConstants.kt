@@ -15,6 +15,12 @@ import kotlin.math.sqrt
 object AutoConstants {
     val fourNoteFirstShotPose get() = Pose2d(2.359, 4.418, Rotation2d.fromDegrees(152.5214)).applyFlip()
 
+    val centerNotePath get() = Pose2d(5.635, 6.381, Rotation2d(Math.PI)).applyFlip()
+    val centerNoteShotPose get() = Pose2d(2.944, 6.375, Rotation2d(Math.PI)).applyFlip()
+
+    val firstCenterNoteIntakePose get() = Pose2d(7.765, 7.436, Rotation2d(Math.PI)).applyFlip()
+    val secondCenterNoteIntakePose get() = Pose2d(7.765, 5.742, Rotation2d(Math.PI)).applyFlip()
+
     private val targetNoteOffsetDistance = 1.0
     private val angledIntakeDistance = sqrt(targetNoteOffsetDistance.pow(2.0) / 2)
 

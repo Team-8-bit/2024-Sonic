@@ -91,27 +91,27 @@ object Drivetrain: KSubsystem() {
         Logger.recordOutput("Drive/SetpointsOptimized", *optimizedSetpointStates)
     }
 
-    private const val POSITIONAL_TOLERANCE = 0.05 // Meters
-    private const val ROTATIONAL_TOLERANCE = 3.0 // Degrees
+    const val POSITIONAL_TOLERANCE = 0.05 // Meters
+    const val ROTATIONAL_TOLERANCE = 3.0 // Degrees
 
     fun setPositionGoal(pose: Pose2d) {
         Logger.recordOutput("Drive/PositionGoal", pose); setXGoal(pose.x); setYGoal(pose.y); setAngleGoal(pose.rotation)
     }
 
     fun calculatePositionSpeed() = ChassisSpeeds.fromFieldRelativeSpeeds(calculateXSpeed(), calculateYSpeed(), calculateAngleSpeed(), Gyro.getYaw())
-    fun atPositionGoal() = atXGoal() && atYGoal() && atAngleGoal()
+    fun atPositionGoal(positionalTolerance: Double = POSITIONAL_TOLERANCE, rotationalTolerance: Double = ROTATIONAL_TOLERANCE) = atXGoal(positionalTolerance) && atYGoal(positionalTolerance) && atAngleGoal(rotationalTolerance)
 
     fun setXGoal(pose: Double) = xController.setSetpoint(pose)
     fun calculateXSpeed() = xController.calculate(getPose().x)
-    fun atXGoal() = abs(xController.positionError) < POSITIONAL_TOLERANCE
+    fun atXGoal(tolerance: Double = POSITIONAL_TOLERANCE) = abs(xController.positionError) < tolerance
 
     fun setYGoal(pose: Double) = yController.setSetpoint(pose)
     fun calculateYSpeed() = yController.calculate(getPose().y)
-    fun atYGoal() = abs(yController.positionError) < POSITIONAL_TOLERANCE
+    fun atYGoal(tolerance: Double = POSITIONAL_TOLERANCE) = abs(yController.positionError) < tolerance
 
     fun setAngleGoal(angle: Rotation2d) = angleController.setGoal(angle.degrees)
     fun calculateAngleSpeed() = angleController.calculate(Gyro.getYaw().degrees)
-    fun atAngleGoal() = abs(angleController.positionError) < ROTATIONAL_TOLERANCE
+    fun atAngleGoal(tolerance: Double = ROTATIONAL_TOLERANCE) = abs(angleController.positionError) < tolerance
 
     fun stop() = setSpeeds(ChassisSpeeds())
     fun stopAndX() {
