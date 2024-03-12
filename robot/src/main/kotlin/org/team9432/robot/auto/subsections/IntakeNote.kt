@@ -24,6 +24,6 @@ fun IntakeNote(note: AllianceNote) = SequentialCommand(
             DriveSpeeds(vx = -1.0, fieldOriented = false),
         ),
 
-        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.afterSimDelay(0.5) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }.withTimeout(2.0)
+        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.afterSimDelay(1.0) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }.withTimeout(2.0)
     )
 )

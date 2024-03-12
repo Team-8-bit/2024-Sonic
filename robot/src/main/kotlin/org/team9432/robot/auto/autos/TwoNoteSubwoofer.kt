@@ -27,5 +27,5 @@ fun TwoNoteSubwoofer() = SequentialCommand(
         deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.withTimeout(3.0)
     ),
     FinishIntakingAndAlign(),
-    AutoShoot()
+    AutoShoot(driveCloser = true)
 )

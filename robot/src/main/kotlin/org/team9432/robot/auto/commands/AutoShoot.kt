@@ -15,7 +15,7 @@ import org.team9432.robot.subsystems.led.LEDState
 import org.team9432.robot.subsystems.led.animations.ChargeUp
 import org.team9432.robot.subsystems.led.animations.Rocket
 
-fun AutoShoot(driveCloser: Boolean = true) = ParallelDeadlineCommand(
+fun AutoShoot(driveCloser: Boolean) = ParallelDeadlineCommand(
     InstantCommand { RobotState.isUsingApriltags = false },
     InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 

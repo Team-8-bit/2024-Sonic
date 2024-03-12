@@ -40,16 +40,3 @@ fun FourAllianceNoteTwo() = SequentialCommand(
     AutoShoot(driveCloser = false),
     ExitAuto(),
 )
-
-fun FinishIntakingThen(command: KCommand, delay: Double = 0.5) = ParallelCommand(
-    SequentialCommand(
-        WaitCommand(delay),
-        command
-    ),
-    FinishIntakingAndLoadToSpeaker()
-)
-
-fun FinishIntakingAndLoadToSpeaker() = SequentialCommand(
-    FinishIntakingAndAlign(),
-    MoveToSide(MechanismSide.SPEAKER)
-)
