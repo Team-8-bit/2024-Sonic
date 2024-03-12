@@ -45,7 +45,6 @@ object Limelight : KSubsystem() {
 
     val baseTransform = Transform3d(
         Translation3d(
-            //issue in here, robot pose is too high
             Units.inchesToMeters(-1.9365),
             Units.inchesToMeters(0.0),
             Units.inchesToMeters(-14.125) - 0.124460
@@ -56,7 +55,7 @@ object Limelight : KSubsystem() {
     fun getCurrentRobotToCamera(): Transform3d {
         val limelightRotationTransform = Transform3d(
             Translation3d(
-                Units.inchesToMeters(1.073367),
+                Units.inchesToMeters(-1.073367),
                 Units.inchesToMeters(0.039107),
                 Units.inchesToMeters(-4.823889)
             ),

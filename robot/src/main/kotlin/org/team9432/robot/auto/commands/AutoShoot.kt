@@ -20,15 +20,14 @@ fun AutoShoot(driveCloser: Boolean = true) = ParallelDeadlineCommand(
     InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 
     deadline = SequentialCommand(
-        TargetAim { FieldConstants.speakerPose },
         ParallelCommand(
+            TargetAim { FieldConstants.speakerPose },
             // Move the note to the speaker side of the hopper and drive forwards
-            MoveToSide(MechanismSide.SPEAKER),
             SuppliedCommand {
                 if (driveCloser) {
                     ParallelRaceCommand(
                         DriveSpeeds(vx = 1.5, fieldOriented = false),
-                        WaitCommand(0.5)
+                        WaitCommand(0.75)
                     )
                 } else InstantCommand {}
             }
@@ -39,10 +38,11 @@ fun AutoShoot(driveCloser: Boolean = true) = ParallelDeadlineCommand(
             CommandIntake.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
 
             // Do this until the note has left the hopper
-            deadline = SimpleCommand(
-                isFinished = { !RobotState.noteInSpeakerSideHopperBeambreak() },
-                end = { LEDState.animation = Rocket(0.5) }
-            ).afterSimDelay(0.25) { BeambreakIOSim.setNoteInHopperSpeakerSide(false) },
+            deadline = WaitCommand(0.5)
+//            SimpleCommand(
+//                isFinished = { !RobotState.noteInSpeakerSideHopperBeambreak() },
+//                end = { LEDState.animation = Rocket(0.5) }
+//            ).afterSimDelay(0.25) { BeambreakIOSim.setNoteInHopperSpeakerSide(false) },
         ),
 
         // Update the note position

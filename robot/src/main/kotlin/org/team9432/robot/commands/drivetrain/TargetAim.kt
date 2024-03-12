@@ -32,4 +32,8 @@ class TargetAim(
     }
 
     override fun isFinished() = Drivetrain.atAngleGoal()
+
+    override fun end(interrupted: Boolean) {
+        Drivetrain.stop()
+    }
 }

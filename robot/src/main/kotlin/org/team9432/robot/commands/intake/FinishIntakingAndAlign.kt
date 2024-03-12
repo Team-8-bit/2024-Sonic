@@ -12,9 +12,8 @@ fun FinishIntakingAndAlign() = SuppliedCommand(Intake) {
 
     SequentialCommand(
         // Intake slowly until the note is fully in the intake
-        CommandIntake.startIntakeSide(side, 4.0),
+        CommandIntake.startIntakeSide(side, 6.0),
         WaitUntilCommand { !RobotState.noteInIntakeSide(side) }.afterSimDelay(0.25) { BeambreakIOSim.setNoteInIntakeSide(side, false) },
-        // Push the note back into the intake beam break to leave more room before the hopper
         // Stop the intake
         CommandIntake.stop(),
         // Update the note position in the robot

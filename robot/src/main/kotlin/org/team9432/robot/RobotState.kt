@@ -44,6 +44,7 @@ object RobotState {
         Logger.recordOutput("RobotState/NotePosition", notePosition.name)
         Logger.recordOutput("Drivetrain/SpeakerDistance", RobotPosition.distanceToSpeaker())
         Logger.recordOutput("SpeakerPose", FieldConstants.speakerPose)
+        Logger.recordOutput("IsUsingAprilTags", isUsingApriltags)
     }
 
     enum class NotePosition {

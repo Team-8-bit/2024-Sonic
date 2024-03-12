@@ -38,7 +38,7 @@ object AutoConstants {
     // 2(x^2) = 0.75^2
     // 2(x^2) = a^2
 
-    private val targetNoteOffsetDistance = 0.75
+    private val targetNoteOffsetDistance = 1.0
     private val angledIntakeDistance = sqrt(targetNoteOffsetDistance.pow(2.0) / 2)
 
     private val blueAmpAngledNoteIntakePose = FieldConstants.blueAmpNotePose.transformBy(Transform2d(Translation2d(-angledIntakeDistance, -angledIntakeDistance), Rotation2d.fromDegrees(-135.0)))
