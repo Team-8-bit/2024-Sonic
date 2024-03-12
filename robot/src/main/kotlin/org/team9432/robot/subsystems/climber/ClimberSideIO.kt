@@ -9,7 +9,7 @@ interface ClimberSideIO {
     open class ClimberSideIOInputs {
         var position = Rotation2d()
         var velocityRadPerSec = 0.0
-        var atLimit = false
+        var limit = false
         var appliedVolts = 0.0
         var currentAmps = 0.0
     }

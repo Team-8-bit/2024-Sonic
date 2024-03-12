@@ -13,6 +13,8 @@ object RightClimber: KSubsystem() {
 
     private val feedforward: SimpleMotorFeedforward
 
+    private var currentVoltage = 0.0
+
     init {
         when (Robot.mode) {
             REAL, REPLAY -> {
@@ -36,14 +38,24 @@ object RightClimber: KSubsystem() {
         Logger.processInputs("Climber/Right", inputs)
     }
 
-    fun setVoltage(volts: Double) = io.setVoltage(volts)
+    fun setVoltage(volts: Double) {
+        currentVoltage = volts
+        if (atLimit && volts < 0.0) {
+            io.stop()
+        } else {
+            io.setVoltage(volts)
+        }
+    }
 
     fun setAngle(angle: Rotation2d) {
         io.setAngle(angle, feedforward.calculate(angle.degrees))
     }
 
-    val atLimit get() = inputs.atLimit
-    val hasVoltageApplied get() = inputs.appliedVolts != 0.0
+    val atLimit get() = !inputs.limit
+    val hasVoltageApplied get() = currentVoltage != 0.0
 
-    fun stop() = io.stop()
+    fun stop() {
+        currentVoltage = 0.0
+        io.stop()
+    }
 }

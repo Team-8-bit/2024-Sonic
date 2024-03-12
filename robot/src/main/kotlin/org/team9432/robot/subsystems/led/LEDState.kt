@@ -40,7 +40,7 @@ object LEDState {
 
             if (DriverStation.isDisabled()) {
                 // Set the top to the alliance color, this also shows when the fms is connected
-                solid(allianceColor, LEDs.Section.TOP)
+                solid(allianceColor, LEDs.Section.TOP_BAR)
 
                 if (hasVisionTarget) { // Turn silver when the robot can see an apriltag
                     solid(Color.kSilver, LEDs.Section.BOTTOM)
