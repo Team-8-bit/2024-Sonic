@@ -97,6 +97,7 @@ object Robot: LoggedRobot() {
         RightClimber
         Limelight
         AdditionalTriggers
+        AutoBuilder
         AutoChooser
     }
 
@@ -115,8 +116,7 @@ object Robot: LoggedRobot() {
     }
 
     override fun autonomousInit() {
-        FourAllianceNote().schedule()
-//        AutoBuilder.getAuto().schedule()
+        AutoChooser.getCommand().schedule()
     }
 
     enum class Mode {
