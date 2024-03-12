@@ -20,7 +20,6 @@ import org.team9432.robot.AdditionalTriggers
 import org.team9432.robot.Controls
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.*
-import org.team9432.robot.auto.autos.FourAllianceNote
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.amp.Amp
@@ -105,7 +104,7 @@ object Robot: LoggedRobot() {
         KCommandScheduler.run()
         RobotState.log()
 
-        AutoConstants.logIntakePoses()
+        AutoConstants.logPoses()
         Logger.recordOutput("Drive/FuturePose", RobotPosition.getFuturePose(CommandConstants.SHOOT_ON_MOVE_SECS ?: 0.0))
 
         DriverStation.getAlliance().getOrNull()?.let { alliance = it }

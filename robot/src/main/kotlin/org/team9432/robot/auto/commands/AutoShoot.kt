@@ -37,16 +37,14 @@ fun AutoShoot(driveCloser: Boolean = true) = ParallelDeadlineCommand(
             CommandHopper.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
             CommandIntake.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
 
-            // Do this until the note has left the hopper
             deadline = WaitCommand(0.5)
-//            SimpleCommand(
-//                isFinished = { !RobotState.noteInSpeakerSideHopperBeambreak() },
-//                end = { LEDState.animation = Rocket(0.5) }
-//            ).afterSimDelay(0.25) { BeambreakIOSim.setNoteInHopperSpeakerSide(false) },
         ),
 
         // Update the note position
-        InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
-        InstantCommand { RobotState.isUsingApriltags = true }
+        InstantCommand {
+            RobotState.notePosition = RobotState.NotePosition.NONE
+            RobotState.isUsingApriltags = true
+            LEDState.animation = Rocket(0.5)
+        }
     )
 )

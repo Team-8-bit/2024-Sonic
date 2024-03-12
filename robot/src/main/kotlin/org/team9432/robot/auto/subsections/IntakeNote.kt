@@ -10,6 +10,7 @@ import org.team9432.robot.commands.drivetrain.DriveSpeeds
 import org.team9432.robot.commands.drivetrain.TargetAim
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.FinishIntakingAndAlign
+import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.intake.Intake
 
@@ -23,6 +24,6 @@ fun IntakeNote(note: AllianceNote) = SequentialCommand(
             DriveSpeeds(vx = -1.0, fieldOriented = false),
         ),
 
-        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.withTimeout(2.0)
+        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.afterSimDelay(0.5) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }.withTimeout(2.0)
     )
 )
