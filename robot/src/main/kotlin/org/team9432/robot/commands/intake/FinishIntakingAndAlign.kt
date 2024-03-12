@@ -1,6 +1,7 @@
 package org.team9432.robot.commands.intake
 
 import org.team9432.lib.commandbased.commands.*
+import org.team9432.robot.Controls
 import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.intake.CommandIntake
@@ -22,7 +23,7 @@ fun FinishIntakingAndAlign() = SuppliedCommand(Intake) {
         InstantCommand {
             SequentialCommand(
                 WaitCommand(3.0),
-                InstantCommand { LEDState.intakeLightOn = false }
+                InstantCommand { Controls.setDriverRumble(0.0) }
             ).schedule()
         }
     )

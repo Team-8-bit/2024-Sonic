@@ -2,6 +2,7 @@ package org.team9432.robot
 
 
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.wpilibj.GenericHID
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
@@ -146,6 +147,10 @@ object Controls {
         // Enter Default Mode
         isDefaultMode.negate().and((driver.start).or(driver.back))
             .onFalse(InstantCommand { currentMode = ControllerMode.DEFAULT }.runsWhenDisabled(true))
+    }
+
+    fun setDriverRumble(magnitude: Double) {
+        driver.setRumble(GenericHID.RumbleType.kBothRumble, magnitude)
     }
 
     private enum class ControllerMode {

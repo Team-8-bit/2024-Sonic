@@ -2,13 +2,14 @@ package org.team9432.robot.subsystems.led
 
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.util.Color
+import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.led.LEDModes.breath
 import org.team9432.robot.subsystems.led.LEDModes.rainbow
 import org.team9432.robot.subsystems.led.LEDModes.strobe
 import org.team9432.robot.subsystems.led.animations.LEDAnimation
 
 object LEDState {
-    var intakeLightOn = false
+    var noteInIntake = false
 
     var animation: LEDAnimation? = null
         set(value) {
@@ -31,10 +32,14 @@ object LEDState {
             } else { // Teleop
                 rainbow(30.0, 0.5, LEDs.Section.ALL) // This will be the default unless overwritten later
 
-                if (intakeLightOn) { // Blink purple while intaking
-                    strobe(Color.kPurple, 0.1, LEDs.Section.BOTTOM + LEDs.Section.TOP_BAR)
+                if (noteInIntake) { // Blink purple while intaking
+                    strobe(Color.kPurple, 0.1, LEDs.Section.TOP + LEDs.Section.TOP_BAR)
                 }
             }
         }
+    }
+
+    fun updateState() {
+        noteInIntake = RobotState.notePosition.isIntake
     }
 }

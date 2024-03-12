@@ -36,6 +36,7 @@ import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.intake.Intake
+import org.team9432.robot.subsystems.led.LEDState
 import org.team9432.robot.subsystems.led.LEDs
 import org.team9432.robot.subsystems.limelight.Limelight
 import org.team9432.robot.subsystems.shooter.Shooter
@@ -108,6 +109,8 @@ object Robot: LoggedRobot() {
     override fun robotPeriodic() {
         KCommandScheduler.run()
         RobotState.log()
+
+        LEDState.updateState()
 
         AutoConstants.logPoses()
         Logger.recordOutput("Drive/FuturePose", RobotPosition.getFuturePose(CommandConstants.SHOOT_ON_MOVE_SECS ?: 0.0))
