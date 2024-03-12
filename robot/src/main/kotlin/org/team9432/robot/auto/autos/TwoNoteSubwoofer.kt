@@ -4,13 +4,12 @@ import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
-import org.team9432.robot.auto.AutoShoot
-import org.team9432.robot.auto.PullFromSpeakerShooter
+import org.team9432.robot.auto.commands.AutoShoot
+import org.team9432.robot.auto.commands.PullFromSpeakerShooter
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.DriveSpeeds
 import org.team9432.robot.commands.intake.FinishIntakingAndAlign
-import org.team9432.robot.commands.shooter.TeleShoot
-import org.team9432.robot.auto.ShootFromHopper
+import org.team9432.robot.auto.commands.ShootFromHopper
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.intake.CommandIntake

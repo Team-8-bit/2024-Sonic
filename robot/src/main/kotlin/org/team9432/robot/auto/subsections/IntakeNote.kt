@@ -8,12 +8,9 @@ import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AllianceNote
 import org.team9432.robot.auto.AutoConstants
-import org.team9432.robot.auto.AutoShoot
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.DriveSpeeds
-import org.team9432.robot.commands.drivetrain.DriveToPosition
 import org.team9432.robot.commands.drivetrain.TargetAim
-import org.team9432.robot.commands.intake.FinishIntakingAndAlign
 import org.team9432.robot.subsystems.intake.CommandIntake
 
 fun IntakeNote(note: AllianceNote) = SequentialCommand(

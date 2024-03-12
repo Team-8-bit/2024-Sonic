@@ -3,6 +3,10 @@ package org.team9432.robot.auto.autos
 import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.robot.auto.*
+import org.team9432.robot.auto.commands.AutoShoot
+import org.team9432.robot.auto.commands.ExitAuto
+import org.team9432.robot.auto.commands.InitAuto
+import org.team9432.robot.auto.commands.ShootFromHopper
 import org.team9432.robot.auto.subsections.AlignToIntakeNote
 import org.team9432.robot.auto.subsections.IntakeNote
 

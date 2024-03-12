@@ -1,4 +1,4 @@
-package org.team9432.robot.auto
+package org.team9432.robot.auto.commands
 
 import org.team9432.lib.commandbased.commands.ParallelDeadlineCommand
 import org.team9432.lib.commandbased.commands.WaitUntilCommand

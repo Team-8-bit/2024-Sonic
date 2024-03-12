@@ -5,10 +5,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
+import org.team9432.robot.auto.commands.ExitAuto
+import org.team9432.robot.auto.commands.InitAuto
 import org.team9432.robot.auto.subsections.ScoreNote
 import org.team9432.robot.auto.subsections.StartNote
 
-object AutoBuilder {
+object AutoChooser {
     private val initChooser = LoggedDashboardChooser<() -> KCommand>("Starting Rotation")
     private val firstChooser = LoggedDashboardChooser<() -> KCommand>("Start Note")
     private val secondChooser = LoggedDashboardChooser<() -> KCommand>("Second Note")

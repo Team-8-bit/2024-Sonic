@@ -3,7 +3,6 @@ package org.team9432
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
 import edu.wpi.first.math.geometry.Pose3d
-import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Translation3d
 import edu.wpi.first.net.PortForwarder
@@ -17,19 +16,15 @@ import org.littletonrobotics.junction.networktables.NT4Publisher
 import org.littletonrobotics.junction.wpilog.WPILOGReader
 import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.lib.commandbased.KCommandScheduler
-import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.robot.AdditionalTriggers
 import org.team9432.robot.Controls
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.*
 import org.team9432.robot.auto.autos.FourAllianceNote
-import org.team9432.robot.auto.subsections.ScoreNote
-import org.team9432.robot.auto.subsections.StartNote
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.amp.Amp
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
-import org.team9432.robot.subsystems.climber.CommandClimber
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
@@ -102,7 +97,7 @@ object Robot: LoggedRobot() {
         RightClimber
         Limelight
         AdditionalTriggers
-        AutoBuilder
+        AutoChooser
     }
 
     override fun robotPeriodic() {
