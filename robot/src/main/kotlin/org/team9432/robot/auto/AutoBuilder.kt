@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
+import org.team9432.robot.auto.commands.CollectPreloadAndStartShooter
 import org.team9432.robot.auto.commands.ExitAuto
 import org.team9432.robot.auto.commands.InitAuto
 import org.team9432.robot.auto.subsections.ScoreNote
@@ -25,6 +26,7 @@ object AutoBuilder {
 
     fun getAuto() = SequentialCommand(
         initChooser.get().invoke(),
+        CollectPreloadAndStartShooter(),
         firstChooser.get().invoke(),
         secondChooser.get().invoke(),
         thirdChooser.get().invoke(),

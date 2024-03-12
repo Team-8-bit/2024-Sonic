@@ -8,6 +8,7 @@ import org.team9432.robot.auto.AutoConstants
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.DriveSpeeds
 import org.team9432.robot.commands.drivetrain.TargetAim
+import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.FinishIntakingAndAlign
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.intake.Intake
@@ -19,7 +20,7 @@ fun IntakeNote(note: AllianceNote) = SequentialCommand(
 
         SequentialCommand(
             TargetAim(MechanismSide.AMP) { AutoConstants.getNotePosition(note) },
-            DriveSpeeds(vx = -0.75, fieldOriented = false),
+            DriveSpeeds(vx = -1.0, fieldOriented = false),
         ),
 
         deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.withTimeout(2.0)
