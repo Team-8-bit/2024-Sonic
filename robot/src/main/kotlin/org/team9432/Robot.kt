@@ -106,6 +106,7 @@ object Robot: LoggedRobot() {
 
         AutoConstants.logPoses()
         Logger.recordOutput("Drive/FuturePose", RobotPosition.getFuturePose(CommandConstants.SHOOT_ON_MOVE_SECS ?: 0.0))
+        Logger.recordOutput("SpeakerSide", RobotPosition.getSpeakerSide())
 
         DriverStation.getAlliance().getOrNull()?.let { alliance = it }
     }

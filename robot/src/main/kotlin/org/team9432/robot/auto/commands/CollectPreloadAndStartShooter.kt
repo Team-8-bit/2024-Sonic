@@ -5,5 +5,5 @@ import org.team9432.robot.subsystems.shooter.CommandShooter
 
 fun CollectPreloadAndStartShooter() = SequentialCommand(
     PullFromSpeakerShooter(),
-    CommandShooter.setSpeed(4000.0, 6000.0)
+    CommandShooter.startRunAtSpeeds()
 )

@@ -26,7 +26,7 @@ fun FinishIntakingAndLoadToSpeaker() = SequentialCommand(
     MoveToSide(MechanismSide.SPEAKER)
 )
 
-fun InitAuto(degrees: Rotation2d, includeHopperCommand: Boolean = true) = SequentialCommand(
+fun InitAuto(degrees: Rotation2d) = SequentialCommand(
     InstantCommand {
         RobotState.notePosition = RobotState.NotePosition.SPEAKER_HOPPER
         Gyro.setYaw(degrees)

@@ -9,7 +9,8 @@ import org.team9432.lib.util.PoseUtil
 
 // All positions are on the blue side of the field and are flipped as needed
 object FieldConstants {
-    val speakerPose get() = Pose2d(0.35, 5.40, Rotation2d()).applyFlip()
+
+    val speakerPose get() = Pose2d(0.35, speakerYAxis, Rotation2d()).applyFlip()
 
     val width = Units.feetToMeters(26.0) + Units.inchesToMeters(11.25)
     val height = Units.feetToMeters(54.0) + Units.inchesToMeters(3.25)
@@ -18,6 +19,8 @@ object FieldConstants {
 
     private val allianceNoteXCoordinateBlue = Units.feetToMeters(9.0) + Units.inchesToMeters(6.0)
     private val allianceNoteXSpacing = Units.feetToMeters(4.0) + Units.inchesToMeters(9.0)
+
+    val speakerYAxis = centerLine + allianceNoteXSpacing
 
     val blueAmpNotePose get() = Pose2d(allianceNoteXCoordinateBlue, centerLine + (allianceNoteXSpacing * 2), Rotation2d())
     val blueCenterNotePose get() = Pose2d(allianceNoteXCoordinateBlue, centerLine + allianceNoteXSpacing, Rotation2d())

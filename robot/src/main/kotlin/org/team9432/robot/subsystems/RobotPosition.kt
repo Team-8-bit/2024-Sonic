@@ -4,10 +4,11 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Transform2d
 import edu.wpi.first.math.geometry.Translation2d
-import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.wpilibj.DriverStation.Alliance
+import org.team9432.Robot
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.subsystems.gyro.Gyro
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.hypot
 
@@ -32,7 +33,19 @@ object RobotPosition {
         return distanceTo(FieldConstants.speakerPose, futureTime)
     }
 
-    fun getFieldRelativeSpeeds() = ChassisSpeeds.fromFieldRelativeSpeeds(Drivetrain.getSpeeds(), Gyro.getYaw())
+    fun getSpeakerSide(): SpeakerSide {
+        val currentY = Drivetrain.getPose().y
+        return when {
+            currentY.isCloseTo(FieldConstants.speakerYAxis, 0.5) -> SpeakerSide.CENTER
+            currentY < FieldConstants.speakerYAxis -> if (Robot.alliance == Alliance.Blue) SpeakerSide.LEFT else SpeakerSide.RIGHT
+            currentY > FieldConstants.speakerYAxis -> if (Robot.alliance == Alliance.Blue) SpeakerSide.RIGHT else SpeakerSide.LEFT
+            else -> SpeakerSide.CENTER
+        }
+    }
+
+    enum class SpeakerSide {
+        LEFT, RIGHT, CENTER
+    }
 
     private fun getMovementIn(futureTime: Double): Transform2d {
         val currentSpeeds = Drivetrain.getSpeeds()
@@ -48,4 +61,6 @@ object RobotPosition {
     fun getFuturePose(futureTime: Double): Pose2d {
         return Drivetrain.getPose().transformBy(getMovementIn(futureTime))
     }
+
+    fun Double.isCloseTo(other: Double, range: Double) = abs(this - other) < range
 }

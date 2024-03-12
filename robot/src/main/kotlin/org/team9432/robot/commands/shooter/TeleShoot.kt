@@ -7,6 +7,7 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.TargetDrive
 import org.team9432.robot.commands.hopper.MoveToSide
+import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.led.LEDState
@@ -14,15 +15,12 @@ import org.team9432.robot.subsystems.led.animations.ChargeUp
 import org.team9432.robot.subsystems.led.animations.Rocket
 import org.team9432.robot.subsystems.shooter.CommandShooter
 
-fun TeleShoot(
-    rpmLeft: Double = 4000.0,
-    rpmRight: Double = 6000.0,
-) = ParallelDeadlineCommand(
+fun TeleShoot() = ParallelDeadlineCommand(
     InstantCommand { RobotState.isUsingApriltags = false },
 
     TargetDrive { FieldConstants.speakerPose },
 
-    CommandShooter.runSpeed { rpmLeft to rpmRight },
+    CommandShooter.startRunAtSpeeds(),
 
     InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 

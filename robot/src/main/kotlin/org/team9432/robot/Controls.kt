@@ -71,7 +71,7 @@ object Controls {
 
         // Shoot Speaker
         driver.rightTrigger.and(isDefaultMode)
-            .onTrue(TeleShoot(4000.0, 6000.0))
+            .onTrue(TeleShoot())
 
         // Shoot Amplifier from speaker
         driver.b.and(isDefaultMode)
