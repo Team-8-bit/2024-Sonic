@@ -42,5 +42,8 @@ object RightClimber: KSubsystem() {
         io.setAngle(angle, feedforward.calculate(angle.degrees))
     }
 
+    val atLimit get() = inputs.atLimit
+    val hasVoltageApplied get() = inputs.appliedVolts != 0.0
+
     fun stop() = io.stop()
 }
