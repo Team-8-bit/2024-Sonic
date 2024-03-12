@@ -16,11 +16,16 @@ import org.littletonrobotics.junction.networktables.NT4Publisher
 import org.littletonrobotics.junction.wpilog.WPILOGReader
 import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.lib.commandbased.KCommandScheduler
+import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.SequentialCommand
+import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.robot.AdditionalTriggers
 import org.team9432.robot.Controls
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.*
+import org.team9432.robot.auto.commands.PullFromSpeakerShooter
 import org.team9432.robot.commands.CommandConstants
+import org.team9432.robot.commands.stop
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.amp.Amp
 import org.team9432.robot.subsystems.beambreaks.Beambreaks
@@ -117,6 +122,17 @@ object Robot: LoggedRobot() {
 
     override fun autonomousInit() {
         AutoChooser.getCommand().schedule()
+    }
+
+    override fun teleopInit() {
+        stop()
+
+        if (RobotState.noteInSpeakerSideHopperBeambreak()) {
+            SequentialCommand(
+                PullFromSpeakerShooter(),
+                InstantCommand { RobotState.hasRemainingAutoNote = true }
+            ).withTimeout(0.75).schedule()
+        }
     }
 
     enum class Mode {

@@ -8,6 +8,9 @@ import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 
 fun MoveToSide(side: MechanismSide) = SuppliedCommand {
+    // If there's a note left in the hopper from auto, don't try to load it
+    if (RobotState.hasRemainingAutoNote) return@SuppliedCommand InstantCommand { RobotState.hasRemainingAutoNote = false }
+
     // If the note is going to a different side than the one it's already on
     val noteIsCrossing = RobotState.notePosition.side != side
 

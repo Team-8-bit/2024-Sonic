@@ -39,6 +39,7 @@ object RobotState {
     var notePosition = NotePosition.NONE
 
     var isUsingApriltags = true
+    var hasRemainingAutoNote = false
 
     fun log() {
         Logger.recordOutput("RobotState/NotePosition", notePosition.name)
