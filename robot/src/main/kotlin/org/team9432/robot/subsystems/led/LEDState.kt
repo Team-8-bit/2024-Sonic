@@ -3,10 +3,12 @@ package org.team9432.robot.subsystems.led
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.util.Color
 import org.team9432.Robot
+import org.team9432.robot.EmergencySwitches
 import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.led.LEDModes.breath
+import org.team9432.robot.subsystems.led.LEDModes.pulse
 import org.team9432.robot.subsystems.led.LEDModes.rainbow
 import org.team9432.robot.subsystems.led.LEDModes.solid
 import org.team9432.robot.subsystems.led.LEDModes.strobe
@@ -14,14 +16,14 @@ import org.team9432.robot.subsystems.led.animations.LEDAnimation
 import org.team9432.robot.subsystems.vision.Vision
 
 object LEDState {
-    var allianceColor = Color.kBlack
+    var allianceColor = Color.kWhite
 
     var noteInIntake = false
-
     var leftClimberAtLimit = false
     var rightClimberAtLimit = false
-
     var hasVisionTarget = false
+    var limelightConnected = false
+    var testEmergencySwitchActive = false
 
     var animation: LEDAnimation? = null
         set(value) {
@@ -35,17 +37,27 @@ object LEDState {
                 val isFinished = animation.updateBuffer()
                 if (isFinished) this.animation = null
             }
+        } else if (testEmergencySwitchActive) {
+            solid(Color.kGreen, LEDs.Section.SPEAKER_LEFT)
+            solid(Color.kRed, LEDs.Section.SPEAKER_RIGHT)
+            solid(Color.kBlue, LEDs.Section.AMP_LEFT)
+            solid(Color.kYellow, LEDs.Section.AMP_RIGHT)
+            solid(Color.kWhite, LEDs.Section.TOP_BAR)
         } else {
             solid(Color.kBlack, LEDs.Section.ALL) // Start with everything off
 
             if (DriverStation.isDisabled()) {
-                // Set the top to the alliance color, this also shows when the fms is connected
-                solid(allianceColor, LEDs.Section.TOP_BAR)
-
-                if (hasVisionTarget) { // Turn silver when the robot can see an apriltag
-                    solid(Color.kSilver, LEDs.Section.BOTTOM)
+                pulse(Color.kBlack, Color.kWhite, LEDModes.sidePulses, 2.0, 1.0)
+                if (Robot.alliance == null) {
+                    breath(Color.kWhite, Color.kBlack, LEDs.Section.TOP_BAR, duration = 2.0)
+                } else {
+                    // Set the top to the alliance color, this also shows when the fms is connected
+                    solid(allianceColor, LEDs.Section.TOP_BAR)
                 }
 
+                if (hasVisionTarget) { // Turn green when the robot can see an apriltag
+                    solid(LEDColors.MAIN_GREEN, LEDs.Section.BOTTOM)
+                }
             } else if (DriverStation.isAutonomous()) {
                 strobe(Color.kRed, 0.25, LEDs.Section.ALL)
             } else { // Teleop
@@ -71,10 +83,13 @@ object LEDState {
         rightClimberAtLimit = RightClimber.atLimit && RightClimber.hasVoltageApplied
 
         hasVisionTarget = Vision.hasVisionTarget()
+        limelightConnected = Vision.connected
+
+        testEmergencySwitchActive = EmergencySwitches.testSwitchActive
 
         allianceColor = when (Robot.alliance) {
-            DriverStation.Alliance.Red -> Color.kFirstRed
-            DriverStation.Alliance.Blue -> Color.kFirstBlue
+            DriverStation.Alliance.Red -> Color.kRed
+            DriverStation.Alliance.Blue -> Color.kBlue
             null -> Color.kWhite
         }
     }

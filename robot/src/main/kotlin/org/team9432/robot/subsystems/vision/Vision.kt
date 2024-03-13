@@ -34,4 +34,6 @@ object Vision: KSubsystem() {
     fun setLED(enable: Boolean) {
         io.setLED(enable)
     }
+
+    val connected get() = inputs.connected
 }

@@ -40,6 +40,8 @@ class VisionIOPhotonvision : VisionIO {
         inputs.estimatedRobotPose = estimatedPose?.estimatedPose?.let {
             arrayOf(it.transformBy(Limelight.getCurrentRobotToCamera()))
         } ?: emptyArray()
+
+        inputs.connected = camera.isConnected
     }
 
     private fun List<PhotonTrackedTarget>.getCornerArray() =

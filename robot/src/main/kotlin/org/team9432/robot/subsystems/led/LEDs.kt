@@ -10,7 +10,7 @@ import org.team9432.robot.Devices
 
 
 object LEDs: KSubsystem() {
-    private const val LENGTH = 119
+    private const val LENGTH = 118
 
     private val ledController = AddressableLED(Devices.LED_PORT)
     val buffer = AddressableLEDBuffer(LENGTH)
@@ -27,9 +27,9 @@ object LEDs: KSubsystem() {
         val AMP_LEFT_BOTTOM = (56..65).toList()
 
         val AMP_RIGHT_BOTTOM = (66..77).toList()
-        val AMP_RIGHT_TOP = (78..88).toList()
+        val AMP_RIGHT_TOP = (78..87).toList()
 
-        val TOP_BAR = (89..118).toList()
+        val TOP_BAR = (88..117).toList()
 
         val SPEAKER_LEFT = SPEAKER_LEFT_TOP + SPEAKER_LEFT_BOTTOM
         val SPEAKER_RIGHT = SPEAKER_RIGHT_BOTTOM + SPEAKER_RIGHT_TOP

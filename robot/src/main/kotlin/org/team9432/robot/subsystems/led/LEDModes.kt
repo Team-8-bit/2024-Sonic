@@ -16,6 +16,29 @@ object LEDModes {
         solid(if (on) color else Color.kBlack, indices)
     }
 
+    fun pulse(bg: Color, fg: Color, indices: List<List<Int>>, duration: Double = 1.0, cooldown: Double = 1.0) {
+        val timestamp = Timer.getFPGATimestamp() % (duration + cooldown)
+        // Set everything to the background color
+        for (strip in indices) solid(bg, strip)
+        // Stop if it is in cooldown
+        if (timestamp > duration) return
+
+        // Set one to be lit up in each strip
+        for (strip in indices) {
+            val stepTime = duration / strip.size
+            val position = (timestamp / stepTime).toInt()
+
+            LEDs.buffer.setLED(strip[position], fg)
+        }
+    }
+
+    val sidePulses = listOf(
+        LEDs.Section.SPEAKER_LEFT,
+        LEDs.Section.SPEAKER_RIGHT.reversed(),
+        LEDs.Section.AMP_LEFT,
+        LEDs.Section.AMP_RIGHT.reversed()
+    )
+
     fun breath(c1: Color, c2: Color, indices: List<Int>, duration: Double = 1.0, timestamp: Double = Timer.getFPGATimestamp()) {
         val x = timestamp % duration / duration * 2.0 * Math.PI
         val ratio = (sin(x) + 1.0) / 2.0
