@@ -48,15 +48,20 @@ object LEDState {
 
             if (DriverStation.isDisabled()) {
                 pulse(Color.kBlack, Color.kWhite, LEDModes.sidePulses, 2.0, 1.0)
+
+                // Set the top to the alliance color, this also shows when the fms is connected
                 if (Robot.alliance == null) {
                     breath(Color.kWhite, Color.kBlack, LEDs.Section.TOP_BAR, duration = 2.0)
                 } else {
-                    // Set the top to the alliance color, this also shows when the fms is connected
                     solid(allianceColor, LEDs.Section.TOP_BAR)
                 }
 
                 if (hasVisionTarget) { // Turn green when the robot can see an apriltag
                     solid(LEDColors.MAIN_GREEN, LEDs.Section.BOTTOM)
+                }
+
+                if (!limelightConnected) { // Lime and red when the limelight isn't connected
+                    breath(Color.kLime, Color.kRed, LEDs.Section.ALL_BUT_TOP, duration = 0.25)
                 }
             } else if (DriverStation.isAutonomous()) {
                 strobe(Color.kRed, 0.25, LEDs.Section.ALL)
