@@ -53,5 +53,5 @@ object Devices {
     const val INTAKE_SPEAKER_SIDE_BEAMBREAK_PORT = 7
 
     // LEDs
-    const val LED_PORT = 0
+    const val LED_PORT = 1
 }

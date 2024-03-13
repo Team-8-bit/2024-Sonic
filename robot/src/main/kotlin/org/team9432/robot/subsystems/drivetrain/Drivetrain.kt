@@ -19,6 +19,7 @@ import org.team9432.Robot
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.util.SwerveUtil
 import org.team9432.robot.RobotState
+import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.vision.Vision
 import kotlin.math.abs
@@ -63,7 +64,9 @@ object Drivetrain: KSubsystem() {
         // Read wheel positions and deltas from each module
         val modulePositions = getModulePositions()
 
-        if (RobotState.isUsingApriltags) {
+        val speeds = getSpeeds()
+        if ((maxOf(abs(speeds.vxMetersPerSecond), abs(speeds.vyMetersPerSecond)) < 0.5) &&
+            abs(Math.toDegrees(speeds.omegaRadiansPerSecond)) < 3.0) {
             Vision.getEstimatedPose2d()?.let {
                 poseEstimator.addVisionMeasurement(it.first, it.second)
             }

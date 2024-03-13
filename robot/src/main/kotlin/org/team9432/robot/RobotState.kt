@@ -39,13 +39,15 @@ object RobotState {
     var notePosition = NotePosition.NONE
 
     var isUsingApriltags = true
+    var autoIsUsingApriltags = true
     var hasRemainingAutoNote = false
 
     fun log() {
         Logger.recordOutput("RobotState/NotePosition", notePosition.name)
+        Logger.recordOutput("RobotState/MovementDirection", getMovementDirection())
         Logger.recordOutput("Drivetrain/SpeakerDistance", RobotPosition.distanceToSpeaker())
-        Logger.recordOutput("SpeakerPose", FieldConstants.speakerPose)
-        Logger.recordOutput("IsUsingAprilTags", isUsingApriltags)
+        Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerPose)
+        Logger.recordOutput("RobotState/IsUsingAprilTags", isUsingApriltags)
     }
 
     enum class NotePosition {

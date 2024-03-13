@@ -18,11 +18,12 @@ fun ShootAngle(rpmFast: Double, rpmSlow: Double, angle: Rotation2d) = ParallelDe
 
     // Aim the hood and spin up the shooter
     CommandHood.followAngle { angle },
-    CommandShooter.startRunAtSpeeds(rpmFast, rpmSlow),
 
     InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 
     deadline = SequentialCommand(
+        CommandShooter.startRunAtSpeeds(rpmFast, rpmSlow),
+
         ParallelCommand(
             // Move the note to the speaker side of the hopper
             MoveToSide(MechanismSide.SPEAKER),
@@ -38,6 +39,7 @@ fun ShootAngle(rpmFast: Double, rpmSlow: Double, angle: Rotation2d) = ParallelDe
 
         // Update the note position
         InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
-        InstantCommand { RobotState.isUsingApriltags = true }
+        InstantCommand { RobotState.isUsingApriltags = true },
+        CommandShooter.stop()
     )
 )

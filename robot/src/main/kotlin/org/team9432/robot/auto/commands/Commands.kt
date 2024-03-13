@@ -12,6 +12,7 @@ import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.FinishIntakingAndAlign
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.shooter.CommandShooter
+import org.team9432.robot.subsystems.shooter.Shooter
 
 fun FinishIntakingThen(command: KCommand, delay: Double = 0.5) = ParallelCommand(
     SequentialCommand(
@@ -26,12 +27,12 @@ fun FinishIntakingAndLoadToSpeaker() = SequentialCommand(
     MoveToSide(MechanismSide.SPEAKER)
 )
 
-fun InitAuto(degrees: Rotation2d) = SequentialCommand(
-    InstantCommand {
-        RobotState.notePosition = RobotState.NotePosition.SPEAKER_HOPPER
-        Gyro.setYaw(degrees)
-    }
-)
+fun InitAuto(degrees: Rotation2d) = InstantCommand {
+    Shooter.stop()
+    RobotState.notePosition = RobotState.NotePosition.SPEAKER_HOPPER
+    Gyro.setYaw(degrees)
+    println("Test 3")
+}
 
 fun ExitAuto() = ParallelCommand(
     CommandShooter.stop()

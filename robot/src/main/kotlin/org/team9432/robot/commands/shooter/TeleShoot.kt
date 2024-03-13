@@ -20,11 +20,11 @@ fun TeleShoot() = ParallelDeadlineCommand(
 
     TargetDrive { FieldConstants.speakerPose },
 
-    CommandShooter.startRunAtSpeeds(),
-
     InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 
     deadline = SequentialCommand(
+        CommandShooter.startRunAtSpeeds(),
+
         ParallelCommand(
             // Move the note to the speaker side of the hopper
             MoveToSide(MechanismSide.SPEAKER),
@@ -46,6 +46,8 @@ fun TeleShoot() = ParallelDeadlineCommand(
 
         // Update the note position
         InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
-        InstantCommand { RobotState.isUsingApriltags = true }
+        InstantCommand { RobotState.isUsingApriltags = true },
+
+        CommandShooter.stop()
     )
 )

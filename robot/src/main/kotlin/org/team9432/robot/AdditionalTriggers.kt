@@ -10,7 +10,7 @@ import org.team9432.robot.subsystems.led.LEDState
 import org.team9432.robot.subsystems.led.animations.Rocket
 
 object AdditionalTriggers {
-    private val isAligningHood = KTrigger { (RobotPosition.distanceToSpeaker() < 5.0 && RobotState.notePosition != RobotState.NotePosition.NONE) || DriverStation.isAutonomous() }
+    private val isAligningHood = KTrigger { (RobotPosition.distanceToSpeaker() < 5.0 && RobotState.notePosition != RobotState.NotePosition.NONE) }
     private val preloadAnimation = KTrigger { DriverStation.isDisabled() && RobotState.noteInSpeakerSideHopperBeambreak() }
 
     init {

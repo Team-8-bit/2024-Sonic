@@ -17,6 +17,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader
 import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.robot.AdditionalTriggers
@@ -25,6 +26,7 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.auto.*
 import org.team9432.robot.auto.commands.PullFromSpeakerShooter
 import org.team9432.robot.commands.CommandConstants
+import org.team9432.robot.commands.hood.HoodAimAtSpeaker
 import org.team9432.robot.commands.stop
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.amp.Amp
@@ -45,7 +47,7 @@ import kotlin.jvm.optionals.getOrNull
 
 val LOOP_PERIOD_SECS = Robot.period
 
-object Robot: LoggedRobot() {
+object Robot : LoggedRobot() {
     val mode = if (isReal()) Mode.REAL else Mode.SIM
 
     var alliance: Alliance? = null
@@ -72,7 +74,14 @@ object Robot: LoggedRobot() {
             setUseTiming(false) // Run as fast as possible
             val logPath = LogFileUtil.findReplayLog() // Pull the replay log from AdvantageScope (or prompt the user)
             Logger.setReplaySource(WPILOGReader(logPath)) // Read replay log
-            Logger.addDataReceiver(WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))) // Save outputs to a new log
+            Logger.addDataReceiver(
+                WPILOGWriter(
+                    LogFileUtil.addPathSuffix(
+                        logPath,
+                        "_sim"
+                    )
+                )
+            ) // Save outputs to a new log
         }
 
         // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
@@ -104,6 +113,7 @@ object Robot: LoggedRobot() {
         AdditionalTriggers
         AutoBuilder
         AutoChooser
+        // Cameras
     }
 
     override fun robotPeriodic() {
