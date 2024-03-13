@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.GenericHID
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.SuppliedCommand
 import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.commands.runsWhenDisabled
 import org.team9432.lib.commandbased.input.KTrigger
@@ -14,6 +15,7 @@ import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.ShootAngle
+import org.team9432.robot.commands.shooter.SubwooferShoot
 import org.team9432.robot.commands.shooter.TeleShoot
 import org.team9432.robot.commands.stopCommand
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
@@ -64,7 +66,11 @@ object Controls {
 
         // Shoot Speaker
         driver.rightTrigger.and(isDefaultMode)
-            .onTrue(TeleShoot())
+            .onTrue(SuppliedCommand {
+                if (EmergencySwitches.isAmpForSpeaker) ScoreAmp(12.0)
+                else if (EmergencySwitches.isSubwooferOnly) SubwooferShoot()
+                else TeleShoot()
+            })
 
         // Shoot Amplifier from speaker
         driver.b.and(isDefaultMode)

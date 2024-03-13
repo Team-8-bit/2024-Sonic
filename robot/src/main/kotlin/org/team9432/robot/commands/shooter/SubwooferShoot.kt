@@ -8,6 +8,7 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.TargetDrive
 import org.team9432.robot.commands.hopper.MoveToSide
+import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.subsystems.led.LEDState
@@ -15,15 +16,7 @@ import org.team9432.robot.subsystems.led.animations.ChargeUp
 import org.team9432.robot.subsystems.led.animations.Rocket
 import org.team9432.robot.subsystems.shooter.CommandShooter
 
-fun TeleShoot() = ParallelDeadlineCommand(
-    InstantCommand { RobotState.isUsingApriltags = false },
-
-    SuppliedCommand {
-        if (!EmergencySwitches.autoAimDisabled) {
-            TargetDrive { FieldConstants.speakerPose }
-        } else InstantCommand {}
-    },
-
+fun SubwooferShoot() = ParallelDeadlineCommand(
     InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 
     deadline = SequentialCommand(
@@ -50,7 +43,6 @@ fun TeleShoot() = ParallelDeadlineCommand(
 
         // Update the note position
         InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
-        InstantCommand { RobotState.isUsingApriltags = true },
 
         CommandShooter.stop()
     )
