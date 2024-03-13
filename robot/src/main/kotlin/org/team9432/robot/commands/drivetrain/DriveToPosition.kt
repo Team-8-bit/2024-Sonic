@@ -22,5 +22,9 @@ class DriveToPosition(
     override fun isFinished(): Boolean {
         return Drivetrain.atPositionGoal(positionalTolerance, rotationalTolerance)
     }
+
+    override fun end(interrupted: Boolean) {
+        Drivetrain.stop()
+    }
 }
 

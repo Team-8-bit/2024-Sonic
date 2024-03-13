@@ -29,13 +29,14 @@ fun FourAllianceNoteTwo() = SequentialCommand(
     InstantCommand { RobotState.autoIsUsingApriltags = false },
     AutoShoot(driveCloser = false),
     IntakeNote(AllianceNote.AMP),
-    ParallelDeadlineCommand(
-        ParallelDeadlineCommand(
-            TargetDriveSpeeds(vx = 3.0, vy = 3.0 * Drivetrain.coordinateFlip) { FieldConstants.speakerPose },
-            deadline = WaitCommand(0.75)
-        ),
-        deadline = FinishIntakingAndLoadToSpeaker()
-    ),
+    FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
+//    ParallelDeadlineCommand(
+//        ParallelDeadlineCommand(
+//            TargetDriveSpeeds(vx = -3.0 * Drivetrain.coordinateFlip, vy = -3.0) { FieldConstants.speakerPose },
+//            deadline = WaitCommand(0.75)
+//        ),
+//        deadline = FinishIntakingAndLoadToSpeaker()
+//    ),
     AutoShoot(driveCloser = false),
     InstantCommand { RobotState.autoIsUsingApriltags = true },
     ExitAuto(),
