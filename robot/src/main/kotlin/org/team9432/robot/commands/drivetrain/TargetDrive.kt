@@ -18,7 +18,7 @@ class TargetDrive(private val target: () -> Pose2d): KCommand() {
         val currentTarget = target.invoke()
         Logger.recordOutput("Drive/AngleTarget", currentTarget)
 
-        val maxSpeedMetersPerSecond = if (Controls.slowDrive) 1.0 else 6.0
+        val maxSpeedMetersPerSecond = if (Controls.slowDrive) 1.0 else 4.0
         val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond * Drivetrain.coordinateFlip
         val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond * Drivetrain.coordinateFlip
 

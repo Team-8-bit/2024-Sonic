@@ -37,6 +37,7 @@ object LEDState {
                 val isFinished = animation.updateBuffer()
                 if (isFinished) this.animation = null
             }
+
         } else if (testEmergencySwitchActive) {
             solid(Color.kGreen, LEDs.Section.SPEAKER_LEFT)
             solid(Color.kRed, LEDs.Section.SPEAKER_RIGHT)

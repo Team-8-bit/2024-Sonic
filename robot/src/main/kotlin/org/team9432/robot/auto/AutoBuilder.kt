@@ -33,6 +33,10 @@ object AutoBuilder {
         ExitAuto()
     )
 
+    fun getInitCommand(): KCommand {
+        return initChooser.get().invoke()
+    }
+
     private fun LoggedDashboardChooser<() -> KCommand>.initStart() {
         addDefaultOption("None") { InstantCommand {} }
         addOption("Amp Note") { StartNote(AllianceNote.AMP) }

@@ -8,7 +8,7 @@ import org.team9432.robot.auto.commands.*
 import org.team9432.robot.auto.subsections.IntakeNote
 import org.team9432.robot.commands.drivetrain.DriveToPosition
 
-fun TopTwoCenterNote() = SequentialCommand(
+fun BottomTwoCenterNote() = SequentialCommand(
     InitAuto(Rotation2d(Math.PI)),
     // Shoot the preload
     ParallelCommand(

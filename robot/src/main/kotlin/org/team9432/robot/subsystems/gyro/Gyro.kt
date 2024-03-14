@@ -56,6 +56,7 @@ object Gyro : KSubsystem() {
 
     fun resetYaw() {
         setYaw(Rotation2d())
+
         Drivetrain.resetAngleController()
     }
 

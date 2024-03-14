@@ -66,10 +66,13 @@ object Drivetrain: KSubsystem() {
 
         val speeds = getSpeeds()
         if ((maxOf(abs(speeds.vxMetersPerSecond), abs(speeds.vyMetersPerSecond)) < 0.5) &&
-            abs(Math.toDegrees(speeds.omegaRadiansPerSecond)) < 3.0) {
+            abs(Math.toDegrees(speeds.omegaRadiansPerSecond)) < 10.0) {
+            Logger.recordOutput("Drive/UsingVision", true)
             Vision.getEstimatedPose2d()?.let {
                 poseEstimator.addVisionMeasurement(it.first, it.second)
             }
+        } else {
+            Logger.recordOutput("Drive/UsingVision", false)
         }
 
         poseEstimator.update(Gyro.getYaw(), modulePositions.toTypedArray())

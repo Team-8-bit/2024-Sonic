@@ -113,7 +113,6 @@ object Robot : LoggedRobot() {
         AdditionalTriggers
         AutoBuilder
         AutoChooser
-        // Cameras
     }
 
     override fun robotPeriodic() {
