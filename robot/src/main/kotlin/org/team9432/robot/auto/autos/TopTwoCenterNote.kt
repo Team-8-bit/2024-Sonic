@@ -15,12 +15,12 @@ fun TopTwoCenterNote() = SequentialCommand(
         CollectPreloadAndStartShooter(),
         DriveToPosition(AutoConstants.topCenterNoteShotPose)
     ),
-    ShootFromHopper(),
+    AutoShoot(),
 
     // Drive to the center and collect the top note
     IntakeNote(AutoConstants.firstCenterNoteIntakePose, timeout = 0.5),
     FinishIntakingThen(DriveToPosition(AutoConstants.topCenterNoteShotPose)),
-    AutoShoot(driveCloser = false),
+    AutoShoot(),
 
     // Collect the next center note
     DriveToPosition(AutoConstants.topCenterNotePath, positionalTolerance = 1.0),
@@ -31,7 +31,7 @@ fun TopTwoCenterNote() = SequentialCommand(
             DriveToPosition(AutoConstants.topCenterNoteShotPose)
         )
     ),
-    AutoShoot(driveCloser = false),
+    AutoShoot(),
 
     ExitAuto(),
 )

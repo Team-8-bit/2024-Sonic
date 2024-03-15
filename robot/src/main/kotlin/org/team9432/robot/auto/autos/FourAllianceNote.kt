@@ -2,53 +2,31 @@ package org.team9432.robot.auto.autos
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.commandbased.commands.*
-import org.team9432.robot.MechanismSide
-import org.team9432.robot.auto.*
+import org.team9432.robot.RobotState
+import org.team9432.robot.auto.AllianceNote
+import org.team9432.robot.auto.AutoConstants
 import org.team9432.robot.auto.commands.*
 import org.team9432.robot.auto.subsections.AlignToIntakeNote
 import org.team9432.robot.auto.subsections.IntakeNote
-import org.team9432.robot.commands.drivetrain.DriveSpeeds
-import org.team9432.robot.commands.hopper.MoveToSide
-import org.team9432.robot.commands.intake.FinishIntakingAndAlign
+import org.team9432.robot.commands.drivetrain.DriveToPosition
 
 fun FourAllianceNote() = SequentialCommand(
-    InitAuto(Rotation2d(Math.PI)),
+    InitAuto(Rotation2d.fromDegrees(180.0)),
     ParallelCommand(
         CollectPreloadAndStartShooter(),
-        AlignToIntakeNote(AllianceNote.STAGE)
+        DriveToPosition(AutoConstants.fourNoteFirstShotPose)
     ),
-    ShootFromHopper(),
+    AutoShoot(),
     IntakeNote(AllianceNote.STAGE),
-    ParallelCommand(
-        SequentialCommand(
-            WaitCommand(0.5),
-            AlignToIntakeNote(AllianceNote.CENTER)
-        ),
-        SequentialCommand(
-            MoveToSide(MechanismSide.SPEAKER),
-            FinishIntakingAndAlign()
-        )
-    ),
-    AutoShoot(driveCloser = false),
+    FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
+    AutoShoot(),
     IntakeNote(AllianceNote.CENTER),
-    FinishIntakingAndAlign(),
-    MoveToSide(MechanismSide.SPEAKER),
-    AutoShoot(driveCloser = false),
-    AlignToIntakeNote(AllianceNote.AMP),
+    FinishIntakingThen(AlignToIntakeNote(AllianceNote.AMP)),
+    InstantCommand { RobotState.autoIsUsingApriltags = false },
+    AutoShoot(),
     IntakeNote(AllianceNote.AMP),
-    ParallelCommand(
-        SequentialCommand(
-            WaitCommand(0.5),
-            ParallelDeadlineCommand(
-                DriveSpeeds(vy = -3.0, fieldOriented = true),
-                deadline = WaitCommand(0.5)
-            )
-        ),
-        SequentialCommand(
-            FinishIntakingAndAlign(),
-            MoveToSide(MechanismSide.SPEAKER),
-        )
-    ),
-    AutoShoot(driveCloser = false),
+    FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
+    AutoShoot(),
+    InstantCommand { RobotState.autoIsUsingApriltags = true },
     ExitAuto(),
 )

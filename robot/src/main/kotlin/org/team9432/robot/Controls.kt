@@ -11,10 +11,9 @@ import org.team9432.lib.commandbased.commands.runsWhenDisabled
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.amp.ScoreAmp
-import org.team9432.robot.commands.drivetrain.FieldOrientedDrive
+import org.team9432.robot.commands.drivetrain.teleop.TeleDrive
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
-import org.team9432.robot.commands.shooter.ShootAngle
 import org.team9432.robot.commands.shooter.SubwooferShoot
 import org.team9432.robot.commands.shooter.TeleShoot
 import org.team9432.robot.commands.stopCommand
@@ -24,7 +23,6 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.led.LEDState
 import org.team9432.robot.subsystems.led.animations.ChargeUp
-import org.team9432.robot.subsystems.led.Chase
 import org.team9432.robot.subsystems.led.animations.Confetti
 import org.team9432.robot.subsystems.led.animations.Rocket
 import org.team9432.robot.subsystems.vision.Vision
@@ -50,7 +48,7 @@ object Controls {
     private val isLedMode = KTrigger { currentMode == ControllerMode.LED }
 
     init {
-        Drivetrain.defaultCommand = FieldOrientedDrive()
+        Drivetrain.defaultCommand = TeleDrive()
 
         /* ------------- DEFAULT BUTTONS ------------- */
 

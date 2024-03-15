@@ -7,7 +7,7 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AllianceNote
 import org.team9432.robot.auto.AutoConstants
 import org.team9432.robot.commands.CommandConstants
-import org.team9432.robot.commands.drivetrain.DriveSpeeds
+import org.team9432.robot.commands.drivetrain.DriveRobotRelativeSpeeds
 import org.team9432.robot.commands.drivetrain.DriveToPosition
 import org.team9432.robot.commands.drivetrain.TargetAim
 import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
@@ -21,7 +21,7 @@ fun IntakeNote(note: AllianceNote) = SequentialCommand(
         SequentialCommand(
             TargetAim(MechanismSide.AMP) { AutoConstants.getNotePosition(note) },
             ParallelDeadlineCommand(
-                DriveSpeeds(vx = -1.0, fieldOriented = false),
+                DriveRobotRelativeSpeeds(vx = -1.0),
                 deadline = WaitCommand(1.0)
             )
         ),
@@ -38,19 +38,10 @@ fun IntakeNote(pose: Pose2d, timeout: Double = 1.0) = SequentialCommand(
         SequentialCommand(
             DriveToPosition(pose),
             ParallelDeadlineCommand(
-                DriveSpeeds(vx = -1.0, fieldOriented = false),
+                DriveRobotRelativeSpeeds(vx = -1.0),
                 deadline = WaitCommand(timeout)
             )
         ),
         deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.afterSimDelay(1.0) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }
     )
-)
-
-fun PrepareToIntake(timeout: Double = 2.0) = ParallelDeadlineCommand(
-    CommandIntake.runIntakeSide(MechanismSide.AMP, CommandConstants.INITIAL_INTAKE_VOLTS),
-    ParallelDeadlineCommand(
-        DriveSpeeds(vx = -0.5, fieldOriented = false),
-        deadline = WaitCommand(timeout)
-    ),
-    deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.afterSimDelay(0.25) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }
 )

@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.littletonrobotics.junction.Logger
+import org.team9432.Robot.applyFlip
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.subsystems.RobotPosition
@@ -17,7 +18,7 @@ class TargetAim(
     override val requirements = setOf(Drivetrain)
 
     override fun execute() {
-        val currentTarget = target.invoke()
+        val currentTarget = target.invoke().applyFlip()
         Logger.recordOutput("Drive/AngleTarget", currentTarget)
 
         when (side) {
@@ -32,8 +33,5 @@ class TargetAim(
     }
 
     override fun isFinished() = Drivetrain.atAngleGoal()
-
-    override fun end(interrupted: Boolean) {
-        Drivetrain.stop()
-    }
+    override fun end(interrupted: Boolean) = Drivetrain.stop()
 }

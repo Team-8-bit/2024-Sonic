@@ -1,6 +1,7 @@
 package org.team9432.robot.auto.commands
 
 import edu.wpi.first.math.geometry.Rotation2d
+import org.team9432.Robot
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.ParallelCommand
@@ -30,8 +31,7 @@ fun FinishIntakingAndLoadToSpeaker() = SequentialCommand(
 fun InitAuto(degrees: Rotation2d) = InstantCommand {
     Shooter.stop()
     RobotState.notePosition = RobotState.NotePosition.SPEAKER_HOPPER
-    Gyro.setYaw(degrees)
-    println("Test 3")
+    Gyro.setYaw(degrees.plus(Robot.rotationOffset))
 }
 
 fun ExitAuto() = ParallelCommand(

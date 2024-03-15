@@ -15,11 +15,8 @@ import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
 import org.team9432.LOOP_PERIOD_SECS
-import org.team9432.Robot
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.util.SwerveUtil
-import org.team9432.robot.RobotState
-import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.gyro.Gyro
 import org.team9432.robot.subsystems.vision.Vision
 import kotlin.math.abs
@@ -138,8 +135,6 @@ object Drivetrain: KSubsystem() {
 
     fun getModulePositions() = modules.map { it.position }
     fun getModuleStates() = modules.map { it.state }
-
-    val coordinateFlip get() = if (Robot.alliance == DriverStation.Alliance.Blue) 1 else -1
 
     private val MODULE_TRANSLATIONS: Array<Translation2d>
         get() {

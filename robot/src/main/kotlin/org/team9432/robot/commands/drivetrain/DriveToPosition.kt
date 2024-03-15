@@ -1,6 +1,7 @@
 package org.team9432.robot.commands.drivetrain
 
 import edu.wpi.first.math.geometry.Pose2d
+import org.team9432.Robot.applyFlip
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
@@ -12,7 +13,7 @@ class DriveToPosition(
     override val requirements = setOf(Drivetrain)
 
     override fun initialize() {
-        Drivetrain.setPositionGoal(position)
+        Drivetrain.setPositionGoal(position.applyFlip())
     }
 
     override fun execute() {

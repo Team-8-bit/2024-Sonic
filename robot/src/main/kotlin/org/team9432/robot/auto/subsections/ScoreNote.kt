@@ -11,5 +11,5 @@ fun ScoreNote(note: AllianceNote) = SequentialCommand(
     AlignToIntakeNote(note),
     IntakeNote(note),
     FinishIntakingAndLoadToSpeaker(),
-    AutoShoot(driveCloser = true)
+    AutoShoot()
 )

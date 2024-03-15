@@ -6,7 +6,7 @@ import org.team9432.robot.FieldConstants
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
-import org.team9432.robot.commands.drivetrain.TargetDrive
+import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
@@ -20,7 +20,7 @@ fun TeleShoot() = ParallelDeadlineCommand(
 
     SuppliedCommand {
         if (!EmergencySwitches.autoAimDisabled) {
-            TargetDrive { FieldConstants.speakerPose }
+            TeleTargetDrive { FieldConstants.speakerPose }
         } else InstantCommand {}
     },
 
