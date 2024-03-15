@@ -81,6 +81,10 @@ object Drivetrain: KSubsystem() {
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
     }
 
+    fun resetPosition(pose: Pose2d, angle: Rotation2d) {
+        poseEstimator.resetPosition(angle, getModulePositions().toTypedArray(), pose)
+    }
+
     fun setSpeeds(speeds: ChassisSpeeds) {
         val discreteSpeeds = SwerveUtil.correctForDynamics(speeds, LOOP_PERIOD_SECS)
         val targetStates = kinematics.toSwerveModuleStates(discreteSpeeds)
@@ -136,7 +140,6 @@ object Drivetrain: KSubsystem() {
     fun getModuleStates() = modules.map { it.state }
 
     val coordinateFlip get() = if (Robot.alliance == DriverStation.Alliance.Blue) 1 else -1
-    val rotationOffset get() = if (Robot.alliance == DriverStation.Alliance.Blue) 0 else 180
 
     private val MODULE_TRANSLATIONS: Array<Translation2d>
         get() {

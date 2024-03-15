@@ -56,12 +56,11 @@ object Gyro : KSubsystem() {
 
     fun resetYaw() {
         setYaw(Rotation2d())
-
-        Drivetrain.resetAngleController()
     }
 
     fun setYaw(angle: Rotation2d) {
-        io.setYaw(angle.degrees + Drivetrain.rotationOffset)
-        Drivetrain.resetAngleController()
+        io.setYaw(angle.degrees)
+        Drivetrain.resetAngleController(angle)
+        Drivetrain.resetPosition(Drivetrain.getPose(), angle)
     }
 }

@@ -74,11 +74,11 @@ object Controls {
 
         // Shoot Amplifier from speaker
         driver.b.and(isDefaultMode)
-            .onTrue(ShootAngle(2250.0, 2250.0, Rotation2d.fromDegrees(10.0)))
+            .onTrue(InstantCommand { Gyro.setYaw(Rotation2d(Math.PI)) }.runsWhenDisabled(true))
 
         // Reset Drivetrain Heading
         driver.a.and(isDefaultMode)
-            .onTrue(InstantCommand { Gyro.resetYaw() })
+            .onTrue(InstantCommand { Gyro.resetYaw() }.runsWhenDisabled(true))
 
         // Reset
         driver.y.and(isDefaultMode)
