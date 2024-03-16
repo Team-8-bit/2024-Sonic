@@ -102,6 +102,7 @@ object Drivetrain : KSubsystem() {
 
         Logger.recordOutput("Drive/Odometry", getPose())
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
+        Logger.recordOutput("Drive/AprilTagStrategy", apriltagStrategy)
     }
 
     fun resetPosition(pose: Pose2d, angle: Rotation2d) {
