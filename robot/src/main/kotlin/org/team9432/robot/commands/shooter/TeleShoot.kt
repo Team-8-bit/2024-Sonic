@@ -7,6 +7,7 @@ import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
+import org.team9432.robot.commands.hood.HoodAimAtSpeaker
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
@@ -23,6 +24,8 @@ fun TeleShoot() = ParallelDeadlineCommand(
             TeleTargetDrive { FieldConstants.speakerPose }
         } else InstantCommand {}
     },
+
+    HoodAimAtSpeaker(),
 
     InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 

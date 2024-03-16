@@ -52,7 +52,7 @@ object Controls {
 
     init {
         Drivetrain.defaultCommand = TeleDrive()
-        Hood.defaultCommand = HoodAimAtSpeaker()
+        // Hood.defaultCommand = HoodAimAtSpeaker()
 
         /* ------------- DEFAULT BUTTONS ------------- */
 
