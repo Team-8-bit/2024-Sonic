@@ -12,12 +12,13 @@ object RobotState {
     fun noteInCenterBeambreak() = !Beambreaks.getCenter()
     fun noteInAmpSideHopperBeambreak() = !Beambreaks.getHopperAmpSide()
     fun noteInSpeakerSideHopperBeambreak() = !Beambreaks.getHopperSpeakerSide()
+
     fun noteInHopperSide(side: MechanismSide) = if (side == MechanismSide.SPEAKER) noteInSpeakerSideHopperBeambreak() else noteInAmpSideHopperBeambreak()
-
     fun noteInIntakeSide(side: MechanismSide) = if (side == MechanismSide.SPEAKER) noteInSpeakerSideIntakeBeambreak() else noteInAmpSideIntakeBeambreak()
-    fun noteInAnyHopper() = noteInAmpSideHopperBeambreak() || noteInSpeakerSideHopperBeambreak()
 
+    fun noteInAnyHopper() = noteInAmpSideHopperBeambreak() || noteInSpeakerSideHopperBeambreak()
     fun noteInAnyIntake() = noteInAmpSideIntakeBeambreak() || noteInSpeakerSideIntakeBeambreak()
+    fun noteInAnyBeambreak() = noteInAmpSideIntakeBeambreak() || noteInSpeakerSideIntakeBeambreak() || noteInCenterBeambreak() || noteInAmpSideHopperBeambreak() || noteInSpeakerSideHopperBeambreak()
 
     // This prioritizes the amp side, but it should be really hard to actually get a note in both
     fun getOneIntakeBeambreak(): MechanismSide? {
