@@ -68,14 +68,14 @@ class HoodIONeo: HoodIO {
     override fun updateInputs(inputs: HoodIO.HoodIOInputs) {
         if (isClosedLoop) {
             val r = Rotation2d.fromRotations(absoluteEncoder.position)
-            spark.setVoltage(MathUtil.clamp(pid.calculate(r.rotations) + ffTable.get(pid.setpoint), -12.0, 12.0))
+            spark.setVoltage(MathUtil.clamp(pid.calculate(r.rotations) + ffTable.get(pid.setpoint), -1.0, 1.0))
         }
 
         inputs.absoluteAngle = Rotation2d.fromRotations(absoluteEncoder.position / encoderToHoodRatio)
         inputs.relativeAngle = Rotation2d.fromRotations(relativeEncoder.position / motorToHoodRatio)
         inputs.velocityDegPerSec = Units.rotationsPerMinuteToRadiansPerSecond(relativeEncoder.velocity) / motorToHoodRatio
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
-        inputs.currentAmps = spark.outputCurrent
+        inputs.currentAmps = spark.outputCurrent 
 
         Logger.recordOutput("HoodDegrees", inputs.absoluteAngle.minus(encoderOffset).degrees)
 

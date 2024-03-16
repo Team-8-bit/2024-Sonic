@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Transform2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj.DriverStation.Alliance
 import org.team9432.Robot
+import org.team9432.Robot.applyFlip
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
@@ -30,7 +31,7 @@ object RobotPosition {
     }
 
     fun distanceToSpeaker(futureTime: Double? = null): Double {
-        return distanceTo(FieldConstants.speakerPose, futureTime)
+        return distanceTo(FieldConstants.speakerPose.applyFlip(), futureTime)
     }
 
     fun getSpeakerSide(): SpeakerSide {

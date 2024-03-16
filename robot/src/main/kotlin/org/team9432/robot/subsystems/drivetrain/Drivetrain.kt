@@ -22,16 +22,19 @@ import org.team9432.robot.subsystems.vision.Vision
 import kotlin.math.abs
 
 
-object Drivetrain: KSubsystem() {
+object Drivetrain : KSubsystem() {
     val modules = ModuleIO.Module.entries.map { Module(it) }
 
-    private val angleController = ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
+    private val angleController =
+        ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
 
     private val xController = PIDController(3.0, 0.0, 0.0)
     private val yController = PIDController(3.0, 0.0, 0.0)
 
     val kinematics: SwerveDriveKinematics
     private val poseEstimator: SwerveDrivePoseEstimator
+
+    var apriltagStrategy = ApriltagStrategy.WHILE_NOT_MOVING
 
     init {
         angleController.enableContinuousInput(-180.0, 180.0)
@@ -62,8 +65,31 @@ object Drivetrain: KSubsystem() {
         val modulePositions = getModulePositions()
 
         val speeds = getSpeeds()
+
+        Vision.getEstimatedPose2d()?.let { (pose, timestamp) ->
+            when (apriltagStrategy) {
+                ApriltagStrategy.WHILE_NOT_MOVING -> {
+                    if ((maxOf(
+                            abs(speeds.vxMetersPerSecond),
+                            abs(speeds.vyMetersPerSecond)
+                        ) < 0.5) && abs(Math.toDegrees(speeds.omegaRadiansPerSecond)) < 10.0
+                    ) {
+                        Logger.recordOutput("Drive/UsingVision", true)
+                        poseEstimator.addVisionMeasurement(pose, timestamp)
+                    } else {
+                        Logger.recordOutput("Drive/UsingVision", false)
+                    }
+                }
+
+                ApriltagStrategy.ALWAYS -> {
+                    poseEstimator.addVisionMeasurement(pose, timestamp)
+                    Logger.recordOutput("Drive/UsingVision", true)
+                }
+            }
+        }
         if ((maxOf(abs(speeds.vxMetersPerSecond), abs(speeds.vyMetersPerSecond)) < 0.5) &&
-            abs(Math.toDegrees(speeds.omegaRadiansPerSecond)) < 10.0) {
+            abs(Math.toDegrees(speeds.omegaRadiansPerSecond)) < 10.0
+        ) {
             Logger.recordOutput("Drive/UsingVision", true)
             Vision.getEstimatedPose2d()?.let {
                 poseEstimator.addVisionMeasurement(it.first, it.second)
@@ -105,8 +131,17 @@ object Drivetrain: KSubsystem() {
         Logger.recordOutput("Drive/PositionGoal", pose); setXGoal(pose.x); setYGoal(pose.y); setAngleGoal(pose.rotation)
     }
 
-    fun calculatePositionSpeed() = ChassisSpeeds.fromFieldRelativeSpeeds(calculateXSpeed(), calculateYSpeed(), calculateAngleSpeed(), Gyro.getYaw())
-    fun atPositionGoal(positionalTolerance: Double = POSITIONAL_TOLERANCE, rotationalTolerance: Double = ROTATIONAL_TOLERANCE) = atXGoal(positionalTolerance) && atYGoal(positionalTolerance) && atAngleGoal(rotationalTolerance)
+    fun calculatePositionSpeed() = ChassisSpeeds.fromFieldRelativeSpeeds(
+        calculateXSpeed(),
+        calculateYSpeed(),
+        calculateAngleSpeed(),
+        Gyro.getYaw()
+    )
+
+    fun atPositionGoal(
+        positionalTolerance: Double = POSITIONAL_TOLERANCE,
+        rotationalTolerance: Double = ROTATIONAL_TOLERANCE
+    ) = atXGoal(positionalTolerance) && atYGoal(positionalTolerance) && atAngleGoal(rotationalTolerance)
 
     fun setXGoal(pose: Double) = xController.setSetpoint(pose)
     fun calculateXSpeed() = xController.calculate(getPose().x)
@@ -122,7 +157,12 @@ object Drivetrain: KSubsystem() {
 
     fun stop() = setSpeeds(ChassisSpeeds())
     fun stopAndX() {
-        val headings = listOf(Rotation2d.fromDegrees(-45.0), Rotation2d.fromDegrees(45.0), Rotation2d.fromDegrees(45.0), Rotation2d.fromDegrees(-45.0))
+        val headings = listOf(
+            Rotation2d.fromDegrees(-45.0),
+            Rotation2d.fromDegrees(45.0),
+            Rotation2d.fromDegrees(45.0),
+            Rotation2d.fromDegrees(-45.0)
+        )
         kinematics.resetHeadings(*headings.toTypedArray())
         stop()
     }
@@ -145,4 +185,9 @@ object Drivetrain: KSubsystem() {
             val backRight = Translation2d(-moduleDistance, -moduleDistance)
             return arrayOf(frontLeft, frontRight, backLeft, backRight)
         }
+
+    enum class ApriltagStrategy {
+        WHILE_NOT_MOVING,
+        ALWAYS
+    }
 }
