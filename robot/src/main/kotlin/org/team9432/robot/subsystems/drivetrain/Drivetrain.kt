@@ -67,8 +67,8 @@ object Drivetrain : KSubsystem() {
         val speeds = getSpeeds()
 
         Vision.getEstimatedPose2d()?.let { (pose, timestamp) ->
-            when (apriltagStrategy) {
-                ApriltagStrategy.WHILE_NOT_MOVING -> {
+//            when (apriltagStrategy) {
+//                ApriltagStrategy.WHILE_NOT_MOVING -> {
                     if ((maxOf(
                             abs(speeds.vxMetersPerSecond),
                             abs(speeds.vyMetersPerSecond)
@@ -79,23 +79,13 @@ object Drivetrain : KSubsystem() {
                     } else {
                         Logger.recordOutput("Drive/UsingVision", false)
                     }
-                }
+//                }
 
-                ApriltagStrategy.ALWAYS -> {
-                    poseEstimator.addVisionMeasurement(pose, timestamp)
-                    Logger.recordOutput("Drive/UsingVision", true)
-                }
-            }
-        }
-        if ((maxOf(abs(speeds.vxMetersPerSecond), abs(speeds.vyMetersPerSecond)) < 0.5) &&
-            abs(Math.toDegrees(speeds.omegaRadiansPerSecond)) < 10.0
-        ) {
-            Logger.recordOutput("Drive/UsingVision", true)
-            Vision.getEstimatedPose2d()?.let {
-                poseEstimator.addVisionMeasurement(it.first, it.second)
-            }
-        } else {
-            Logger.recordOutput("Drive/UsingVision", false)
+//                ApriltagStrategy.ALWAYS -> {
+//                    poseEstimator.addVisionMeasurement(pose, timestamp)
+//                    Logger.recordOutput("Drive/UsingVision", true)
+//                }
+//            }
         }
 
         poseEstimator.update(Gyro.getYaw(), modulePositions.toTypedArray())
