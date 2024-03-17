@@ -9,9 +9,8 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
-import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
-object Limelight : KSubsystem() {
+object Limelight: KSubsystem() {
     private val io: LimelightIO
     private val inputs = LoggedLimelightIOInputs()
 
@@ -23,7 +22,7 @@ object Limelight : KSubsystem() {
             }
 
             SIM -> {
-                io = object : LimelightIO {}
+                io = object: LimelightIO {}
                 io.setPID(0.0, 0.0, 0.0)
             }
         }

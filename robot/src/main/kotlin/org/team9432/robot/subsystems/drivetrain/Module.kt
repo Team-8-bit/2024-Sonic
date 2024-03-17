@@ -47,7 +47,7 @@ class Module(module: ModuleIO.Module) {
             }
         }
 
-        steerFeedback.enableContinuousInput(-Math.PI, Math.PI);
+        steerFeedback.enableContinuousInput(-Math.PI, Math.PI)
         setBrakeMode(true)
     }
 

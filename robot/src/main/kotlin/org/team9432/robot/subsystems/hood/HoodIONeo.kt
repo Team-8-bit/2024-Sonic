@@ -75,7 +75,7 @@ class HoodIONeo: HoodIO {
         inputs.relativeAngle = Rotation2d.fromRotations(relativeEncoder.position / motorToHoodRatio)
         inputs.velocityDegPerSec = Units.rotationsPerMinuteToRadiansPerSecond(relativeEncoder.velocity) / motorToHoodRatio
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
-        inputs.currentAmps = spark.outputCurrent 
+        inputs.currentAmps = spark.outputCurrent
 
         Logger.recordOutput("HoodDegrees", inputs.absoluteAngle.minus(encoderOffset).degrees)
 

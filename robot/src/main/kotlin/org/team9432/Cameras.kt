@@ -1,7 +1,6 @@
 package org.team9432
 
 import edu.wpi.first.cameraserver.CameraServer
-import edu.wpi.first.cscore.UsbCamera
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
@@ -36,7 +35,7 @@ object Cameras {
             while (!Thread.interrupted()) {
                 currentCamera = selectCamera()
 
-                if (currentCamera != lastCamera){
+                if (currentCamera != lastCamera) {
                     lastCamera = currentCamera
 
                     // Disable and wait

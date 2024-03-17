@@ -2,11 +2,7 @@ package org.team9432
 
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Pose3d
-import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Rotation3d
-import edu.wpi.first.math.geometry.Translation3d
+import edu.wpi.first.math.geometry.*
 import edu.wpi.first.net.PortForwarder
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
@@ -130,7 +126,7 @@ object Robot: LoggedRobot() {
 
         LEDState.updateState()
 
-        Logger.recordOutput("Drive/FuturePose", RobotPosition.getFuturePose(CommandConstants.SHOOT_ON_MOVE_SECS ?: 0.0))
+        Logger.recordOutput("Drive/FuturePose", RobotPosition.getFuturePose(CommandConstants.SHOOT_ON_MOVE_SECS))
         Logger.recordOutput("SpeakerSide", RobotPosition.getSpeakerSide())
 
         DriverStation.getAlliance().getOrNull()?.let { alliance = it }

@@ -37,7 +37,7 @@ object Intake: KSubsystem() {
     }
 
     fun stop() {
-            ampSide.stop()
+        ampSide.stop()
         speakerSide.stop()
     }
 

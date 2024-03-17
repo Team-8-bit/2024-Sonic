@@ -1,11 +1,9 @@
 package org.team9432.robot.subsystems.intake
 
-import com.revrobotics.CANSparkBase.ControlType
 import com.revrobotics.CANSparkBase.IdleMode
 import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
-import com.revrobotics.SparkPIDController.ArbFFUnits
 import org.team9432.lib.drivers.motors.KSparkMAX
 
 class IntakeSideIONeo(override val intakeSide: IntakeSideIO.IntakeSide): IntakeSideIO {

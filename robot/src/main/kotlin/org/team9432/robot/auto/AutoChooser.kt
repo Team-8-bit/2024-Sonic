@@ -2,7 +2,6 @@ package org.team9432.robot.auto
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 import org.team9432.lib.commandbased.KCommand
-import org.team9432.lib.commandbased.commands.InstantCommand
 
 object AutoChooser {
     private val chooser = LoggedDashboardChooser<Auto>("Auto")

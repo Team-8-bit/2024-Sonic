@@ -22,7 +22,7 @@ import org.team9432.robot.subsystems.vision.Vision
 import kotlin.math.abs
 
 
-object Drivetrain : KSubsystem() {
+object Drivetrain: KSubsystem() {
     val modules = ModuleIO.Module.entries.map { Module(it) }
 
     private val angleController =
@@ -69,16 +69,16 @@ object Drivetrain : KSubsystem() {
         Vision.getEstimatedPose2d()?.let { (pose, timestamp) ->
 //            when (apriltagStrategy) {
 //                ApriltagStrategy.WHILE_NOT_MOVING -> {
-                    if ((maxOf(
-                            abs(speeds.vxMetersPerSecond),
-                            abs(speeds.vyMetersPerSecond)
-                        ) < 0.5) && abs(Math.toDegrees(speeds.omegaRadiansPerSecond)) < 10.0
-                    ) {
-                        Logger.recordOutput("Drive/UsingVision", true)
-                        poseEstimator.addVisionMeasurement(pose, timestamp)
-                    } else {
-                        Logger.recordOutput("Drive/UsingVision", false)
-                    }
+            if ((maxOf(
+                    abs(speeds.vxMetersPerSecond),
+                    abs(speeds.vyMetersPerSecond)
+                ) < 0.5) && abs(Math.toDegrees(speeds.omegaRadiansPerSecond)) < 10.0
+            ) {
+                Logger.recordOutput("Drive/UsingVision", true)
+                poseEstimator.addVisionMeasurement(pose, timestamp)
+            } else {
+                Logger.recordOutput("Drive/UsingVision", false)
+            }
 //                }
 
 //                ApriltagStrategy.ALWAYS -> {
@@ -131,7 +131,7 @@ object Drivetrain : KSubsystem() {
 
     fun atPositionGoal(
         positionalTolerance: Double = POSITIONAL_TOLERANCE,
-        rotationalTolerance: Double = ROTATIONAL_TOLERANCE
+        rotationalTolerance: Double = ROTATIONAL_TOLERANCE,
     ) = atXGoal(positionalTolerance) && atYGoal(positionalTolerance) && atAngleGoal(rotationalTolerance)
 
     fun setXGoal(pose: Double) = xController.setSetpoint(pose)

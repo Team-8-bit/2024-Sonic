@@ -12,7 +12,6 @@ import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.commands.amp.ScoreAmp
 import org.team9432.robot.commands.drivetrain.teleop.TeleDrive
-import org.team9432.robot.commands.hood.HoodAimAtSpeaker
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.SubwooferShoot
@@ -22,8 +21,6 @@ import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.climber.CommandClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.gyro.Gyro
-import org.team9432.robot.subsystems.hood.CommandHood
-import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.led.LEDState
 import org.team9432.robot.subsystems.led.animations.ChargeUp
 import org.team9432.robot.subsystems.led.animations.Confetti
@@ -139,7 +136,7 @@ object Controls {
         operator.a
             .whileTrue(CommandClimber.runClimbers(-12.0))
 
-       // operator.x.whileTrue(CommandHood.followAngle({ Rotation2d.fromDegrees(30.0) }))
+        // operator.x.whileTrue(CommandHood.followAngle({ Rotation2d.fromDegrees(30.0) }))
         //operator.x.whileTrue(CommandHood.followAngle({ Rotation2d.fromDegrees(0.0) }))
 
         /* -------------- MODE SWITCHING -------------- */

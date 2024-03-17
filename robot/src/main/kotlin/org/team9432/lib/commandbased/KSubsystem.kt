@@ -1,7 +1,6 @@
 package org.team9432.lib.commandbased
 
 
-
 abstract class KSubsystem {
     init {
         KCommandScheduler.registerSubsystem(this)

@@ -1,8 +1,6 @@
 package org.team9432.robot.subsystems.shooter
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*

@@ -1,15 +1,14 @@
 package org.team9432.robot.subsystems.shooter
 
-import com.revrobotics.CANSparkBase.*
+import com.revrobotics.CANSparkBase.IdleMode
 import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
-import com.revrobotics.SparkPIDController.ArbFFUnits
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
 import org.team9432.lib.drivers.motors.KSparkFlex
 
-class ShooterSideIOVortex(override val shooterSide: ShooterSideIO.ShooterSide) : ShooterSideIO {
+class ShooterSideIOVortex(override val shooterSide: ShooterSideIO.ShooterSide): ShooterSideIO {
     private val spark = KSparkFlex(shooterSide.motorID)
 
     private val encoder = spark.encoder

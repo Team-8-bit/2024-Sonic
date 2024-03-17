@@ -2,7 +2,6 @@ package org.team9432.robot.subsystems.hopper
 
 import com.revrobotics.*
 import com.revrobotics.CANSparkBase.IdleMode
-import edu.wpi.first.wpilibj.DigitalInput
 import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Devices
 

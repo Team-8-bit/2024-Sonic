@@ -10,8 +10,8 @@ interface AmpIO {
         var currentAmps = 0.0
     }
 
-
     fun updateInputs(inputs: AmpIOInputs)
+
     /* Run open loop at the specified voltage */
     fun setVoltage(volts: Double) {}
 

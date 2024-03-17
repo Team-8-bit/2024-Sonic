@@ -6,20 +6,18 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
-import org.team9432.robot.RobotState
-import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.drivetrain.Drivetrain.kinematics
 import org.team9432.robot.subsystems.drivetrain.Drivetrain.modules
 
-object Gyro : KSubsystem() {
+object Gyro: KSubsystem() {
     private val io: GyroIO
     private val inputs = LoggedGyroIOInputs()
 
     init {
         io = when (Robot.mode) {
             REAL, REPLAY -> GyroIOPigeon2()
-            SIM -> object : GyroIO {}
+            SIM -> object: GyroIO {}
         }
     }
 

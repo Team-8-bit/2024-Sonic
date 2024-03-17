@@ -1,7 +1,9 @@
 package org.team9432.robot.auto.autos
 
 import edu.wpi.first.math.geometry.Rotation2d
-import org.team9432.lib.commandbased.commands.*
+import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.ParallelCommand
+import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AllianceNote
 import org.team9432.robot.auto.AutoConstants

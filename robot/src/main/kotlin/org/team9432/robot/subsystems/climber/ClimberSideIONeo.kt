@@ -57,7 +57,7 @@ class ClimberSideIONeo(override val climberSide: ClimberSideIO.ClimberSide): Cli
 
     override fun setVoltage(volts: Double) {
         spark.setVoltage(volts)
-        }
+    }
 
     override fun setAngle(angle: Rotation2d, feedforwardVolts: Double) {
         pid.setReference(

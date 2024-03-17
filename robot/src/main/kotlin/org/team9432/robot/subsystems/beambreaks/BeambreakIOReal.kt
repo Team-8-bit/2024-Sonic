@@ -11,10 +11,10 @@ class BeambreakIOReal: BeambreakIO {
     private val center = DigitalInput(Devices.CENTER_BEAMBREAK_PORT)
 
     override fun updateInputs(inputs: BeambreakIO.BeambreakIOInputs) {
-       inputs.intakeAmpSideActive = intakeAmpSide.get()
-       inputs.intakeSpeakerSideActive = intakeSpeakerSide.get()
-       inputs.hopperAmpSideActive = hopperAmpSide.get()
-       inputs.hopperSpeakerSideActive = hopperSpeakerSide.get()
-       inputs.centerActive = center.get()
+        inputs.intakeAmpSideActive = intakeAmpSide.get()
+        inputs.intakeSpeakerSideActive = intakeSpeakerSide.get()
+        inputs.hopperAmpSideActive = hopperAmpSide.get()
+        inputs.hopperSpeakerSideActive = hopperSpeakerSide.get()
+        inputs.centerActive = center.get()
     }
 }

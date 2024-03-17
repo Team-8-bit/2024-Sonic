@@ -3,7 +3,6 @@ package org.team9432.lib.util
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.robot.FieldConstants
-import kotlin.math.atan2
 
 
 object PoseUtil {

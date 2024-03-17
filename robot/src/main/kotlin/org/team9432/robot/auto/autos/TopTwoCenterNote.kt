@@ -32,6 +32,5 @@ fun TopTwoCenterNote() = SequentialCommand(
         )
     ),
     AutoShoot(),
-
     ExitAuto(),
 )
