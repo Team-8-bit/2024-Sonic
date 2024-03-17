@@ -6,7 +6,7 @@ import org.team9432.lib.commandbased.KCommand
 object AutoChooser {
     private val chooser = LoggedDashboardChooser<Auto>("Auto")
 
-    init {
+    fun initChooser() {
         chooser.addDefaultOption("Nothing", Auto.NOTHING)
         Auto.entries.forEach { chooser.addOption(it.displayName, it) }
     }

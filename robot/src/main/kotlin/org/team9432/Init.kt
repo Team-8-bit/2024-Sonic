@@ -44,8 +44,8 @@ object Init {
         Intake
         Shooter
 
-        AutoBuilder
-        AutoChooser
+        AutoBuilder.initChoosers()
+        AutoChooser.initChooser()
 
         LEDs.stopLoadingThread()
     }

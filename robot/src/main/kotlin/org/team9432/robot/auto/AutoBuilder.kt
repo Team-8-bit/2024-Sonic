@@ -17,7 +17,7 @@ object AutoBuilder {
     private val secondChooser = LoggedDashboardChooser<() -> KCommand>("Second Note")
     private val thirdChooser = LoggedDashboardChooser<() -> KCommand>("Third Note")
 
-    init {
+    fun initChoosers() {
         initChooser.initInit()
         firstChooser.initStart()
         secondChooser.initStep()
