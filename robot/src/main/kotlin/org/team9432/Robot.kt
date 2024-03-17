@@ -19,6 +19,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader
 import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.lib.util.PoseUtil
@@ -29,6 +30,7 @@ import org.team9432.robot.auto.AutoBuilder
 import org.team9432.robot.auto.AutoChooser
 import org.team9432.robot.auto.commands.PullFromSpeakerShooter
 import org.team9432.robot.commands.CommandConstants
+import org.team9432.robot.commands.hood.HoodAimAtSpeaker
 import org.team9432.robot.commands.stop
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.amp.Amp
@@ -139,7 +141,10 @@ object Robot: LoggedRobot() {
     }
 
     override fun autonomousInit() {
-        AutoChooser.getCommand().schedule()
+        ParallelCommand(
+            AutoChooser.getCommand(),
+            HoodAimAtSpeaker()
+        ).schedule()
     }
 
     override fun teleopInit() {
