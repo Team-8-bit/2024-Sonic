@@ -40,7 +40,6 @@ import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.intake.Intake
 import org.team9432.robot.subsystems.led.LEDState
 import org.team9432.robot.subsystems.led.LEDs
-import org.team9432.robot.subsystems.limelight.Limelight
 import org.team9432.robot.subsystems.shooter.Shooter
 import org.team9432.robot.subsystems.vision.Vision
 import kotlin.jvm.optionals.getOrNull
@@ -114,7 +113,6 @@ object Robot: LoggedRobot() {
         Beambreaks
         LeftClimber
         RightClimber
-        Limelight
         AdditionalTriggers
         AutoBuilder
         AutoChooser

@@ -42,9 +42,6 @@ object Devices {
     const val LEFT_CLIMBER_LIMIT_PORT = 3
     const val RIGHT_CLIMBER_LIMIT_PORT = 5
 
-    // Limelight
-    const val LIMELIGHT_MOTOR_ID = 60
-
     // Beambreaks
     const val CENTER_BEAMBREAK_PORT = 2
     const val HOPPER_AMP_SIDE_BEAMBREAK_PORT = 1
