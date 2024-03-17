@@ -2,6 +2,7 @@ package org.team9432.robot.subsystems.hood
 
 import com.revrobotics.CANSparkBase.IdleMode
 import com.revrobotics.CANSparkLowLevel
+import com.revrobotics.CANSparkMax
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.math.MathUtil
@@ -10,11 +11,10 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
-import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Devices
 
 class HoodIONeo: HoodIO {
-    private val spark = KSparkMAX(Devices.HOOD_ID)
+    private val spark = CANSparkMax(Devices.HOOD_ID, CANSparkLowLevel.MotorType.kBrushless)
 
     private val absoluteEncoder = spark.absoluteEncoder
     private val relativeEncoder = spark.encoder

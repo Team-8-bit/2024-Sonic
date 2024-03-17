@@ -1,14 +1,14 @@
-package org.team9432.robot.subsystems.amp
+package org.team9432.robot.subsystems.hopper
 
-import com.revrobotics.CANSparkBase
+import com.revrobotics.CANSparkBase.IdleMode
 import com.revrobotics.CANSparkLowLevel
+import com.revrobotics.CANSparkMax
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
-import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.Devices
 
-class AmpIOReal: AmpIO {
-    private val spark = KSparkMAX(Devices.AMP_ID, CANSparkLowLevel.MotorType.kBrushless)
+class HopperIONeo: HopperIO {
+    private val spark = CANSparkMax(Devices.HOPPER_ID, CANSparkLowLevel.MotorType.kBrushless)
 
     private val encoder = spark.encoder
 
@@ -22,7 +22,7 @@ class AmpIOReal: AmpIO {
 
         for (i in 0..88) {
             val errors = mutableListOf<REVLibError>()
-            errors += spark.setIdleMode(CANSparkBase.IdleMode.kCoast)
+            errors += spark.setIdleMode(IdleMode.kBrake)
             errors += spark.enableVoltageCompensation(12.0)
             errors += spark.setSmartCurrentLimit(60)
             errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
@@ -39,8 +39,7 @@ class AmpIOReal: AmpIO {
         spark.burnFlash()
     }
 
-
-    override fun updateInputs(inputs: AmpIO.AmpIOInputs) {
+    override fun updateInputs(inputs: HopperIO.HopperIOInputs) {
         inputs.velocityRPM = encoder.velocity
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
         inputs.currentAmps = spark.outputCurrent
@@ -53,5 +52,4 @@ class AmpIOReal: AmpIO {
     override fun stop() {
         spark.setVoltage(0.0)
     }
-
 }

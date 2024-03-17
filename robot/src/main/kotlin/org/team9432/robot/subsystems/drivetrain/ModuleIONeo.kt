@@ -5,22 +5,18 @@ import com.ctre.phoenix6.StatusSignal
 import com.ctre.phoenix6.configs.CANcoderConfiguration
 import com.ctre.phoenix6.hardware.CANcoder
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue
+import com.revrobotics.*
 import com.revrobotics.CANSparkBase.IdleMode
-import com.revrobotics.CANSparkLowLevel
-import com.revrobotics.REVLibError
-import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
 import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
-import org.team9432.lib.drivers.motors.KSparkFlex
-import org.team9432.lib.drivers.motors.KSparkMAX
 import org.team9432.robot.subsystems.drivetrain.ModuleIO.ModuleIOInputs
 
 
 class ModuleIONeo(override val module: ModuleIO.Module): ModuleIO {
-    private val drive = KSparkFlex(module.driveID)
-    private val steer = KSparkMAX(module.steerID)
+    private val drive = CANSparkFlex(module.driveID, CANSparkLowLevel.MotorType.kBrushless)
+    private val steer = CANSparkMax(module.steerID, CANSparkLowLevel.MotorType.kBrushless)
     private val cancoder = CANcoder(module.encoderID)
     private val driveEncoder = drive.encoder
     private val steerEncoder = steer.encoder

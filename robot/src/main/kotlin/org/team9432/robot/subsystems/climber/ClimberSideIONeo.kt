@@ -2,14 +2,14 @@ package org.team9432.robot.subsystems.climber
 
 import com.revrobotics.CANSparkBase.IdleMode
 import com.revrobotics.CANSparkLowLevel
+import com.revrobotics.CANSparkMax
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DigitalInput
-import org.team9432.lib.drivers.motors.KSparkMAX
 
 class ClimberSideIONeo(override val climberSide: ClimberSideIO.ClimberSide): ClimberSideIO {
-    private val spark = KSparkMAX(climberSide.motorID)
+    private val spark = CANSparkMax(climberSide.motorID, CANSparkLowLevel.MotorType.kBrushless)
     private val limit = DigitalInput(climberSide.limitPort)
 
     private val encoder = spark.encoder

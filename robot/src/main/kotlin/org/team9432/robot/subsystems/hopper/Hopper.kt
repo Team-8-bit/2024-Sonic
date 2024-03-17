@@ -12,7 +12,7 @@ object Hopper: KSubsystem() {
 
     init {
         io = when (Robot.mode) {
-            REAL, REPLAY -> HopperIOReal()
+            REAL, REPLAY -> HopperIONeo()
             SIM -> HopperIOSim()
         }
     }

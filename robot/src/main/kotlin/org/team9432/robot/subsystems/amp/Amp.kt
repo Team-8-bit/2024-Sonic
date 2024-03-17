@@ -11,7 +11,7 @@ object Amp: KSubsystem() {
 
     init {
         io = when (Robot.mode) {
-            REAL, REPLAY -> AmpIOReal()
+            REAL, REPLAY -> AmpIONeo()
             SIM -> AmpIOSim()
         }
     }
