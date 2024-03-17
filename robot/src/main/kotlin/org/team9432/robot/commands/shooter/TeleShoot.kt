@@ -1,7 +1,7 @@
 package org.team9432.robot.commands.shooter
 
 import org.team9432.lib.commandbased.commands.*
-import org.team9432.robot.EmergencySwitches
+import org.team9432.robot.oi.EmergencySwitches
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState

@@ -6,7 +6,7 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.applyFlip
 import org.team9432.lib.commandbased.KCommand
-import org.team9432.robot.Controls
+import org.team9432.robot.oi.Controls
 import org.team9432.robot.commands.CommandConstants.SHOOT_ON_MOVE_SECS
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain

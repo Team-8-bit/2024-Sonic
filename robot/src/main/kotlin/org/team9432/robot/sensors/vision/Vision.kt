@@ -1,6 +1,7 @@
 package org.team9432.robot.sensors.vision
 
 import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.net.PortForwarder
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
@@ -31,9 +32,9 @@ object Vision: KSubsystem() {
 
     fun hasVisionTarget() = inputs.trackedTags.isNotEmpty()
 
-    fun setLED(enable: Boolean) {
-        io.setLED(enable)
-    }
-
     val connected get() = inputs.connected
+
+    fun forwardPorts() {
+        PortForwarder.add(5800, "photonvision.local", 5800)
+    }
 }

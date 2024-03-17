@@ -3,7 +3,7 @@ package org.team9432.robot.commands.drivetrain.teleop
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team9432.Robot
 import org.team9432.lib.commandbased.KCommand
-import org.team9432.robot.Controls
+import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.sensors.gyro.Gyro
 

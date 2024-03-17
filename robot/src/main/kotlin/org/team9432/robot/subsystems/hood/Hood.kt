@@ -9,7 +9,7 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
-import org.team9432.robot.EmergencySwitches
+import org.team9432.robot.oi.EmergencySwitches
 
 object Hood: KSubsystem() {
     private val io: HoodIO

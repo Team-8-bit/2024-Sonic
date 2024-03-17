@@ -13,7 +13,6 @@ object LEDs: KSubsystem() {
 
     private val ledController = AddressableLED(Devices.LED_PORT)
     val buffer = AddressableLEDBuffer(LENGTH)
-    private val loadingNotifier: Notifier
 
     object Section {
         val SPEAKER_LEFT_TOP = (0..11).toList()
@@ -52,16 +51,6 @@ object LEDs: KSubsystem() {
         ledController.setLength(LENGTH)
         ledController.setData(buffer)
         ledController.start()
-
-        loadingNotifier = Notifier {
-            synchronized(this) {
-                // We need to provide a timestamp while robot code is loading
-                Chase.updateBuffer(timestamp = System.currentTimeMillis() / 1000.0)
-                ledController.setData(buffer)
-            }
-        }
-
-        loadingNotifier.startPeriodic(LOOP_PERIOD_SECS)
     }
 
     private const val INIT_AFTER_LOOP_CYCLE = 10
@@ -73,10 +62,18 @@ object LEDs: KSubsystem() {
             return
         }
 
-        loadingNotifier.stop()
-
         LEDState.updateBuffer()
-
         ledController.setData(buffer)
     }
+
+    private val loadingNotifier = Notifier {
+        synchronized(this) {
+            // We need to provide a timestamp while robot code is loading
+            Chase.updateBuffer(timestamp = System.currentTimeMillis() / 1000.0)
+            ledController.setData(buffer)
+        }
+    }
+
+    fun startLoadingThread() = loadingNotifier.startPeriodic(LOOP_PERIOD_SECS)
+    fun stopLoadingThread() = loadingNotifier.stop()
 }

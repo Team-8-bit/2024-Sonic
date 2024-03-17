@@ -3,17 +3,17 @@ package org.team9432.robot.led
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.util.Color
 import org.team9432.Robot
-import org.team9432.robot.EmergencySwitches
 import org.team9432.robot.RobotState
-import org.team9432.robot.subsystems.climber.LeftClimber
-import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.led.LEDModes.breath
 import org.team9432.robot.led.LEDModes.pulse
 import org.team9432.robot.led.LEDModes.rainbow
 import org.team9432.robot.led.LEDModes.solid
 import org.team9432.robot.led.LEDModes.strobe
 import org.team9432.robot.led.animations.LEDAnimation
+import org.team9432.robot.oi.EmergencySwitches
 import org.team9432.robot.sensors.vision.Vision
+import org.team9432.robot.subsystems.climber.LeftClimber
+import org.team9432.robot.subsystems.climber.RightClimber
 
 object LEDState {
     var allianceColor = Color.kWhite

@@ -1,7 +1,7 @@
 package org.team9432.robot.commands.intake
 
 import org.team9432.lib.commandbased.commands.*
-import org.team9432.robot.Controls
+import org.team9432.robot.oi.Controls
 import org.team9432.robot.RobotState
 import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.intake.CommandIntake

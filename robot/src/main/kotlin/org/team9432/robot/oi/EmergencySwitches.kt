@@ -1,4 +1,4 @@
-package org.team9432.robot
+package org.team9432.robot.oi
 
 import edu.wpi.first.wpilibj.GenericHID
 
