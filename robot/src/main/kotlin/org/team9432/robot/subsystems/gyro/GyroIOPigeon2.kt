@@ -7,6 +7,7 @@ import com.ctre.phoenix6.StatusCode
 import com.ctre.phoenix6.configs.Pigeon2Configuration
 import com.ctre.phoenix6.hardware.Pigeon2
 import edu.wpi.first.math.geometry.Rotation2d
+import org.littletonrobotics.junction.Logger
 import org.team9432.robot.Devices
 
 
@@ -27,6 +28,8 @@ class GyroIOPigeon2: GyroIO {
         inputs.connected = BaseStatusSignal.refreshAll(yaw, yawVelocity).equals(StatusCode.OK)
         inputs.yaw = Rotation2d.fromDegrees(yaw.valueAsDouble)
         inputs.yawVelocityDegPerSec = yawVelocity.valueAsDouble
+
+        Logger.recordOutput("Gyro/YawDegrees", inputs.yaw.degrees)
     }
 
     override fun setYaw(yaw: Double) {

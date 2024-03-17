@@ -11,6 +11,6 @@ object CommandHood {
     fun followAngle(angle: () -> Rotation2d) = SimpleCommand(
         requirements = setOf(Hood),
         execute = { Hood.setAngle(angle.invoke()) },
-        end = { Hood.stop() }
+        end = { Hood.setAngle(Rotation2d()) }
     )
 }

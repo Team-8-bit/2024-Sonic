@@ -1,8 +1,7 @@
 package org.team9432.robot.subsystems.vision
 
 import edu.wpi.first.apriltag.AprilTagFields
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.*
 import org.photonvision.PhotonCamera
 import org.photonvision.PhotonPoseEstimator
 import org.photonvision.common.hardware.VisionLEDMode
@@ -17,7 +16,7 @@ class VisionIOPhotonvision : VisionIO {
         aprilTagFieldLayout,
         PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY,
         camera,
-        Limelight.getCurrentRobotToCamera()
+        Transform3d()
     )
 
     override fun updateInputs(inputs: VisionIO.VisionIOInputs) {
@@ -33,13 +32,16 @@ class VisionIOPhotonvision : VisionIO {
             inputs.trackedTags = intArrayOf()
         }
 
-        photonPoseEstimator.robotToCameraTransform = Limelight.getCurrentRobotToCamera()
         val estimatedPose = photonPoseEstimator.update().getOrNull()
 
         inputs.usedCorners = estimatedPose?.targetsUsed?.getCornerArray() ?: emptyArray()
 
         inputs.poseTimestamp = estimatedPose?.timestampSeconds?.let { doubleArrayOf(it) } ?: doubleArrayOf()
-        inputs.estimatedRobotPose = estimatedPose?.estimatedPose?.let { arrayOf(it) } ?: emptyArray()
+        inputs.estimatedRobotPose = estimatedPose?.estimatedPose?.let {
+            arrayOf(it.transformBy(Limelight.getCurrentRobotToCamera()))
+        } ?: emptyArray()
+
+        inputs.connected = camera.isConnected
     }
 
     private fun List<PhotonTrackedTarget>.getCornerArray() =

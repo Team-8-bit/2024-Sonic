@@ -7,16 +7,39 @@ import kotlin.math.pow
 import kotlin.math.sin
 
 object LEDModes {
-    fun solid(color: Color, indices: Set<Int>) {
+    fun solid(color: Color, indices: List<Int>) {
         indices.forEach { LEDs.buffer.setLED(it, color) }
     }
 
-    fun strobe(color: Color, duration: Double, indices: Set<Int>) {
+    fun strobe(color: Color, duration: Double, indices: List<Int>) {
         val on = Timer.getFPGATimestamp() % duration / duration > 0.5
         solid(if (on) color else Color.kBlack, indices)
     }
 
-    fun breath(c1: Color, c2: Color, indices: Set<Int>, duration: Double = 1.0, timestamp: Double = Timer.getFPGATimestamp()) {
+    fun pulse(bg: Color, fg: Color, indices: List<List<Int>>, duration: Double = 1.0, cooldown: Double = 1.0) {
+        val timestamp = Timer.getFPGATimestamp() % (duration + cooldown)
+        // Set everything to the background color
+        for (strip in indices) solid(bg, strip)
+        // Stop if it is in cooldown
+        if (timestamp > duration) return
+
+        // Set one to be lit up in each strip
+        for (strip in indices) {
+            val stepTime = duration / strip.size
+            val position = (timestamp / stepTime).toInt()
+
+            LEDs.buffer.setLED(strip[position], fg)
+        }
+    }
+
+    val sidePulses = listOf(
+        LEDs.Section.SPEAKER_LEFT,
+        LEDs.Section.SPEAKER_RIGHT.reversed(),
+        LEDs.Section.AMP_LEFT,
+        LEDs.Section.AMP_RIGHT.reversed()
+    )
+
+    fun breath(c1: Color, c2: Color, indices: List<Int>, duration: Double = 1.0, timestamp: Double = Timer.getFPGATimestamp()) {
         val x = timestamp % duration / duration * 2.0 * Math.PI
         val ratio = (sin(x) + 1.0) / 2.0
         val red = c1.red * (1 - ratio) + c2.red * ratio
@@ -25,7 +48,7 @@ object LEDModes {
         solid(Color(red, green, blue), indices)
     }
 
-    fun rainbow(cycleLength: Double, duration: Double, indices: Set<Int>) {
+    fun rainbow(cycleLength: Double, duration: Double, indices: List<Int>) {
         var x = (1 - Timer.getFPGATimestamp() / duration % 1.0) * 180.0
         val xDiffPerLed = 180.0 / cycleLength
         for (index in indices) {
@@ -35,7 +58,7 @@ object LEDModes {
         }
     }
 
-    fun wave(c1: Color, c2: Color, cycleLength: Double, duration: Double, indices: Set<Int>) {
+    fun wave(c1: Color, c2: Color, cycleLength: Double, duration: Double, indices: List<Int>) {
         val WAVE_EXPONENT = 0.4
 
         var x = (1 - Timer.getFPGATimestamp() % duration / duration) * 2.0 * Math.PI
@@ -56,7 +79,7 @@ object LEDModes {
         }
     }
 
-    fun stripes(colors: List<Color>, length: Int, duration: Double, indices: Set<Int>) {
+    fun stripes(colors: List<Color>, length: Int, duration: Double, indices: List<Int>) {
         for (index in indices) {
             var colorIndex = (floor((index - (Timer.getFPGATimestamp() % duration / duration * length * colors.size)) / length) + colors.size).toInt() % colors.size
             colorIndex = colors.size - 1 - colorIndex

@@ -13,6 +13,8 @@ interface VisionIO {
         // these two are only one value, but wrapped in an array so it can be null/empty
         var poseTimestamp = doubleArrayOf()
         var estimatedRobotPose = emptyArray<Pose3d>()
+
+        var connected = false
     }
 
     fun updateInputs(inputs: VisionIOInputs) {}

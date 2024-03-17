@@ -10,26 +10,26 @@ import org.team9432.robot.Devices
 
 
 object LEDs: KSubsystem() {
-    private const val LENGTH = 119
+    private const val LENGTH = 118
 
     private val ledController = AddressableLED(Devices.LED_PORT)
     val buffer = AddressableLEDBuffer(LENGTH)
     private val loadingNotifier: Notifier
 
     object Section {
-        val SPEAKER_LEFT_TOP = (0..11).toSet()
-        val SPEAKER_LEFT_BOTTOM = (12..21).toSet()
+        val SPEAKER_LEFT_TOP = (0..11).toList()
+        val SPEAKER_LEFT_BOTTOM = (12..21).toList()
 
-        val SPEAKER_RIGHT_BOTTOM = (22..33).toSet()
-        val SPEAKER_RIGHT_TOP = (34..43).toSet()
+        val SPEAKER_RIGHT_BOTTOM = (22..33).toList()
+        val SPEAKER_RIGHT_TOP = (34..43).toList()
 
-        val AMP_LEFT_TOP = (44..55).toSet()
-        val AMP_LEFT_BOTTOM = (56..65).toSet()
+        val AMP_LEFT_TOP = (44..55).toList()
+        val AMP_LEFT_BOTTOM = (56..65).toList()
 
-        val AMP_RIGHT_BOTTOM = (66..77).toSet()
-        val AMP_RIGHT_TOP = (78..88).toSet()
+        val AMP_RIGHT_BOTTOM = (66..77).toList()
+        val AMP_RIGHT_TOP = (78..87).toList()
 
-        val TOP_BAR = (89..118).toSet()
+        val TOP_BAR = (88..117).toList()
 
         val SPEAKER_LEFT = SPEAKER_LEFT_TOP + SPEAKER_LEFT_BOTTOM
         val SPEAKER_RIGHT = SPEAKER_RIGHT_BOTTOM + SPEAKER_RIGHT_TOP
@@ -38,6 +38,9 @@ object LEDs: KSubsystem() {
 
         val TOP = SPEAKER_LEFT_BOTTOM + SPEAKER_RIGHT_BOTTOM + AMP_LEFT_BOTTOM + AMP_RIGHT_BOTTOM
         val BOTTOM = SPEAKER_LEFT_TOP + SPEAKER_RIGHT_TOP + AMP_LEFT_TOP + AMP_RIGHT_TOP
+
+        val LEFT = SPEAKER_LEFT + AMP_RIGHT
+        val RIGHT = SPEAKER_RIGHT + AMP_LEFT
 
         val SPEAKER = SPEAKER_LEFT + SPEAKER_RIGHT
         val AMP = AMP_LEFT + AMP_RIGHT
@@ -53,12 +56,8 @@ object LEDs: KSubsystem() {
 
         loadingNotifier = Notifier {
             synchronized(this) {
-                LEDModes.breath(
-                    Color.kWhite,
-                    Color.kBlack,
-                    Section.ALL,
-                    timestamp = System.currentTimeMillis() / 1000.0
-                )
+                // We need to provide a timestamp while robot code is loading
+                Chase.updateBuffer(timestamp = System.currentTimeMillis() / 1000.0)
                 ledController.setData(buffer)
             }
         }

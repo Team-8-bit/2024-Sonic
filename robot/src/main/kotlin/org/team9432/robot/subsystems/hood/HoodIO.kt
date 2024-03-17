@@ -19,7 +19,7 @@ interface HoodIO {
     fun setVoltage(volts: Double) {}
 
     /* Run closed loop angle control */
-    fun setAngle(angle: Rotation2d, feedforwardVolts: Double) {}
+    fun setAngle(angle: Rotation2d) {}
 
     fun setPID(p: Double, i: Double, d: Double) {}
 

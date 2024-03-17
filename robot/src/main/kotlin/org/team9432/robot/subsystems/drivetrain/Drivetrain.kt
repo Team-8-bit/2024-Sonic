@@ -15,7 +15,6 @@ import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
 import org.team9432.LOOP_PERIOD_SECS
-import org.team9432.Robot
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.util.SwerveUtil
 import org.team9432.robot.subsystems.gyro.Gyro
@@ -23,16 +22,19 @@ import org.team9432.robot.subsystems.vision.Vision
 import kotlin.math.abs
 
 
-object Drivetrain: KSubsystem() {
+object Drivetrain : KSubsystem() {
     val modules = ModuleIO.Module.entries.map { Module(it) }
 
-    private val angleController = ProfiledPIDController(0.087266, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
+    private val angleController =
+        ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
 
     private val xController = PIDController(3.0, 0.0, 0.0)
     private val yController = PIDController(3.0, 0.0, 0.0)
 
     val kinematics: SwerveDriveKinematics
     private val poseEstimator: SwerveDrivePoseEstimator
+
+    var apriltagStrategy = ApriltagStrategy.WHILE_NOT_MOVING
 
     init {
         angleController.enableContinuousInput(-180.0, 180.0)
@@ -44,7 +46,7 @@ object Drivetrain: KSubsystem() {
         poseEstimator = SwerveDrivePoseEstimator(
             kinematics, Rotation2d(), getModulePositions().toTypedArray(), Pose2d(),
             VecBuilder.fill(Units.inchesToMeters(3.0), Units.inchesToMeters(3.0), Math.toDegrees(4.0)),
-            VecBuilder.fill(Units.inchesToMeters(6.0), Units.inchesToMeters(6.0), Math.toDegrees(10.0))
+            VecBuilder.fill(Units.inchesToMeters(8.0), Units.inchesToMeters(8.0), Math.toDegrees(20.0))
         )
         for (m in modules) m.setBrakeMode(true)
     }
@@ -62,14 +64,39 @@ object Drivetrain: KSubsystem() {
         // Read wheel positions and deltas from each module
         val modulePositions = getModulePositions()
 
-        Vision.getEstimatedPose2d()?.let {
-            poseEstimator.addVisionMeasurement(it.first, it.second)
+        val speeds = getSpeeds()
+
+        Vision.getEstimatedPose2d()?.let { (pose, timestamp) ->
+//            when (apriltagStrategy) {
+//                ApriltagStrategy.WHILE_NOT_MOVING -> {
+                    if ((maxOf(
+                            abs(speeds.vxMetersPerSecond),
+                            abs(speeds.vyMetersPerSecond)
+                        ) < 0.5) && abs(Math.toDegrees(speeds.omegaRadiansPerSecond)) < 10.0
+                    ) {
+                        Logger.recordOutput("Drive/UsingVision", true)
+                        poseEstimator.addVisionMeasurement(pose, timestamp)
+                    } else {
+                        Logger.recordOutput("Drive/UsingVision", false)
+                    }
+//                }
+
+//                ApriltagStrategy.ALWAYS -> {
+//                    poseEstimator.addVisionMeasurement(pose, timestamp)
+//                    Logger.recordOutput("Drive/UsingVision", true)
+//                }
+//            }
         }
 
         poseEstimator.update(Gyro.getYaw(), modulePositions.toTypedArray())
 
         Logger.recordOutput("Drive/Odometry", getPose())
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
+        Logger.recordOutput("Drive/AprilTagStrategy", apriltagStrategy)
+    }
+
+    fun resetPosition(pose: Pose2d, angle: Rotation2d) {
+        poseEstimator.resetPosition(angle, getModulePositions().toTypedArray(), pose)
     }
 
     fun setSpeeds(speeds: ChassisSpeeds) {
@@ -88,34 +115,50 @@ object Drivetrain: KSubsystem() {
         Logger.recordOutput("Drive/SetpointsOptimized", *optimizedSetpointStates)
     }
 
-    private const val POSITIONAL_TOLERANCE = 0.05 // Meters
-    private const val ROTATIONAL_TOLERANCE = 3.0 // Degrees
+    const val POSITIONAL_TOLERANCE = 0.05 // Meters
+    const val ROTATIONAL_TOLERANCE = 3.0 // Degrees
 
     fun setPositionGoal(pose: Pose2d) {
         Logger.recordOutput("Drive/PositionGoal", pose); setXGoal(pose.x); setYGoal(pose.y); setAngleGoal(pose.rotation)
     }
 
-    fun calculatePositionSpeed() = ChassisSpeeds.fromFieldRelativeSpeeds(calculateXSpeed(), calculateYSpeed(), calculateAngleSpeed(), Gyro.getYaw())
-    fun atPositionGoal() = atXGoal() && atYGoal() && atAngleGoal()
+    fun calculatePositionSpeed() = ChassisSpeeds.fromFieldRelativeSpeeds(
+        calculateXSpeed(),
+        calculateYSpeed(),
+        calculateAngleSpeed(),
+        Gyro.getYaw()
+    )
+
+    fun atPositionGoal(
+        positionalTolerance: Double = POSITIONAL_TOLERANCE,
+        rotationalTolerance: Double = ROTATIONAL_TOLERANCE
+    ) = atXGoal(positionalTolerance) && atYGoal(positionalTolerance) && atAngleGoal(rotationalTolerance)
 
     fun setXGoal(pose: Double) = xController.setSetpoint(pose)
     fun calculateXSpeed() = xController.calculate(getPose().x)
-    fun atXGoal() = abs(xController.positionError) < POSITIONAL_TOLERANCE
+    fun atXGoal(tolerance: Double = POSITIONAL_TOLERANCE) = abs(xController.positionError) < tolerance
 
     fun setYGoal(pose: Double) = yController.setSetpoint(pose)
     fun calculateYSpeed() = yController.calculate(getPose().y)
-    fun atYGoal() = abs(yController.positionError) < POSITIONAL_TOLERANCE
+    fun atYGoal(tolerance: Double = POSITIONAL_TOLERANCE) = abs(yController.positionError) < tolerance
 
     fun setAngleGoal(angle: Rotation2d) = angleController.setGoal(angle.degrees)
     fun calculateAngleSpeed() = angleController.calculate(Gyro.getYaw().degrees)
-    fun atAngleGoal() = abs(angleController.positionError) < ROTATIONAL_TOLERANCE
+    fun atAngleGoal(tolerance: Double = ROTATIONAL_TOLERANCE) = abs(angleController.positionError) < tolerance
 
     fun stop() = setSpeeds(ChassisSpeeds())
     fun stopAndX() {
-        val headings = listOf(Rotation2d.fromDegrees(-45.0), Rotation2d.fromDegrees(45.0), Rotation2d.fromDegrees(45.0), Rotation2d.fromDegrees(-45.0))
+        val headings = listOf(
+            Rotation2d.fromDegrees(-45.0),
+            Rotation2d.fromDegrees(45.0),
+            Rotation2d.fromDegrees(45.0),
+            Rotation2d.fromDegrees(-45.0)
+        )
         kinematics.resetHeadings(*headings.toTypedArray())
         stop()
     }
+
+    fun resetAngleController(angle: Rotation2d = Gyro.getYaw()) = angleController.reset(angle.degrees)
 
     fun getPose(): Pose2d = poseEstimator.estimatedPosition
 
@@ -123,9 +166,6 @@ object Drivetrain: KSubsystem() {
 
     fun getModulePositions() = modules.map { it.position }
     fun getModuleStates() = modules.map { it.state }
-
-    val coordinateFlip get() = if (Robot.alliance == DriverStation.Alliance.Blue) 1 else -1
-    val rotationOffset get() = if (Robot.alliance == DriverStation.Alliance.Blue) 0 else 180
 
     private val MODULE_TRANSLATIONS: Array<Translation2d>
         get() {
@@ -136,4 +176,9 @@ object Drivetrain: KSubsystem() {
             val backRight = Translation2d(-moduleDistance, -moduleDistance)
             return arrayOf(frontLeft, frontRight, backLeft, backRight)
         }
+
+    enum class ApriltagStrategy {
+        WHILE_NOT_MOVING,
+        ALWAYS
+    }
 }

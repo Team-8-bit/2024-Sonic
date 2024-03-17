@@ -2,6 +2,7 @@ package org.team9432.robot.subsystems.limelight
 
 import com.revrobotics.CANSparkBase.ControlType
 import com.revrobotics.CANSparkBase.IdleMode
+import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.math.geometry.Rotation2d
@@ -19,7 +20,7 @@ class LimelightIONeo: LimelightIO {
 
     private val gearRatio = 36 / 8
 
-    private val encoderOffset = Rotation2d.fromDegrees(0.0)
+    private val encoderOffset = Rotation2d.fromDegrees(-15.0)
 
     init {
         spark.restoreFactoryDefaults()
@@ -35,6 +36,12 @@ class LimelightIONeo: LimelightIO {
             errors += spark.enableVoltageCompensation(12.0)
             errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
             errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus4, 1000)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus6, 1000)
+
             if (errors.all { it == REVLibError.kOk }) break
         }
 

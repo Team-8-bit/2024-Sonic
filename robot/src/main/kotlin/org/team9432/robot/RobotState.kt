@@ -12,12 +12,13 @@ object RobotState {
     fun noteInCenterBeambreak() = !Beambreaks.getCenter()
     fun noteInAmpSideHopperBeambreak() = !Beambreaks.getHopperAmpSide()
     fun noteInSpeakerSideHopperBeambreak() = !Beambreaks.getHopperSpeakerSide()
+
     fun noteInHopperSide(side: MechanismSide) = if (side == MechanismSide.SPEAKER) noteInSpeakerSideHopperBeambreak() else noteInAmpSideHopperBeambreak()
-
     fun noteInIntakeSide(side: MechanismSide) = if (side == MechanismSide.SPEAKER) noteInSpeakerSideIntakeBeambreak() else noteInAmpSideIntakeBeambreak()
-    fun noteInAnyHopper() = noteInAmpSideHopperBeambreak() || noteInSpeakerSideHopperBeambreak()
 
+    fun noteInAnyHopper() = noteInAmpSideHopperBeambreak() || noteInSpeakerSideHopperBeambreak()
     fun noteInAnyIntake() = noteInAmpSideIntakeBeambreak() || noteInSpeakerSideIntakeBeambreak()
+    fun noteInAnyBeambreak() = noteInAmpSideIntakeBeambreak() || noteInSpeakerSideIntakeBeambreak() || noteInCenterBeambreak() || noteInAmpSideHopperBeambreak() || noteInSpeakerSideHopperBeambreak()
 
     // This prioritizes the amp side, but it should be really hard to actually get a note in both
     fun getOneIntakeBeambreak(): MechanismSide? {
@@ -38,9 +39,16 @@ object RobotState {
 
     var notePosition = NotePosition.NONE
 
+    var isUsingApriltags = true
+    var autoIsUsingApriltags = true
+    var hasRemainingAutoNote = false
+
     fun log() {
         Logger.recordOutput("RobotState/NotePosition", notePosition.name)
+        Logger.recordOutput("RobotState/MovementDirection", getMovementDirection())
         Logger.recordOutput("Drivetrain/SpeakerDistance", RobotPosition.distanceToSpeaker())
+        Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerPose)
+        Logger.recordOutput("RobotState/IsUsingAprilTags", isUsingApriltags)
     }
 
     enum class NotePosition {

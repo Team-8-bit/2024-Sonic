@@ -33,6 +33,10 @@ object Amp: KSubsystem() {
         Logger.processInputs("Amp", inputs)
     }
 
+    fun setVoltage(volts: Double) {
+        io.setVoltage(volts)
+    }
+
     fun setSpeed(rpm: Double) {
         io.setSpeed(rpm, feedforward.calculate(rpm))
 

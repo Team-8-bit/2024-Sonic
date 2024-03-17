@@ -14,17 +14,23 @@ class AmpIOReal : AmpIO {
         spark.restoreFactoryDefaults()
 
         for (i in 0..88) {
-            spark.inverted = false
-            if (spark.inverted == false) break
+            spark.inverted = true
+            if (spark.inverted == true) break
         }
 
         for (i in 0..88) {
             val errors = mutableListOf<REVLibError>()
             errors += spark.setIdleMode(CANSparkBase.IdleMode.kCoast)
             errors += spark.enableVoltageCompensation(12.0)
-            errors += spark.setSmartCurrentLimit(30)
+            errors += spark.setSmartCurrentLimit(60)
             errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
             errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
+
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus4, 1000)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus5, 1000)
+            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus6, 1000)
             if (errors.all { it == REVLibError.kOk }) break
         }
 
