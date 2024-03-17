@@ -6,6 +6,7 @@ import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.KSubsystem
 import java.util.*
 
+/** A command composition that runs a set of commands in parallel, ending when the last command ends. */
 class ParallelCommand(vararg commands: KCommand): KCommandGroup() {
     // maps commands in this composition to whether they are still running
     private val commands: MutableMap<KCommand, Boolean> = HashMap()

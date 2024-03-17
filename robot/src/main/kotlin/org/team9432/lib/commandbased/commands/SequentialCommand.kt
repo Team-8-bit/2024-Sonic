@@ -5,6 +5,7 @@ import org.team9432.lib.commandbased.KCommandGroup
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.KSubsystem
 
+/** A command composition that runs a list of commands in sequence. */
 class SequentialCommand(vararg commands: KCommand): KCommandGroup() {
     private val commands = mutableListOf<KCommand>()
     private var currentCommandIndex = -1

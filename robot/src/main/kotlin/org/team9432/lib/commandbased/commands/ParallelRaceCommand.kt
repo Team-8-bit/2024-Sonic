@@ -6,6 +6,7 @@ import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.KSubsystem
 import java.util.*
 
+/** A composition that runs a set of commands in parallel, ending when any one of the commands ends and interrupting all the others. */
 class ParallelRaceCommand(vararg commands: KCommand): KCommandGroup() {
     private val commands: MutableList<KCommand> = mutableListOf()
     private var finished = true

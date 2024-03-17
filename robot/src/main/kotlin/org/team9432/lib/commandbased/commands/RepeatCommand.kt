@@ -4,6 +4,7 @@ import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.KSubsystem
 
+/** A command that runs another command repeatedly, restarting it when it ends, until this command is interrupted */
 class RepeatCommand(private val command: KCommand): KCommand() {
     private var ended = false
 
