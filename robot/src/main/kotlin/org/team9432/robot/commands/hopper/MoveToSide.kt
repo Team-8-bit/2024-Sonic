@@ -15,7 +15,12 @@ fun MoveToSide(side: MechanismSide) = SuppliedCommand {
     val noteIsCrossing = RobotState.notePosition.side != side
 
     SequentialCommand(
-        CommandHopper.startLoadTo(side, 2.0),
+        SuppliedCommand {
+            when (side) {
+                MechanismSide.AMP -> CommandHopper.startLoadTo(side, 2.0)
+                MechanismSide.SPEAKER -> CommandHopper.startLoadTo(side, 1.0)
+            }
+        },
         // Let the hopper spin up a bit
         WaitCommand(0.25),
         // Both intakes need to be run when feeding across, but it runs only one when bending the note
