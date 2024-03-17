@@ -3,6 +3,7 @@ package org.team9432.robot.led
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.util.Color
 import org.team9432.Robot
+import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.robot.RobotState
 import org.team9432.robot.led.LEDModes.breath
 import org.team9432.robot.led.LEDModes.pulse
@@ -31,13 +32,16 @@ object LEDState {
             field = value
         }
 
+    init {
+        KCommandScheduler.addPeriodic { updateState() }
+    }
+
     fun updateBuffer() {
         if (animation != null) {
             animation?.let { animation ->
                 val isFinished = animation.updateBuffer()
                 if (isFinished) LEDState.animation = null
             }
-
         } else if (testEmergencySwitchActive) {
             solid(Color.kGreen, LEDs.Section.SPEAKER_LEFT)
             solid(Color.kRed, LEDs.Section.SPEAKER_RIGHT)
@@ -83,7 +87,7 @@ object LEDState {
         }
     }
 
-    fun updateState() {
+    private fun updateState() {
         noteInIntake = RobotState.notePosition.isIntake
         leftClimberAtLimit = LeftClimber.atLimit && LeftClimber.hasVoltageApplied
         rightClimberAtLimit = RightClimber.atLimit && RightClimber.hasVoltageApplied

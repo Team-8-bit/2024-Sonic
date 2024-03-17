@@ -25,6 +25,8 @@ object KCommandScheduler {
     // as a list of currently-registered subsystems.
     private val subsystems: MutableMap<KSubsystem, KCommand?> = LinkedHashMap()
 
+    private val additionalPeriodics: MutableSet<() -> Unit> = mutableSetOf()
+
     /**
      * Get the default button poll.
      *
@@ -122,6 +124,10 @@ object KCommandScheduler {
         commands.forEach { schedule(it) }
     }
 
+    fun addPeriodic(runnable: () -> Unit) {
+        additionalPeriodics.add(runnable)
+    }
+
     /**
      * Runs a single iteration of the scheduler. The execution occurs in the following order:
      *
@@ -138,6 +144,9 @@ object KCommandScheduler {
     fun run() {
         if (isDisabled) return
         watchdog.reset()
+
+        // Call each additional periodic method
+        additionalPeriodics.forEach { it.invoke() }
 
         // Run the periodic method of all registered subsystems.
         for (subsystem in subsystems.keys) {

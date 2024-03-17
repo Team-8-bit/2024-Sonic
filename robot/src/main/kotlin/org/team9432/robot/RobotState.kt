@@ -1,12 +1,23 @@
 package org.team9432.robot
 
 import org.littletonrobotics.junction.Logger
-import org.team9432.robot.subsystems.RobotPosition
+import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.robot.sensors.beambreaks.Beambreaks
+import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
 
 object RobotState {
+    init {
+        KCommandScheduler.addPeriodic {
+            Logger.recordOutput("RobotState/NotePosition", notePosition.name)
+            Logger.recordOutput("RobotState/MovementDirection", getMovementDirection())
+            Logger.recordOutput("Drivetrain/SpeakerDistance", RobotPosition.distanceToSpeaker())
+            Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerPose)
+            Logger.recordOutput("RobotState/IsUsingAprilTags", isUsingApriltags)
+        }
+    }
+
     fun noteInAmpSideIntakeBeambreak() = !Beambreaks.getIntakeAmpSide()
     fun noteInSpeakerSideIntakeBeambreak() = !Beambreaks.getIntakeSpeakerSide()
     fun noteInCenterBeambreak() = !Beambreaks.getCenter()
@@ -43,14 +54,6 @@ object RobotState {
     var autoIsUsingApriltags = true
     var hasRemainingAutoNote = false
 
-    fun log() {
-        Logger.recordOutput("RobotState/NotePosition", notePosition.name)
-        Logger.recordOutput("RobotState/MovementDirection", getMovementDirection())
-        Logger.recordOutput("Drivetrain/SpeakerDistance", RobotPosition.distanceToSpeaker())
-        Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerPose)
-        Logger.recordOutput("RobotState/IsUsingAprilTags", isUsingApriltags)
-    }
-
     enum class NotePosition {
         AMP_INTAKE, SPEAKER_INTAKE, AMP_HOPPER, SPEAKER_HOPPER, NONE;
 
@@ -63,9 +66,7 @@ object RobotState {
                 SPEAKER_INTAKE, SPEAKER_HOPPER -> MechanismSide.SPEAKER
                 NONE -> null
             }
-
     }
-
 }
 
 enum class MechanismSide {
