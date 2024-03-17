@@ -8,7 +8,6 @@ import org.team9432.robot.MechanismSide
 object CommandHopper {
     fun setVoltage(volts: Double) = InstantCommand(Hopper) { Hopper.setVoltage(volts) }
     fun stop() = InstantCommand(Hopper) { Hopper.stop() }
-    fun startSpeed(rotationsPerMinute: Double) = InstantCommand(Hopper) { Hopper.setSpeed(rotationsPerMinute) }
 
     fun startLoadTo(side: MechanismSide, volts: Double) = InstantCommand(Hopper) { Hopper.loadTo(side, volts) }
     fun startUnloadFrom(side: MechanismSide, volts: Double) = InstantCommand(Hopper) { Hopper.unloadFrom(side, volts) }
