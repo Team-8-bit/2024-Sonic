@@ -1,4 +1,4 @@
-package org.team9432.robot.subsystems.led.animations
+package org.team9432.robot.led.animations
 
 interface LEDAnimation {
     /** Update the animation, returns true when finished **/

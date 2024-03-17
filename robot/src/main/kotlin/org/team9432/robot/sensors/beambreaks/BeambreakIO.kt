@@ -1,4 +1,4 @@
-package org.team9432.robot.subsystems.beambreaks
+package org.team9432.robot.sensors.beambreaks
 
 import org.team9432.lib.annotation.Logged
 

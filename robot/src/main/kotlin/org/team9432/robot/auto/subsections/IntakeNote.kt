@@ -10,7 +10,7 @@ import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.DriveRobotRelativeSpeeds
 import org.team9432.robot.commands.drivetrain.DriveToPosition
 import org.team9432.robot.commands.drivetrain.TargetAim
-import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
+import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.intake.CommandIntake
 
 fun IntakeNote(note: AllianceNote) = SequentialCommand(

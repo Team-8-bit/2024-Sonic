@@ -2,7 +2,7 @@ package org.team9432.robot
 
 import org.littletonrobotics.junction.Logger
 import org.team9432.robot.subsystems.RobotPosition
-import org.team9432.robot.subsystems.beambreaks.Beambreaks
+import org.team9432.robot.sensors.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
 

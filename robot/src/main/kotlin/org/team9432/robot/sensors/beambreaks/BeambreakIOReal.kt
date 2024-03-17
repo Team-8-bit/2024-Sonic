@@ -1,4 +1,4 @@
-package org.team9432.robot.subsystems.beambreaks
+package org.team9432.robot.sensors.beambreaks
 
 import edu.wpi.first.wpilibj.DigitalInput
 import org.team9432.robot.Devices

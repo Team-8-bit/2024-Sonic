@@ -1,4 +1,4 @@
-package org.team9432.robot.subsystems.led
+package org.team9432.robot.led
 
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.util.Color
@@ -7,13 +7,13 @@ import org.team9432.robot.EmergencySwitches
 import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
-import org.team9432.robot.subsystems.led.LEDModes.breath
-import org.team9432.robot.subsystems.led.LEDModes.pulse
-import org.team9432.robot.subsystems.led.LEDModes.rainbow
-import org.team9432.robot.subsystems.led.LEDModes.solid
-import org.team9432.robot.subsystems.led.LEDModes.strobe
-import org.team9432.robot.subsystems.led.animations.LEDAnimation
-import org.team9432.robot.subsystems.vision.Vision
+import org.team9432.robot.led.LEDModes.breath
+import org.team9432.robot.led.LEDModes.pulse
+import org.team9432.robot.led.LEDModes.rainbow
+import org.team9432.robot.led.LEDModes.solid
+import org.team9432.robot.led.LEDModes.strobe
+import org.team9432.robot.led.animations.LEDAnimation
+import org.team9432.robot.sensors.vision.Vision
 
 object LEDState {
     var allianceColor = Color.kWhite
@@ -35,7 +35,7 @@ object LEDState {
         if (animation != null) {
             animation?.let { animation ->
                 val isFinished = animation.updateBuffer()
-                if (isFinished) this.animation = null
+                if (isFinished) LEDState.animation = null
             }
 
         } else if (testEmergencySwitchActive) {

@@ -7,9 +7,9 @@ import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.subsystems.hopper.CommandHopper
 import org.team9432.robot.subsystems.intake.CommandIntake
-import org.team9432.robot.subsystems.led.LEDState
-import org.team9432.robot.subsystems.led.animations.ChargeUp
-import org.team9432.robot.subsystems.led.animations.Rocket
+import org.team9432.robot.led.LEDState
+import org.team9432.robot.led.animations.ChargeUp
+import org.team9432.robot.led.animations.Rocket
 import org.team9432.robot.subsystems.shooter.CommandShooter
 
 fun SubwooferShoot() = ParallelDeadlineCommand(

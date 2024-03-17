@@ -1,4 +1,4 @@
-package org.team9432.robot.subsystems.led
+package org.team9432.robot.led
 
 import edu.wpi.first.wpilibj.util.Color
 

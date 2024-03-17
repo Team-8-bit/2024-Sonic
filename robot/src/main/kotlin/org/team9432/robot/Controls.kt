@@ -17,15 +17,15 @@ import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.SubwooferShoot
 import org.team9432.robot.commands.shooter.TeleShoot
 import org.team9432.robot.commands.stopCommand
-import org.team9432.robot.subsystems.beambreaks.BeambreakIOSim
+import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.climber.CommandClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.subsystems.gyro.Gyro
-import org.team9432.robot.subsystems.led.LEDState
-import org.team9432.robot.subsystems.led.animations.ChargeUp
-import org.team9432.robot.subsystems.led.animations.Confetti
-import org.team9432.robot.subsystems.led.animations.Rocket
-import org.team9432.robot.subsystems.vision.Vision
+import org.team9432.robot.sensors.gyro.Gyro
+import org.team9432.robot.led.LEDState
+import org.team9432.robot.led.animations.ChargeUp
+import org.team9432.robot.led.animations.Confetti
+import org.team9432.robot.led.animations.Rocket
+import org.team9432.robot.sensors.vision.Vision
 
 object Controls {
     private val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)

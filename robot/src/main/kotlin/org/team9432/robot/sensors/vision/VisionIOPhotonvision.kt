@@ -1,4 +1,4 @@
-package org.team9432.robot.subsystems.vision
+package org.team9432.robot.sensors.vision
 
 import edu.wpi.first.apriltag.AprilTagFields
 import edu.wpi.first.math.geometry.*

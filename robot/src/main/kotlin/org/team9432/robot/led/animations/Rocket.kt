@@ -1,10 +1,10 @@
-package org.team9432.robot.subsystems.led.animations
+package org.team9432.robot.led.animations
 
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.util.Color
-import org.team9432.robot.subsystems.led.LEDModes
-import org.team9432.robot.subsystems.led.LEDs
+import org.team9432.robot.led.LEDModes
+import org.team9432.robot.led.LEDs
 
 class Rocket(private val duration: Double, private val cooldown: Double = 1.0, private val color: HSVColor? = null): LEDAnimation {
     data class HSVColor(val h: Int, val s: Int, val v: Int)

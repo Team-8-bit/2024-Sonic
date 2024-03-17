@@ -30,18 +30,18 @@ import org.team9432.robot.commands.hood.HoodAimAtSpeaker
 import org.team9432.robot.commands.stop
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.amp.Amp
-import org.team9432.robot.subsystems.beambreaks.Beambreaks
+import org.team9432.robot.sensors.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.climber.LeftClimber
 import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.subsystems.gyro.Gyro
+import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.hopper.Hopper
 import org.team9432.robot.subsystems.intake.Intake
-import org.team9432.robot.subsystems.led.LEDState
-import org.team9432.robot.subsystems.led.LEDs
+import org.team9432.robot.led.LEDState
+import org.team9432.robot.led.LEDs
 import org.team9432.robot.subsystems.shooter.Shooter
-import org.team9432.robot.subsystems.vision.Vision
+import org.team9432.robot.sensors.vision.Vision
 import kotlin.jvm.optionals.getOrNull
 
 val LOOP_PERIOD_SECS = Robot.period

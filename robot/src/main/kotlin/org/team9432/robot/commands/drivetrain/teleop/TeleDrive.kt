@@ -5,7 +5,7 @@ import org.team9432.Robot
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.robot.Controls
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.subsystems.gyro.Gyro
+import org.team9432.robot.sensors.gyro.Gyro
 
 class TeleDrive: KCommand() {
     override val requirements = setOf(Drivetrain)

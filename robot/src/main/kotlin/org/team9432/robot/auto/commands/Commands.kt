@@ -11,7 +11,7 @@ import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.FinishIntakingAndAlign
-import org.team9432.robot.subsystems.gyro.Gyro
+import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.shooter.CommandShooter
 import org.team9432.robot.subsystems.shooter.Shooter
 

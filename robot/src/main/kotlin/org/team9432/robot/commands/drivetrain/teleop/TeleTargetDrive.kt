@@ -10,7 +10,7 @@ import org.team9432.robot.Controls
 import org.team9432.robot.commands.CommandConstants.SHOOT_ON_MOVE_SECS
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.subsystems.gyro.Gyro
+import org.team9432.robot.sensors.gyro.Gyro
 
 class TeleTargetDrive(private val target: () -> Pose2d): KCommand() {
     override val requirements = setOf(Drivetrain)

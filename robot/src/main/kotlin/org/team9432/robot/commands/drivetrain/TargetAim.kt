@@ -9,7 +9,7 @@ import org.team9432.lib.commandbased.KCommand
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.subsystems.gyro.Gyro
+import org.team9432.robot.sensors.gyro.Gyro
 
 class TargetAim(
     private val side: MechanismSide = MechanismSide.SPEAKER,

@@ -17,8 +17,8 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.LOOP_PERIOD_SECS
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.util.SwerveUtil
-import org.team9432.robot.subsystems.gyro.Gyro
-import org.team9432.robot.subsystems.vision.Vision
+import org.team9432.robot.sensors.gyro.Gyro
+import org.team9432.robot.sensors.vision.Vision
 import kotlin.math.abs
 
 

@@ -1,6 +1,6 @@
 // https://github.com/Mechanical-Advantage/AdvantageKit/blob/main/example_projects/swerve_drive/src/main/java/frc/robot/subsystems/drive/GyroIOPigeon2.java
 
-package org.team9432.robot.subsystems.gyro
+package org.team9432.robot.sensors.gyro
 
 import com.ctre.phoenix6.BaseStatusSignal
 import com.ctre.phoenix6.StatusCode
@@ -9,7 +9,6 @@ import com.ctre.phoenix6.hardware.Pigeon2
 import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.Logger
 import org.team9432.robot.Devices
-
 
 class GyroIOPigeon2: GyroIO {
     private val pigeon = Pigeon2(Devices.PIGEON_ID)
