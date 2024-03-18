@@ -34,8 +34,6 @@ object Drivetrain: KSubsystem() {
     val kinematics: SwerveDriveKinematics
     private val poseEstimator: SwerveDrivePoseEstimator
 
-    var apriltagStrategy = ApriltagStrategy.WHILE_NOT_MOVING
-
     init {
         angleController.enableContinuousInput(-180.0, 180.0)
         angleController.setTolerance(0.0)
@@ -67,8 +65,6 @@ object Drivetrain: KSubsystem() {
         val speeds = getSpeeds()
 
         Vision.getEstimatedPose2d()?.let { (pose, timestamp) ->
-//            when (apriltagStrategy) {
-//                ApriltagStrategy.WHILE_NOT_MOVING -> {
             if ((maxOf(
                     abs(speeds.vxMetersPerSecond),
                     abs(speeds.vyMetersPerSecond)
@@ -79,20 +75,12 @@ object Drivetrain: KSubsystem() {
             } else {
                 Logger.recordOutput("Drive/UsingVision", false)
             }
-//                }
-
-//                ApriltagStrategy.ALWAYS -> {
-//                    poseEstimator.addVisionMeasurement(pose, timestamp)
-//                    Logger.recordOutput("Drive/UsingVision", true)
-//                }
-//            }
         }
 
         poseEstimator.update(Gyro.getYaw(), modulePositions.toTypedArray())
 
         Logger.recordOutput("Drive/Odometry", getPose())
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
-        Logger.recordOutput("Drive/AprilTagStrategy", apriltagStrategy)
     }
 
     fun resetPosition(pose: Pose2d, angle: Rotation2d) {
@@ -176,9 +164,4 @@ object Drivetrain: KSubsystem() {
             val backRight = Translation2d(-moduleDistance, -moduleDistance)
             return arrayOf(frontLeft, frontRight, backLeft, backRight)
         }
-
-    enum class ApriltagStrategy {
-        WHILE_NOT_MOVING,
-        ALWAYS
-    }
 }

@@ -15,10 +15,6 @@ import org.team9432.robot.sensors.gyro.Gyro
 class TeleTargetDrive(private val target: () -> Pose2d): KCommand() {
     override val requirements = setOf(Drivetrain)
 
-    override fun initialize() {
-        Drivetrain.apriltagStrategy = Drivetrain.ApriltagStrategy.WHILE_NOT_MOVING
-    }
-
     override fun execute() {
         val currentTarget = target.invoke().applyFlip()
         Logger.recordOutput("Drive/AngleTarget", currentTarget)
@@ -32,9 +28,5 @@ class TeleTargetDrive(private val target: () -> Pose2d): KCommand() {
 
         val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Gyro.getYaw())
         Drivetrain.setSpeeds(speeds)
-    }
-
-    override fun end(interrupted: Boolean) {
-        Drivetrain.apriltagStrategy = Drivetrain.ApriltagStrategy.ALWAYS
     }
 }

@@ -24,11 +24,9 @@ fun FourAllianceNote() = SequentialCommand(
     AutoShoot(),
     IntakeNote(AllianceNote.CENTER),
     FinishIntakingThen(AlignToIntakeNote(AllianceNote.AMP)),
-    InstantCommand { RobotState.autoIsUsingApriltags = false },
     AutoShoot(),
     IntakeNote(AllianceNote.AMP),
     FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
     AutoShoot(),
-    InstantCommand { RobotState.autoIsUsingApriltags = true },
     ExitAuto(),
 )

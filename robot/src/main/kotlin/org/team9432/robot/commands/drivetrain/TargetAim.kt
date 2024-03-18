@@ -17,10 +17,6 @@ class TargetAim(
 ): KCommand() {
     override val requirements = setOf(Drivetrain)
 
-    override fun initialize() {
-        Drivetrain.apriltagStrategy = Drivetrain.ApriltagStrategy.WHILE_NOT_MOVING
-    }
-
     override fun execute() {
         val currentTarget = target.invoke().applyFlip()
         Logger.recordOutput("Drive/AngleTarget", currentTarget)
@@ -39,6 +35,5 @@ class TargetAim(
     override fun isFinished() = Drivetrain.atAngleGoal()
     override fun end(interrupted: Boolean) {
         Drivetrain.stop()
-        Drivetrain.apriltagStrategy = Drivetrain.ApriltagStrategy.ALWAYS
     }
 }

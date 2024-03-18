@@ -16,7 +16,6 @@ import org.team9432.robot.led.animations.ChargeUp
 import org.team9432.robot.led.animations.Rocket
 
 fun AutoShoot() = ParallelDeadlineCommand(
-    InstantCommand { RobotState.isUsingApriltags = false },
     InstantCommand { LEDState.animation = ChargeUp(0.5, 1.0) },
 
     deadline = SequentialCommand(
@@ -32,7 +31,6 @@ fun AutoShoot() = ParallelDeadlineCommand(
         // Update the note position
         InstantCommand {
             RobotState.notePosition = RobotState.NotePosition.NONE
-            RobotState.isUsingApriltags = true
             LEDState.animation = Rocket(0.5)
         }
     )

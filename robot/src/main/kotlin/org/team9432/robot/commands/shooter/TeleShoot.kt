@@ -17,8 +17,6 @@ import org.team9432.robot.led.animations.Rocket
 import org.team9432.robot.subsystems.shooter.CommandShooter
 
 fun TeleShoot() = ParallelDeadlineCommand(
-    InstantCommand { RobotState.isUsingApriltags = false },
-
     SuppliedCommand {
         if (!EmergencySwitches.autoAimDisabled) {
             TeleTargetDrive { FieldConstants.speakerPose }
@@ -53,8 +51,6 @@ fun TeleShoot() = ParallelDeadlineCommand(
 
         // Update the note position
         InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
-        InstantCommand { RobotState.isUsingApriltags = true },
-
         CommandShooter.stop()
     )
 )
