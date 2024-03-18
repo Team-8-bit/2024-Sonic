@@ -8,7 +8,6 @@ import org.team9432.robot.auto.AutoChooser
 import org.team9432.robot.commands.DefaultCommands
 import org.team9432.robot.led.LEDs
 import org.team9432.robot.oi.Controls
-import org.team9432.robot.oi.TestControls
 import org.team9432.robot.sensors.beambreaks.Beambreaks
 import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.sensors.vision.Vision
@@ -49,7 +48,5 @@ object Init {
         AutoChooser.initChooser()
 
         LEDs.stopLoadingThread()
-
-        TestControls
     }
 }
