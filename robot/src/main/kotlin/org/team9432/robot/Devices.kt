@@ -35,13 +35,6 @@ object Devices {
     // Hood
     const val HOOD_ID = 53
 
-    // Climbers
-    const val LEFT_CLIMBER_ID = 61
-
-    const val RIGHT_CLIMBER_ID = 62
-    const val LEFT_CLIMBER_LIMIT_PORT = 3
-    const val RIGHT_CLIMBER_LIMIT_PORT = 5
-
     // Beambreaks
     const val CENTER_BEAMBREAK_PORT = 2
     const val HOPPER_AMP_SIDE_BEAMBREAK_PORT = 1

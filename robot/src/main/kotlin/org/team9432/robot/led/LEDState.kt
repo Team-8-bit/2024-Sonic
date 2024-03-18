@@ -13,15 +13,11 @@ import org.team9432.robot.led.LEDModes.strobe
 import org.team9432.robot.led.animations.LEDAnimation
 import org.team9432.robot.oi.EmergencySwitches
 import org.team9432.robot.sensors.vision.Vision
-import org.team9432.robot.subsystems.climber.LeftClimber
-import org.team9432.robot.subsystems.climber.RightClimber
 
 object LEDState {
     var allianceColor = Color.kWhite
 
     var noteInIntake = false
-    var leftClimberAtLimit = false
-    var rightClimberAtLimit = false
     var hasVisionTarget = false
     var limelightConnected = false
     var testEmergencySwitchActive = false
@@ -76,21 +72,12 @@ object LEDState {
                 if (noteInIntake) { // Blink purple when there's a note in the intake
                     strobe(Color.kPurple, 0.1, LEDs.Section.TOP + LEDs.Section.TOP_BAR)
                 }
-
-                if (leftClimberAtLimit) { // When a climber is running into the limit, set that side to red
-                    solid(Color.kRed, LEDs.Section.LEFT)
-                }
-                if (rightClimberAtLimit) {
-                    solid(Color.kRed, LEDs.Section.RIGHT)
-                }
             }
         }
     }
 
     private fun updateState() {
         noteInIntake = RobotState.notePosition.isIntake
-        leftClimberAtLimit = LeftClimber.atLimit && LeftClimber.hasVoltageApplied
-        rightClimberAtLimit = RightClimber.atLimit && RightClimber.hasVoltageApplied
 
         hasVisionTarget = Vision.hasVisionTarget()
         limelightConnected = Vision.connected

@@ -12,8 +12,6 @@ import org.team9432.robot.sensors.beambreaks.Beambreaks
 import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.sensors.vision.Vision
 import org.team9432.robot.subsystems.amp.Amp
-import org.team9432.robot.subsystems.climber.LeftClimber
-import org.team9432.robot.subsystems.climber.RightClimber
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.hood.Hood
 import org.team9432.robot.subsystems.hopper.Hopper
@@ -36,8 +34,6 @@ object Init {
         Beambreaks
 
         Amp
-        LeftClimber
-        RightClimber
         Drivetrain
         Hood
         Hopper
