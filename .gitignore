@@ -205,7 +205,8 @@ replay_pid*
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -288,7 +289,7 @@ $RECYCLE.BIN/
 ### Gradle ###
 .gradle
 **/build/
-!src/**/build/
+!robot/src/**/build/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -331,3 +332,7 @@ bin/
 
 # End entries from WPI Lib team
 
+/robot/src/main/kotlin/org/team9432/BuildConstants.java
+/robot/ctre_sim/
+/robot/logs/
+/robot/networktables.json
