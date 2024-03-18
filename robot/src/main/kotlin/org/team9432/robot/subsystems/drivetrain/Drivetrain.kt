@@ -102,7 +102,7 @@ object Drivetrain: KSubsystem() {
     fun setSpeeds(speeds: ChassisSpeeds) {
         val discreteSpeeds = SwerveUtil.correctForDynamics(speeds, LOOP_PERIOD_SECS)
         val targetStates = kinematics.toSwerveModuleStates(discreteSpeeds)
-        SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, 6.0)
+        SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, 5.0)
 
         // Send setpoints to modules
         val optimizedSetpointStates = arrayOfNulls<SwerveModuleState>(4)
