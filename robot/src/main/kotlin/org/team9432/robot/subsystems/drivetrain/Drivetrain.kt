@@ -27,17 +27,12 @@ object Drivetrain: KSubsystem() {
 
     private val angleController = ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
 
-    private val xController = PIDController(3.0, 0.0, 0.0)
-    private val yController = PIDController(3.0, 0.0, 0.0)
-
     val kinematics: SwerveDriveKinematics
     private val poseEstimator: SwerveDrivePoseEstimator
 
     init {
         angleController.enableContinuousInput(-180.0, 180.0)
         angleController.setTolerance(0.0)
-        xController.setTolerance(0.0)
-        yController.setTolerance(0.0)
 
         kinematics = SwerveDriveKinematics(*MODULE_TRANSLATIONS)
         poseEstimator = SwerveDrivePoseEstimator(
@@ -104,30 +99,6 @@ object Drivetrain: KSubsystem() {
 
     const val POSITIONAL_TOLERANCE = 0.05 // Meters
     const val ROTATIONAL_TOLERANCE = 3.0 // Degrees
-
-    fun setPositionGoal(pose: Pose2d) {
-        Logger.recordOutput("Drive/PositionGoal", pose); setXGoal(pose.x); setYGoal(pose.y); setAngleGoal(pose.rotation)
-    }
-
-    fun calculatePositionSpeed() = ChassisSpeeds.fromFieldRelativeSpeeds(
-        calculateXSpeed(),
-        calculateYSpeed(),
-        calculateAngleSpeed(),
-        Gyro.getYaw()
-    )
-
-    fun atPositionGoal(
-        positionalTolerance: Double = POSITIONAL_TOLERANCE,
-        rotationalTolerance: Double = ROTATIONAL_TOLERANCE,
-    ) = atXGoal(positionalTolerance) && atYGoal(positionalTolerance) && atAngleGoal(rotationalTolerance)
-
-    fun setXGoal(pose: Double) = xController.setSetpoint(pose)
-    fun calculateXSpeed() = xController.calculate(getPose().x)
-    fun atXGoal(tolerance: Double = POSITIONAL_TOLERANCE) = abs(xController.positionError) < tolerance
-
-    fun setYGoal(pose: Double) = yController.setSetpoint(pose)
-    fun calculateYSpeed() = yController.calculate(getPose().y)
-    fun atYGoal(tolerance: Double = POSITIONAL_TOLERANCE) = abs(yController.positionError) < tolerance
 
     fun setAngleGoal(angle: Rotation2d) {
         angleController.setGoal(angle.degrees)
