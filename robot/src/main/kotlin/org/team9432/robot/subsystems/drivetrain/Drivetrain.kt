@@ -25,15 +25,10 @@ import kotlin.math.abs
 object Drivetrain: KSubsystem() {
     val modules = ModuleIO.Module.entries.map { Module(it) }
 
-    private val angleController = ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 360.0))
-
     val kinematics: SwerveDriveKinematics
     private val poseEstimator: SwerveDrivePoseEstimator
 
     init {
-        angleController.enableContinuousInput(-180.0, 180.0)
-        angleController.setTolerance(0.0)
-
         kinematics = SwerveDriveKinematics(*MODULE_TRANSLATIONS)
         poseEstimator = SwerveDrivePoseEstimator(
             kinematics, Rotation2d(), getModulePositions().toTypedArray(), Pose2d(),
@@ -77,10 +72,6 @@ object Drivetrain: KSubsystem() {
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
     }
 
-    fun resetPosition(pose: Pose2d, angle: Rotation2d) {
-        poseEstimator.resetPosition(angle, getModulePositions().toTypedArray(), pose)
-    }
-
     fun setSpeeds(speeds: ChassisSpeeds) {
         val discreteSpeeds = SwerveUtil.correctForDynamics(speeds, LOOP_PERIOD_SECS)
         val targetStates = kinematics.toSwerveModuleStates(discreteSpeeds)
@@ -97,16 +88,9 @@ object Drivetrain: KSubsystem() {
         Logger.recordOutput("Drive/SetpointsOptimized", *optimizedSetpointStates)
     }
 
-    const val POSITIONAL_TOLERANCE = 0.05 // Meters
-    const val ROTATIONAL_TOLERANCE = 3.0 // Degrees
-
-    fun setAngleGoal(angle: Rotation2d) {
-        angleController.setGoal(angle.degrees)
-        angleController.reset(Gyro.getYaw().degrees)
+    fun resetPosition(pose: Pose2d, angle: Rotation2d) {
+        poseEstimator.resetPosition(angle, getModulePositions().toTypedArray(), pose)
     }
-
-    fun calculateAngleSpeed() = angleController.calculate(Gyro.getYaw().degrees)
-    fun atAngleGoal(tolerance: Double = ROTATIONAL_TOLERANCE) = abs(angleController.positionError) < tolerance
 
     fun stop() = setSpeeds(ChassisSpeeds())
     fun stopAndX() {
@@ -119,8 +103,6 @@ object Drivetrain: KSubsystem() {
         kinematics.resetHeadings(*headings.toTypedArray())
         stop()
     }
-
-    fun resetAngleController(angle: Rotation2d = Gyro.getYaw()) = angleController.reset(angle.degrees)
 
     fun getPose(): Pose2d = poseEstimator.estimatedPosition
 

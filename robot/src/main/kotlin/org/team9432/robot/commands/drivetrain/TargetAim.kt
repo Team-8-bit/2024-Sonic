@@ -1,8 +1,10 @@
 package org.team9432.robot.commands.drivetrain
 
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot.applyFlip
 import org.team9432.lib.commandbased.KCommand
@@ -10,29 +12,41 @@ import org.team9432.robot.MechanismSide
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.sensors.gyro.Gyro
+import kotlin.math.abs
 
 class TargetAim(
     private val side: MechanismSide = MechanismSide.SPEAKER,
+    private val toleranceDegrees: Double = 3.0,
     private val target: () -> Pose2d,
 ): KCommand() {
     override val requirements = setOf(Drivetrain)
+
+    private var pid = ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0))
+
+    init {
+        pid.enableContinuousInput(-180.0, 180.0)
+    }
+
+    override fun initialize() {
+        pid.reset(Gyro.getYaw().degrees)
+    }
 
     override fun execute() {
         val currentTarget = target.invoke().applyFlip()
         Logger.recordOutput("Drive/AngleTarget", currentTarget)
 
         when (side) {
-            MechanismSide.SPEAKER -> Drivetrain.setAngleGoal(RobotPosition.angleTo(currentTarget))
-            MechanismSide.AMP -> Drivetrain.setAngleGoal(RobotPosition.angleTo(currentTarget).plus(Rotation2d(Math.PI)))
+            MechanismSide.SPEAKER -> pid.setGoal(RobotPosition.angleTo(currentTarget).degrees)
+            MechanismSide.AMP -> pid.setGoal(RobotPosition.angleTo(currentTarget).plus(Rotation2d(Math.PI)).degrees)
         }
 
-        val rSpeed = Drivetrain.calculateAngleSpeed()
+        val rSpeed = pid.calculate(Gyro.getYaw().degrees)
 
         val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(0.0, 0.0, rSpeed, Gyro.getYaw())
         Drivetrain.setSpeeds(speeds)
     }
 
-    override fun isFinished() = Drivetrain.atAngleGoal()
+    override fun isFinished() = abs(pid.positionError) < toleranceDegrees
     override fun end(interrupted: Boolean) {
         Drivetrain.stop()
     }

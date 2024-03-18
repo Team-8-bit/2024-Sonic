@@ -12,7 +12,7 @@ import org.team9432.Robot
 
 object Logger {
     fun initAdvantagekit(projectName: String) {
-        Logger.recordMetadata("ProjectName", "2024 - Sonic")
+        Logger.recordMetadata("ProjectName", projectName)
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE)
         Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA)
         Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE)

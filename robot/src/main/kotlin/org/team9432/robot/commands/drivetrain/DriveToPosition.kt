@@ -17,29 +17,39 @@ class DriveToPosition(
     private val position: Pose2d,
     private val maxSpeedMetersPerSecond: Double = 4.0,
     private val maxAccelerationMetersPerSecond: Double = 3.0,
-    private val positionalTolerance: Double = Drivetrain.POSITIONAL_TOLERANCE,
-    private val rotationalTolerance: Double = Drivetrain.ROTATIONAL_TOLERANCE,
+    private val positionalTolerance: Double = 0.05, // Meters
+    private val rotationalTolerance: Double = 3.0, // Degrees
+    private val maxRotationalSpeedDegreesPerSecond: Double = 360.0,
+    private val maxRotationalAccelerationDegreesPerSecond: Double = 360.0,
 ): KCommand() {
     override val requirements = setOf(Drivetrain)
 
-    private val pid = ProfiledPIDController(5.0, 0.0, 0.0, TrapezoidProfile.Constraints(maxSpeedMetersPerSecond, maxAccelerationMetersPerSecond))
+    private val positionPid = ProfiledPIDController(5.0, 0.0, 0.0, TrapezoidProfile.Constraints(maxSpeedMetersPerSecond, maxAccelerationMetersPerSecond))
+    private var rotationPid = ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(maxRotationalSpeedDegreesPerSecond, maxRotationalAccelerationDegreesPerSecond))
 
     private var finalPosition = position.applyFlip()
+
+    init {
+        rotationPid.enableContinuousInput(-180.0, 180.0)
+    }
 
     override fun initialize() {
         finalPosition = position.applyFlip()
         Logger.recordOutput("Drive/PositionGoal", finalPosition)
-        Drivetrain.setAngleGoal(finalPosition.rotation)
 
         val (xDistance, yDistance) = getDistanceToGoal()
-        pid.reset(hypot(xDistance, yDistance))
+        positionPid.reset(hypot(xDistance, yDistance))
+        rotationPid.reset(Gyro.getYaw().degrees)
+
+        positionPid.setGoal(0.0)
+        rotationPid.setGoal(finalPosition.rotation.degrees)
     }
 
     override fun execute() {
         val (xDistance, yDistance) = getDistanceToGoal()
         val measurement = hypot(xDistance, yDistance)
 
-        val result = pid.calculate(measurement, 0.0)
+        val result = positionPid.calculate(measurement, 0.0)
 
         // The x and y ratio as numbers from -1 to 1
         val xSpeed: Double
@@ -56,7 +66,7 @@ class DriveToPosition(
         val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             (xSpeed * result).withSign(xDistance),
             (ySpeed * result).withSign(yDistance),
-            Drivetrain.calculateAngleSpeed(),
+            rotationPid.calculate(Gyro.getYaw().degrees),
             Gyro.getYaw()
         )
 
@@ -65,7 +75,7 @@ class DriveToPosition(
 
     override fun isFinished(): Boolean {
         val (xDistance, yDistance) = getDistanceToGoal()
-        return hypot(xDistance, yDistance) < positionalTolerance && Drivetrain.atAngleGoal(rotationalTolerance)
+        return hypot(xDistance, yDistance) < positionalTolerance && abs(rotationPid.positionError) < rotationalTolerance
     }
 
     override fun end(interrupted: Boolean) {
