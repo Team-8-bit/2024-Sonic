@@ -1,16 +1,15 @@
 package org.team9432.robot.oi
 
 
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.GenericHID
-import org.team9432.lib.commandbased.commands.InstantCommand
-import org.team9432.lib.commandbased.commands.SuppliedCommand
-import org.team9432.lib.commandbased.commands.afterSimDelay
-import org.team9432.lib.commandbased.commands.runsWhenDisabled
+import org.team9432.lib.commandbased.commands.*
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AutoConstants
 import org.team9432.robot.commands.amp.ScoreAmp
 import org.team9432.robot.commands.drivetrain.DriveToPosition
+import org.team9432.robot.commands.drivetrain.teleop.TeleAngleDrive
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.SubwooferShoot
@@ -32,7 +31,7 @@ object Controls {
     val slowDrive get() = slowButton.asBoolean
 
     val readyToShootSpeaker get() = readyToShootSpeakerButton.asBoolean
-    val readyToShootAmp get() = readyToShootSpeakerButton.asBoolean
+    val readyToShootAmp get() = readyToShootAmpButton.asBoolean
 
     fun setButtons() {
         // Run Intake
@@ -64,9 +63,14 @@ object Controls {
         driver.y
             .onTrue(stopCommand())
 
-        // Load to amp
+        // Score amp
         driver.leftTrigger
-            .onTrue(ScoreAmp(4.5))
+            .onTrue(
+                ParallelDeadlineCommand(
+                    TeleAngleDrive { Rotation2d.fromDegrees(-90.0) },
+                    deadline = ScoreAmp(4.5)
+                )
+            )
     }
 
     fun setDriverRumble(magnitude: Double) {
