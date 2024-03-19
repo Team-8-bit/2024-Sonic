@@ -48,7 +48,6 @@ class TargetAim(
 
     override fun isFinished() = abs(pid.goal.position - Gyro.getYaw().degrees) < toleranceDegrees
     override fun end(interrupted: Boolean) {
-        println("ended: $interrupted")
         Drivetrain.stop()
     }
 }

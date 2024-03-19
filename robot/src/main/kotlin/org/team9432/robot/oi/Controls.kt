@@ -9,7 +9,9 @@ import org.team9432.lib.commandbased.commands.afterSimDelay
 import org.team9432.lib.commandbased.commands.runsWhenDisabled
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.RobotState
+import org.team9432.robot.auto.AutoConstants
 import org.team9432.robot.commands.amp.ScoreAmp
+import org.team9432.robot.commands.drivetrain.DriveToPosition
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.SubwooferShoot
@@ -48,8 +50,7 @@ object Controls {
             })
 
         // Shoot Amplifier from speaker
-        driver.b
-            .onTrue(InstantCommand { Gyro.setYaw(Rotation2d(Math.PI)) }.runsWhenDisabled(true))
+        driver.b.onTrue(DriveToPosition(AutoConstants.centerNoteOneIntakePose))
 
         // Reset Drivetrain Heading
         driver.a
