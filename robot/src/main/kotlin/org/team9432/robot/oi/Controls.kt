@@ -1,7 +1,6 @@
 package org.team9432.robot.oi
 
 
-import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.GenericHID
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SuppliedCommand
@@ -24,11 +23,16 @@ object Controls {
     private val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
 
     private val slowButton = driver.rightBumper
+    private val readyToShootSpeakerButton = driver.rightTrigger.negate()
+    private val readyToShootAmpButton = driver.leftTrigger.negate()
 
     val xSpeed get() = -driver.leftY
     val ySpeed get() = -driver.leftX
     val angle get() = -driver.rightX
     val slowDrive get() = slowButton.asBoolean
+
+    val readyToShootSpeaker get() = readyToShootSpeakerButton.asBoolean
+    val readyToShootAmp get() = readyToShootSpeakerButton.asBoolean
 
     fun setButtons() {
         // Run Intake
