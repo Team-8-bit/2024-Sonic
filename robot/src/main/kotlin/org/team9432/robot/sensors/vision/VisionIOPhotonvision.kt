@@ -49,23 +49,14 @@ class VisionIOPhotonvision: VisionIO {
 
     private val robotToCamera = Transform3d(
         Translation3d(
-            Units.inchesToMeters(-1.9365),
+            Units.inchesToMeters(-1.342924),
             Units.inchesToMeters(0.0),
-            Units.inchesToMeters(-14.125) - 0.124460
+            Units.inchesToMeters(-17.048946) - 0.124460
         ),
-        Rotation3d()
-    ).plus(
-        Transform3d(
-            Translation3d(
-                Units.inchesToMeters(-1.073367),
-                Units.inchesToMeters(0.039107),
-                Units.inchesToMeters(-4.823889)
-            ),
-            Rotation3d(
-                0.0,
-                Math.toRadians(20.0),
-                0.0
-            )
+        Rotation3d(
+            0.0,
+            Math.toRadians(20.0),
+            0.0
         )
     )
 }
