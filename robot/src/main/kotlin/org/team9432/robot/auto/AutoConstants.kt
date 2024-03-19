@@ -15,6 +15,9 @@ object AutoConstants {
     val topCenterNotePath = Pose2d(5.635, 6.381, Rotation2d(Math.PI))
     val topCenterNoteShotPose = Pose2d(2.944, 6.375, Rotation2d()).angleAtSpeaker()
 
+    val bottomCenterNotePath = Pose2d(5.326, 1.628, Rotation2d(Math.PI))
+    val bottomCenterNoteShotPose = Pose2d(2.0, 3.5, Rotation2d()).angleAtSpeaker()
+
     private val targetNoteOffsetDistance = 0.8
     private val angledIntakeDistance = sqrt(targetNoteOffsetDistance.pow(2.0) / 2)
 
@@ -26,7 +29,7 @@ object AutoConstants {
     val stageNoteAngledIntakePose = FieldConstants.blueStageNotePose.transformBy(Transform2d(Translation2d(-angledIntakeDistance, angledIntakeDistance), Rotation2d.fromDegrees(135.0)))
     val stageNoteIntakePose = FieldConstants.blueStageNotePose.transformBy(Transform2d(Translation2d(-targetNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
 
-    private val centerNoteOffsetDistance = 0.8
+    private val centerNoteOffsetDistance = 0.6
     val centerNoteOneIntakePose = FieldConstants.centerNoteOnePose.transformBy(Transform2d(Translation2d(-centerNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
     val centerNoteTwoIntakePose = FieldConstants.centerNoteTwoPose.transformBy(Transform2d(Translation2d(-centerNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
     val centerNoteThreeIntakePose = FieldConstants.centerNoteThreePose.transformBy(Transform2d(Translation2d(-centerNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
