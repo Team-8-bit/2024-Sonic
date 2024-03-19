@@ -21,7 +21,7 @@ class TargetAim(
 ): KCommand() {
     override val requirements = setOf(Drivetrain)
 
-    private var pid = ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0))
+    private var pid = ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 2.0))
 
     init {
         pid.enableContinuousInput(-180.0, 180.0)
@@ -46,8 +46,9 @@ class TargetAim(
         Drivetrain.setSpeeds(speeds)
     }
 
-    override fun isFinished() = abs(pid.positionError) < toleranceDegrees
+    override fun isFinished() = abs(pid.goal.position - Gyro.getYaw().degrees) < toleranceDegrees
     override fun end(interrupted: Boolean) {
+        println("ended: $interrupted")
         Drivetrain.stop()
     }
 }

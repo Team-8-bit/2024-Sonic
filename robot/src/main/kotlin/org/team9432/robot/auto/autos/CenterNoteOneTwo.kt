@@ -8,7 +8,7 @@ import org.team9432.robot.auto.commands.*
 import org.team9432.robot.auto.subsections.IntakeNote
 import org.team9432.robot.commands.drivetrain.DriveToPosition
 
-fun TopTwoCenterNote() = SequentialCommand(
+fun CenterNoteOneTwo() = SequentialCommand(
     InitAuto(Rotation2d(Math.PI)),
     // Shoot the preload
     ParallelCommand(
@@ -16,15 +16,14 @@ fun TopTwoCenterNote() = SequentialCommand(
         DriveToPosition(AutoConstants.topCenterNoteShotPose)
     ),
     AutoShoot(),
-
     // Drive to the center and collect the top note
-    IntakeNote(AutoConstants.firstCenterNoteIntakePose, timeout = 0.5),
+    IntakeNote(AutoConstants.centerNoteOneIntakePose, timeout = 0.5),
     FinishIntakingThen(DriveToPosition(AutoConstants.topCenterNoteShotPose)),
     AutoShoot(),
 
     // Collect the next center note
     DriveToPosition(AutoConstants.topCenterNotePath, positionalTolerance = 1.0),
-    IntakeNote(AutoConstants.secondCenterNoteIntakePose, timeout = 0.5),
+    IntakeNote(AutoConstants.centerNoteTwoIntakePose, timeout = 0.5),
     FinishIntakingThen(
         SequentialCommand(
             DriveToPosition(AutoConstants.topCenterNotePath, positionalTolerance = 1.0),

@@ -38,12 +38,12 @@ object RobotState {
     }
 
     fun getMovementDirection(): MechanismSide {
-        val speeds = Drivetrain.getSpeeds()
+        val speeds = Drivetrain.getRobotRelativeSpeeds()
         if (speeds.vxMetersPerSecond > 0) return MechanismSide.SPEAKER else return MechanismSide.AMP
     }
 
     fun shouldRunOneIntake(): Boolean {
-        val speeds = Drivetrain.getSpeeds()
+        val speeds = Drivetrain.getRobotRelativeSpeeds()
         return maxOf(abs(speeds.vxMetersPerSecond), abs(speeds.vyMetersPerSecond)) > 1
     }
 

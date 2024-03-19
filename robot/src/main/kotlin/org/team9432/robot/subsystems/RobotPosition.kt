@@ -15,8 +15,8 @@ import kotlin.math.hypot
 
 
 object RobotPosition {
-    fun angleTo(pose: Pose2d, futureTime: Double? = null): Rotation2d {
-        val robotPose = futureTime?.let { getFuturePose(futureTime) } ?: Drivetrain.getPose()
+    fun angleTo(pose: Pose2d, futureTime: Double? = null, currentPose: Pose2d = Drivetrain.getPose()): Rotation2d {
+        val robotPose = futureTime?.let { getFuturePose(futureTime) } ?: currentPose
         return Rotation2d(atan2(pose.y - robotPose.y, pose.x - robotPose.x))
     }
 
@@ -49,7 +49,7 @@ object RobotPosition {
     }
 
     private fun getMovementIn(futureTime: Double): Transform2d {
-        val currentSpeeds = Drivetrain.getSpeeds()
+        val currentSpeeds = Drivetrain.getRobotRelativeSpeeds()
         return Transform2d(
             Translation2d(
                 currentSpeeds.vxMetersPerSecond * futureTime,

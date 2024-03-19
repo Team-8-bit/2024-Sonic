@@ -40,8 +40,8 @@ fun IntakeNote(pose: Pose2d, timeout: Double = 1.0) = SequentialCommand(
             ParallelDeadlineCommand(
                 DriveRobotRelativeSpeeds(vx = -1.0),
                 deadline = WaitCommand(timeout)
-            )
+            ).afterSimDelay(0.25) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }
         ),
-        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.afterSimDelay(1.0) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }
+        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }
     )
 )

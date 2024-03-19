@@ -13,10 +13,7 @@ object AutoConstants {
     val fourNoteFirstShotPose = Pose2d(2.359, 4.418, Rotation2d.fromDegrees(152.5214))
 
     val topCenterNotePath = Pose2d(5.635, 6.381, Rotation2d(Math.PI))
-    val topCenterNoteShotPose = Pose2d(2.944, 6.375, Rotation2d(Math.PI))
-
-    val firstCenterNoteIntakePose = Pose2d(7.765, 7.436, Rotation2d(Math.PI))
-    val secondCenterNoteIntakePose = Pose2d(7.765, 5.742, Rotation2d(Math.PI))
+    val topCenterNoteShotPose = Pose2d(2.944, 6.375, Rotation2d()).angleAtSpeaker()
 
     private val targetNoteOffsetDistance = 0.8
     private val angledIntakeDistance = sqrt(targetNoteOffsetDistance.pow(2.0) / 2)
@@ -29,6 +26,13 @@ object AutoConstants {
     val stageNoteAngledIntakePose = FieldConstants.blueStageNotePose.transformBy(Transform2d(Translation2d(-angledIntakeDistance, angledIntakeDistance), Rotation2d.fromDegrees(135.0)))
     val stageNoteIntakePose = FieldConstants.blueStageNotePose.transformBy(Transform2d(Translation2d(-targetNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
 
+    private val centerNoteOffsetDistance = 0.8
+    val centerNoteOneIntakePose = FieldConstants.centerNoteOnePose.transformBy(Transform2d(Translation2d(-centerNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
+    val centerNoteTwoIntakePose = FieldConstants.centerNoteTwoPose.transformBy(Transform2d(Translation2d(-centerNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
+    val centerNoteThreeIntakePose = FieldConstants.centerNoteThreePose.transformBy(Transform2d(Translation2d(-centerNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
+    val centerNoteFourIntakePose = FieldConstants.centerNoteFourPose.transformBy(Transform2d(Translation2d(-centerNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
+    val centerNoteFiveIntakePose = FieldConstants.centerNoteFivePose.transformBy(Transform2d(Translation2d(-centerNoteOffsetDistance, 0.0), Rotation2d.fromDegrees(180.0)))
+
     fun getIntakePosition(note: AllianceNote) = when (note) {
         AllianceNote.AMP -> listOf(ampNoteAngledIntakePose, ampNoteIntakePose).minBy { RobotPosition.distanceTo(it) }
         AllianceNote.CENTER -> listOf(centerNoteIntakePose).minBy { RobotPosition.distanceTo(it) }
@@ -40,6 +44,8 @@ object AutoConstants {
         AllianceNote.CENTER -> FieldConstants.blueCenterNotePose
         AllianceNote.STAGE -> FieldConstants.blueStageNotePose
     }
+
+    private fun Pose2d.angleAtSpeaker() = Pose2d(x, y, RobotPosition.angleTo(FieldConstants.speakerPose, currentPose = Pose2d(x, y, Rotation2d())))
 }
 
 enum class AllianceNote {

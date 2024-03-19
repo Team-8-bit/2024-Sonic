@@ -2,6 +2,8 @@ package org.team9432.robot.commands.drivetrain
 
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Transform2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import org.littletonrobotics.junction.Logger
@@ -37,16 +39,18 @@ class DriveToPosition(
         finalPosition = position.applyFlip()
         Logger.recordOutput("Drive/PositionGoal", finalPosition)
 
-        val (xDistance, yDistance) = getDistanceToGoal()
-        positionPid.reset(hypot(xDistance, yDistance))
-        rotationPid.reset(Gyro.getYaw().degrees)
+        val currentSpeeds = Drivetrain.getFieldRelativeSpeeds()
+
+        val (xDistance, yDistance) = getDistancesToGoal()
+        positionPid.reset(hypot(xDistance, yDistance), getSpeedToGoal(currentSpeeds))
+        rotationPid.reset(Gyro.getYaw().degrees, Math.toDegrees(currentSpeeds.omegaRadiansPerSecond))
 
         positionPid.setGoal(0.0)
         rotationPid.setGoal(finalPosition.rotation.degrees)
     }
 
     override fun execute() {
-        val (xDistance, yDistance) = getDistanceToGoal()
+        val (xDistance, yDistance) = getDistancesToGoal()
         val measurement = hypot(xDistance, yDistance)
 
         val result = positionPid.calculate(measurement, 0.0)
@@ -74,7 +78,7 @@ class DriveToPosition(
     }
 
     override fun isFinished(): Boolean {
-        val (xDistance, yDistance) = getDistanceToGoal()
+        val (xDistance, yDistance) = getDistancesToGoal()
         return hypot(xDistance, yDistance) < positionalTolerance && abs(rotationPid.positionError) < rotationalTolerance
     }
 
@@ -82,10 +86,25 @@ class DriveToPosition(
         Drivetrain.stop()
     }
 
-    private fun getDistanceToGoal(): Pair<Double, Double> {
-        val currentPose = Drivetrain.getPose()
-        val xDistance = finalPosition.x - currentPose.x
-        val yDistance = finalPosition.y - currentPose.y
+    private fun getDistancesToGoal(pose: Pose2d = Drivetrain.getPose()): Pair<Double, Double> {
+        val xDistance = finalPosition.x - pose.x
+        val yDistance = finalPosition.y - pose.y
         return xDistance to yDistance
+    }
+
+    private fun getDistanceToGoal(pose: Pose2d): Double {
+        val xDistance = finalPosition.x - pose.x
+        val yDistance = finalPosition.y - pose.y
+        return hypot(xDistance, yDistance)
+    }
+
+    private fun getSpeedToGoal(speeds: ChassisSpeeds): Double {
+        val currentPose = Drivetrain.getPose()
+        val futurePose = currentPose.transformBy(speeds.let { Transform2d(it.vxMetersPerSecond, it.vyMetersPerSecond, Rotation2d(it.omegaRadiansPerSecond)) })
+
+        val currentDistance = getDistanceToGoal(currentPose)
+        val futureDistance = getDistanceToGoal(futurePose)
+
+        return currentDistance - futureDistance
     }
 }

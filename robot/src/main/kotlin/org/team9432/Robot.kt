@@ -12,8 +12,10 @@ import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.lib.util.PoseUtil
+import org.team9432.robot.FieldConstants
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AutoChooser
+import org.team9432.robot.auto.AutoConstants
 import org.team9432.robot.auto.commands.PullFromSpeakerShooter
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.hood.HoodAimAtSpeaker
@@ -38,7 +40,6 @@ object Robot: LoggedRobot() {
 
     override fun robotPeriodic() {
         KCommandScheduler.run()
-
         DriverStation.getAlliance().getOrNull()?.let { alliance = it }
     }
 
