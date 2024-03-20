@@ -5,6 +5,7 @@ import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.hopper.MoveToSide
+import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.amp.CommandAmp
 import org.team9432.robot.subsystems.hopper.CommandHopper
@@ -19,7 +20,9 @@ fun ScoreAmp(volts: Double) = SequentialCommand(
         WaitCommand(1.0),
     ),
 
+    InstantCommand { LEDState.ampShooterReady = true },
     WaitUntilCommand { Controls.readyToShootAmp },
+    InstantCommand { LEDState.ampShooterReady = false },
 
     ParallelDeadlineCommand(
         // Shoot the note
