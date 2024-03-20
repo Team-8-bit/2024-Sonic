@@ -10,13 +10,26 @@ import org.photonvision.targeting.PhotonTrackedTarget
 import kotlin.jvm.optionals.getOrNull
 
 class VisionIOPhotonvision: VisionIO {
+    private val robotToCamera = Transform3d(
+        Translation3d(
+            Units.inchesToMeters(1.342924),
+            Units.inchesToMeters(0.0),
+            Units.inchesToMeters(17.048946) + 0.124460
+        ),
+        Rotation3d(
+            0.0,
+            Math.toRadians(-20.0),
+            0.0
+        )
+    )
+
     private val camera = PhotonCamera("Limelight")
     private val aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField()
     private val photonPoseEstimator = PhotonPoseEstimator(
         aprilTagFieldLayout,
         PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY,
         camera,
-        Transform3d()
+        robotToCamera
     )
 
     override fun updateInputs(inputs: VisionIO.VisionIOInputs) {
@@ -36,7 +49,7 @@ class VisionIOPhotonvision: VisionIO {
 
         inputs.usedCorners = estimatedPose?.targetsUsed?.getCornerArray() ?: emptyArray()
         inputs.poseTimestamp = estimatedPose?.timestampSeconds?.let { doubleArrayOf(it) } ?: doubleArrayOf()
-        inputs.estimatedRobotPose = estimatedPose?.estimatedPose?.let { arrayOf(it.transformBy(robotToCamera)) } ?: emptyArray()
+        inputs.estimatedRobotPose = estimatedPose?.estimatedPose?.let { arrayOf(it) } ?: emptyArray()
         inputs.connected = camera.isConnected
     }
 
@@ -46,17 +59,4 @@ class VisionIOPhotonvision: VisionIO {
     override fun setLED(enable: Boolean) {
         camera.setLED(if (enable) VisionLEDMode.kOn else VisionLEDMode.kOff)
     }
-
-    private val robotToCamera = Transform3d(
-        Translation3d(
-            Units.inchesToMeters(-1.342924),
-            Units.inchesToMeters(0.0),
-            Units.inchesToMeters(-17.048946) - 0.124460
-        ),
-        Rotation3d(
-            0.0,
-            Math.toRadians(20.0),
-            0.0
-        )
-    )
 }
