@@ -36,7 +36,7 @@ class ModuleIONeo(override val module: ModuleIO.Module): ModuleIO {
 
         for (i in 0..88) {
             val errors = mutableListOf<REVLibError>()
-            errors += drive.setSmartCurrentLimit(45)
+            errors += drive.setSmartCurrentLimit(60)
             errors += steer.setSmartCurrentLimit(30)
 
             errors += drive.enableVoltageCompensation(12.0)
