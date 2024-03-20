@@ -65,7 +65,7 @@ object LEDState {
                 }
 
                 if (!limelightConnected) { // Lime and red when the limelight isn't connected
-                    breath(Color.kLime, Color.kRed, LEDs.Section.SPEAKER_RIGHT_BOTTOM + LEDs.Section.AMP_RIGHT_BOTTOM, duration = 0.25)
+                    breath(Color.kLime, Color.kRed, LEDs.Section.BOTTOM, duration = 0.75)
                 }
             } else if (DriverStation.isAutonomous()) {
                 strobe(Color.kRed, 0.25, LEDs.Section.ALL)
@@ -80,7 +80,8 @@ object LEDState {
                     strobe(Color.kLime, 0.25, LEDs.Section.SPEAKER)
                 }
                 if (ampShooterReady) {
-                    strobe(Color.kLime, 0.25, LEDs.Section.AMP)
+                    if (Robot.alliance == DriverStation.Alliance.Red) strobe(Color.kLime, 0.25, LEDs.Section.LEFT)
+                    else strobe(Color.kLime, 0.25, LEDs.Section.RIGHT)
                 }
             }
         }
