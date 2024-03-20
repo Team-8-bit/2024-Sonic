@@ -12,4 +12,6 @@ object CommandHood {
         execute = { Hood.setAngle(angle.invoke()) },
         end = { Hood.setAngle(Rotation2d()) }
     )
+    fun setVoltage(volts: Double) = InstantCommand(Hood) { Hood.setVoltage(volts) }
+    fun resetAngle() = InstantCommand(Hood) { Hood.resetAngle() }
 }

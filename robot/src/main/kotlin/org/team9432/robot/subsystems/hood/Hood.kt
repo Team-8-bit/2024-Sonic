@@ -48,5 +48,15 @@ object Hood: KSubsystem() {
         Logger.recordOutput("Hood/AngleSetpointDegrees", angle.degrees)
     }
 
+    fun setVoltage(volts: Double) {
+        if (!EmergencySwitches.isSubwooferOnly) {
+            io.setVoltage(volts)
+        }
+    }
+
+    fun resetAngle() {
+        io.resetEncoder()
+    }
+
     fun stop() = io.stop()
 }
