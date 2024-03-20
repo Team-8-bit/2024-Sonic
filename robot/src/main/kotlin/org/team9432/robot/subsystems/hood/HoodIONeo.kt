@@ -61,7 +61,7 @@ class HoodIONeo: HoodIO {
 
     override fun updateInputs(inputs: HoodIO.HoodIOInputs) {
         if (isClosedLoop) {
-            val r = Rotation2d.fromRotations(encoder.position * 2.0)
+            val r = Rotation2d.fromRotations(encoder.position)
             spark.setVoltage(MathUtil.clamp(pid.calculate(r.rotations) + ffTable.get(pid.setpoint), -1.0, 1.0))
         }
 

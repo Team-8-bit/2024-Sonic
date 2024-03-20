@@ -6,9 +6,9 @@ object ShooterInterpolator {
     private val map = InterpolatingDoubleTreeMap()
 
     init {
-        map.put(0.85, 0.0)
-        map.put(1.65, 15.0)
-        map.put(2.65, 22.0)
+        map.put(1.0, 0.0)
+        map.put(1.8, 15.0)
+        map.put(2.8, 22.0)
     }
 
     fun getHoodAngle(distanceMeters: Double): Double {

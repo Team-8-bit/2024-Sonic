@@ -24,5 +24,7 @@ interface HoodIO {
 
     fun setBrakeMode(enabled: Boolean) {}
 
+    fun resetEncoder(newAngle: Rotation2d = Rotation2d()) {}
+
     fun stop() {}
 }
