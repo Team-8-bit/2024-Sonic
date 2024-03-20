@@ -5,6 +5,4 @@ object CommandConstants {
 
     const val INTAKE_SHOOT_SPEAKER_VOLTS = 5.0
     const val HOPPER_SHOOT_SPEAKER_VOLTS = 5.0
-
-    val SHOOT_ON_MOVE_SECS: Double? = null
 }
