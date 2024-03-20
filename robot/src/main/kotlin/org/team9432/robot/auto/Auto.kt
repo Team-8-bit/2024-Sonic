@@ -10,6 +10,7 @@ enum class Auto(val displayName: String, val command: () -> KCommand) {
     CENTER_ONE_TWO("One Two Center", { CenterNoteOneTwo() }),
     CENTER_FIVE_FOUR("Five Four Center", { CenterNoteFiveFour() }),
     NOTHING("Nothing", { InstantCommand {} }),
+    PRELOAD_AND_TAXI("Preload And Taxi", { PreloadAndTaxi() }),
     PRELOAD("Preload", { Preload() }),
     AMP_SIDE_TWO("Amp Side Two", { AmpSideTwo() })
 }
