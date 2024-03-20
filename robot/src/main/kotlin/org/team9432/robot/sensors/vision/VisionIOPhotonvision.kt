@@ -7,6 +7,7 @@ import org.photonvision.PhotonCamera
 import org.photonvision.PhotonPoseEstimator
 import org.photonvision.common.hardware.VisionLEDMode
 import org.photonvision.targeting.PhotonTrackedTarget
+import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.jvm.optionals.getOrNull
 
 class VisionIOPhotonvision: VisionIO {
@@ -28,6 +29,7 @@ class VisionIOPhotonvision: VisionIO {
     private val photonPoseEstimator = PhotonPoseEstimator(
         aprilTagFieldLayout,
         PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY,
+//        PhotonPoseEstimator.PoseStrategy.CLOSEST_TO_LAST_POSE,
         camera,
         robotToCamera
     )
@@ -44,6 +46,8 @@ class VisionIOPhotonvision: VisionIO {
             inputs.allCorners = emptyArray()
             inputs.trackedTags = intArrayOf()
         }
+
+//        photonPoseEstimator.setLastPose(Drivetrain.getPose())
 
         val estimatedPose = photonPoseEstimator.update().getOrNull()
 
