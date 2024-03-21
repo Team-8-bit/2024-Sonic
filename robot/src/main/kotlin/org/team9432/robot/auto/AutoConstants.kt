@@ -10,7 +10,8 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 object AutoConstants {
-    val fourNoteFirstShotPose = Pose2d(2.359, 4.418, Rotation2d.fromDegrees(152.5214))
+    val fourNoteFirstShotPose = Pose2d(2.359, 4.418, Rotation2d()).angleAtSpeaker()
+    val fourNoteFirstShotPoseReversed = Pose2d(2.159, 6.617, Rotation2d()).angleAtSpeaker()
 
     val topCenterNotePath = Pose2d(5.635, 6.381, Rotation2d(Math.PI))
     val topCenterNoteShotPose = Pose2d(2.944, 6.375, Rotation2d()).angleAtSpeaker()

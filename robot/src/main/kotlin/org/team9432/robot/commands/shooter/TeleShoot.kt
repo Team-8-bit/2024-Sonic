@@ -16,9 +16,9 @@ import org.team9432.robot.led.animations.Rocket
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.shooter.CommandShooter
 
-fun TeleShoot() = ParallelDeadlineCommand(
+fun TeleShoot(shouldNotAim: Boolean = false) = ParallelDeadlineCommand(
     SuppliedCommand {
-        if (!EmergencySwitches.autoAimDisabled) {
+        if (!EmergencySwitches.autoAimDisabled || shouldNotAim) {
             TeleTargetDrive { FieldConstants.speakerPose }
         } else InstantCommand {}
     },

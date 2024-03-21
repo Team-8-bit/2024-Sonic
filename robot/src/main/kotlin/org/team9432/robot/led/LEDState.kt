@@ -73,7 +73,7 @@ object LEDState {
                 rainbow(30.0, 0.5, LEDs.Section.ALL) // This will be the default unless overwritten later
 
                 if (noteInIntake) { // Blink purple when there's a note in the intake
-                    strobe(Color.kPurple, 0.1, LEDs.Section.TOP_BAR)
+                    strobe(Color.kPurple, 0.1, LEDs.Section.ALL)
                 }
 
                 if (speakerShooterReady) {

@@ -29,7 +29,7 @@ class TeleAngleDrive(private val target: () -> Rotation2d): KCommand() {
         val currentTarget = target.invoke().applyFlip()
         Logger.recordOutput("Drive/AngleTarget", currentTarget)
 
-        val maxSpeedMetersPerSecond = if (Controls.slowDrive) 1.0 else 5.0
+        val maxSpeedMetersPerSecond = if (Controls.slowDrive) 2.0 else 5.0
         val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond * Robot.coordinateFlip
         val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond * Robot.coordinateFlip
 

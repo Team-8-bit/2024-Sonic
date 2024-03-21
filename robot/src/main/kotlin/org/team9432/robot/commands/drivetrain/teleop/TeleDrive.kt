@@ -11,11 +11,12 @@ class TeleDrive: KCommand() {
     override val requirements = setOf(Drivetrain)
 
     override fun execute() {
-        val maxSpeedMetersPerSecond = if (Controls.slowDrive) 1.0 else 5.0
+        val maxSpeedMetersPerSecond = if (Controls.slowDrive) 2.0 else 5.0
         val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond * Robot.coordinateFlip
         val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond * Robot.coordinateFlip
 
-        val rSpeed = Math.toRadians(Controls.angle * 360.0)
+        val maxSpeedDegreesPerSecond = if (Controls.slowDrive) 180.0 else 360.0
+        val rSpeed = Math.toRadians(Controls.angle * maxSpeedDegreesPerSecond)
 
         Drivetrain.setSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Gyro.getYaw()))
     }

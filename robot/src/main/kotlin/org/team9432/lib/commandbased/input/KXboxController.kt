@@ -54,5 +54,5 @@ class KXboxController(
 
 
     private fun Double.applyDeadband() = if (abs(this) > joystickDeadband) this else 0.0
-    private fun Double.applySquare() = if (squareJoysticks) this.pow(3).withSign(this) else this
+    private fun Double.applySquare() = if (squareJoysticks) this.pow(2).withSign(this) else this
 }

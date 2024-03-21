@@ -53,7 +53,11 @@ object Controls {
             })
 
         // Shoot Amplifier from speaker
-        driver.b.onTrue(DriveToPosition(AutoConstants.centerNoteOneIntakePose))
+        driver.b.onTrue(SuppliedCommand {
+            if (EmergencySwitches.isAmpForSpeaker) ScoreAmp(12.0)
+            else if (EmergencySwitches.isSubwooferOnly) SubwooferShoot()
+            else TeleShoot(shouldNotAim = true)
+        })
 
         // Reset Drivetrain Heading
         driver.a
