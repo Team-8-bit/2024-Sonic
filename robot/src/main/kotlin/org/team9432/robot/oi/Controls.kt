@@ -5,11 +5,11 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.GenericHID
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.lib.commandbased.input.KXboxController
+import org.team9432.robot.FieldConstants
 import org.team9432.robot.RobotState
-import org.team9432.robot.auto.AutoConstants
 import org.team9432.robot.commands.amp.ScoreAmp
-import org.team9432.robot.commands.drivetrain.DriveToPosition
 import org.team9432.robot.commands.drivetrain.teleop.TeleAngleDrive
+import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.SubwooferShoot
@@ -52,12 +52,9 @@ object Controls {
                 else TeleShoot()
             })
 
-        // Shoot Amplifier from speaker
-        driver.b.onTrue(SuppliedCommand {
-            if (EmergencySwitches.isAmpForSpeaker) ScoreAmp(12.0)
-            else if (EmergencySwitches.isSubwooferOnly) SubwooferShoot()
-            else TeleShoot(shouldNotAim = true)
-        })
+        // Aim at the speaker
+        driver.b
+            .whileTrue(TeleTargetDrive { FieldConstants.speakerPose })
 
         // Reset Drivetrain Heading
         driver.a

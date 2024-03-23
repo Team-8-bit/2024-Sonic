@@ -1,12 +1,9 @@
 package org.team9432.robot.commands.shooter
 
 import org.team9432.lib.commandbased.commands.*
-import org.team9432.robot.oi.EmergencySwitches
-import org.team9432.robot.FieldConstants
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
-import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
 import org.team9432.robot.commands.hood.HoodAimAtSpeaker
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.subsystems.hopper.CommandHopper
@@ -16,13 +13,7 @@ import org.team9432.robot.led.animations.Rocket
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.shooter.CommandShooter
 
-fun TeleShoot(shouldNotAim: Boolean = false) = ParallelDeadlineCommand(
-    SuppliedCommand {
-        if (!EmergencySwitches.autoAimDisabled || shouldNotAim) {
-            TeleTargetDrive { FieldConstants.speakerPose }
-        } else InstantCommand {}
-    },
-
+fun TeleShoot() = ParallelDeadlineCommand(
     HoodAimAtSpeaker(),
 
     deadline = SequentialCommand(
