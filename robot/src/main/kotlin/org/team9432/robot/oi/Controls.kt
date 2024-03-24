@@ -3,13 +3,13 @@ package org.team9432.robot.oi
 
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.GenericHID
-import org.team9432.lib.commandbased.commands.InstantCommand
-import org.team9432.lib.commandbased.commands.SuppliedCommand
-import org.team9432.lib.commandbased.commands.afterSimDelay
-import org.team9432.lib.commandbased.commands.runsWhenDisabled
+import org.team9432.lib.commandbased.commands.*
 import org.team9432.lib.commandbased.input.KXboxController
+import org.team9432.robot.FieldConstants
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.amp.ScoreAmp
+import org.team9432.robot.commands.drivetrain.teleop.TeleAngleDrive
+import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
 import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.SubwooferShoot
@@ -22,11 +22,16 @@ object Controls {
     private val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
 
     private val slowButton = driver.rightBumper
+    private val readyToShootSpeakerButton = driver.rightTrigger.negate()
+    private val readyToShootAmpButton = driver.leftTrigger.negate()
 
     val xSpeed get() = -driver.leftY
     val ySpeed get() = -driver.leftX
     val angle get() = -driver.rightX
     val slowDrive get() = slowButton.asBoolean
+
+    val readyToShootSpeaker get() = readyToShootSpeakerButton.asBoolean
+    val readyToShootAmp get() = readyToShootAmpButton.asBoolean
 
     fun setButtons() {
         // Run Intake
@@ -47,9 +52,9 @@ object Controls {
                 else TeleShoot()
             })
 
-        // Shoot Amplifier from speaker
+        // Aim at the speaker
         driver.b
-            .onTrue(InstantCommand { Gyro.setYaw(Rotation2d(Math.PI)) }.runsWhenDisabled(true))
+            .whileTrue(TeleTargetDrive { FieldConstants.speakerPose })
 
         // Reset Drivetrain Heading
         driver.a
@@ -59,9 +64,14 @@ object Controls {
         driver.y
             .onTrue(stopCommand())
 
-        // Load to amp
+        // Score amp
         driver.leftTrigger
-            .onTrue(ScoreAmp(4.5))
+            .onTrue(
+                ParallelDeadlineCommand(
+                    TeleAngleDrive { Rotation2d.fromDegrees(-90.0) },
+                    deadline = ScoreAmp(4.5)
+                )
+            )
     }
 
     fun setDriverRumble(magnitude: Double) {

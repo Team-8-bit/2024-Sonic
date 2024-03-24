@@ -2,8 +2,6 @@ package org.team9432.robot.subsystems
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Transform2d
-import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj.DriverStation.Alliance
 import org.team9432.Robot
 import org.team9432.Robot.applyFlip
@@ -15,9 +13,8 @@ import kotlin.math.hypot
 
 
 object RobotPosition {
-    fun angleTo(pose: Pose2d, futureTime: Double? = null): Rotation2d {
-        val robotPose = futureTime?.let { getFuturePose(futureTime) } ?: Drivetrain.getPose()
-        return Rotation2d(atan2(pose.y - robotPose.y, pose.x - robotPose.x))
+    fun angleTo(pose: Pose2d, currentPose: Pose2d = Drivetrain.getPose()): Rotation2d {
+        return Rotation2d(atan2(pose.y - currentPose.y, pose.x - currentPose.x))
     }
 
     fun isNear(pose: Pose2d, epsilon: Double): Boolean {
@@ -25,13 +22,13 @@ object RobotPosition {
         return hypot(robotPose.x - pose.x, robotPose.y - pose.y) < epsilon
     }
 
-    fun distanceTo(pose: Pose2d, futureTime: Double? = null): Double {
-        val robotPose = futureTime?.let { getFuturePose(futureTime) } ?: Drivetrain.getPose()
+    fun distanceTo(pose: Pose2d): Double {
+        val robotPose = Drivetrain.getPose()
         return robotPose.translation.getDistance(pose.translation)
     }
 
-    fun distanceToSpeaker(futureTime: Double? = null): Double {
-        return distanceTo(FieldConstants.speakerPose.applyFlip(), futureTime)
+    fun distanceToSpeaker(): Double {
+        return distanceTo(FieldConstants.speakerPose.applyFlip())
     }
 
     fun getSpeakerSide(): SpeakerSide {
@@ -46,21 +43,6 @@ object RobotPosition {
 
     enum class SpeakerSide {
         LEFT, RIGHT, CENTER
-    }
-
-    private fun getMovementIn(futureTime: Double): Transform2d {
-        val currentSpeeds = Drivetrain.getSpeeds()
-        return Transform2d(
-            Translation2d(
-                currentSpeeds.vxMetersPerSecond * futureTime,
-                currentSpeeds.vyMetersPerSecond * futureTime
-            ),
-            Rotation2d.fromRadians(currentSpeeds.omegaRadiansPerSecond * futureTime)
-        )
-    }
-
-    fun getFuturePose(futureTime: Double): Pose2d {
-        return Drivetrain.getPose().transformBy(getMovementIn(futureTime))
     }
 
     fun Double.isCloseTo(other: Double, range: Double) = abs(this - other) < range

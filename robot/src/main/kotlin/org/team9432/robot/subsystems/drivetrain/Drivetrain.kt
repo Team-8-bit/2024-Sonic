@@ -1,8 +1,6 @@
 package org.team9432.robot.subsystems.drivetrain
 
 import edu.wpi.first.math.VecBuilder
-import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
@@ -10,7 +8,6 @@ import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModuleState
-import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
@@ -51,7 +48,7 @@ object Drivetrain: KSubsystem() {
         // Read wheel positions and deltas from each module
         val modulePositions = getModulePositions()
 
-        val speeds = getSpeeds()
+        val speeds = getRobotRelativeSpeeds()
 
         Vision.getEstimatedPose2d()?.let { (pose, timestamp) ->
             if ((maxOf(
@@ -106,7 +103,8 @@ object Drivetrain: KSubsystem() {
 
     fun getPose(): Pose2d = poseEstimator.estimatedPosition
 
-    fun getSpeeds() = kinematics.toChassisSpeeds(*getModuleStates().toTypedArray())
+    fun getRobotRelativeSpeeds() = kinematics.toChassisSpeeds(*getModuleStates().toTypedArray())
+    fun getFieldRelativeSpeeds() = ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeeds(), Gyro.getYaw())
 
     fun getModulePositions() = modules.map { it.position }
     fun getModuleStates() = modules.map { it.state }

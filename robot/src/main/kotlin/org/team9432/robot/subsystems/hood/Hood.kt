@@ -33,7 +33,7 @@ object Hood: KSubsystem() {
         io.updateInputs(inputs)
         Logger.processInputs("Hood", inputs)
 
-        Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, inputs.absoluteAngle.radians, 0.0)))
+        Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, inputs.angle.radians, 0.0)))
 
         if (EmergencySwitches.isSubwooferOnly) {
             io.stop()
@@ -46,6 +46,16 @@ object Hood: KSubsystem() {
         }
 
         Logger.recordOutput("Hood/AngleSetpointDegrees", angle.degrees)
+    }
+
+    fun setVoltage(volts: Double) {
+        if (!EmergencySwitches.isSubwooferOnly) {
+            io.setVoltage(volts)
+        }
+    }
+
+    fun resetAngle() {
+        io.resetEncoder()
     }
 
     fun stop() = io.stop()

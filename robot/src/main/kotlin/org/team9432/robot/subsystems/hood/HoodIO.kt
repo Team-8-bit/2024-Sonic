@@ -6,11 +6,10 @@ import org.team9432.lib.annotation.Logged
 interface HoodIO {
     @Logged
     open class HoodIOInputs {
-        var absoluteAngle = Rotation2d()
-        var relativeAngle = Rotation2d()
+        var angle = Rotation2d()
         var appliedVolts = 0.0
         var currentAmps = 0.0
-        var velocityDegPerSec = 0.0
+        var velocityRadPerSec = 0.0
     }
 
     fun updateInputs(inputs: HoodIOInputs) {}
@@ -24,6 +23,8 @@ interface HoodIO {
     fun setPID(p: Double, i: Double, d: Double) {}
 
     fun setBrakeMode(enabled: Boolean) {}
+
+    fun resetEncoder(newAngle: Rotation2d = Rotation2d()) {}
 
     fun stop() {}
 }

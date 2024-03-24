@@ -40,7 +40,7 @@ object Devices {
     const val HOPPER_AMP_SIDE_BEAMBREAK_PORT = 1
     const val INTAKE_AMP_SIDE_BEAMBREAK_PORT = 6
     const val HOPPER_SPEAKER_SIDE_BEAMBREAK_PORT = 0
-    const val INTAKE_SPEAKER_SIDE_BEAMBREAK_PORT = 7
+    const val INTAKE_SPEAKER_SIDE_BEAMBREAK_PORT = 5
 
     // LEDs
     const val LED_PORT = 1

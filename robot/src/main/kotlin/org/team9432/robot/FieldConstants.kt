@@ -12,12 +12,19 @@ object FieldConstants {
     val midLine = height / 2
 
     private val allianceNoteXCoordinateBlue = Units.feetToMeters(9.0) + Units.inchesToMeters(6.0)
-    private val allianceNoteXSpacing = Units.feetToMeters(4.0) + Units.inchesToMeters(9.0)
+    private val allianceNoteYSpacing = Units.feetToMeters(4.0) + Units.inchesToMeters(9.0)
+    private val centerNoteYSpacing = Units.feetToMeters(5.0) + Units.inchesToMeters(6.0)
 
-    val speakerYAxis = centerLine + allianceNoteXSpacing
-    val speakerPose = Pose2d(0.35, speakerYAxis, Rotation2d())
-
-    val blueAmpNotePose = Pose2d(allianceNoteXCoordinateBlue, centerLine + (allianceNoteXSpacing * 2), Rotation2d())
-    val blueCenterNotePose = Pose2d(allianceNoteXCoordinateBlue, centerLine + allianceNoteXSpacing, Rotation2d())
+    val blueAmpNotePose = Pose2d(allianceNoteXCoordinateBlue, centerLine + (allianceNoteYSpacing * 2), Rotation2d())
+    val blueCenterNotePose = Pose2d(allianceNoteXCoordinateBlue, centerLine + allianceNoteYSpacing, Rotation2d())
     val blueStageNotePose = Pose2d(allianceNoteXCoordinateBlue, centerLine, Rotation2d())
+
+    val centerNoteOnePose = Pose2d(midLine, centerLine + (centerNoteYSpacing * 2), Rotation2d())
+    val centerNoteTwoPose = Pose2d(midLine, centerLine + (centerNoteYSpacing * 1), Rotation2d())
+    val centerNoteThreePose = Pose2d(midLine, centerLine + (centerNoteYSpacing * 0), Rotation2d())
+    val centerNoteFourPose = Pose2d(midLine, centerLine + (centerNoteYSpacing * -1), Rotation2d())
+    val centerNoteFivePose = Pose2d(midLine, centerLine + (centerNoteYSpacing * -2), Rotation2d())
+
+    val speakerYAxis = centerLine + allianceNoteYSpacing
+    val speakerPose = Pose2d(0.35, speakerYAxis, Rotation2d())
 }

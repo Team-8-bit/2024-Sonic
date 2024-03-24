@@ -22,6 +22,9 @@ object LEDState {
     var limelightConnected = false
     var testEmergencySwitchActive = false
 
+    var speakerShooterReady = false
+    var ampShooterReady = false
+
     var animation: LEDAnimation? = null
         set(value) {
             value?.reset()
@@ -58,11 +61,11 @@ object LEDState {
                 }
 
                 if (hasVisionTarget) { // Turn green when the robot can see an apriltag
-                    solid(LEDColors.MAIN_GREEN, LEDs.Section.BOTTOM)
+                    solid(LEDColors.MAIN_GREEN, LEDs.Section.TOP)
                 }
 
                 if (!limelightConnected) { // Lime and red when the limelight isn't connected
-                    breath(Color.kLime, Color.kRed, LEDs.Section.ALL_BUT_TOP, duration = 0.25)
+                    breath(Color.kLime, Color.kRed, LEDs.Section.BOTTOM, duration = 0.75)
                 }
             } else if (DriverStation.isAutonomous()) {
                 strobe(Color.kRed, 0.25, LEDs.Section.ALL)
@@ -70,7 +73,15 @@ object LEDState {
                 rainbow(30.0, 0.5, LEDs.Section.ALL) // This will be the default unless overwritten later
 
                 if (noteInIntake) { // Blink purple when there's a note in the intake
-                    strobe(Color.kPurple, 0.1, LEDs.Section.TOP + LEDs.Section.TOP_BAR)
+                    strobe(Color.kPurple, 0.1, LEDs.Section.ALL)
+                }
+
+                if (speakerShooterReady) {
+                    strobe(Color.kLime, 0.25, LEDs.Section.SPEAKER)
+                }
+                if (ampShooterReady) {
+                    if (Robot.alliance == DriverStation.Alliance.Red) strobe(Color.kLime, 0.25, LEDs.Section.LEFT)
+                    else strobe(Color.kLime, 0.25, LEDs.Section.RIGHT)
                 }
             }
         }

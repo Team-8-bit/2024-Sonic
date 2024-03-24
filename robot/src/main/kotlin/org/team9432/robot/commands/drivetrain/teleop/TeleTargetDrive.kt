@@ -9,10 +9,9 @@ import org.team9432.Robot
 import org.team9432.Robot.applyFlip
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.robot.oi.Controls
-import org.team9432.robot.commands.CommandConstants.SHOOT_ON_MOVE_SECS
+import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.sensors.gyro.Gyro
 
 class TeleTargetDrive(private val target: () -> Pose2d): KCommand() {
     override val requirements = setOf(Drivetrain)
@@ -31,11 +30,11 @@ class TeleTargetDrive(private val target: () -> Pose2d): KCommand() {
         val currentTarget = target.invoke().applyFlip()
         Logger.recordOutput("Drive/AngleTarget", currentTarget)
 
-        val maxSpeedMetersPerSecond = if (Controls.slowDrive) 1.0 else 5.0
+        val maxSpeedMetersPerSecond = if (Controls.slowDrive) 2.0 else 5.0
         val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond * Robot.coordinateFlip
         val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond * Robot.coordinateFlip
 
-        pid.setGoal(RobotPosition.angleTo(currentTarget, SHOOT_ON_MOVE_SECS).degrees)
+        pid.setGoal(RobotPosition.angleTo(currentTarget).degrees)
         val rSpeed = pid.calculate(Gyro.getYaw().degrees)
 
         val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Gyro.getYaw())
