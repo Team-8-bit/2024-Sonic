@@ -2,7 +2,7 @@ package org.team9432
 
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
-import org.team9432.lib.logger.Logger
+import org.team9432.lib.advantagekit.Logger
 import org.team9432.robot.auto.AutoBuilder
 import org.team9432.robot.auto.AutoChooser
 import org.team9432.robot.commands.DefaultCommands

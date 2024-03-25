@@ -1,4 +1,4 @@
-package org.team9432.lib.logger
+package org.team9432.lib.advantagekit
 
 import edu.wpi.first.wpilibj.PowerDistribution
 import org.littletonrobotics.junction.LogFileUtil
