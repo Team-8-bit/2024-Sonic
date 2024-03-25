@@ -5,9 +5,12 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import org.team9432.lib.geometry.Pose2d
 import org.team9432.lib.geometry.Translation2d
+import org.team9432.lib.unit.inMeters
 import org.team9432.lib.unit.meters
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.subsystems.RobotPosition
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 object AutoConstants {
     val fourNoteFirstShotPose = Translation2d(2.359.meters, 4.418.meters).angleAtSpeaker()
@@ -20,7 +23,7 @@ object AutoConstants {
     val bottomCenterNoteShotPose = Pose2d(2.0.meters, 3.5.meters, Rotation2d()).angleAtSpeaker()
 
     private val targetNoteOffsetDistance = 0.8.meters
-    private val angledIntakeDistance = (targetNoteOffsetDistance.pow(2) / 2).sqrt()
+    private val angledIntakeDistance = sqrt(targetNoteOffsetDistance.inMeters.pow(2) / 2).meters
 
     val ampNoteAngledIntakePose = Pose2d(FieldConstants.blueAmpNotePose.plus(Translation2d(-angledIntakeDistance, -angledIntakeDistance)), Rotation2d.fromDegrees(-135.0))
     val ampNoteIntakePose = Pose2d(FieldConstants.blueAmpNotePose.plus(Translation2d(-targetNoteOffsetDistance, 0.0.meters)), Rotation2d.fromDegrees(180.0))

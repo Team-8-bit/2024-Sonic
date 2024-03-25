@@ -1,7 +1,5 @@
 package org.team9432.lib.unit
 
-import edu.wpi.first.math.util.Units
-
 data object Meter: UnitType
 
 typealias Length = Value<Meter>
