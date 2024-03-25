@@ -1,20 +1,18 @@
 package org.team9432.robot
 
 import org.littletonrobotics.junction.Logger
-import org.team9432.lib.commandbased.KCommandScheduler
+import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.robot.sensors.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
 
-object RobotState {
-    init {
-        KCommandScheduler.addPeriodic {
-            Logger.recordOutput("RobotState/NotePosition", notePosition.name)
-            Logger.recordOutput("RobotState/MovementDirection", getMovementDirection())
-            Logger.recordOutput("Drivetrain/SpeakerDistance", RobotPosition.distanceToSpeaker())
-            Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerPose)
-        }
+object RobotState: KPeriodic() {
+    override fun periodic() {
+        Logger.recordOutput("RobotState/NotePosition", notePosition.name)
+        Logger.recordOutput("RobotState/MovementDirection", getMovementDirection())
+        Logger.recordOutput("Drivetrain/SpeakerDistance", RobotPosition.distanceToSpeaker())
+        Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerPose)
     }
 
     fun noteInAmpSideIntakeBeambreak() = !Beambreaks.getIntakeAmpSide()

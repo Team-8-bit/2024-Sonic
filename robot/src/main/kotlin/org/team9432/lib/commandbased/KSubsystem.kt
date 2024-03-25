@@ -6,7 +6,6 @@ abstract class KSubsystem {
         KCommandScheduler.registerSubsystem(this)
     }
 
-    /** Is always called, used for mainly for logging */
     open fun periodic() {}
 
     var defaultCommand: KCommand?

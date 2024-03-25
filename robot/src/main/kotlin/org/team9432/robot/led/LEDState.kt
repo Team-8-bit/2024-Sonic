@@ -3,7 +3,7 @@ package org.team9432.robot.led
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.util.Color
 import org.team9432.Robot
-import org.team9432.lib.commandbased.KCommandScheduler
+import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.robot.RobotState
 import org.team9432.robot.led.LEDModes.breath
 import org.team9432.robot.led.LEDModes.pulse
@@ -14,7 +14,7 @@ import org.team9432.robot.led.animations.LEDAnimation
 import org.team9432.robot.oi.EmergencySwitches
 import org.team9432.robot.sensors.vision.Vision
 
-object LEDState {
+object LEDState: KPeriodic() {
     var allianceColor = Color.kWhite
 
     var noteInIntake = false
@@ -30,10 +30,6 @@ object LEDState {
             value?.reset()
             field = value
         }
-
-    init {
-        KCommandScheduler.addPeriodic { updateState() }
-    }
 
     fun updateBuffer() {
         if (animation != null) {
@@ -87,7 +83,7 @@ object LEDState {
         }
     }
 
-    private fun updateState() {
+    override fun periodic() {
         noteInIntake = RobotState.notePosition.isIntake
 
         hasVisionTarget = Vision.hasVisionTarget()
