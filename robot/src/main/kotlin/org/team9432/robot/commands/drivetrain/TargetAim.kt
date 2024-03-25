@@ -3,6 +3,7 @@ package org.team9432.robot.commands.drivetrain
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import org.littletonrobotics.junction.Logger
@@ -17,7 +18,7 @@ import kotlin.math.abs
 class TargetAim(
     private val side: MechanismSide = MechanismSide.SPEAKER,
     private val toleranceDegrees: Double = 3.0,
-    private val target: () -> Pose2d,
+    private val target: () -> Translation2d,
 ): KCommand() {
     override val requirements = setOf(Drivetrain)
 
