@@ -12,30 +12,6 @@ import com.squareup.kotlinpoet.ksp.writeTo
 class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor {
     private val logTableType = ClassName("org.littletonrobotics.junction", "LogTable")
     private val loggableInputsType = ClassName("org.littletonrobotics.junction.inputs", "LoggableInputs")
-    private val loggableTypes = listOf(
-        "kotlin.ByteArray",
-        "kotlin.Boolean",
-        "kotlin.Long",
-        "kotlin.Float",
-        "kotlin.Double",
-        "kotlin.String",
-        "kotlin.BooleanArray",
-        "kotlin.LongArray",
-        "kotlin.FloatArray",
-        "kotlin.DoubleArray",
-        "kotlin.IntArray",
-        "kotlin.Array",
-        "edu.wpi.first.math.geometry.Rotation2d",
-        "edu.wpi.first.math.geometry.Pose3d",
-    )
-
-    private val arrayTypes = listOf(
-        "edu.wpi.first.math.geometry.Rotation2d",
-        "edu.wpi.first.math.geometry.Pose3d",
-    )
-    private val destructureTypes = listOf(
-        "kotlin.Array",
-    )
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val annotatedClasses = resolver.getSymbolsWithAnnotation("org.team9432.lib.annotation.Logged").filterIsInstance<KSClassDeclaration>()
@@ -63,52 +39,19 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor
             val simpleName = property.simpleName.asString()
             val logName = simpleName.substring(0, 1).uppercase() + simpleName.substring(1)
 
-            val fieldType = property.type.resolve().toClassName().canonicalName
             if (!property.isMutable) throw Exception("""[Logged] Please ensure the class you are annotating (${classDeclaration.simpleName.asString()}) has only mutable properties!""")
-            if (!loggableTypes.contains(fieldType)) throw Exception("""[Logged] Unknown type for "$simpleName" in "$className" ("$fieldType" is not supported)""")
 
-            when {
-                destructureTypes.contains(fieldType) -> {
-                    toLogBuilder.addCode(
-                        """ |table.put("$logName", *$simpleName)
-                            |
-                        """.trimMargin()
-                    )
-                }
-                else -> {
-                    toLogBuilder.addCode(
-                        """ |table.put("$logName", $simpleName)
-                            |
-                        """.trimMargin()
-                    )
-                }
-            }
+            toLogBuilder.addCode(
+                """ |table.kPut("$logName", $simpleName)
+                    |
+                """.trimMargin()
+            )
 
-            when {
-                arrayTypes.contains(fieldType) -> {
-                    fromLogBuilder.addCode(
-                        """ |$simpleName = table.get("$logName", $simpleName)[0]
-                            |
-                        """.trimMargin()
-                    )
-                }
-
-                destructureTypes.contains(fieldType) -> {
-                    fromLogBuilder.addCode(
-                        """ |$simpleName = table.get("$logName", *$simpleName)
-                            |
-                        """.trimMargin()
-                    )
-                }
-
-                else -> {
-                    fromLogBuilder.addCode(
-                        """ |$simpleName = table.get("$logName", $simpleName)
-                            |
-                        """.trimMargin()
-                    )
-                }
-            }
+            fromLogBuilder.addCode(
+                """ |$simpleName = table.kGet("$logName", $simpleName)
+                    |
+                """.trimMargin()
+            )
         }
 
         val type = TypeSpec.classBuilder(newClassName)
@@ -118,7 +61,7 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor
             .addFunction(fromLogBuilder.build())
 
 
-        val file = FileSpec.builder(packageName, newClassName).addType(type.build()).build()
+        val file = FileSpec.builder(packageName, newClassName).addType(type.build()).indent("    ").addImport("org.team9432.lib.advantagekit", listOf("kGet", "kPut")).build()
         file.writeTo(codeGenerator, Dependencies(true, classDeclaration.containingFile!!))
     }
 }
