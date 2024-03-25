@@ -14,7 +14,6 @@ object RobotState {
             Logger.recordOutput("RobotState/MovementDirection", getMovementDirection())
             Logger.recordOutput("Drivetrain/SpeakerDistance", RobotPosition.distanceToSpeaker())
             Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerPose)
-            Logger.recordOutput("RobotState/IsUsingAprilTags", isUsingApriltags)
         }
     }
 
@@ -39,19 +38,16 @@ object RobotState {
     }
 
     fun getMovementDirection(): MechanismSide {
-        val speeds = Drivetrain.getSpeeds()
+        val speeds = Drivetrain.getRobotRelativeSpeeds()
         if (speeds.vxMetersPerSecond > 0) return MechanismSide.SPEAKER else return MechanismSide.AMP
     }
 
     fun shouldRunOneIntake(): Boolean {
-        val speeds = Drivetrain.getSpeeds()
+        val speeds = Drivetrain.getRobotRelativeSpeeds()
         return maxOf(abs(speeds.vxMetersPerSecond), abs(speeds.vyMetersPerSecond)) > 1
     }
 
     var notePosition = NotePosition.NONE
-
-    var isUsingApriltags = true
-    var autoIsUsingApriltags = true
     var hasRemainingAutoNote = false
 
     enum class NotePosition {

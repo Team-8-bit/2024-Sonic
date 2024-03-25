@@ -59,7 +59,6 @@ object Gyro: KSubsystem() {
     fun setYaw(angle: Rotation2d) {
         disconnectedAngle = angle
         io.setYaw(angle.degrees)
-        Drivetrain.resetAngleController(angle)
         Drivetrain.resetPosition(Drivetrain.getPose(), angle)
     }
 }

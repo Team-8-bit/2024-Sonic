@@ -12,20 +12,20 @@ import org.team9432.robot.auto.subsections.AlignToIntakeNote
 import org.team9432.robot.auto.subsections.IntakeNote
 import org.team9432.robot.commands.drivetrain.DriveToPosition
 
-fun FourAllianceNote() = SequentialCommand(
+fun FourAllianceNoteReversed() = SequentialCommand(
     InitAuto(Rotation2d.fromDegrees(180.0)),
     ParallelCommand(
         CollectPreloadAndStartShooter(),
-        DriveToPosition(AutoConstants.fourNoteFirstShotPose)
+        DriveToPosition(AutoConstants.fourNoteFirstShotPoseReversed)
     ),
     AutoShoot(),
-    IntakeNote(AllianceNote.STAGE),
+    IntakeNote(AllianceNote.AMP),
     FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
     AutoShoot(),
     IntakeNote(AllianceNote.CENTER),
-    FinishIntakingThen(AlignToIntakeNote(AllianceNote.AMP)),
+    FinishIntakingThen(AlignToIntakeNote(AllianceNote.STAGE)),
     AutoShoot(),
-    IntakeNote(AllianceNote.AMP),
+    IntakeNote(AllianceNote.STAGE),
     FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
     AutoShoot(),
     ExitAuto(),

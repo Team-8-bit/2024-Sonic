@@ -13,18 +13,17 @@ import org.team9432.robot.led.LEDModes.strobe
 import org.team9432.robot.led.animations.LEDAnimation
 import org.team9432.robot.oi.EmergencySwitches
 import org.team9432.robot.sensors.vision.Vision
-import org.team9432.robot.subsystems.climber.LeftClimber
-import org.team9432.robot.subsystems.climber.RightClimber
 
 object LEDState {
     var allianceColor = Color.kWhite
 
     var noteInIntake = false
-    var leftClimberAtLimit = false
-    var rightClimberAtLimit = false
     var hasVisionTarget = false
     var limelightConnected = false
     var testEmergencySwitchActive = false
+
+    var speakerShooterReady = false
+    var ampShooterReady = false
 
     var animation: LEDAnimation? = null
         set(value) {
@@ -62,11 +61,11 @@ object LEDState {
                 }
 
                 if (hasVisionTarget) { // Turn green when the robot can see an apriltag
-                    solid(LEDColors.MAIN_GREEN, LEDs.Section.BOTTOM)
+                    solid(LEDColors.MAIN_GREEN, LEDs.Section.TOP)
                 }
 
                 if (!limelightConnected) { // Lime and red when the limelight isn't connected
-                    breath(Color.kLime, Color.kRed, LEDs.Section.ALL_BUT_TOP, duration = 0.25)
+                    breath(Color.kLime, Color.kRed, LEDs.Section.BOTTOM, duration = 0.75)
                 }
             } else if (DriverStation.isAutonomous()) {
                 strobe(Color.kRed, 0.25, LEDs.Section.ALL)
@@ -74,14 +73,15 @@ object LEDState {
                 rainbow(30.0, 0.5, LEDs.Section.ALL) // This will be the default unless overwritten later
 
                 if (noteInIntake) { // Blink purple when there's a note in the intake
-                    strobe(Color.kPurple, 0.1, LEDs.Section.TOP + LEDs.Section.TOP_BAR)
+                    strobe(Color.kPurple, 0.1, LEDs.Section.ALL)
                 }
 
-                if (leftClimberAtLimit) { // When a climber is running into the limit, set that side to red
-                    solid(Color.kRed, LEDs.Section.LEFT)
+                if (speakerShooterReady) {
+                    strobe(Color.kLime, 0.25, LEDs.Section.SPEAKER)
                 }
-                if (rightClimberAtLimit) {
-                    solid(Color.kRed, LEDs.Section.RIGHT)
+                if (ampShooterReady) {
+                    if (Robot.alliance == DriverStation.Alliance.Red) strobe(Color.kLime, 0.25, LEDs.Section.LEFT)
+                    else strobe(Color.kLime, 0.25, LEDs.Section.RIGHT)
                 }
             }
         }
@@ -89,8 +89,6 @@ object LEDState {
 
     private fun updateState() {
         noteInIntake = RobotState.notePosition.isIntake
-        leftClimberAtLimit = LeftClimber.atLimit && LeftClimber.hasVoltageApplied
-        rightClimberAtLimit = RightClimber.atLimit && RightClimber.hasVoltageApplied
 
         hasVisionTarget = Vision.hasVisionTarget()
         limelightConnected = Vision.connected

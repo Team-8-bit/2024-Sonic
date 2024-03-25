@@ -18,7 +18,7 @@ fun MoveToSide(side: MechanismSide) = SuppliedCommand {
         SuppliedCommand {
             when (side) {
                 MechanismSide.AMP -> CommandHopper.startLoadTo(side, 2.0)
-                MechanismSide.SPEAKER -> CommandHopper.startLoadTo(side, 1.0)
+                MechanismSide.SPEAKER -> CommandHopper.startLoadTo(side, 1.5)
             }
         },
         // Let the hopper spin up a bit
