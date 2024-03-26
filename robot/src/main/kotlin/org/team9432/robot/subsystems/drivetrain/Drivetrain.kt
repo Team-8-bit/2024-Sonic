@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
 import org.team9432.LOOP_PERIOD_SECS
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.unit.*
 import org.team9432.lib.util.SwerveUtil
 import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.sensors.vision.Vision
@@ -29,8 +30,8 @@ object Drivetrain: KSubsystem() {
         kinematics = SwerveDriveKinematics(*MODULE_TRANSLATIONS)
         poseEstimator = SwerveDrivePoseEstimator(
             kinematics, Rotation2d(), getModulePositions().toTypedArray(), Pose2d(),
-            VecBuilder.fill(Units.inchesToMeters(3.0), Units.inchesToMeters(3.0), Math.toDegrees(4.0)),
-            VecBuilder.fill(Units.inchesToMeters(8.0), Units.inchesToMeters(8.0), Math.toDegrees(20.0))
+            VecBuilder.fill(3.0.inches.inMeters, 3.0.inches.inMeters, 4.0.degrees.inDegrees),
+            VecBuilder.fill(8.0.inches.inMeters, 8.0.inches.inMeters, 20.0.degrees.inDegrees)
         )
         for (m in modules) m.setBrakeMode(true)
     }
@@ -92,10 +93,10 @@ object Drivetrain: KSubsystem() {
     fun stop() = setSpeeds(ChassisSpeeds())
     fun stopAndX() {
         val headings = listOf(
-            Rotation2d.fromDegrees(-45.0),
-            Rotation2d.fromDegrees(45.0),
-            Rotation2d.fromDegrees(45.0),
-            Rotation2d.fromDegrees(-45.0)
+            -45.0.degrees.asRotation2d,
+            45.0.degrees.asRotation2d,
+            45.0.degrees.asRotation2d,
+            -45.0.degrees.asRotation2d
         )
         kinematics.resetHeadings(*headings.toTypedArray())
         stop()

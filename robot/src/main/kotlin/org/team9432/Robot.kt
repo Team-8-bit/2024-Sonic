@@ -2,6 +2,7 @@ package org.team9432
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
 import org.littletonrobotics.junction.LoggedRobot
@@ -29,6 +30,7 @@ object Robot: LoggedRobot() {
     val rotationOffset: Rotation2d get() = if (alliance == Alliance.Blue) Rotation2d() else Rotation2d.fromDegrees(180.0)
 
     fun Pose2d.applyFlip() = if (alliance == Alliance.Blue) this else PoseUtil.flip(this)
+    fun Translation2d.applyFlip() = if (alliance == Alliance.Blue) this else PoseUtil.flip(this)
     fun Rotation2d.applyFlip() = if (alliance == Alliance.Blue) this else PoseUtil.flip(this)
 
     override fun robotInit() = Init.initRobot()

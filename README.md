@@ -44,3 +44,4 @@ _Code for Team 8-Bit's 2024 robot, Sonic_
 - Team 95's drivetrain skew fix
 - Team 6328's led control
 - Team 254's motor factories
+- Team 4099's unit library
