@@ -19,13 +19,13 @@ import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
 import org.team9432.lib.constants.SwerveConstants.MK4I_L2_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
-import org.team9432.lib.motors.neo.NEO
+import org.team9432.lib.motors.neo.Neo
 import org.team9432.lib.wrappers.Spark
 import kotlin.math.cos
 
 class Module(private val module: ModuleConfig) {
-    private val drive = NEO(getDriveConfig())
-    private val steer = NEO(getSteerConfig())
+    private val drive = Neo(getDriveConfig())
+    private val steer = Neo(getSteerConfig())
     private val cancoder = CANcoder(module.encoderID)
 
     private val driveFeedforward: SimpleMotorFeedforward
@@ -136,8 +136,8 @@ class Module(private val module: ModuleConfig) {
     val position get() = SwerveModulePosition(positionMeters, getAngle())
     val state get() = SwerveModuleState(velocityMetersPerSec, getAngle())
 
-    private fun getDriveConfig(): NEO.Config {
-        return NEO.Config(
+    private fun getDriveConfig(): Neo.Config {
+        return Neo.Config(
             canID = module.driveID,
             motorType = Spark.MotorType.VORTEX,
             name = "${module.name} Drive Motor",
@@ -152,8 +152,8 @@ class Module(private val module: ModuleConfig) {
         )
     }
 
-    private fun getSteerConfig(): NEO.Config {
-        return NEO.Config(
+    private fun getSteerConfig(): Neo.Config {
+        return Neo.Config(
             canID = module.steerID,
             motorType = Spark.MotorType.NEO,
             name = "${module.name} Steer Motor",

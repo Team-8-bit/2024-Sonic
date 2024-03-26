@@ -11,13 +11,13 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
-import org.team9432.lib.motors.neo.NEO
+import org.team9432.lib.motors.neo.Neo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
 import org.team9432.robot.oi.EmergencySwitches
 
 object Hood: KSubsystem() {
-    private val motor = NEO(getConfig())
+    private val motor = Neo(getConfig())
 
     private val ffTable = InterpolatingDoubleTreeMap()
 
@@ -60,7 +60,7 @@ object Hood: KSubsystem() {
 
     fun stop() = motor.stop()
 
-    private fun getConfig() = NEO.Config(
+    private fun getConfig() = Neo.Config(
         canID = Devices.HOOD_ID,
         motorType = Spark.MotorType.NEO,
         name = "Hood Motor",

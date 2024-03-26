@@ -7,13 +7,13 @@ import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.wrappers.Spark
 
-class NEO(private val config: Config): KPeriodic() {
+class Neo(private val config: Config): KPeriodic() {
     private val io: NeoIO
     val inputs = LoggedNEOIOInputs()
 
     init {
         io = when (Robot.mode) {
-            REAL, REPLAY -> NeoIONeo(config)
+            REAL, REPLAY -> NeoIOReal(config)
             SIM -> NeoIOSim(config)
         }
     }

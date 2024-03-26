@@ -10,7 +10,7 @@ import org.team9432.LOOP_PERIOD_SECS
 import org.team9432.lib.wrappers.Spark
 import kotlin.math.abs
 
-class NeoIOSim(config: NEO.Config): NeoIO {
+class NeoIOSim(config: Neo.Config): NeoIO {
     private val sim = DCMotorSim(
         when (config.motorType) {
             Spark.MotorType.NEO -> DCMotor.getNEO(1)
@@ -18,7 +18,7 @@ class NeoIOSim(config: NEO.Config): NeoIO {
         }, config.gearRatio, config.simJkgMetersSquared
     )
 
-    private var controlMode = NEO.ControlMode.VOLTAGE
+    private var controlMode = Neo.ControlMode.VOLTAGE
 
     private val pid = PIDController(0.0, 0.0, 0.0)
 
@@ -26,12 +26,12 @@ class NeoIOSim(config: NEO.Config): NeoIO {
 
     override fun updateInputs(inputs: NeoIO.NEOIOInputs) {
         when (controlMode) {
-            NEO.ControlMode.VOLTAGE -> {}
-            NEO.ControlMode.POSITION -> {
+            Neo.ControlMode.VOLTAGE -> {}
+            Neo.ControlMode.POSITION -> {
                 appliedVolts = MathUtil.clamp(pid.calculate(sim.angularPositionRad), -12.0, 12.0)
                 sim.setInputVoltage(appliedVolts)
             }
-            NEO.ControlMode.VELOCITY -> {
+            Neo.ControlMode.VELOCITY -> {
                 appliedVolts = MathUtil.clamp(pid.calculate(sim.angularVelocityRPM), -12.0, 12.0)
                 sim.setInputVoltage(appliedVolts)
             }
@@ -46,18 +46,18 @@ class NeoIOSim(config: NEO.Config): NeoIO {
     }
 
     override fun setVoltage(volts: Double) {
-        controlMode = NEO.ControlMode.VOLTAGE
+        controlMode = Neo.ControlMode.VOLTAGE
         appliedVolts = MathUtil.clamp(volts, -12.0, 12.0)
         sim.setInputVoltage(appliedVolts)
     }
 
     override fun setAngle(angle: Rotation2d) {
-        controlMode = NEO.ControlMode.POSITION
+        controlMode = Neo.ControlMode.POSITION
         pid.setpoint = angle.radians
     }
 
     override fun setSpeed(rpm: Int) {
-        controlMode = NEO.ControlMode.VELOCITY
+        controlMode = Neo.ControlMode.VELOCITY
         pid.setpoint = rpm.toDouble()
     }
 
