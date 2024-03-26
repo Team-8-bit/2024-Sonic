@@ -5,18 +5,19 @@ import com.ctre.phoenix6.StatusSignal
 import com.ctre.phoenix6.configs.CANcoderConfiguration
 import com.ctre.phoenix6.hardware.CANcoder
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue
-import com.revrobotics.*
 import com.revrobotics.CANSparkBase.IdleMode
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
 import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
+import org.team9432.lib.wrappers.SparkMax
+import org.team9432.lib.wrappers.applyAndErrorCheck
 import org.team9432.robot.subsystems.drivetrain.ModuleIO.ModuleIOInputs
 
 
 class ModuleIONeo(override val module: ModuleIO.Module): ModuleIO {
-    private val drive = CANSparkFlex(module.driveID, CANSparkLowLevel.MotorType.kBrushless)
-    private val steer = CANSparkMax(module.steerID, CANSparkLowLevel.MotorType.kBrushless)
+    private val drive = SparkMax(module.driveID, "${module.name} Drive Motor")
+    private val steer = SparkMax(module.steerID, "${module.name} Steer Motor")
     private val cancoder = CANcoder(module.encoderID)
     private val driveEncoder = drive.encoder
     private val steerEncoder = steer.encoder
@@ -24,58 +25,28 @@ class ModuleIONeo(override val module: ModuleIO.Module): ModuleIO {
     private val steerAbsolutePosition: StatusSignal<Double>
 
     init {
-        drive.restoreFactoryDefaults()
-        steer.restoreFactoryDefaults()
+        val driveConfig = SparkMax.Config(
+            inverted = module.driveInverted,
+            idleMode = IdleMode.kBrake,
+            smartCurrentLimit = 50,
+        )
 
-        for (i in 0..88) {
-            drive.inverted = module.driveInverted
-            steer.inverted = module.steerInverted
+        val steerInverted = SparkMax.Config(
+            inverted = module.steerInverted,
+            idleMode = IdleMode.kBrake,
+            smartCurrentLimit = 30,
+        )
 
-            if (drive.inverted == module.driveInverted && steer.inverted == module.steerInverted) break
-        }
+        drive.applyConfig(driveConfig)
+        steer.applyConfig(steerInverted)
 
-        for (i in 0..88) {
-            val errors = mutableListOf<REVLibError>()
-            errors += drive.setSmartCurrentLimit(50)
-            errors += steer.setSmartCurrentLimit(30)
+        applyAndErrorCheck("Drive Position") { driveEncoder.setPosition(0.0) }
+        applyAndErrorCheck("Drive Measurement Period") { driveEncoder.setMeasurementPeriod(10) }
+        applyAndErrorCheck("Drive Average Depth") { driveEncoder.setAverageDepth(2) }
 
-            errors += drive.enableVoltageCompensation(12.0)
-            errors += steer.enableVoltageCompensation(12.0)
-
-            errors += driveEncoder.setPosition(0.0)
-            errors += driveEncoder.setMeasurementPeriod(10)
-            errors += driveEncoder.setAverageDepth(2)
-
-            errors += steerEncoder.setPosition(0.0)
-            errors += steerEncoder.setMeasurementPeriod(10)
-            errors += steerEncoder.setAverageDepth(2)
-
-            errors += drive.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-            errors += drive.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-
-            errors += steer.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-            errors += steer.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-
-            errors += drive.setIdleMode(IdleMode.kBrake)
-            errors += steer.setIdleMode(IdleMode.kBrake)
-
-            errors += drive.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
-            errors += drive.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
-            errors += drive.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus4, 1000)
-            errors += drive.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus5, 1000)
-            errors += drive.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus6, 1000)
-
-            errors += steer.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
-            errors += steer.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
-            errors += steer.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus4, 1000)
-            errors += steer.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus5, 1000)
-            errors += steer.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus6, 1000)
-
-            if (errors.all { it == REVLibError.kOk }) break
-        }
-
-        drive.burnFlash()
-        steer.burnFlash()
+        applyAndErrorCheck("Steer Position") { steerEncoder.setPosition(0.0) }
+        applyAndErrorCheck("Steer Measurement Period") { steerEncoder.setMeasurementPeriod(10) }
+        applyAndErrorCheck("Steer Average Depth") { steerEncoder.setAverageDepth(2) }
 
         val cancoderConfig = CANcoderConfiguration()
         cancoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1
@@ -90,16 +61,13 @@ class ModuleIONeo(override val module: ModuleIO.Module): ModuleIO {
         BaseStatusSignal.refreshAll(steerAbsolutePosition)
 
         inputs.drivePositionRad = Units.rotationsToRadians(driveEncoder.position) / MK4I_L3_DRIVE_REDUCTION
-        inputs.driveVelocityRadPerSec =
-            Units.rotationsPerMinuteToRadiansPerSecond(driveEncoder.velocity) / MK4I_L3_DRIVE_REDUCTION
+        inputs.driveVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(driveEncoder.velocity) / MK4I_L3_DRIVE_REDUCTION
         inputs.driveAppliedVolts = drive.getAppliedOutput() * drive.getBusVoltage()
         inputs.driveCurrentAmps = drive.getOutputCurrent()
 
-        inputs.steerAbsolutePosition =
-            Rotation2d.fromRotations(steerAbsolutePosition.valueAsDouble).minus(module.encoderOffset)
+        inputs.steerAbsolutePosition = Rotation2d.fromRotations(steerAbsolutePosition.valueAsDouble).minus(module.encoderOffset)
         inputs.steerPosition = Rotation2d.fromRotations(steerEncoder.position / MK4I_STEER_REDUCTION)
-        inputs.steerVelocityRadPerSec =
-            (Units.rotationsPerMinuteToRadiansPerSecond(steerEncoder.velocity) / MK4I_STEER_REDUCTION)
+        inputs.steerVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(steerEncoder.velocity) / MK4I_STEER_REDUCTION
         inputs.steerAppliedVolts = steer.getAppliedOutput() * steer.getBusVoltage()
         inputs.steerCurrentAmps = steer.getOutputCurrent()
     }

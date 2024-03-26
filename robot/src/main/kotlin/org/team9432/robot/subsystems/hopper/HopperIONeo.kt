@@ -13,8 +13,7 @@ class HopperIONeo: HopperIO {
         val config = SparkMax.Config(
             inverted = true,
             idleMode = IdleMode.kBrake,
-            smartCurrentLimit = 60,
-            voltageCompensation = 12.0
+            smartCurrentLimit = 60
         )
 
         spark.applyConfig(config)

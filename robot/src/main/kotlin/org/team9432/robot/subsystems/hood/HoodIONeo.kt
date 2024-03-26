@@ -27,8 +27,7 @@ class HoodIONeo: HoodIO {
         val config = SparkMax.Config(
             inverted = true,
             idleMode = IdleMode.kBrake,
-            smartCurrentLimit = 20,
-            voltageCompensation = 12.0
+            smartCurrentLimit = 20
         )
 
         spark.applyConfig(config)
@@ -69,7 +68,7 @@ class HoodIONeo: HoodIO {
     }
 
     override fun setBrakeMode(enabled: Boolean) {
-        spark.applySetting("Idle Mode") { spark.setIdleMode(if (enabled) IdleMode.kBrake else IdleMode.kCoast) }
+        spark.applyAndErrorCheck("Idle Mode") { spark.setIdleMode(if (enabled) IdleMode.kBrake else IdleMode.kCoast) }
     }
 
     override fun stop() = setVoltage(0.0)
