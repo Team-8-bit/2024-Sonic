@@ -1,29 +1,28 @@
 package org.team9432.robot.subsystems.amp
 
-import org.littletonrobotics.junction.Logger
-import org.team9432.Robot
-import org.team9432.Robot.Mode.*
+import com.revrobotics.CANSparkBase
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.motors.neo.Neo
+import org.team9432.lib.wrappers.Spark
+import org.team9432.robot.Devices
 
 object Amp: KSubsystem() {
-    private val io: AmpIO
-    private val inputs = LoggedAmpIOInputs()
+    private val motor = Neo(getConfig())
 
-    init {
-        io = when (Robot.mode) {
-            REAL, REPLAY -> AmpIONeo()
-            SIM -> AmpIOSim()
-        }
-    }
+    fun setVoltage(volts: Double) = motor.setVoltage(volts)
+    fun stop() = motor.stop()
 
-    override fun periodic() {
-        io.updateInputs(inputs)
-        Logger.processInputs("Amp", inputs)
-    }
-
-    fun setVoltage(volts: Double) {
-        io.setVoltage(volts)
-    }
-
-    fun stop() = io.stop()
+    private fun getConfig() = Neo.Config(
+        canID = Devices.AMP_ID,
+        motorType = Spark.MotorType.NEO,
+        name = "Amp Motor",
+        logName = "Amp",
+        gearRatio = 1.0,
+        simJkgMetersSquared = 0.003,
+        sparkConfig = Spark.Config(
+            inverted = true,
+            idleMode = CANSparkBase.IdleMode.kCoast,
+            smartCurrentLimit = 60
+        )
+    )
 }

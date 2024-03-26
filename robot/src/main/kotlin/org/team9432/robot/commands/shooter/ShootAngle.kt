@@ -13,7 +13,7 @@ import org.team9432.robot.led.LEDState
 import org.team9432.robot.led.animations.ChargeUp
 import org.team9432.robot.subsystems.shooter.CommandShooter
 
-fun ShootAngle(rpmFast: Double, rpmSlow: Double, angle: Rotation2d) = ParallelDeadlineCommand(
+fun ShootAngle(rpmFast: Int, rpmSlow: Int, angle: Rotation2d) = ParallelDeadlineCommand(
     // Aim the hood and spin up the shooter
     CommandHood.followAngle { angle },
 

@@ -1,0 +1,66 @@
+package org.team9432.lib.motors.neo
+
+import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.system.plant.DCMotor
+import edu.wpi.first.math.util.Units
+import edu.wpi.first.wpilibj.simulation.DCMotorSim
+import org.team9432.LOOP_PERIOD_SECS
+import org.team9432.lib.wrappers.Spark
+import kotlin.math.abs
+
+class NeoIOSim(config: Neo.Config): NeoIO {
+    private val sim = DCMotorSim(
+        when (config.motorType) {
+            Spark.MotorType.NEO -> DCMotor.getNEO(1)
+            Spark.MotorType.VORTEX -> DCMotor.getNeoVortex(1)
+        }, config.gearRatio, config.simJkgMetersSquared
+    )
+
+    private var controlMode = Neo.ControlMode.VOLTAGE
+
+    private val pid = PIDController(0.0, 0.0, 0.0)
+
+    private var appliedVolts = 0.0
+
+    override fun updateInputs(inputs: NeoIO.NEOIOInputs) {
+        when (controlMode) {
+            Neo.ControlMode.VOLTAGE -> {}
+            Neo.ControlMode.POSITION -> {
+                appliedVolts = MathUtil.clamp(pid.calculate(sim.angularPositionRad), -12.0, 12.0)
+                sim.setInputVoltage(appliedVolts)
+            }
+            Neo.ControlMode.VELOCITY -> {
+                appliedVolts = MathUtil.clamp(pid.calculate(sim.angularVelocityRPM), -12.0, 12.0)
+                sim.setInputVoltage(appliedVolts)
+            }
+        }
+
+        sim.update(LOOP_PERIOD_SECS)
+
+        inputs.angle = Rotation2d(sim.angularPositionRad)
+        inputs.velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(sim.angularVelocityRPM)
+        inputs.appliedVolts = appliedVolts
+        inputs.currentAmps = abs(sim.currentDrawAmps)
+    }
+
+    override fun setVoltage(volts: Double) {
+        controlMode = Neo.ControlMode.VOLTAGE
+        appliedVolts = MathUtil.clamp(volts, -12.0, 12.0)
+        sim.setInputVoltage(appliedVolts)
+    }
+
+    override fun setAngle(angle: Rotation2d) {
+        controlMode = Neo.ControlMode.POSITION
+        pid.setpoint = angle.radians
+    }
+
+    override fun setSpeed(rpm: Int) {
+        controlMode = Neo.ControlMode.VELOCITY
+        pid.setpoint = rpm.toDouble()
+    }
+
+    override fun setPID(p: Double, i: Double, d: Double) = pid.setPID(p, i, d)
+    override fun stop() = setVoltage(0.0)
+}

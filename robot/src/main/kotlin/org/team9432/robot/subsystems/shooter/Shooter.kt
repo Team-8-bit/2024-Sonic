@@ -1,18 +1,19 @@
 package org.team9432.robot.subsystems.shooter
 
+import com.revrobotics.CANSparkBase
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.motors.neo.Neo
+import org.team9432.lib.wrappers.Spark
+import org.team9432.robot.Devices
 import org.team9432.robot.subsystems.RobotPosition
 
 object Shooter: KSubsystem() {
-    private val leftSide = ShooterSide(ShooterSideIO.ShooterSide.LEFT)
-    private val rightSide = ShooterSide(ShooterSideIO.ShooterSide.RIGHT)
+    private val leftSide = Neo(getConfig(Devices.LEFT_SHOOTER_ID, false, "Left"))
+    private val rightSide = Neo(getConfig(Devices.RIGHT_SHOOTER_ID, true, "Right"))
 
-    private var isRunningAtSpeeds: Pair<Double, Double>? = null
+    private var isRunningAtSpeeds: Pair<Int, Int>? = null
 
     override fun periodic() {
-        leftSide.periodic()
-        rightSide.periodic()
-
         isRunningAtSpeeds?.let {
             val (rpmFast, rpmSlow) = it
 
@@ -26,7 +27,7 @@ object Shooter: KSubsystem() {
         }
     }
 
-    fun startRunAtSpeeds(rpmFast: Double = 6000.0, rpmSlow: Double = 4000.0) {
+    fun startRunAtSpeeds(rpmFast: Int = 6000, rpmSlow: Int = 4000) {
         isRunningAtSpeeds = rpmFast to rpmSlow
     }
 
@@ -36,7 +37,7 @@ object Shooter: KSubsystem() {
         rightSide.setVoltage(rightVolts)
     }
 
-    fun setSpeed(leftRPM: Double, rightRPM: Double) {
+    fun setSpeed(leftRPM: Int, rightRPM: Int) {
         isRunningAtSpeeds = null
         leftSide.setSpeed(leftRPM)
         rightSide.setSpeed(rightRPM)
@@ -46,5 +47,21 @@ object Shooter: KSubsystem() {
         isRunningAtSpeeds = null
         leftSide.stop()
         rightSide.stop()
+    }
+
+    private fun getConfig(canID: Int, inverted: Boolean, side: String): Neo.Config {
+        return Neo.Config(
+            canID = canID,
+            motorType = Spark.MotorType.VORTEX,
+            name = "$side Shooter",
+            sparkConfig = Spark.Config(
+                inverted = inverted,
+                idleMode = CANSparkBase.IdleMode.kCoast,
+                smartCurrentLimit = 80
+            ),
+            logName = "Shooter/${side}Side",
+            gearRatio = 0.5,
+            simJkgMetersSquared = 0.003
+        )
     }
 }

@@ -1,11 +1,21 @@
 package org.team9432.lib.wrappers
 
-import com.revrobotics.CANSparkFlex
+import com.revrobotics.CANSparkBase
+import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.wpilibj.DriverStation
 
-class SparkFlex(canID: Int, val name: String, motorType: MotorType = MotorType.kBrushless): CANSparkFlex(canID, motorType) {
+/** A spark wrapper that provides safety when configuring parameters */
+open class Spark(canID: Int, val name: String, motorType: MotorType): CANSparkBase(
+    canID,
+    CANSparkLowLevel.MotorType.kBrushless,
+    when (motorType) {
+        MotorType.NEO -> SparkModel.SparkMax
+        MotorType.VORTEX -> SparkModel.SparkFlex
+    }
+) {
+    /** Applies a given config to this device, retrying any failed attempts */
     fun applyConfig(config: Config) {
         applyAndErrorCheck("Restore Defaults") { restoreFactoryDefaults() }
 
@@ -27,6 +37,13 @@ class SparkFlex(canID: Int, val name: String, motorType: MotorType = MotorType.k
         applyAndErrorCheck("Burn Flash") { burnFlash() }
     }
 
+    /** Safely set the motor in brake mode, retrying if it fails */
+    fun setBrakeMode(enabled: Boolean) {
+        val mode = if (enabled) IdleMode.kBrake else IdleMode.kCoast
+        applyAndErrorCheck("Idle Mode") { setIdleMode(mode) }
+    }
+
+    /** Applies a given setting to the spark until hasSucceeded returns true or until the given number of attempts is reached */
     fun applyAndErrorCheck(settingName: String, runnable: () -> Unit, hasSucceeded: () -> Boolean, attempts: Int = 88): Boolean {
         for (i in 1..attempts) {
             runnable()
@@ -37,6 +54,7 @@ class SparkFlex(canID: Int, val name: String, motorType: MotorType = MotorType.k
         return false
     }
 
+    /** Applies a given setting to the spark until it returns REVLibError.kOk or until the given number of attempts is reached */
     fun applyAndErrorCheck(settingName: String, attempts: Int = 88, attempt: () -> REVLibError): Boolean {
         for (i in 1..attempts) {
             if (attempt() == REVLibError.kOk) return true
@@ -46,28 +64,30 @@ class SparkFlex(canID: Int, val name: String, motorType: MotorType = MotorType.k
         return false
     }
 
+    /** A class describing the configuration options of a spark */
     data class Config(
-        var inverted: Boolean = true,
-        var idleMode: IdleMode = IdleMode.kBrake,
-        var smartCurrentLimit: Int = 20,
-        var voltageCompensation: Double? = 12.0,
-        var forwardLimitSwitchType: SparkLimitSwitch.Type = SparkLimitSwitch.Type.kNormallyOpen,
-        var forwardLimitSwitchEnabled: Boolean = false,
-        var reverseLimitSwitchType: SparkLimitSwitch.Type = SparkLimitSwitch.Type.kNormallyOpen,
-        var reverseLimitSwitchEnabled: Boolean = false,
-        var statusFrameConfig: StatusFrameConfig = StatusFrameConfig(),
+        val inverted: Boolean = true,
+        val idleMode: IdleMode = IdleMode.kBrake,
+        val smartCurrentLimit: Int = 20,
+        val voltageCompensation: Double? = 12.0,
+        val forwardLimitSwitchType: SparkLimitSwitch.Type = SparkLimitSwitch.Type.kNormallyOpen,
+        val forwardLimitSwitchEnabled: Boolean = false,
+        val reverseLimitSwitchType: SparkLimitSwitch.Type = SparkLimitSwitch.Type.kNormallyOpen,
+        val reverseLimitSwitchEnabled: Boolean = false,
+        val statusFrameConfig: StatusFrameConfig = StatusFrameConfig(),
     ) {
         data class StatusFrameConfig(
-            var periodicFramePeriod0: Int = 1000,
-            var periodicFramePeriod1: Int = 20,
-            var periodicFramePeriod2: Int = 20,
-            var periodicFramePeriod3: Int = 1000,
-            var periodicFramePeriod4: Int = 1000,
-            var periodicFramePeriod5: Int = 1000,
-            var periodicFramePeriod6: Int = 1000,
+            val periodicFramePeriod0: Int = 1000,
+            val periodicFramePeriod1: Int = 20,
+            val periodicFramePeriod2: Int = 20,
+            val periodicFramePeriod3: Int = 1000,
+            val periodicFramePeriod4: Int = 1000,
+            val periodicFramePeriod5: Int = 1000,
+            val periodicFramePeriod6: Int = 1000,
         )
     }
 
+    /** The default status frame timings provided by rev. Use .copy() to make modifications while retaining the rest of the defaults. */
     val revDefaultStatusFrameConfig = Config.StatusFrameConfig(
         periodicFramePeriod0 = 10,
         periodicFramePeriod1 = 20,
@@ -77,4 +97,8 @@ class SparkFlex(canID: Int, val name: String, motorType: MotorType = MotorType.k
         periodicFramePeriod5 = 200,
         periodicFramePeriod6 = 200
     )
+
+    enum class MotorType {
+        NEO, VORTEX
+    }
 }
