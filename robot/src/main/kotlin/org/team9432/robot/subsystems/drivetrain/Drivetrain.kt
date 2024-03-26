@@ -21,7 +21,7 @@ import kotlin.math.abs
 
 
 object Drivetrain: KSubsystem() {
-    val modules = ModuleIO.Module.entries.map { Module(it) }
+    val modules = ModuleConfig.entries.map { Module(it) }
 
     val kinematics: SwerveDriveKinematics
     private val poseEstimator: SwerveDrivePoseEstimator
