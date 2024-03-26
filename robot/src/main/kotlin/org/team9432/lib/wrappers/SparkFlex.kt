@@ -1,11 +1,11 @@
 package org.team9432.lib.wrappers
 
-import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkFlex
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.wpilibj.DriverStation
 
-class SparkMax(canID: Int, val name: String, motorType: MotorType = MotorType.kBrushless): CANSparkMax(canID, motorType) {
+class SparkFlex(canID: Int, val name: String, motorType: MotorType = MotorType.kBrushless): CANSparkFlex(canID, motorType) {
     fun applyConfig(config: Config) {
         applyAndErrorCheck("Restore Defaults") { restoreFactoryDefaults() }
 
