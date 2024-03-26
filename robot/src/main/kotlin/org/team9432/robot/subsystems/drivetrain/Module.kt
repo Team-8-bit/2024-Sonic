@@ -127,8 +127,8 @@ class Module(private val module: ModuleConfig) {
     }
 
     fun setBrakeMode(enabled: Boolean) {
-//        drive.setBrakeMode(enabled)
-//        steer.setBrakeMode(enabled)
+        drive.setBrakeMode(enabled)
+        steer.setBrakeMode(enabled)
     }
 
     val positionMeters get() = drive.inputs.angle.radians * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)

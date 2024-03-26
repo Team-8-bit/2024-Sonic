@@ -25,6 +25,8 @@ interface NeoIO {
 
     fun setPID(p: Double, i: Double, d: Double) {}
 
+    fun setBrakeMode(enabled: Boolean) {}
+
     fun resetEncoder(newAngle: Rotation2d = Rotation2d()) {}
 
     fun stop() {}

@@ -24,9 +24,10 @@ class NEO(private val config: Config): KPeriodic() {
     }
 
     fun setVoltage(volts: Double) = io.setVoltage(volts)
-    fun setPID(p: Double, i: Double, d: Double) = io.setPID(p, i, d)
     fun setAngle(angle: Rotation2d) = io.setAngle(angle)
     fun setSpeed(rpm: Int) = io.setSpeed(rpm)
+    fun setPID(p: Double, i: Double, d: Double) = io.setPID(p, i, d)
+    fun setBrakeMode(enabled: Boolean) = io.setBrakeMode(enabled)
     fun resetEncoder(newAngle: Rotation2d = Rotation2d()) = io.resetEncoder(newAngle)
     fun stop() = io.stop()
 

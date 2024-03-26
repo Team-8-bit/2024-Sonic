@@ -49,5 +49,6 @@ class NeoIONeo(val config: NEO.Config): NeoIO {
     }
 
     override fun setPID(p: Double, i: Double, d: Double) = pid.setPID(p, i, d)
+    override fun setBrakeMode(enabled: Boolean) = spark.setBrakeMode(enabled)
     override fun stop() = setVoltage(0.0)
 }

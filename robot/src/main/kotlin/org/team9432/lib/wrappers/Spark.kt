@@ -36,6 +36,11 @@ open class Spark(canID: Int, val name: String, motorType: MotorType):
         applyAndErrorCheck("Burn Flash") { burnFlash() }
     }
 
+    fun setBrakeMode(enabled: Boolean) {
+        val mode = if (enabled) IdleMode.kBrake else IdleMode.kCoast
+        applyAndErrorCheck("Idle Mode") { setIdleMode(mode) }
+    }
+
     fun applyAndErrorCheck(settingName: String, runnable: () -> Unit, hasSucceeded: () -> Boolean, attempts: Int = 88): Boolean {
         for (i in 1..attempts) {
             runnable()
