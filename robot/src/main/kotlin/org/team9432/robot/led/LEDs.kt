@@ -4,11 +4,12 @@ import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
 import edu.wpi.first.wpilibj.Notifier
 import org.team9432.LOOP_PERIOD_SECS
+import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.robot.Devices
 
 
-object LEDs: KSubsystem() {
+object LEDs: KPeriodic() {
     private const val LENGTH = 118
 
     private val ledController = AddressableLED(Devices.LED_PORT)

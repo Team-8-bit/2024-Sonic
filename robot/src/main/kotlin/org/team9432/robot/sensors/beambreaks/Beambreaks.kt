@@ -3,9 +3,10 @@ package org.team9432.robot.sensors.beambreaks
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
+import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.commandbased.KSubsystem
 
-object Beambreaks: KSubsystem() {
+object Beambreaks: KPeriodic() {
     private val io: BeambreakIO
     private val inputs = LoggedBeambreakIOInputs()
 

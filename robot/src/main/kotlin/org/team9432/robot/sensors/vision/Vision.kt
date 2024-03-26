@@ -5,9 +5,10 @@ import edu.wpi.first.net.PortForwarder
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
+import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.commandbased.KSubsystem
 
-object Vision: KSubsystem() {
+object Vision: KPeriodic() {
     private val io: VisionIO
     private val inputs = LoggedVisionIOInputs()
 
