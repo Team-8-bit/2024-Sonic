@@ -14,7 +14,15 @@ interface NeoIO {
 
     fun updateInputs(inputs: NEOIOInputs) {}
 
+    /* Run open loop at the specified voltage */
     fun setVoltage(volts: Double) {}
+
+    /* Run closed loop angle control */
+    fun setAngle(angle: Rotation2d) {}
+
+    fun setPID(p: Double, i: Double, d: Double) {}
+
+    fun resetEncoder(newAngle: Rotation2d = Rotation2d()) {}
 
     fun stop() {}
 }

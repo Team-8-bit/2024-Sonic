@@ -1,5 +1,6 @@
 package org.team9432.lib.motors.neo
 
+import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
@@ -8,7 +9,7 @@ import org.team9432.lib.wrappers.SparkMax
 
 class NEO(private val config: Config): KPeriodic() {
     private val io: NeoIO
-    private val inputs = LoggedNEOIOInputs()
+    val inputs = LoggedNEOIOInputs()
 
     init {
         io = when (Robot.mode) {
@@ -26,13 +27,20 @@ class NEO(private val config: Config): KPeriodic() {
         io.setVoltage(volts)
     }
 
+    fun setPID(p: Double, i: Double, d: Double) = io.setPID(p, i, d)
+
+    fun setAngle(angle: Rotation2d) = io.setAngle(angle)
+
+    fun resetEncoder(newAngle: Rotation2d = Rotation2d()) = io.resetEncoder(newAngle)
+
     fun stop() = io.stop()
 
     data class Config(
         val canID: Int,
         val name: String,
         val logName: String,
-        val simGearRatio: Double,
+        val gearRatio: Double,
+        val feedForwardSupplier: (Double) -> Double = { 0.0 },
         val simJkgMetersSquared: Double,
         val sparkConfig: SparkMax.Config
     )

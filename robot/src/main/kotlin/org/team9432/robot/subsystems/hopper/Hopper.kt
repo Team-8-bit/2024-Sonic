@@ -26,7 +26,7 @@ object Hopper: KSubsystem() {
         canID = Devices.HOPPER_ID,
         name = "Hopper Motor",
         logName = "Hopper",
-        simGearRatio = 1.0,
+        gearRatio = 1.0,
         simJkgMetersSquared = 0.0015,
         sparkConfig = SparkMax.Config(
             inverted = true,

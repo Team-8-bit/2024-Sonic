@@ -16,7 +16,7 @@ object Amp: KSubsystem() {
         canID = Devices.AMP_ID,
         name = "Amp Motor",
         logName = "Amp",
-        simGearRatio = 1.0,
+        gearRatio = 1.0,
         simJkgMetersSquared = 0.003,
         sparkConfig = SparkMax.Config(
             inverted = true,

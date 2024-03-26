@@ -70,7 +70,7 @@ object Intake: KSubsystem() {
                 smartCurrentLimit = 80
             ),
             logName = "Intake/${side}Side",
-            simGearRatio = 2.0,
+            gearRatio = 2.0,
             simJkgMetersSquared = 0.003
         )
     }
