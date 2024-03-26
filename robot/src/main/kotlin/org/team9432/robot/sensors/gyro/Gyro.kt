@@ -3,8 +3,8 @@ package org.team9432.robot.sensors.gyro
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import org.littletonrobotics.junction.Logger
-import org.team9432.Robot
-import org.team9432.Robot.Mode.*
+import org.team9432.lib.State
+import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.drivetrain.Drivetrain.kinematics
@@ -15,7 +15,7 @@ object Gyro: KSubsystem() {
     private val inputs = LoggedGyroIOInputs()
 
     init {
-        io = when (Robot.mode) {
+        io = when (State.mode) {
             REAL, REPLAY -> GyroIOPigeon2()
             SIM -> object: GyroIO {}
         }

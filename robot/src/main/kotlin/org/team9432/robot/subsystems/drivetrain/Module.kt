@@ -13,8 +13,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
-import org.team9432.Robot
-import org.team9432.Robot.Mode.*
+import org.team9432.lib.State
+import org.team9432.lib.State.Mode.*
 import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
 import org.team9432.lib.constants.SwerveConstants.MK4I_L2_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
@@ -42,7 +42,7 @@ class Module(private val module: ModuleConfig) {
     private val steerAbsolutePositionSignal: StatusSignal<Double>
 
     init {
-        when (Robot.mode) {
+        when (State.mode) {
             REAL, REPLAY -> {
                 driveFeedforward = SimpleMotorFeedforward(0.1.adjustRatio(), 0.13.adjustRatio())
                 driveFeedback = PIDController(0.05.adjustRatio(), 0.0, 0.0)

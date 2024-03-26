@@ -8,6 +8,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader
 import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.BuildConstants
 import org.team9432.Robot
+import org.team9432.lib.State
 import org.littletonrobotics.junction.Logger as AkitLogger
 
 object Logger {
@@ -23,11 +24,11 @@ object Logger {
             else -> AkitLogger.recordMetadata("GitDirty", "Unknown")
         }
 
-        if (LoggedRobot.isReal() || Robot.mode == Robot.Mode.SIM) {
+        if (LoggedRobot.isReal() || State.mode == State.Mode.SIM) {
             AkitLogger.addDataReceiver(WPILOGWriter()) // Log to a USB stick ("/U/logs")
             AkitLogger.addDataReceiver(NT4Publisher()) // Publish data to NetworkTables
             PowerDistribution(1, PowerDistribution.ModuleType.kRev) // Enables power distribution logging
-        } else if (Robot.mode == Robot.Mode.REPLAY) {
+        } else if (State.mode == State.Mode.REPLAY) {
             Robot.setUseTiming(false) // Run as fast as possible
             val logPath = LogFileUtil.findReplayLog() // Pull the replay log from AdvantageScope (or prompt the user)
             AkitLogger.setReplaySource(WPILOGReader(logPath)) // Read replay log

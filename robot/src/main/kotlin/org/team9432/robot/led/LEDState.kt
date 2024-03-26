@@ -2,7 +2,7 @@ package org.team9432.robot.led
 
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.util.Color
-import org.team9432.Robot
+import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.robot.RobotState
 import org.team9432.robot.led.LEDModes.breath
@@ -50,7 +50,7 @@ object LEDState: KPeriodic() {
                 pulse(Color.kBlack, Color.kWhite, LEDModes.sidePulses, 2.0, 1.0)
 
                 // Set the top to the alliance color, this also shows when the fms is connected
-                if (Robot.alliance == null) {
+                if (State.alliance == null) {
                     breath(Color.kWhite, Color.kBlack, LEDs.Section.TOP_BAR, duration = 2.0)
                 } else {
                     solid(allianceColor, LEDs.Section.TOP_BAR)
@@ -76,7 +76,7 @@ object LEDState: KPeriodic() {
                     strobe(Color.kLime, 0.25, LEDs.Section.SPEAKER)
                 }
                 if (ampShooterReady) {
-                    if (Robot.alliance == DriverStation.Alliance.Red) strobe(Color.kLime, 0.25, LEDs.Section.LEFT)
+                    if (State.alliance == DriverStation.Alliance.Red) strobe(Color.kLime, 0.25, LEDs.Section.LEFT)
                     else strobe(Color.kLime, 0.25, LEDs.Section.RIGHT)
                 }
             }
@@ -91,7 +91,7 @@ object LEDState: KPeriodic() {
 
         testEmergencySwitchActive = EmergencySwitches.testSwitchActive
 
-        allianceColor = when (Robot.alliance) {
+        allianceColor = when (State.alliance) {
             DriverStation.Alliance.Red -> Color.kRed
             DriverStation.Alliance.Blue -> Color.kBlue
             null -> Color.kWhite

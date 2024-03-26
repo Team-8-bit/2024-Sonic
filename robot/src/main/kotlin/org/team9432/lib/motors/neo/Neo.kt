@@ -2,8 +2,8 @@ package org.team9432.lib.motors.neo
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.Logger
-import org.team9432.Robot
-import org.team9432.Robot.Mode.*
+import org.team9432.lib.State
+import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.wrappers.Spark
 
@@ -16,7 +16,7 @@ class Neo(private val config: Config): KPeriodic() {
     val inputs = LoggedNEOIOInputs()
 
     init {
-        io = when (Robot.mode) {
+        io = when (State.mode) {
             REAL, REPLAY -> NeoIOReal(config)
             SIM -> NeoIOSim(config)
         }
@@ -29,16 +29,22 @@ class Neo(private val config: Config): KPeriodic() {
 
     /** Run open loop at the specified voltage */
     fun setVoltage(volts: Double) = io.setVoltage(volts)
+
     /** Run closed loop position control */
     fun setAngle(angle: Rotation2d) = io.setAngle(angle)
+
     /** Run closed loop velocity control */
     fun setSpeed(rpm: Int) = io.setSpeed(rpm)
+
     /** Set PID constants */
     fun setPID(p: Double, i: Double, d: Double) = io.setPID(p, i, d)
+
     /** Set the motor in brake mode */
     fun setBrakeMode(enabled: Boolean) = io.setBrakeMode(enabled)
+
     /** Sets the integrated encoder to the specified angle. Defaults to 0. */
     fun resetEncoder(newAngle: Rotation2d = Rotation2d()) = io.resetEncoder(newAngle)
+
     /** Stops the motor */
     fun stop() = io.stop()
 
@@ -55,6 +61,6 @@ class Neo(private val config: Config): KPeriodic() {
         val gearRatio: Double,
         val feedForwardSupplier: (Double) -> Double = { 0.0 },
         val simJkgMetersSquared: Double,
-        val sparkConfig: Spark.Config
+        val sparkConfig: Spark.Config,
     )
 }

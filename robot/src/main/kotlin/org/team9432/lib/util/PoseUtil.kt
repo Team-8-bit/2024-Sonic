@@ -3,22 +3,25 @@ package org.team9432.lib.util
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
-import org.team9432.lib.geometry.Pose2d
+import edu.wpi.first.wpilibj.DriverStation
+import org.team9432.lib.State.alliance
 import org.team9432.lib.geometry.Translation2d
+import org.team9432.lib.unit.asRotation2d
+import org.team9432.lib.unit.degrees
 import org.team9432.lib.unit.meters
 import org.team9432.robot.FieldConstants
 
 
 object PoseUtil {
-    fun flip(input: Pose2d): Pose2d {
-        return Pose2d(FieldConstants.midLine + (FieldConstants.midLine - input.x.meters), input.y.meters, Rotation2d.fromDegrees((input.rotation.degrees + 180) * -1))
-    }
+    fun Pose2d.flip() = Pose2d(translation.flip(), rotation.flip())
+    fun Translation2d.flip() = Translation2d(FieldConstants.midLine + (FieldConstants.midLine - x.meters), y.meters)
+    fun Rotation2d.flip() = Rotation2d.fromDegrees((degrees + 180) * -1)
 
-    fun flip(input: Translation2d): Translation2d {
-        return Translation2d(FieldConstants.midLine + (FieldConstants.midLine - input.x.meters), input.y.meters)
-    }
+    val coordinateFlip get() = if (alliance == DriverStation.Alliance.Blue) 1 else -1
+    val rotationOffset get() = if (alliance == DriverStation.Alliance.Blue) 0.0.degrees.asRotation2d else 180.0.degrees.asRotation2d
 
-    fun flip(input: Rotation2d): Rotation2d {
-        return Rotation2d.fromDegrees((input.degrees + 180) * -1)
-    }
+    fun Pose2d.applyFlip() = if (alliance == DriverStation.Alliance.Blue) this else this.flip()
+    fun Translation2d.applyFlip() = if (alliance == DriverStation.Alliance.Blue) this else this.flip()
+    fun Rotation2d.applyFlip() = if (alliance == DriverStation.Alliance.Blue) this else this.flip()
+
 }

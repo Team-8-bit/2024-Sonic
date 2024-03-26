@@ -1,18 +1,17 @@
 package org.team9432.robot.commands.drivetrain
 
 import edu.wpi.first.math.controller.ProfiledPIDController
-import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import org.littletonrobotics.junction.Logger
-import org.team9432.Robot.applyFlip
 import org.team9432.lib.commandbased.KCommand
+import org.team9432.lib.util.PoseUtil.applyFlip
 import org.team9432.robot.MechanismSide
+import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.sensors.gyro.Gyro
 import kotlin.math.abs
 
 class TargetAim(

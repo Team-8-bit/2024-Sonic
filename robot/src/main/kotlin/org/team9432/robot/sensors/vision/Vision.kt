@@ -3,8 +3,8 @@ package org.team9432.robot.sensors.vision
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.net.PortForwarder
 import org.littletonrobotics.junction.Logger
-import org.team9432.Robot
-import org.team9432.Robot.Mode.*
+import org.team9432.lib.State
+import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 
 object Vision: KSubsystem() {
@@ -12,7 +12,7 @@ object Vision: KSubsystem() {
     private val inputs = LoggedVisionIOInputs()
 
     init {
-        io = when (Robot.mode) {
+        io = when (State.mode) {
             REAL, REPLAY -> VisionIOPhotonvision()
             SIM -> object: VisionIO {}
         }

@@ -5,12 +5,12 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import org.littletonrobotics.junction.Logger
-import org.team9432.Robot
-import org.team9432.Robot.applyFlip
 import org.team9432.lib.commandbased.KCommand
+import org.team9432.lib.util.PoseUtil
+import org.team9432.lib.util.PoseUtil.applyFlip
 import org.team9432.robot.oi.Controls
-import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.sensors.gyro.Gyro
+import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
 class TeleAngleDrive(private val target: () -> Rotation2d): KCommand() {
     override val requirements = setOf(Drivetrain)
@@ -30,8 +30,8 @@ class TeleAngleDrive(private val target: () -> Rotation2d): KCommand() {
         Logger.recordOutput("Drive/AngleTarget", currentTarget)
 
         val maxSpeedMetersPerSecond = if (Controls.slowDrive) 2.0 else 5.0
-        val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond * Robot.coordinateFlip
-        val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond * Robot.coordinateFlip
+        val xSpeed = Controls.xSpeed * maxSpeedMetersPerSecond * PoseUtil.coordinateFlip
+        val ySpeed = Controls.ySpeed * maxSpeedMetersPerSecond * PoseUtil.coordinateFlip
 
         pid.setGoal(currentTarget.degrees)
         val rSpeed = pid.calculate(Gyro.getYaw().degrees)

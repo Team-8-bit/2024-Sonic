@@ -8,8 +8,8 @@ import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Translation3d
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import org.littletonrobotics.junction.Logger
-import org.team9432.Robot
-import org.team9432.Robot.Mode.*
+import org.team9432.lib.State
+import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.motors.neo.Neo
 import org.team9432.lib.wrappers.Spark
@@ -22,7 +22,7 @@ object Hood: KSubsystem() {
     private val ffTable = InterpolatingDoubleTreeMap()
 
     init {
-        when (Robot.mode) {
+        when (State.mode) {
             REAL, REPLAY -> motor.setPID(2.25, 0.0, 0.0)
             SIM -> motor.setPID(1.0, 0.0, 0.0)
         }

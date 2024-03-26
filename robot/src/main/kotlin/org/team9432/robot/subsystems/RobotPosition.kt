@@ -4,11 +4,10 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj.DriverStation.Alliance
-import org.team9432.Robot
-import org.team9432.Robot.applyFlip
+import org.team9432.lib.State
 import org.team9432.lib.unit.compareTo
 import org.team9432.lib.unit.inMeters
-import org.team9432.lib.unit.meters
+import org.team9432.lib.util.PoseUtil.applyFlip
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
@@ -39,8 +38,8 @@ object RobotPosition {
         val currentY = Drivetrain.getPose().y
         return when {
             currentY.isCloseTo(FieldConstants.speakerYAxis.inMeters, 0.5) -> SpeakerSide.CENTER
-            currentY < FieldConstants.speakerYAxis -> if (Robot.alliance == Alliance.Blue) SpeakerSide.LEFT else SpeakerSide.RIGHT
-            currentY > FieldConstants.speakerYAxis -> if (Robot.alliance == Alliance.Blue) SpeakerSide.RIGHT else SpeakerSide.LEFT
+            currentY < FieldConstants.speakerYAxis -> if (State.alliance == Alliance.Blue) SpeakerSide.LEFT else SpeakerSide.RIGHT
+            currentY > FieldConstants.speakerYAxis -> if (State.alliance == Alliance.Blue) SpeakerSide.RIGHT else SpeakerSide.LEFT
             else -> SpeakerSide.CENTER
         }
     }

@@ -6,8 +6,8 @@ import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import org.littletonrobotics.junction.Logger
-import org.team9432.Robot.applyFlip
 import org.team9432.lib.commandbased.KCommand
+import org.team9432.lib.util.PoseUtil.applyFlip
 import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
