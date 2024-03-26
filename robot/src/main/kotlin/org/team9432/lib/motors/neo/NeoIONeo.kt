@@ -1,4 +1,4 @@
-package org.team9432.lib.wrappers.neo
+package org.team9432.lib.motors.neo
 
 import com.revrobotics.CANSparkBase.IdleMode
 import edu.wpi.first.math.geometry.Rotation2d

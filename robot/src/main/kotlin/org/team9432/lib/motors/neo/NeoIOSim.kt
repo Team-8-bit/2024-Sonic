@@ -1,4 +1,4 @@
-package org.team9432.lib.wrappers.neo
+package org.team9432.lib.motors.neo
 
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d

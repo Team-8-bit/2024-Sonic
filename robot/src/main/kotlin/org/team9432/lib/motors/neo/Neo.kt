@@ -1,4 +1,4 @@
-package org.team9432.lib.wrappers.neo
+package org.team9432.lib.motors.neo
 
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot

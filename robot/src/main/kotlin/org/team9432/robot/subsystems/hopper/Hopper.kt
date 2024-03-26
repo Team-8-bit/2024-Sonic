@@ -1,7 +1,7 @@
 package org.team9432.robot.subsystems.hopper
 
 import org.team9432.lib.commandbased.KSubsystem
-import org.team9432.lib.wrappers.neo.NEO
+import org.team9432.lib.motors.neo.NEO
 import org.team9432.robot.Devices
 import org.team9432.robot.MechanismSide
 
