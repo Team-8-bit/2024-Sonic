@@ -1,24 +1,16 @@
 package org.team9432.lib.motors.neo
 
-import com.revrobotics.CANSparkBase.IdleMode
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
 import org.team9432.lib.wrappers.SparkMax
-import org.team9432.robot.Devices
 
-class NeoIONeo(canID: Int, name: String): NeoIO {
-    private val spark = SparkMax(canID, name)
+class NeoIONeo(config: NEO.Config): NeoIO {
+    private val spark = SparkMax(config.canID, config.name)
 
     private val encoder = spark.encoder
 
     init {
-        val config = SparkMax.Config(
-            inverted = true,
-            idleMode = IdleMode.kBrake,
-            smartCurrentLimit = 60
-        )
-
-        spark.applyConfig(config)
+        spark.applyConfig(config.sparkConfig)
     }
 
     override fun updateInputs(inputs: NeoIO.NEOIOInputs) {
