@@ -28,15 +28,7 @@ class HoodIONeo: HoodIO {
             inverted = true,
             idleMode = IdleMode.kBrake,
             smartCurrentLimit = 20,
-            voltageCompensation = 12.0,
-            forwardLimitSwitchEnabled = false,
-            reverseLimitSwitchEnabled = false,
-
-            periodicFramePeriod0 = 1000,
-            periodicFramePeriod3 = 1000,
-            periodicFramePeriod4 = 1000,
-            periodicFramePeriod5 = 1000,
-            periodicFramePeriod6 = 1000,
+            voltageCompensation = 12.0
         )
 
         spark.applyConfig(config)

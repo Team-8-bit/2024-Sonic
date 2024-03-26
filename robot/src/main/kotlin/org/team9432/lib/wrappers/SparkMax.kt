@@ -17,13 +17,13 @@ class SparkMax(canID: Int, val name: String, motorType: MotorType = MotorType.kB
         applySetting("Forwards Limit") { getForwardLimitSwitch(config.forwardLimitSwitchType).enableLimitSwitch(config.forwardLimitSwitchEnabled) }
         applySetting("Reverse Limit") { getReverseLimitSwitch(config.reverseLimitSwitchType).enableLimitSwitch(config.reverseLimitSwitchEnabled) }
 
-        applySetting("Status Frame 0") { setPeriodicFramePeriod(PeriodicFrame.kStatus0, config.periodicFramePeriod0) }
-        applySetting("Status Frame 1") { setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.periodicFramePeriod1) }
-        applySetting("Status Frame 2") { setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.periodicFramePeriod2) }
-        applySetting("Status Frame 3") { setPeriodicFramePeriod(PeriodicFrame.kStatus3, config.periodicFramePeriod3) }
-        applySetting("Status Frame 4") { setPeriodicFramePeriod(PeriodicFrame.kStatus4, config.periodicFramePeriod4) }
-        applySetting("Status Frame 5") { setPeriodicFramePeriod(PeriodicFrame.kStatus5, config.periodicFramePeriod5) }
-        applySetting("Status Frame 6") { setPeriodicFramePeriod(PeriodicFrame.kStatus6, config.periodicFramePeriod6) }
+        applySetting("Status Frame 0") { setPeriodicFramePeriod(PeriodicFrame.kStatus0, config.statusFrameConfig.periodicFramePeriod0) }
+        applySetting("Status Frame 1") { setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.statusFrameConfig.periodicFramePeriod1) }
+        applySetting("Status Frame 2") { setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.statusFrameConfig.periodicFramePeriod2) }
+        applySetting("Status Frame 3") { setPeriodicFramePeriod(PeriodicFrame.kStatus3, config.statusFrameConfig.periodicFramePeriod3) }
+        applySetting("Status Frame 4") { setPeriodicFramePeriod(PeriodicFrame.kStatus4, config.statusFrameConfig.periodicFramePeriod4) }
+        applySetting("Status Frame 5") { setPeriodicFramePeriod(PeriodicFrame.kStatus5, config.statusFrameConfig.periodicFramePeriod5) }
+        applySetting("Status Frame 6") { setPeriodicFramePeriod(PeriodicFrame.kStatus6, config.statusFrameConfig.periodicFramePeriod6) }
 
         applySetting("Burn Flash") { burnFlash() }
     }
@@ -56,13 +56,26 @@ class SparkMax(canID: Int, val name: String, motorType: MotorType = MotorType.kB
         var forwardLimitSwitchEnabled: Boolean = false,
         var reverseLimitSwitchType: SparkLimitSwitch.Type = SparkLimitSwitch.Type.kNormallyOpen,
         var reverseLimitSwitchEnabled: Boolean = false,
+        var statusFrameConfig: StatusFrameConfig = StatusFrameConfig(),
+    ) {
+        data class StatusFrameConfig(
+            var periodicFramePeriod0: Int = 1000,
+            var periodicFramePeriod1: Int = 20,
+            var periodicFramePeriod2: Int = 20,
+            var periodicFramePeriod3: Int = 1000,
+            var periodicFramePeriod4: Int = 1000,
+            var periodicFramePeriod5: Int = 1000,
+            var periodicFramePeriod6: Int = 1000,
+        )
+    }
 
-        var periodicFramePeriod0: Int = 10,
-        var periodicFramePeriod1: Int = 20,
-        var periodicFramePeriod2: Int = 20,
-        var periodicFramePeriod3: Int = 50,
-        var periodicFramePeriod4: Int = 20,
-        var periodicFramePeriod5: Int = 200,
-        var periodicFramePeriod6: Int = 200,
+    val revDefaultStatusFrameConfig = Config.StatusFrameConfig(
+        periodicFramePeriod0 = 10,
+        periodicFramePeriod1 = 20,
+        periodicFramePeriod2 = 20,
+        periodicFramePeriod3 = 50,
+        periodicFramePeriod4 = 20,
+        periodicFramePeriod5 = 200,
+        periodicFramePeriod6 = 200
     )
 }
