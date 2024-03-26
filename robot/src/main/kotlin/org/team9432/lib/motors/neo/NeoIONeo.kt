@@ -1,6 +1,5 @@
 package org.team9432.lib.motors.neo
 
-import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
@@ -11,7 +10,7 @@ class NeoIONeo(val config: NEO.Config): NeoIO {
 
     private val encoder = spark.encoder
 
-    private var isClosedLoop = false
+    private var controlMode = NEO.ControlMode.VOLTAGE
 
     private val pid = PIDController(0.0, 0.0, 0.0)
 
@@ -22,9 +21,10 @@ class NeoIONeo(val config: NEO.Config): NeoIO {
     }
 
     override fun updateInputs(inputs: NeoIO.NEOIOInputs) {
-        if (isClosedLoop) {
-            val r = Rotation2d.fromRotations(encoder.position)
-            spark.setVoltage(MathUtil.clamp(pid.calculate(r.rotations) + config.feedForwardSupplier.invoke(pid.setpoint), -1.0, 1.0))
+        when (controlMode) {
+            NEO.ControlMode.VOLTAGE -> {}
+            NEO.ControlMode.POSITION -> spark.setVoltage(pid.calculate(encoder.position) + config.feedForwardSupplier.invoke(pid.setpoint))
+            NEO.ControlMode.VELOCITY -> spark.setVoltage(pid.calculate(encoder.velocity) + config.feedForwardSupplier.invoke(pid.setpoint))
         }
 
         inputs.angle = Rotation2d.fromRotations(encoder.position) / config.gearRatio
@@ -34,13 +34,18 @@ class NeoIONeo(val config: NEO.Config): NeoIO {
     }
 
     override fun setVoltage(volts: Double) {
-        isClosedLoop = false
+        controlMode = NEO.ControlMode.VOLTAGE
         spark.setVoltage(volts)
     }
 
     override fun setAngle(angle: Rotation2d) {
-        isClosedLoop = true
+        controlMode = NEO.ControlMode.POSITION
         pid.setpoint = angle.rotations * config.gearRatio
+    }
+
+    override fun setSpeed(rpm: Int) {
+        controlMode = NEO.ControlMode.VELOCITY
+        pid.setpoint = rpm * config.gearRatio
     }
 
     override fun setPID(p: Double, i: Double, d: Double) = pid.setPID(p, i, d)

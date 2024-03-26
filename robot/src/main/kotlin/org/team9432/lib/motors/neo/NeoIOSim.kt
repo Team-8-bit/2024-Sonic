@@ -17,15 +17,24 @@ class NeoIOSim(config: NEO.Config): NeoIO {
             Spark.MotorType.VORTEX -> DCMotor.getNeoVortex(1)
         }, config.gearRatio, config.simJkgMetersSquared
     )
+
+    private var controlMode = NEO.ControlMode.VOLTAGE
+
     private val pid = PIDController(0.0, 0.0, 0.0)
 
     private var appliedVolts = 0.0
-    private var isClosedLoop = false
 
     override fun updateInputs(inputs: NeoIO.NEOIOInputs) {
-        if (isClosedLoop) {
-            appliedVolts = MathUtil.clamp(pid.calculate(sim.angularPositionRad), -12.0, 12.0)
-            sim.setInputVoltage(appliedVolts)
+        when (controlMode) {
+            NEO.ControlMode.VOLTAGE -> {}
+            NEO.ControlMode.POSITION -> {
+                appliedVolts = MathUtil.clamp(pid.calculate(sim.angularPositionRad), -12.0, 12.0)
+                sim.setInputVoltage(appliedVolts)
+            }
+            NEO.ControlMode.VELOCITY -> {
+                appliedVolts = MathUtil.clamp(pid.calculate(sim.angularVelocityRPM), -12.0, 12.0)
+                sim.setInputVoltage(appliedVolts)
+            }
         }
 
         sim.update(LOOP_PERIOD_SECS)
@@ -37,14 +46,19 @@ class NeoIOSim(config: NEO.Config): NeoIO {
     }
 
     override fun setVoltage(volts: Double) {
-        isClosedLoop = false
+        controlMode = NEO.ControlMode.VOLTAGE
         appliedVolts = MathUtil.clamp(volts, -12.0, 12.0)
         sim.setInputVoltage(appliedVolts)
     }
 
     override fun setAngle(angle: Rotation2d) {
-        isClosedLoop = true
+        controlMode = NEO.ControlMode.POSITION
         pid.setpoint = angle.radians
+    }
+
+    override fun setSpeed(rpm: Int) {
+        controlMode = NEO.ControlMode.VELOCITY
+        pid.setpoint = rpm.toDouble()
     }
 
     override fun setPID(p: Double, i: Double, d: Double) = pid.setPID(p, i, d)

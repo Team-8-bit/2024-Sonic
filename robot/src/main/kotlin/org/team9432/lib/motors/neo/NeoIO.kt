@@ -20,6 +20,9 @@ interface NeoIO {
     /* Run closed loop angle control */
     fun setAngle(angle: Rotation2d) {}
 
+    /* Run closed loop velocity control */
+    fun setSpeed(rpm: Int) {}
+
     fun setPID(p: Double, i: Double, d: Double) {}
 
     fun resetEncoder(newAngle: Rotation2d = Rotation2d()) {}

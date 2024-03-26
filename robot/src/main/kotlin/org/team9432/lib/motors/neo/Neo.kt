@@ -23,17 +23,16 @@ class NEO(private val config: Config): KPeriodic() {
         Logger.processInputs(config.logName, inputs)
     }
 
-    fun setVoltage(volts: Double) {
-        io.setVoltage(volts)
-    }
-
+    fun setVoltage(volts: Double) = io.setVoltage(volts)
     fun setPID(p: Double, i: Double, d: Double) = io.setPID(p, i, d)
-
     fun setAngle(angle: Rotation2d) = io.setAngle(angle)
-
+    fun setSpeed(rpm: Int) = io.setSpeed(rpm)
     fun resetEncoder(newAngle: Rotation2d = Rotation2d()) = io.resetEncoder(newAngle)
-
     fun stop() = io.stop()
+
+    enum class ControlMode {
+        VOLTAGE, POSITION, VELOCITY
+    }
 
     data class Config(
         val canID: Int,
