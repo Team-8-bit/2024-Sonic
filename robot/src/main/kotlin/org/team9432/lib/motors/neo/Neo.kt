@@ -5,7 +5,7 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KPeriodic
-import org.team9432.lib.wrappers.SparkMax
+import org.team9432.lib.wrappers.Spark
 
 class NEO(private val config: Config): KPeriodic() {
     private val io: NeoIO
@@ -37,11 +37,12 @@ class NEO(private val config: Config): KPeriodic() {
 
     data class Config(
         val canID: Int,
+        val motorType: Spark.MotorType,
         val name: String,
         val logName: String,
         val gearRatio: Double,
         val feedForwardSupplier: (Double) -> Double = { 0.0 },
         val simJkgMetersSquared: Double,
-        val sparkConfig: SparkMax.Config
+        val sparkConfig: Spark.Config
     )
 }

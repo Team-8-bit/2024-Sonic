@@ -1,16 +1,12 @@
 package org.team9432.robot.subsystems.shooter
 
 import com.revrobotics.CANSparkBase.IdleMode
-import com.revrobotics.CANSparkFlex
-import com.revrobotics.CANSparkLowLevel
-import com.revrobotics.REVLibError
-import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
-import org.team9432.lib.wrappers.SparkFlex
+import org.team9432.lib.wrappers.Spark
 
 class ShooterSideIOVortex(override val shooterSide: ShooterSideIO.ShooterSide): ShooterSideIO {
-    private val spark = SparkFlex(shooterSide.motorID, "${shooterSide.name} Shooter Motor")
+    private val spark = Spark(shooterSide.motorID, "${shooterSide.name} Shooter Motor", Spark.MotorType.VORTEX)
 
     private val encoder = spark.encoder
     private val pid = PIDController(0.0, 0.0, 0.0)
@@ -21,7 +17,7 @@ class ShooterSideIOVortex(override val shooterSide: ShooterSideIO.ShooterSide): 
     private var feedforwardVolts = 0.0
 
     init {
-        val config = SparkFlex.Config(
+        val config = Spark.Config(
             inverted = shooterSide.inverted,
             idleMode = IdleMode.kCoast,
             smartCurrentLimit = 80

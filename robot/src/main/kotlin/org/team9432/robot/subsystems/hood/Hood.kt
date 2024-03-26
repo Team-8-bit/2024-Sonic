@@ -12,7 +12,7 @@ import org.team9432.Robot
 import org.team9432.Robot.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.motors.neo.NEO
-import org.team9432.lib.wrappers.SparkMax
+import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
 import org.team9432.robot.oi.EmergencySwitches
 
@@ -62,12 +62,13 @@ object Hood: KSubsystem() {
 
     private fun getConfig() = NEO.Config(
         canID = Devices.HOOD_ID,
+        motorType = Spark.MotorType.NEO,
         name = "Hood Motor",
         logName = "Hood",
         gearRatio = 2.0 * (150 / 15),
         simJkgMetersSquared = 0.01507,
         feedForwardSupplier = { setpoint -> ffTable.get(setpoint) },
-        sparkConfig = SparkMax.Config(
+        sparkConfig = Spark.Config(
             inverted = true,
             idleMode = CANSparkBase.IdleMode.kBrake,
             smartCurrentLimit = 20

@@ -3,7 +3,7 @@ package org.team9432.robot.subsystems.intake
 import com.revrobotics.CANSparkBase
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.motors.neo.NEO
-import org.team9432.lib.wrappers.SparkMax
+import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
@@ -63,8 +63,9 @@ object Intake: KSubsystem() {
     private fun getConfig(canID: Int, inverted: Boolean, side: String): NEO.Config {
         return NEO.Config(
             canID = canID,
+            motorType = Spark.MotorType.NEO,
             name = "$side Side Intake",
-            sparkConfig = SparkMax.Config(
+            sparkConfig = Spark.Config(
                 inverted = inverted,
                 idleMode = CANSparkBase.IdleMode.kCoast,
                 smartCurrentLimit = 80

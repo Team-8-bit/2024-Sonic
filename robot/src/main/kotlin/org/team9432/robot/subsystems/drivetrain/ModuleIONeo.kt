@@ -10,15 +10,14 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
 import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
-import org.team9432.lib.wrappers.SparkFlex
-import org.team9432.lib.wrappers.SparkMax
+import org.team9432.lib.wrappers.Spark
 import org.team9432.lib.wrappers.applyAndErrorCheck
 import org.team9432.robot.subsystems.drivetrain.ModuleIO.ModuleIOInputs
 
 
 class ModuleIONeo(override val module: ModuleIO.Module): ModuleIO {
-    private val drive = SparkFlex(module.driveID, "${module.name} Drive Motor")
-    private val steer = SparkMax(module.steerID, "${module.name} Steer Motor")
+    private val drive = Spark(module.driveID, "${module.name} Drive Motor", Spark.MotorType.VORTEX)
+    private val steer = Spark(module.steerID, "${module.name} Steer Motor", Spark.MotorType.NEO)
     private val cancoder = CANcoder(module.encoderID)
     private val driveEncoder = drive.encoder
     private val steerEncoder = steer.encoder
@@ -26,13 +25,13 @@ class ModuleIONeo(override val module: ModuleIO.Module): ModuleIO {
     private val steerAbsolutePosition: StatusSignal<Double>
 
     init {
-        val driveConfig = SparkFlex.Config(
+        val driveConfig = Spark.Config(
             inverted = module.driveInverted,
             idleMode = IdleMode.kBrake,
             smartCurrentLimit = 50,
         )
 
-        val steerInverted = SparkMax.Config(
+        val steerInverted = Spark.Config(
             inverted = module.steerInverted,
             idleMode = IdleMode.kBrake,
             smartCurrentLimit = 30,

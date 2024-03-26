@@ -4,10 +4,10 @@ import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
-import org.team9432.lib.wrappers.SparkMax
+import org.team9432.lib.wrappers.Spark
 
 class NeoIONeo(val config: NEO.Config): NeoIO {
-    private val spark = SparkMax(config.canID, config.name)
+    private val spark = Spark(config.canID, config.name, config.motorType)
 
     private val encoder = spark.encoder
 

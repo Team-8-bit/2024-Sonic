@@ -1,11 +1,20 @@
 package org.team9432.lib.wrappers
 
-import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkBase
+import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.wpilibj.DriverStation
 
-open class SparkMax(canID: Int, val name: String, motorType: MotorType = MotorType.kBrushless): CANSparkMax(canID, motorType) {
+open class Spark(canID: Int, val name: String, motorType: MotorType):
+    CANSparkBase(
+        canID,
+        CANSparkLowLevel.MotorType.kBrushless,
+        when (motorType) {
+            MotorType.NEO -> SparkModel.SparkMax
+            MotorType.VORTEX -> SparkModel.SparkFlex
+        }
+    ) {
     fun applyConfig(config: Config) {
         applyAndErrorCheck("Restore Defaults") { restoreFactoryDefaults() }
 
@@ -77,4 +86,8 @@ open class SparkMax(canID: Int, val name: String, motorType: MotorType = MotorTy
         periodicFramePeriod5 = 200,
         periodicFramePeriod6 = 200
     )
+
+    enum class MotorType {
+        NEO, VORTEX
+    }
 }
