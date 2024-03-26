@@ -7,9 +7,10 @@ import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
+import org.team9432.lib.wrappers.SparkFlex
 
 class ShooterSideIOVortex(override val shooterSide: ShooterSideIO.ShooterSide): ShooterSideIO {
-    private val spark = CANSparkFlex(shooterSide.motorID, CANSparkLowLevel.MotorType.kBrushless)
+    private val spark = SparkFlex(shooterSide.motorID, "${shooterSide.name} Shooter Motor")
 
     private val encoder = spark.encoder
     private val pid = PIDController(0.0, 0.0, 0.0)
@@ -20,30 +21,13 @@ class ShooterSideIOVortex(override val shooterSide: ShooterSideIO.ShooterSide): 
     private var feedforwardVolts = 0.0
 
     init {
-        spark.restoreFactoryDefaults()
+        val config = SparkFlex.Config(
+            inverted = shooterSide.inverted,
+            idleMode = IdleMode.kCoast,
+            smartCurrentLimit = 80
+        )
 
-        for (i in 0..88) {
-            spark.inverted = shooterSide.inverted
-            if (spark.inverted == shooterSide.inverted) break
-        }
-
-        for (i in 0..88) {
-            val errors = mutableListOf<REVLibError>()
-            errors += spark.setIdleMode(IdleMode.kCoast)
-            errors += spark.enableVoltageCompensation(12.0)
-            errors += spark.setSmartCurrentLimit(80)
-            errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-            errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus4, 1000)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus5, 1000)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus6, 1000)
-            if (errors.all { it == REVLibError.kOk }) break
-        }
-
-        spark.burnFlash()
+        spark.applyConfig(config)
     }
 
     override fun updateInputs(inputs: ShooterSideIO.ShooterSideIOInputs) {

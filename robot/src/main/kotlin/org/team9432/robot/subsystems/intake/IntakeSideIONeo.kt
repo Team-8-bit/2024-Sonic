@@ -5,39 +5,23 @@ import com.revrobotics.CANSparkLowLevel
 import com.revrobotics.CANSparkMax
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
+import org.team9432.lib.wrappers.SparkMax
 
 class IntakeSideIONeo(override val intakeSide: IntakeSideIO.IntakeSide): IntakeSideIO {
-    private val spark = CANSparkMax(intakeSide.motorID, CANSparkLowLevel.MotorType.kBrushless)
+    private val spark = SparkMax(intakeSide.motorID, "${intakeSide.name} Intake Motor")
 
     private val encoder = spark.encoder
 
     private val gearRatio = 2
 
     init {
-        spark.restoreFactoryDefaults()
+        val config = SparkMax.Config(
+            inverted = intakeSide.inverted,
+            idleMode = IdleMode.kCoast,
+            smartCurrentLimit = 80
+        )
 
-        for (i in 0..88) {
-            spark.inverted = intakeSide.inverted
-            if (spark.inverted == intakeSide.inverted) break
-        }
-
-        for (i in 0..88) {
-            val errors = mutableListOf<REVLibError>()
-            errors += spark.setIdleMode(IdleMode.kCoast)
-            errors += spark.enableVoltageCompensation(12.0)
-            errors += spark.setSmartCurrentLimit(80)
-            errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-            errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus4, 1000)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus5, 1000)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus6, 1000)
-            if (errors.all { it == REVLibError.kOk }) break
-        }
-
-        spark.burnFlash()
+        spark.applyConfig(config)
     }
 
     override fun updateInputs(inputs: IntakeSideIO.IntakeSideIOInputs) {

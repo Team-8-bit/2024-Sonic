@@ -1,20 +1,17 @@
 package org.team9432.robot.subsystems.hood
 
 import com.revrobotics.CANSparkBase.IdleMode
-import com.revrobotics.CANSparkLowLevel
-import com.revrobotics.CANSparkMax
-import com.revrobotics.REVLibError
-import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
+import org.team9432.lib.wrappers.SparkMax
 import org.team9432.robot.Devices
 
 class HoodIONeo: HoodIO {
-    private val spark = CANSparkMax(Devices.HOOD_ID, CANSparkLowLevel.MotorType.kBrushless)
+    private val spark = SparkMax(Devices.HOOD_ID, "Hood Motor")
 
     private val encoder = spark.encoder
 
@@ -27,32 +24,15 @@ class HoodIONeo: HoodIO {
     private val ffTable = InterpolatingDoubleTreeMap()
 
     init {
-        spark.restoreFactoryDefaults()
+        val config = SparkMax.Config(
+            inverted = true,
+            idleMode = IdleMode.kBrake,
+            smartCurrentLimit = 20
+        )
 
-        for (i in 0..88) {
-            spark.inverted = true
-            if (spark.inverted == true) break
-        }
+        spark.applyConfig(config)
 
-        for (i in 0..88) {
-            val errors = mutableListOf<REVLibError>()
-            errors += spark.setIdleMode(IdleMode.kBrake)
-            errors += spark.setSmartCurrentLimit(20)
-            errors += spark.enableVoltageCompensation(12.0)
-            errors += spark.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-            errors += spark.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false)
-            errors += encoder.setPosition(0.0)
-
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 250)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus3, 1000)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus4, 1000)
-            errors += spark.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus6, 1000)
-
-            if (errors.all { it == REVLibError.kOk }) break
-        }
         pid.setTolerance(0.0)
-
-        spark.burnFlash()
 
         ffTable.put(0.0, 0.0)
         ffTable.put(15.0, 10.0)
@@ -88,7 +68,7 @@ class HoodIONeo: HoodIO {
     }
 
     override fun setBrakeMode(enabled: Boolean) {
-        spark.idleMode = if (enabled) IdleMode.kBrake else IdleMode.kCoast
+        spark.applyAndErrorCheck("Idle Mode") { spark.setIdleMode(if (enabled) IdleMode.kBrake else IdleMode.kCoast) }
     }
 
     override fun stop() = setVoltage(0.0)
