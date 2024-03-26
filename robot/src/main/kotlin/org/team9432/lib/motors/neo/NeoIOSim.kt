@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim
 import org.team9432.LOOP_PERIOD_SECS
 import kotlin.math.abs
 
-class NeoIOSim(gearRatio: Double, jkgMetersSquared: Double): NeoIO {
-    private val sim = DCMotorSim(DCMotor.getNEO(1), gearRatio, jkgMetersSquared)
+class NeoIOSim(config: NEO.Config): NeoIO {
+    private val sim = DCMotorSim(DCMotor.getNEO(1), config.simGearRatio, config.simJkgMetersSquared)
 
     private var appliedVolts = 0.0
 
