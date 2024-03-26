@@ -5,7 +5,7 @@ import com.revrobotics.REVLibError
 import com.revrobotics.SparkLimitSwitch
 import edu.wpi.first.wpilibj.DriverStation
 
-class SparkMax(canID: Int, val name: String, motorType: MotorType = MotorType.kBrushless): CANSparkMax(canID, motorType) {
+open class SparkMax(canID: Int, val name: String, motorType: MotorType = MotorType.kBrushless): CANSparkMax(canID, motorType) {
     fun applyConfig(config: Config) {
         applyAndErrorCheck("Restore Defaults") { restoreFactoryDefaults() }
 

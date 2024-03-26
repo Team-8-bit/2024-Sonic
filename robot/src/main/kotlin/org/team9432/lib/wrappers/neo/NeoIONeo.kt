@@ -1,11 +1,13 @@
-package org.team9432.robot.subsystems.hopper
+package org.team9432.lib.wrappers.neo
 
 import com.revrobotics.CANSparkBase.IdleMode
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.util.Units
 import org.team9432.lib.wrappers.SparkMax
 import org.team9432.robot.Devices
 
-class HopperIONeo: HopperIO {
-    private val spark = SparkMax(Devices.HOPPER_ID, "Hopper Motor")
+class NeoIONeo(canID: Int, name: String): NeoIO {
+    private val spark = SparkMax(canID, name)
 
     private val encoder = spark.encoder
 
@@ -19,8 +21,9 @@ class HopperIONeo: HopperIO {
         spark.applyConfig(config)
     }
 
-    override fun updateInputs(inputs: HopperIO.HopperIOInputs) {
-        inputs.velocityRPM = encoder.velocity
+    override fun updateInputs(inputs: NeoIO.NEOIOInputs) {
+        inputs.angle = Rotation2d.fromRotations(encoder.position)
+        inputs.velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(encoder.velocity)
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
         inputs.currentAmps = spark.outputCurrent
     }
