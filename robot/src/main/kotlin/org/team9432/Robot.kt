@@ -9,8 +9,8 @@ import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AutoChooser
 import org.team9432.robot.auto.commands.PullFromSpeakerShooter
-import org.team9432.robot.commands.hood.HoodAimAtSpeaker
 import org.team9432.robot.commands.stop
+import org.team9432.robot.subsystems.Hood
 
 val LOOP_PERIOD_SECS = Robot.period
 
@@ -22,7 +22,7 @@ object Robot: LoggedRobot() {
     override fun autonomousInit() {
         ParallelCommand(
             AutoChooser.getCommand(),
-            HoodAimAtSpeaker()
+            Hood.Commands.aimAtSpeaker()
         ).schedule()
     }
 

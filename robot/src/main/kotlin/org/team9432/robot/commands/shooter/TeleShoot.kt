@@ -4,17 +4,17 @@ import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
-import org.team9432.robot.commands.hood.HoodAimAtSpeaker
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.led.LEDState
 import org.team9432.robot.led.animations.Rocket
 import org.team9432.robot.oi.Controls
+import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Hopper
 import org.team9432.robot.subsystems.Intake
 import org.team9432.robot.subsystems.Shooter
 
 fun TeleShoot() = ParallelDeadlineCommand(
-    HoodAimAtSpeaker(),
+    Hood.Commands.aimAtSpeaker(),
 
     deadline = SequentialCommand(
         Shooter.Commands.startRunAtSpeeds(),
