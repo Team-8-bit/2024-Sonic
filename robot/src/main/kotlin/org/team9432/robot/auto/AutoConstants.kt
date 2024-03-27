@@ -8,7 +8,7 @@ import org.team9432.lib.unit.degrees
 import org.team9432.lib.unit.inMeters
 import org.team9432.lib.unit.meters
 import org.team9432.robot.FieldConstants
-import org.team9432.robot.subsystems.RobotPosition
+import org.team9432.robot.RobotPosition
 import kotlin.math.pow
 import kotlin.math.sqrt
 

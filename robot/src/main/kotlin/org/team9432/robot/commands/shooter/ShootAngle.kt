@@ -6,21 +6,21 @@ import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.hopper.MoveToSide
-import org.team9432.robot.subsystems.hood.CommandHood
-import org.team9432.robot.subsystems.hopper.CommandHopper
-import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.led.LEDState
 import org.team9432.robot.led.animations.ChargeUp
-import org.team9432.robot.subsystems.shooter.CommandShooter
+import org.team9432.robot.subsystems.Hood
+import org.team9432.robot.subsystems.Hopper
+import org.team9432.robot.subsystems.Intake
+import org.team9432.robot.subsystems.Shooter
 
 fun ShootAngle(rpmFast: Int, rpmSlow: Int, angle: Rotation2d) = ParallelDeadlineCommand(
     // Aim the hood and spin up the shooter
-    CommandHood.followAngle { angle },
+    Hood.Commands.followAngle { angle },
 
     InstantCommand { LEDState.animation = ChargeUp(1.0, 1.0) },
 
     deadline = SequentialCommand(
-        CommandShooter.startRunAtSpeeds(rpmFast, rpmSlow),
+        Shooter.Commands.startRunAtSpeeds(rpmFast, rpmSlow),
 
         ParallelCommand(
             // Move the note to the speaker side of the hopper
@@ -29,14 +29,14 @@ fun ShootAngle(rpmFast: Int, rpmSlow: Int, angle: Rotation2d) = ParallelDeadline
         ),
         ParallelDeadlineCommand(
             // Shoot the note
-            CommandHopper.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
-            CommandIntake.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
+            Hopper.Commands.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
+            Intake.Commands.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
             // Do this for one second
             deadline = WaitCommand(1.0)
         ),
 
         // Update the note position
         InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
-        CommandShooter.stop()
+        Shooter.Commands.stop()
     )
 )

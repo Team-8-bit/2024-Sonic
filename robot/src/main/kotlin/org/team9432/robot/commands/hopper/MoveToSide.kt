@@ -4,8 +4,8 @@ import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
-import org.team9432.robot.subsystems.hopper.CommandHopper
-import org.team9432.robot.subsystems.intake.CommandIntake
+import org.team9432.robot.subsystems.Hopper
+import org.team9432.robot.subsystems.Intake
 
 fun MoveToSide(side: MechanismSide) = SuppliedCommand {
     // If there's a note left in the hopper from auto, don't try to load it
@@ -17,15 +17,15 @@ fun MoveToSide(side: MechanismSide) = SuppliedCommand {
     SequentialCommand(
         SuppliedCommand {
             when (side) {
-                MechanismSide.AMP -> CommandHopper.startLoadTo(side, 2.0)
-                MechanismSide.SPEAKER -> CommandHopper.startLoadTo(side, 1.5)
+                MechanismSide.AMP -> Hopper.Commands.startLoadTo(side, 2.0)
+                MechanismSide.SPEAKER -> Hopper.Commands.startLoadTo(side, 1.5)
             }
         },
         // Let the hopper spin up a bit
         WaitCommand(0.25),
         // Both intakes need to be run when feeding across, but it runs only one when bending the note
-        if (noteIsCrossing) CommandIntake.startIntake(2.0, 2.0)
-        else CommandIntake.startIntakeSide(side, 2.0),
+        if (noteIsCrossing) Intake.Commands.startIntake(2.0, 2.0)
+        else Intake.Commands.startIntakeSide(side, 2.0),
         // After the note is at the beam break, slowly unload to align it
         WaitUntilCommand { RobotState.noteInHopperSide(side) }
             .afterSimDelay(1.0) {
@@ -36,8 +36,8 @@ fun MoveToSide(side: MechanismSide) = SuppliedCommand {
 
         ParallelDeadlineCommand(
             // Unload the note until it is no longer blocking the beam break
-            CommandIntake.runOuttakeSide(side, 2.0),
-            CommandHopper.runUnloadFrom(side, 2.0),
+            Intake.Commands.runOuttakeSide(side, 2.0),
+            Hopper.Commands.runUnloadFrom(side, 2.0),
             deadline = WaitUntilCommand { !RobotState.noteInHopperSide(side) }.afterSimDelay(0.25) { BeambreakIOSim.setNoteInHopperSide(side, false) }
         ),
         // Update the note position in the robot

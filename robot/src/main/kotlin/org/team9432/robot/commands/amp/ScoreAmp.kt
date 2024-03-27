@@ -7,12 +7,12 @@ import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
-import org.team9432.robot.subsystems.amp.CommandAmp
-import org.team9432.robot.subsystems.hopper.CommandHopper
-import org.team9432.robot.subsystems.intake.CommandIntake
+import org.team9432.robot.subsystems.Amp
+import org.team9432.robot.subsystems.Hopper
+import org.team9432.robot.subsystems.Intake
 
 fun ScoreAmp(volts: Double) = SequentialCommand(
-    CommandAmp.setVoltage(volts),
+    Amp.Commands.setVoltage(volts),
 
     ParallelCommand(
         // Move the note to the speaker side of the hopper
@@ -26,12 +26,12 @@ fun ScoreAmp(volts: Double) = SequentialCommand(
 
     ParallelDeadlineCommand(
         // Shoot the note
-        CommandHopper.runLoadTo(MechanismSide.AMP, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
-        CommandIntake.runIntakeSide(MechanismSide.AMP, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
+        Hopper.Commands.runLoadTo(MechanismSide.AMP, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
+        Intake.Commands.runIntakeSide(MechanismSide.AMP, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
         // Do this for one second
         deadline = WaitCommand(1.0)
     ),
-    CommandAmp.stop(),
+    Amp.Commands.stop(),
     // Update the note position
     InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE }
 )

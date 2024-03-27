@@ -8,9 +8,9 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.util.PoseUtil
 import org.team9432.lib.util.PoseUtil.applyFlip
+import org.team9432.robot.RobotPosition
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.sensors.gyro.Gyro
-import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
 class TeleTargetDrive(private val target: () -> Translation2d): KCommand() {

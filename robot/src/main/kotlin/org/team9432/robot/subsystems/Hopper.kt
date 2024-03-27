@@ -1,7 +1,9 @@
-package org.team9432.robot.subsystems.hopper
+package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.lib.motors.neo.Neo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
@@ -21,6 +23,26 @@ object Hopper: KSubsystem() {
         if (side == MechanismSide.SPEAKER) setVoltage(volts) else setVoltage(-volts)
 
     fun stop() = motor.stop()
+
+    object Commands {
+        fun setVoltage(volts: Double) = InstantCommand(Hopper) { Hopper.setVoltage(volts) }
+        fun stop() = InstantCommand(Hopper) { Hopper.stop() }
+
+        fun startLoadTo(side: MechanismSide, volts: Double) = InstantCommand(Hopper) { loadTo(side, volts) }
+        fun startUnloadFrom(side: MechanismSide, volts: Double) = InstantCommand(Hopper) { unloadFrom(side, volts) }
+
+        fun runLoadTo(side: MechanismSide, volts: Double) = SimpleCommand(
+            requirements = setOf(Hopper),
+            execute = { loadTo(side, volts) },
+            end = { Hopper.stop() }
+        )
+
+        fun runUnloadFrom(side: MechanismSide, volts: Double) = SimpleCommand(
+            requirements = setOf(Hopper),
+            execute = { unloadFrom(side, volts) },
+            end = { Hopper.stop() }
+        )
+    }
 
     private fun getConfig() = Neo.Config(
         canID = Devices.HOPPER_ID,

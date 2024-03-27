@@ -1,4 +1,4 @@
-package org.team9432.robot.subsystems.hood
+package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
 import edu.wpi.first.math.MathUtil
@@ -11,6 +11,8 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.lib.motors.neo.Neo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
@@ -59,6 +61,18 @@ object Hood: KSubsystem() {
     }
 
     fun stop() = motor.stop()
+
+    object Commands {
+        fun stop() = InstantCommand(Hood) { Hood.stop() }
+        fun followAngle(angle: () -> Rotation2d) = SimpleCommand(
+            requirements = setOf(Hood),
+            execute = { setAngle(angle.invoke()) },
+            end = { setAngle(Rotation2d()) }
+        )
+
+        fun setVoltage(volts: Double) = InstantCommand(Hood) { Hood.setVoltage(volts) }
+        fun resetAngle() = InstantCommand(Hood) { Hood.resetAngle() }
+    }
 
     private fun getConfig() = Neo.Config(
         canID = Devices.HOOD_ID,

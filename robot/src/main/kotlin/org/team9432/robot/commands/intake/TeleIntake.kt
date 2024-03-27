@@ -2,15 +2,15 @@ package org.team9432.robot.commands.intake
 
 import org.team9432.lib.commandbased.KCommand.InterruptionBehavior
 import org.team9432.lib.commandbased.commands.*
-import org.team9432.robot.oi.Controls
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
-import org.team9432.robot.subsystems.intake.CommandIntake
+import org.team9432.robot.oi.Controls
+import org.team9432.robot.subsystems.Intake
 
 fun TeleIntake() = SequentialCommand(
     // This part just gets the note touching the first intake beam break
     ParallelDeadlineCommand(
-        CommandIntake.runTeleIntake(CommandConstants.INITIAL_INTAKE_VOLTS),
+        Intake.Commands.runTeleIntake(CommandConstants.INITIAL_INTAKE_VOLTS),
         deadline = WaitUntilCommand { RobotState.noteInAnyIntake() }
     ),
 

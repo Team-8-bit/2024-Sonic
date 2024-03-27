@@ -12,8 +12,7 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.commands.intake.FinishIntakingAndAlign
 import org.team9432.robot.sensors.gyro.Gyro
-import org.team9432.robot.subsystems.shooter.CommandShooter
-import org.team9432.robot.subsystems.shooter.Shooter
+import org.team9432.robot.subsystems.Shooter
 
 fun FinishIntakingThen(command: KCommand, delay: Double = 0.5) = ParallelCommand(
     SequentialCommand(
@@ -35,5 +34,5 @@ fun InitAuto(degrees: Rotation2d) = InstantCommand {
 }
 
 fun ExitAuto() = ParallelCommand(
-    CommandShooter.stop()
+    Shooter.Commands.stop()
 )

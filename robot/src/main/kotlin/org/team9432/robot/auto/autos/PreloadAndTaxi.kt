@@ -9,7 +9,7 @@ import org.team9432.robot.auto.AutoBuilder
 import org.team9432.robot.auto.commands.AutoShoot
 import org.team9432.robot.auto.commands.CollectPreloadAndStartShooter
 import org.team9432.robot.commands.drivetrain.DriveFieldRelativeSpeeds
-import org.team9432.robot.subsystems.shooter.CommandShooter
+import org.team9432.robot.subsystems.Shooter
 
 fun PreloadAndTaxi() = SequentialCommand(
     SuppliedCommand {
@@ -19,8 +19,7 @@ fun PreloadAndTaxi() = SequentialCommand(
     WaitCommand(1.0),
     AutoShoot(),
     WaitCommand(1.0),
-    CommandShooter.stop(),
-
+    Shooter.Commands.stop(),
     DriveFieldRelativeSpeeds(0.0, 1.0, 0.0).withTimeout(1.0), // Towards Amp Side
     SuppliedCommand {
         DriveFieldRelativeSpeeds(1.0 * PoseUtil.coordinateFlip, 0.0, 0.0).withTimeout(1.0) // Forwards

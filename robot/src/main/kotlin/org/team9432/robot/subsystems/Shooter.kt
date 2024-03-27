@@ -1,11 +1,12 @@
-package org.team9432.robot.subsystems.shooter
+package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.motors.neo.Neo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
-import org.team9432.robot.subsystems.RobotPosition
+import org.team9432.robot.RobotPosition
 
 object Shooter: KSubsystem() {
     private val leftSide = Neo(getConfig(Devices.LEFT_SHOOTER_ID, false, "Left"))
@@ -47,6 +48,14 @@ object Shooter: KSubsystem() {
         isRunningAtSpeeds = null
         leftSide.stop()
         rightSide.stop()
+    }
+
+    object Commands {
+        fun setVoltage(leftVolts: Double, rightVolts: Double) = InstantCommand(Shooter) { Shooter.setVoltage(leftVolts, rightVolts) }
+        fun setSpeed(leftRPM: Int, rightRPM: Int) = InstantCommand(Shooter) { Shooter.setSpeed(leftRPM, rightRPM) }
+        fun stop() = InstantCommand(Shooter) { Shooter.stop() }
+
+        fun startRunAtSpeeds(rpmFast: Int = 6000, rpmSlow: Int = 4000) = InstantCommand(Shooter) { Shooter.startRunAtSpeeds(rpmFast, rpmSlow) }
     }
 
     private fun getConfig(canID: Int, inverted: Boolean, side: String): Neo.Config {

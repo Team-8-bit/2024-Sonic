@@ -9,11 +9,11 @@ import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.TargetAim
-import org.team9432.robot.subsystems.hopper.CommandHopper
-import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.led.LEDState
 import org.team9432.robot.led.animations.ChargeUp
 import org.team9432.robot.led.animations.Rocket
+import org.team9432.robot.subsystems.Hopper
+import org.team9432.robot.subsystems.Intake
 
 fun AutoShoot() = ParallelDeadlineCommand(
     InstantCommand { LEDState.animation = ChargeUp(0.5, 1.0) },
@@ -22,8 +22,8 @@ fun AutoShoot() = ParallelDeadlineCommand(
         TargetAim { FieldConstants.speakerPose },
         ParallelDeadlineCommand(
             // Shoot the note
-            CommandHopper.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
-            CommandIntake.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
+            Hopper.Commands.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
+            Intake.Commands.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
 
             deadline = WaitCommand(0.5)
         ),
