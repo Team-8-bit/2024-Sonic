@@ -11,12 +11,8 @@ import org.team9432.robot.oi.Controls
 import org.team9432.robot.sensors.beambreaks.Beambreaks
 import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.sensors.vision.Vision
-import org.team9432.robot.subsystems.amp.Amp
+import org.team9432.robot.subsystems.*
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
-import org.team9432.robot.subsystems.hood.Hood
-import org.team9432.robot.subsystems.hopper.Hopper
-import org.team9432.robot.subsystems.intake.Intake
-import org.team9432.robot.subsystems.shooter.Shooter
 
 object Init {
     fun initRobot() {

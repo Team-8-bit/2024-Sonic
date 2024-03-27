@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
 import org.team9432.LOOP_PERIOD_SECS
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.unit.*
 import org.team9432.lib.util.SwerveUtil
 import org.team9432.robot.sensors.gyro.Gyro
@@ -109,6 +110,11 @@ object Drivetrain: KSubsystem() {
 
     fun getModulePositions() = modules.map { it.position }
     fun getModuleStates() = modules.map { it.state }
+
+    object Commands {
+        fun stop() = InstantCommand(Drivetrain) { Drivetrain.stop() }
+        fun stopAndX() = InstantCommand(Drivetrain) { Drivetrain.stopAndX() }
+    }
 
     private val MODULE_TRANSLATIONS: Array<Translation2d>
         get() {

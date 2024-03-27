@@ -3,11 +3,7 @@ package org.team9432.robot.commands
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.robot.RobotState
-import org.team9432.robot.subsystems.amp.Amp
-import org.team9432.robot.subsystems.hood.Hood
-import org.team9432.robot.subsystems.hopper.Hopper
-import org.team9432.robot.subsystems.intake.Intake
-import org.team9432.robot.subsystems.shooter.Shooter
+import org.team9432.robot.subsystems.*
 
 fun stop() {
     RobotState.notePosition = RobotState.NotePosition.NONE

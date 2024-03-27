@@ -9,8 +9,8 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.util.PoseUtil.applyFlip
 import org.team9432.robot.MechanismSide
+import org.team9432.robot.RobotPosition
 import org.team9432.robot.sensors.gyro.Gyro
-import org.team9432.robot.subsystems.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
 

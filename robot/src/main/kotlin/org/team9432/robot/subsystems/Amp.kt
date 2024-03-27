@@ -1,7 +1,8 @@
-package org.team9432.robot.subsystems.amp
+package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.motors.neo.Neo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
@@ -11,6 +12,11 @@ object Amp: KSubsystem() {
 
     fun setVoltage(volts: Double) = motor.setVoltage(volts)
     fun stop() = motor.stop()
+
+    object Commands {
+        fun setVoltage(volts: Double) = InstantCommand(Amp) { Amp.setVoltage(volts) }
+        fun stop() = InstantCommand(Amp) { Amp.stop() }
+    }
 
     private fun getConfig() = Neo.Config(
         canID = Devices.AMP_ID,

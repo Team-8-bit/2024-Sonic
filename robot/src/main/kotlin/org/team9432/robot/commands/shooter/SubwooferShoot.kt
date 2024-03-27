@@ -5,17 +5,16 @@ import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.hopper.MoveToSide
-import org.team9432.robot.subsystems.hopper.CommandHopper
-import org.team9432.robot.subsystems.intake.CommandIntake
 import org.team9432.robot.led.LEDState
-import org.team9432.robot.led.animations.ChargeUp
 import org.team9432.robot.led.animations.Rocket
 import org.team9432.robot.oi.Controls
-import org.team9432.robot.subsystems.shooter.CommandShooter
+import org.team9432.robot.subsystems.Hopper
+import org.team9432.robot.subsystems.Intake
+import org.team9432.robot.subsystems.Shooter
 
 fun SubwooferShoot() = ParallelDeadlineCommand(
     deadline = SequentialCommand(
-        CommandShooter.startRunAtSpeeds(),
+        Shooter.Commands.startRunAtSpeeds(),
 
         ParallelCommand(
             // Move the note to the speaker side of the hopper
@@ -27,8 +26,8 @@ fun SubwooferShoot() = ParallelDeadlineCommand(
         InstantCommand { LEDState.speakerShooterReady = false },
         ParallelDeadlineCommand(
             // Shoot the note
-            CommandHopper.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
-            CommandIntake.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
+            Hopper.Commands.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
+            Intake.Commands.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
 
             SimpleCommand(
                 isFinished = { !RobotState.noteInSpeakerSideHopperBeambreak() },
@@ -42,6 +41,6 @@ fun SubwooferShoot() = ParallelDeadlineCommand(
         // Update the note position
         InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
 
-        CommandShooter.stop()
+        Shooter.Commands.stop()
     )
 )

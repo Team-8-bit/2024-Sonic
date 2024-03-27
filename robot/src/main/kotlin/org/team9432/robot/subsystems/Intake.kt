@@ -1,7 +1,9 @@
-package org.team9432.robot.subsystems.intake
+package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
 import org.team9432.lib.commandbased.KSubsystem
+import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.lib.motors.neo.Neo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
@@ -58,6 +60,33 @@ object Intake: KSubsystem() {
     override fun periodic() {
         ampSide.periodic()
         speakerSide.periodic()
+    }
+
+    object Commands {
+        fun startIntake(ampVolts: Double, speakerVolts: Double) = InstantCommand(Intake) { intake(ampVolts, speakerVolts) }
+        fun startOuttake(ampVolts: Double, speakerVolts: Double) = InstantCommand(Intake) { outtake(ampVolts, speakerVolts) }
+        fun stop() = InstantCommand(Intake) { Intake.stop() }
+        fun startTeleIntake(volts: Double) = InstantCommand(Intake) { Intake.runTeleIntake(volts) }
+        fun startIntakeSide(side: MechanismSide, volts: Double) = InstantCommand(Intake) { intakeSide(side, volts) }
+        fun startOuttakeSide(side: MechanismSide, volts: Double) = InstantCommand(Intake) { outtakeSide(side, volts) }
+
+        fun runTeleIntake(volts: Double) = SimpleCommand(
+            requirements = setOf(Intake),
+            execute = { Intake.runTeleIntake(volts) },
+            end = { Intake.stop() }
+        )
+
+        fun runIntakeSide(side: MechanismSide, volts: Double) = SimpleCommand(
+            requirements = setOf(Intake),
+            execute = { intakeSide(side, volts) },
+            end = { Intake.stop() }
+        )
+
+        fun runOuttakeSide(side: MechanismSide, volts: Double) = SimpleCommand(
+            requirements = setOf(Intake),
+            execute = { outtakeSide(side, volts) },
+            end = { Intake.stop() }
+        )
     }
 
     private fun getConfig(canID: Int, inverted: Boolean, side: String): Neo.Config {

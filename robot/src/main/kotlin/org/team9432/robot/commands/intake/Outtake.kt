@@ -2,7 +2,7 @@ package org.team9432.robot.commands.intake
 
 import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.robot.RobotState
-import org.team9432.robot.subsystems.intake.Intake
+import org.team9432.robot.subsystems.Intake
 
 fun Outtake() = SimpleCommand(
     requirements = setOf(Intake),

@@ -1,4 +1,4 @@
-package org.team9432.robot.subsystems
+package org.team9432.robot
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 

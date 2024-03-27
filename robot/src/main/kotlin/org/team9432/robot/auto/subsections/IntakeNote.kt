@@ -11,12 +11,12 @@ import org.team9432.robot.commands.drivetrain.DriveRobotRelativeSpeeds
 import org.team9432.robot.commands.drivetrain.DriveToPosition
 import org.team9432.robot.commands.drivetrain.TargetAim
 import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
-import org.team9432.robot.subsystems.intake.CommandIntake
+import org.team9432.robot.subsystems.Intake
 
 fun IntakeNote(note: AllianceNote) = SequentialCommand(
     // Move forwards until the note is touched
     ParallelDeadlineCommand(
-        CommandIntake.runIntakeSide(MechanismSide.AMP, CommandConstants.INITIAL_INTAKE_VOLTS),
+        Intake.Commands.runIntakeSide(MechanismSide.AMP, CommandConstants.INITIAL_INTAKE_VOLTS),
 
         SequentialCommand(
             TargetAim(MechanismSide.AMP) { AutoConstants.getNotePosition(note) },
@@ -33,7 +33,7 @@ fun IntakeNote(note: AllianceNote) = SequentialCommand(
 fun IntakeNote(pose: Pose2d, timeout: Double = 1.0) = SequentialCommand(
     // Move forwards until the note is touched
     ParallelDeadlineCommand(
-        CommandIntake.runIntakeSide(MechanismSide.AMP, CommandConstants.INITIAL_INTAKE_VOLTS),
+        Intake.Commands.runIntakeSide(MechanismSide.AMP, CommandConstants.INITIAL_INTAKE_VOLTS),
 
         SequentialCommand(
             DriveToPosition(pose),
