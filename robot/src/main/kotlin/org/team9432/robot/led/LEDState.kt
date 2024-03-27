@@ -76,8 +76,11 @@ object LEDState: KPeriodic() {
                     strobe(Color.kLime, 0.25, LEDs.Section.SPEAKER)
                 }
                 if (ampShooterReady) {
-                    if (State.alliance == DriverStation.Alliance.Red) strobe(Color.kLime, 0.25, LEDs.Section.LEFT)
-                    else strobe(Color.kLime, 0.25, LEDs.Section.RIGHT)
+                    if (State.alliance == DriverStation.Alliance.Red) {
+                        strobe(Color.kLime, 0.25, LEDs.Section.LEFT)
+                    } else {
+                        strobe(Color.kLime, 0.25, LEDs.Section.RIGHT)
+                    }
                 }
             }
         }
