@@ -1,6 +1,8 @@
 package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
+import org.team9432.lib.State
+import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.motors.neo.Neo
@@ -13,6 +15,19 @@ object Shooter: KSubsystem() {
     private val rightSide = Neo(getConfig(Devices.RIGHT_SHOOTER_ID, true, "Right"))
 
     private var isRunningAtSpeeds: Pair<Int, Int>? = null
+
+    init {
+        when (State.mode) {
+            REAL, REPLAY -> {
+                leftSide.setPID(0.0005, 0.0, 0.0)
+                rightSide.setPID(0.0005, 0.0, 0.0)
+            }
+            SIM -> {
+                leftSide.setPID(0.1, 0.0, 0.0)
+                rightSide.setPID(0.1, 0.0, 0.0)
+            }
+        }
+    }
 
     override fun periodic() {
         isRunningAtSpeeds?.let {
