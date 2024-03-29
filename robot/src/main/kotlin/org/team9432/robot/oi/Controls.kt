@@ -10,13 +10,12 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.commands.amp.ScoreAmp
 import org.team9432.robot.commands.drivetrain.teleop.TeleAngleDrive
 import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
-import org.team9432.robot.commands.intake.Outtake
 import org.team9432.robot.commands.intake.TeleIntake
-import org.team9432.robot.commands.shooter.SubwooferShoot
 import org.team9432.robot.commands.shooter.TeleShoot
 import org.team9432.robot.commands.stopCommand
 import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
 import org.team9432.robot.sensors.gyro.Gyro
+import org.team9432.robot.subsystems.Intake
 
 object Controls {
     private val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
@@ -42,13 +41,12 @@ object Controls {
 
         // Outtake Intake
         driver.x
-            .whileTrue(Outtake())
+            .whileTrue(Intake.Commands.runOuttake())
 
         // Shoot Speaker
         driver.rightTrigger
             .onTrue(SuppliedCommand {
                 if (EmergencySwitches.isAmpForSpeaker) ScoreAmp(12.0)
-                else if (EmergencySwitches.isSubwooferOnly) SubwooferShoot()
                 else TeleShoot()
             })
 

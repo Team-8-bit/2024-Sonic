@@ -74,6 +74,7 @@ object Hood: KSubsystem() {
         fun followAngle(angle: () -> Rotation2d) = SimpleCommand(
             requirements = setOf(Hood),
             execute = { setAngle(angle.invoke()) },
+            isFinished = { EmergencySwitches.isSubwooferOnly },
             end = { setAngle(0.0.degrees.asRotation2d) }
         )
 

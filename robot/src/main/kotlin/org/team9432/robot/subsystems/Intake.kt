@@ -87,6 +87,15 @@ object Intake: KSubsystem() {
             execute = { outtakeSide(side, volts) },
             end = { Intake.stop() }
         )
+
+        fun runOuttake() = SimpleCommand(
+            requirements = setOf(Intake),
+            initialize = { outtake(8.0, 8.0) },
+            end = {
+                Intake.stop()
+                if (!RobotState.noteInAnyIntake()) RobotState.notePosition = RobotState.NotePosition.NONE
+            }
+        )
     }
 
     private fun getConfig(canID: Int, inverted: Boolean, side: String): Neo.Config {

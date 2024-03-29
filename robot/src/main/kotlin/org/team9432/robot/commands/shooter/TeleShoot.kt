@@ -43,6 +43,7 @@ fun TeleShoot() = ParallelDeadlineCommand(
 
         // Update the note position
         InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
+
         Shooter.Commands.stop()
     )
 )
