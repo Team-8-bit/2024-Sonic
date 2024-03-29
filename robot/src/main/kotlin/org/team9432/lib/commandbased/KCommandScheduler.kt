@@ -27,6 +27,10 @@ object KCommandScheduler {
 
     private val additionalPeriodics: MutableSet<() -> Unit> = mutableSetOf()
 
+    private val subsystemQueue = mutableSetOf<KSubsystem>()
+    private val periodicQueue: MutableSet<() -> Unit> = mutableSetOf()
+
+
     /**
      * Get the default button poll.
      *
@@ -35,6 +39,8 @@ object KCommandScheduler {
     val buttonLoop = EventLoop()
 
     private var isDisabled = false
+
+    private var inLoop = false
 
     // Flag and queues for avoiding ConcurrentModificationException if commands are
     // scheduled/canceled during run
@@ -125,7 +131,11 @@ object KCommandScheduler {
     }
 
     fun addPeriodic(runnable: () -> Unit) {
-        additionalPeriodics.add(runnable)
+        if (!inLoop) {
+            additionalPeriodics.add(runnable)
+        } else {
+            periodicQueue.add(runnable)
+        }
     }
 
     /**
@@ -142,11 +152,13 @@ object KCommandScheduler {
      * Any subsystems not being used as requirements have their default methods started.
      */
     fun run() {
+        registerSubsystem(*subsystemQueue.toTypedArray())
+        periodicQueue.forEach { addPeriodic(it) }
+
+        inLoop = true
+
         if (isDisabled) return
         watchdog.reset()
-
-        // Call each additional periodic method
-        additionalPeriodics.forEach { it.invoke() }
 
         // Run the periodic method of all registered subsystems.
         for (subsystem in subsystems.keys) {
@@ -154,6 +166,9 @@ object KCommandScheduler {
 
             watchdog.addEpoch(subsystem.javaClass.getSimpleName() + ".periodic()")
         }
+
+        // Call each additional periodic method
+        additionalPeriodics.forEach { it.invoke() }
 
         // Poll buttons for new commands to add.
         buttonLoop.poll()
@@ -206,6 +221,8 @@ object KCommandScheduler {
             println("CommandScheduler loop overrun")
             watchdog.printEpochs()
         }
+
+        inLoop = false
     }
 
     /**
@@ -216,6 +233,10 @@ object KCommandScheduler {
      * @param subsystems the subsystem to register
      */
     fun registerSubsystem(vararg subsystems: KSubsystem) {
+        if (inLoop) {
+            subsystemQueue.addAll(subsystems)
+            return
+        }
         for (subsystem in subsystems) {
             if (this.subsystems.containsKey(subsystem)) {
                 DriverStation.reportWarning("Tried to register an already-registered subsystem", true)
