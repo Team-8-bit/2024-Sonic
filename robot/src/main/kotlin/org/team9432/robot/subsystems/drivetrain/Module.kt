@@ -72,10 +72,10 @@ class Module(private val module: ModuleConfig) {
     fun periodic() {
         BaseStatusSignal.refreshAll(steerAbsolutePositionSignal)
 
-        val steerInputs = steer.inputs
-        val driveInputs = drive.inputs
-
         val steerAbsolutePosition = Rotation2d.fromRotations(steerAbsolutePositionSignal.valueAsDouble).minus(module.encoderOffset)
+
+        val steerInputs = steer.getCurrentInputs()
+        val driveInputs = drive.getCurrentInputs()
 
         // On first cycle, reset relative turn encoder
         // Wait until absolute angle is nonzero in case it wasn't initialized yet

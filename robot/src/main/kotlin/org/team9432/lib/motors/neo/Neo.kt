@@ -27,6 +27,11 @@ class Neo(private val config: Config): KPeriodic() {
         Logger.processInputs(config.logName, inputs)
     }
 
+    fun getCurrentInputs(): LoggedNEOIOInputs {
+        io.updateInputs(inputs)
+        return inputs
+    }
+
     /** Run open loop at the specified voltage */
     fun setVoltage(volts: Double) = io.setVoltage(volts)
 
