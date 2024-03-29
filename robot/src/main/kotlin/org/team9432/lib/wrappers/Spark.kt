@@ -77,7 +77,7 @@ open class Spark(canID: Int, val name: String, motorType: MotorType): CANSparkBa
         val statusFrameConfig: StatusFrameConfig = StatusFrameConfig(),
     ) {
         data class StatusFrameConfig(
-            val periodicFramePeriod0: Int = 1000,
+            val periodicFramePeriod0: Int = 100,
             val periodicFramePeriod1: Int = 20,
             val periodicFramePeriod2: Int = 20,
             val periodicFramePeriod3: Int = 1000,
