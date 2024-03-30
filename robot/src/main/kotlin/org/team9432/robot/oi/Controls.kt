@@ -46,7 +46,7 @@ object Controls {
         // Shoot Speaker
         driver.rightTrigger
             .onTrue(SuppliedCommand {
-                if (EmergencySwitches.isAmpForSpeaker) ScoreAmp(12.0)
+                if (EmergencySwitches.useAmpForSpeaker) ScoreAmp(12.0)
                 else TeleShoot()
             })
 

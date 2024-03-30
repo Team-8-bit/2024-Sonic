@@ -21,6 +21,7 @@ import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
 import org.team9432.lib.motors.neo.Neo
 import org.team9432.lib.wrappers.Spark
+import org.team9432.robot.oi.EmergencySwitches
 import kotlin.math.cos
 
 class Module(private val module: ModuleConfig) {
@@ -40,6 +41,8 @@ class Module(private val module: ModuleConfig) {
     private fun Double.adjustRatio() = (this / MK4I_L2_DRIVE_REDUCTION) * MK4I_L3_DRIVE_REDUCTION
 
     private val steerAbsolutePositionSignal: StatusSignal<Double>
+
+    private var isBrakeMode: Boolean? = null
 
     init {
         when (State.mode) {
@@ -70,6 +73,13 @@ class Module(private val module: ModuleConfig) {
     }
 
     fun periodic() {
+        if (EmergencySwitches.disableDrivetrain) {
+            drive.stop()
+            steer.stop()
+
+            setBrakeMode(false)
+        } else setBrakeMode(true)
+
         BaseStatusSignal.refreshAll(steerAbsolutePositionSignal)
 
         val steerAbsolutePosition = Rotation2d.fromRotations(steerAbsolutePositionSignal.valueAsDouble).minus(module.encoderOffset)
@@ -127,8 +137,11 @@ class Module(private val module: ModuleConfig) {
     }
 
     fun setBrakeMode(enabled: Boolean) {
-        drive.setBrakeMode(enabled)
-        steer.setBrakeMode(enabled)
+        if (isBrakeMode != enabled) {
+            isBrakeMode = enabled
+            drive.setBrakeMode(enabled)
+            steer.setBrakeMode(enabled)
+        }
     }
 
     val positionMeters get() = drive.inputs.angle.radians * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
