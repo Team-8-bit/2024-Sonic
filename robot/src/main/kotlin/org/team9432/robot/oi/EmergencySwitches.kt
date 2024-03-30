@@ -7,4 +7,5 @@ object EmergencySwitches {
     val disableHood get() = switches.getRawButton(8)
     val useAmpForSpeaker get() = switches.getRawButton(1)
     val testSwitchActive get() = switches.getRawButton(2)
+    val disableDrivetrain get() = switches.getRawButton(4)
 }
