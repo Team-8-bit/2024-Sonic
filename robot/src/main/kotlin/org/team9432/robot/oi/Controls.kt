@@ -18,7 +18,7 @@ import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.Intake
 
 object Controls {
-    private val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
+    val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
 
     private val slowButton = driver.rightBumper
     private val readyToShootSpeakerButton = driver.rightTrigger.negate()

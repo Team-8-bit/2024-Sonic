@@ -2,7 +2,12 @@ package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
 import edu.wpi.first.math.util.Units
+import edu.wpi.first.units.Units.Volts
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import org.littletonrobotics.junction.Logger
+import org.team9432.Robot
+import org.team9432.lib.KSysIdConfig
+import org.team9432.lib.KSysIdMechanism
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
@@ -12,11 +17,14 @@ import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
 import org.team9432.robot.RobotPosition
 
+
 object Shooter: KSubsystem() {
     private val leftSide = Neo(getConfig(Devices.LEFT_SHOOTER_ID, false, "Left"))
     private val rightSide = Neo(getConfig(Devices.RIGHT_SHOOTER_ID, true, "Right"))
 
     private var isRunningAtSpeeds: Pair<Int, Int>? = null
+
+    private val sysId: SysIdRoutine
 
     init {
         when (State.mode) {
@@ -24,11 +32,22 @@ object Shooter: KSubsystem() {
                 leftSide.setPID(0.0005, 0.0, 0.0)
                 rightSide.setPID(0.0005, 0.0, 0.0)
             }
+
             SIM -> {
                 leftSide.setPID(0.1, 0.0, 0.0)
                 rightSide.setPID(0.1, 0.0, 0.0)
             }
         }
+
+        sysId = SysIdRoutine(
+            KSysIdConfig(
+                recordState = { state -> Logger.recordOutput("SysIdState", state.toString()) }
+            ),
+            KSysIdMechanism(
+                { volts -> leftSide.setVoltage(volts.`in`(Volts)) },
+                name = "Left Shooter"
+            )
+        )
     }
 
     override fun periodic() {
@@ -46,6 +65,10 @@ object Shooter: KSubsystem() {
 
         Logger.recordOutput("Shooter/LeftSide/RPM", Units.radiansPerSecondToRotationsPerMinute(leftSide.inputs.velocityRadPerSec))
         Logger.recordOutput("Shooter/RightSide/RPM", Units.radiansPerSecondToRotationsPerMinute(rightSide.inputs.velocityRadPerSec))
+        if (Robot.isTest) {
+            Logger.recordOutput("Shooter/LeftSide/PositionRadians", Units.radiansPerSecondToRotationsPerMinute(leftSide.inputs.angle.radians))
+            Logger.recordOutput("Shooter/RightSide/PositionRadians", Units.radiansPerSecondToRotationsPerMinute(rightSide.inputs.angle.radians))
+        }
     }
 
     fun startRunAtSpeeds(rpmFast: Int = 6000, rpmSlow: Int = 4000) {
@@ -93,4 +116,7 @@ object Shooter: KSubsystem() {
             simJkgMetersSquared = 0.003
         )
     }
+
+    fun sysIdQuasistatic(direction: SysIdRoutine.Direction) = sysId.quasistatic(direction)
+    fun sysIdDynamic(direction: SysIdRoutine.Direction) = sysId.dynamic(direction)
 }

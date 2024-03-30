@@ -152,11 +152,12 @@ object KCommandScheduler {
      * Any subsystems not being used as requirements have their default methods started.
      */
     fun run() {
+        if (isDisabled) return
+
         clearQueue()
 
         inLoop = true
 
-        if (isDisabled) return
         watchdog.reset()
 
         // Run the periodic method of all registered subsystems.
