@@ -3,6 +3,7 @@ package org.team9432.lib.motors.neo
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
+import org.littletonrobotics.junction.Logger
 import org.team9432.lib.wrappers.Spark
 
 class NeoIOReal(val config: Neo.Config): NeoIO {
@@ -31,6 +32,8 @@ class NeoIOReal(val config: Neo.Config): NeoIO {
         inputs.velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(encoder.velocity) / config.gearRatio
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
         inputs.currentAmps = spark.outputCurrent
+
+        Logger.recordOutput("${config.logName}/ControlMode", controlMode)
     }
 
     override fun setVoltage(volts: Double) {

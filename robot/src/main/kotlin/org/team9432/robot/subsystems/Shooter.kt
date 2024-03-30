@@ -1,6 +1,8 @@
 package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
+import edu.wpi.first.math.util.Units
+import org.littletonrobotics.junction.Logger
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
@@ -41,6 +43,9 @@ object Shooter: KSubsystem() {
             leftSide.setSpeed(leftSpeed)
             rightSide.setSpeed(rightSpeed)
         }
+
+        Logger.recordOutput("Shooter/LeftSide/RPM", Units.radiansPerSecondToRotationsPerMinute(leftSide.inputs.velocityRadPerSec))
+        Logger.recordOutput("Shooter/RightSide/RPM", Units.radiansPerSecondToRotationsPerMinute(rightSide.inputs.velocityRadPerSec))
     }
 
     fun startRunAtSpeeds(rpmFast: Int = 6000, rpmSlow: Int = 4000) {
