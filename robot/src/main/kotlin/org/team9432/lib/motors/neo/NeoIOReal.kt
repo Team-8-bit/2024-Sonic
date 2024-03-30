@@ -7,7 +7,7 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.lib.wrappers.Spark
 
 class NeoIOReal(val config: Neo.Config): NeoIO {
-    private val spark = Spark(config.canID, config.name, config.motorType)
+    private val spark = Spark(config.canID, config.motorName, config.motorType)
 
     private val encoder = spark.encoder
 

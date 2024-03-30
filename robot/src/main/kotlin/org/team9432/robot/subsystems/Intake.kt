@@ -102,13 +102,14 @@ object Intake: KSubsystem() {
         return Neo.Config(
             canID = canID,
             motorType = Spark.MotorType.NEO,
-            name = "$side Side Intake",
+            motorName = "$side Side Intake",
             sparkConfig = Spark.Config(
                 inverted = inverted,
                 idleMode = CANSparkBase.IdleMode.kCoast,
                 smartCurrentLimit = 80
             ),
-            logName = "Intake/${side}Side",
+            logName = "Intake",
+            additionalQualifier = side,
             gearRatio = 2.0,
             simJkgMetersSquared = 0.003
         )

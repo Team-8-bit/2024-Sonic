@@ -87,7 +87,7 @@ object Hood: KSubsystem() {
     private fun getConfig() = Neo.Config(
         canID = Devices.HOOD_ID,
         motorType = Spark.MotorType.NEO,
-        name = "Hood Motor",
+        motorName = "Hood Motor",
         logName = "Hood",
         gearRatio = 2.0 * (150 / 15),
         simJkgMetersSquared = 0.01507,

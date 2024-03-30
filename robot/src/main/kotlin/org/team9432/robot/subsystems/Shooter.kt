@@ -108,13 +108,14 @@ object Shooter: KSubsystem() {
         return Neo.Config(
             canID = canID,
             motorType = Spark.MotorType.VORTEX,
-            name = "$side Shooter",
+            motorName = "$side Shooter",
             sparkConfig = Spark.Config(
                 inverted = inverted,
                 idleMode = CANSparkBase.IdleMode.kCoast,
                 smartCurrentLimit = 80
             ),
-            logName = "Shooter/${side}Side",
+            additionalQualifier = side,
+            logName = "Shooter",
             gearRatio = 0.5,
             simJkgMetersSquared = 0.003
         )

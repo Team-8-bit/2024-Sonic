@@ -25,7 +25,7 @@ object Amp: KSubsystem() {
     private fun getConfig() = Neo.Config(
         canID = Devices.AMP_ID,
         motorType = Spark.MotorType.NEO,
-        name = "Amp Motor",
+        motorName = "Amp",
         logName = "Amp",
         gearRatio = 1.0,
         simJkgMetersSquared = 0.003,

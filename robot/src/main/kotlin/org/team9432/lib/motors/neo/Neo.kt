@@ -12,7 +12,7 @@ import org.team9432.lib.wrappers.Spark
  */
 class Neo(private val config: Config) {
     private val io: NeoIO
-    private val inputs = LoggedNEOIOInputs()
+    private val inputs = NeoIO.NEOIOInputs(config.additionalQualifier)
 
     init {
         io = when (State.mode) {
@@ -21,7 +21,7 @@ class Neo(private val config: Config) {
         }
     }
 
-    fun updateAndRecordInputs(): LoggedNEOIOInputs {
+    fun updateAndRecordInputs(): NeoIO.NEOIOInputs {
         io.updateInputs(inputs)
         Logger.processInputs(config.logName, inputs)
         return inputs
@@ -56,9 +56,10 @@ class Neo(private val config: Config) {
     data class Config(
         val canID: Int,
         val motorType: Spark.MotorType,
-        val name: String,
+        val motorName: String,
         val logName: String,
         val gearRatio: Double,
+        val additionalQualifier: String = "",
         val feedForwardSupplier: (Double) -> Double = { 0.0 },
         val simJkgMetersSquared: Double,
         val sparkConfig: Spark.Config,

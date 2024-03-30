@@ -51,7 +51,7 @@ object Hopper: KSubsystem() {
     private fun getConfig() = Neo.Config(
         canID = Devices.HOPPER_ID,
         motorType = Spark.MotorType.NEO,
-        name = "Hopper Motor",
+        motorName = "Hopper Motor",
         logName = "Hopper",
         gearRatio = 1.0,
         simJkgMetersSquared = 0.0015,

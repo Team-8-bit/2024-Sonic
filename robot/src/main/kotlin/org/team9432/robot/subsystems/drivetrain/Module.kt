@@ -19,8 +19,8 @@ import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
 import org.team9432.lib.constants.SwerveConstants.MK4I_L2_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
-import org.team9432.lib.motors.neo.LoggedNEOIOInputs
 import org.team9432.lib.motors.neo.Neo
+import org.team9432.lib.motors.neo.NeoIO
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.oi.EmergencySwitches
 import kotlin.math.cos
@@ -45,8 +45,8 @@ class Module(private val module: ModuleConfig) {
 
     private var isBrakeMode: Boolean? = null
 
-    private var driveInputs: LoggedNEOIOInputs = LoggedNEOIOInputs()
-    private var steerInputs: LoggedNEOIOInputs = LoggedNEOIOInputs()
+    private var driveInputs: NeoIO.NEOIOInputs = NeoIO.NEOIOInputs()
+    private var steerInputs: NeoIO.NEOIOInputs = NeoIO.NEOIOInputs()
 
     init {
         when (State.mode) {
@@ -158,15 +158,16 @@ class Module(private val module: ModuleConfig) {
         return Neo.Config(
             canID = module.driveID,
             motorType = Spark.MotorType.VORTEX,
-            name = "${module.name} Drive Motor",
+            motorName = "${module.name} Drive Motor",
             sparkConfig = Spark.Config(
                 inverted = module.driveInverted,
                 idleMode = CANSparkBase.IdleMode.kBrake,
                 smartCurrentLimit = 50
             ),
-            logName = "Drive/${module.name}ModuleDrive",
+            logName = "Drive/${module.name}Module",
             gearRatio = MK4I_L3_DRIVE_REDUCTION,
-            simJkgMetersSquared = 0.025
+            simJkgMetersSquared = 0.025,
+            additionalQualifier = "Drive"
         )
     }
 
@@ -174,15 +175,16 @@ class Module(private val module: ModuleConfig) {
         return Neo.Config(
             canID = module.steerID,
             motorType = Spark.MotorType.NEO,
-            name = "${module.name} Steer Motor",
+            motorName = "${module.name} Steer Motor",
             sparkConfig = Spark.Config(
                 inverted = module.steerInverted,
                 idleMode = CANSparkBase.IdleMode.kBrake,
                 smartCurrentLimit = 30
             ),
-            logName = "Drive/${module.name}ModuleSteer",
+            logName = "Drive/${module.name}Module",
             gearRatio = MK4I_STEER_REDUCTION,
-            simJkgMetersSquared = 0.004096955
+            simJkgMetersSquared = 0.004096955,
+            additionalQualifier = "Steer"
         )
     }
 }
