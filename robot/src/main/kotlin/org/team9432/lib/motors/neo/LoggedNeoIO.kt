@@ -5,9 +5,8 @@ import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.team9432.lib.advantagekit.kGet
 import org.team9432.lib.advantagekit.kPut
-import org.team9432.lib.annotation.Logged
 
-interface NeoIO {
+interface LoggedNeoIO {
     open class NEOIOInputs(private val additionalQualifier: String = ""): LoggableInputs {
         var angle = Rotation2d()
         var appliedVolts = 0.0

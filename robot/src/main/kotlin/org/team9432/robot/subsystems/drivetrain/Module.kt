@@ -19,15 +19,15 @@ import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
 import org.team9432.lib.constants.SwerveConstants.MK4I_L2_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
-import org.team9432.lib.motors.neo.Neo
-import org.team9432.lib.motors.neo.NeoIO
+import org.team9432.lib.motors.neo.LoggedNeo
+import org.team9432.lib.motors.neo.LoggedNeoIO
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.oi.EmergencySwitches
 import kotlin.math.cos
 
 class Module(private val module: ModuleConfig) {
-    private val drive = Neo(getDriveConfig())
-    private val steer = Neo(getSteerConfig())
+    private val drive = LoggedNeo(getDriveConfig())
+    private val steer = LoggedNeo(getSteerConfig())
     private val cancoder = CANcoder(module.encoderID)
 
     private val driveFeedforward: SimpleMotorFeedforward
@@ -45,8 +45,8 @@ class Module(private val module: ModuleConfig) {
 
     private var isBrakeMode: Boolean? = null
 
-    private var driveInputs: NeoIO.NEOIOInputs = NeoIO.NEOIOInputs()
-    private var steerInputs: NeoIO.NEOIOInputs = NeoIO.NEOIOInputs()
+    private var driveInputs: LoggedNeoIO.NEOIOInputs = LoggedNeoIO.NEOIOInputs()
+    private var steerInputs: LoggedNeoIO.NEOIOInputs = LoggedNeoIO.NEOIOInputs()
 
     init {
         when (State.mode) {
@@ -154,8 +154,8 @@ class Module(private val module: ModuleConfig) {
     val position get() = SwerveModulePosition(positionMeters, getAngle())
     val state get() = SwerveModuleState(velocityMetersPerSec, getAngle())
 
-    private fun getDriveConfig(): Neo.Config {
-        return Neo.Config(
+    private fun getDriveConfig(): LoggedNeo.Config {
+        return LoggedNeo.Config(
             canID = module.driveID,
             motorType = Spark.MotorType.VORTEX,
             motorName = "${module.name} Drive Motor",
@@ -171,8 +171,8 @@ class Module(private val module: ModuleConfig) {
         )
     }
 
-    private fun getSteerConfig(): Neo.Config {
-        return Neo.Config(
+    private fun getSteerConfig(): LoggedNeo.Config {
+        return LoggedNeo.Config(
             canID = module.steerID,
             motorType = Spark.MotorType.NEO,
             motorName = "${module.name} Steer Motor",

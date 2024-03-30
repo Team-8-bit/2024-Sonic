@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkBase
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
-import org.team9432.lib.motors.neo.Neo
+import org.team9432.lib.motors.neo.LoggedNeo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
 import org.team9432.robot.MechanismSide
@@ -12,8 +12,8 @@ import org.team9432.robot.RobotState
 import kotlin.math.abs
 
 object Intake: KSubsystem() {
-    private val ampSide = Neo(getConfig(Devices.AMP_SIDE_INTAKE_ID, true, "Amp"))
-    private val speakerSide = Neo(getConfig(Devices.SPEAKER_SIDE_INTAKE_ID, false, "Speaker"))
+    private val ampSide = LoggedNeo(getConfig(Devices.AMP_SIDE_INTAKE_ID, true, "Amp"))
+    private val speakerSide = LoggedNeo(getConfig(Devices.SPEAKER_SIDE_INTAKE_ID, false, "Speaker"))
 
     private fun setVoltage(ampVolts: Double, speakerVolts: Double) {
         ampSide.setVoltage(ampVolts)
@@ -98,8 +98,8 @@ object Intake: KSubsystem() {
         )
     }
 
-    private fun getConfig(canID: Int, inverted: Boolean, side: String): Neo.Config {
-        return Neo.Config(
+    private fun getConfig(canID: Int, inverted: Boolean, side: String): LoggedNeo.Config {
+        return LoggedNeo.Config(
             canID = canID,
             motorType = Spark.MotorType.NEO,
             motorName = "$side Side Intake",
