@@ -1,4 +1,4 @@
-package org.team9432.lib.motors.neo
+package org.team9432.lib.logged.neo
 
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
@@ -7,7 +7,7 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.lib.wrappers.Spark
 
 class LoggedNeoIOReal(val config: LoggedNeo.Config): LoggedNeoIO {
-    private val spark = Spark(config.canID, config.motorName, config.motorType)
+    private val spark = Spark(config.canID, config.deviceName, config.motorType)
 
     private val encoder = spark.encoder
 

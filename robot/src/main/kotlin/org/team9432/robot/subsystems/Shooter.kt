@@ -12,7 +12,7 @@ import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
-import org.team9432.lib.motors.neo.LoggedNeo
+import org.team9432.lib.logged.neo.LoggedNeo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
 import org.team9432.robot.RobotPosition
@@ -108,7 +108,7 @@ object Shooter: KSubsystem() {
         return LoggedNeo.Config(
             canID = canID,
             motorType = Spark.MotorType.VORTEX,
-            motorName = "$side Shooter",
+            deviceName = "$side Shooter",
             sparkConfig = Spark.Config(
                 inverted = inverted,
                 idleMode = CANSparkBase.IdleMode.kCoast,

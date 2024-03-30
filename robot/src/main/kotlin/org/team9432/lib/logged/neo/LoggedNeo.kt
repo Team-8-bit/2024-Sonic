@@ -1,4 +1,4 @@
-package org.team9432.lib.motors.neo
+package org.team9432.lib.logged.neo
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.Logger
@@ -56,7 +56,7 @@ class LoggedNeo(private val config: Config) {
     data class Config(
         val canID: Int,
         val motorType: Spark.MotorType,
-        val motorName: String,
+        val deviceName: String,
         val logName: String,
         val gearRatio: Double,
         val additionalQualifier: String = "",

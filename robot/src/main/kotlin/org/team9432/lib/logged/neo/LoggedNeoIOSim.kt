@@ -1,4 +1,4 @@
-package org.team9432.lib.motors.neo
+package org.team9432.lib.logged.neo
 
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController

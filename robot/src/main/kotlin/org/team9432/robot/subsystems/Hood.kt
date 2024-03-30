@@ -13,7 +13,7 @@ import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
-import org.team9432.lib.motors.neo.LoggedNeo
+import org.team9432.lib.logged.neo.LoggedNeo
 import org.team9432.lib.unit.asRotation2d
 import org.team9432.lib.unit.degrees
 import org.team9432.lib.wrappers.Spark
@@ -87,7 +87,7 @@ object Hood: KSubsystem() {
     private fun getConfig() = LoggedNeo.Config(
         canID = Devices.HOOD_ID,
         motorType = Spark.MotorType.NEO,
-        motorName = "Hood Motor",
+        deviceName = "Hood Motor",
         logName = "Hood",
         gearRatio = 2.0 * (150 / 15),
         simJkgMetersSquared = 0.01507,

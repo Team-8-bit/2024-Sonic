@@ -19,8 +19,9 @@ import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
 import org.team9432.lib.constants.SwerveConstants.MK4I_L2_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
-import org.team9432.lib.motors.neo.LoggedNeo
-import org.team9432.lib.motors.neo.LoggedNeoIO
+import org.team9432.lib.logged.cancoder.LoggedCancoder
+import org.team9432.lib.logged.neo.LoggedNeo
+import org.team9432.lib.logged.neo.LoggedNeoIO
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.oi.EmergencySwitches
 import kotlin.math.cos
@@ -28,7 +29,7 @@ import kotlin.math.cos
 class Module(private val module: ModuleConfig) {
     private val drive = LoggedNeo(getDriveConfig())
     private val steer = LoggedNeo(getSteerConfig())
-    private val cancoder = CANcoder(module.encoderID)
+    private val cancoder = LoggedCancoder(getCancoderConfig())
 
     private val driveFeedforward: SimpleMotorFeedforward
     private val driveFeedback: PIDController
@@ -40,8 +41,6 @@ class Module(private val module: ModuleConfig) {
     private var steerRelativeOffset: Rotation2d? = null // Relative + Offset = Absolute
 
     private fun Double.adjustRatio() = (this / MK4I_L2_DRIVE_REDUCTION) * MK4I_L3_DRIVE_REDUCTION
-
-    private val steerAbsolutePositionSignal: StatusSignal<Double>
 
     private var isBrakeMode: Boolean? = null
 
@@ -65,20 +64,13 @@ class Module(private val module: ModuleConfig) {
 
         steerFeedback.enableContinuousInput(-Math.PI, Math.PI)
 
-        val cancoderConfig = CANcoderConfiguration()
-        cancoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1
-        cancoder.configurator.apply(cancoderConfig)
-
-        steerAbsolutePositionSignal = cancoder.absolutePosition
-        BaseStatusSignal.setUpdateFrequencyForAll(50.0, steerAbsolutePositionSignal)
-        cancoder.optimizeBusUtilization()
-
         setBrakeMode(true)
     }
 
     fun periodic() {
         steerInputs = steer.updateAndRecordInputs()
         driveInputs = drive.updateAndRecordInputs()
+        val cancoderInputs = cancoder.updateAndRecordInputs()
 
         if (EmergencySwitches.disableDrivetrain) {
             drive.stop()
@@ -88,9 +80,7 @@ class Module(private val module: ModuleConfig) {
             return
         } else setBrakeMode(true)
 
-        BaseStatusSignal.refreshAll(steerAbsolutePositionSignal)
-
-        val steerAbsolutePosition = Rotation2d.fromRotations(steerAbsolutePositionSignal.valueAsDouble).minus(module.encoderOffset)
+        val steerAbsolutePosition = cancoderInputs.position.minus(module.encoderOffset)
 
         // On first cycle, reset relative turn encoder
         // Wait until absolute angle is nonzero in case it wasn't initialized yet
@@ -158,7 +148,7 @@ class Module(private val module: ModuleConfig) {
         return LoggedNeo.Config(
             canID = module.driveID,
             motorType = Spark.MotorType.VORTEX,
-            motorName = "${module.name} Drive Motor",
+            deviceName = "${module.name} Drive Motor",
             sparkConfig = Spark.Config(
                 inverted = module.driveInverted,
                 idleMode = CANSparkBase.IdleMode.kBrake,
@@ -175,7 +165,7 @@ class Module(private val module: ModuleConfig) {
         return LoggedNeo.Config(
             canID = module.steerID,
             motorType = Spark.MotorType.NEO,
-            motorName = "${module.name} Steer Motor",
+            deviceName = "${module.name} Steer Motor",
             sparkConfig = Spark.Config(
                 inverted = module.steerInverted,
                 idleMode = CANSparkBase.IdleMode.kBrake,
@@ -185,6 +175,17 @@ class Module(private val module: ModuleConfig) {
             gearRatio = MK4I_STEER_REDUCTION,
             simJkgMetersSquared = 0.004096955,
             additionalQualifier = "Steer"
+        )
+    }
+
+    private fun getCancoderConfig(): LoggedCancoder.Config {
+        return LoggedCancoder.Config(
+            canID = module.encoderID,
+            deviceName = "${module.name} Cancoder",
+            logName = "Drive/${module.name}Module",
+            encoderOffset = module.encoderOffset,
+            simPositionSupplier = { steerInputs.angle },
+            additionalQualifier = "Cancoder"
         )
     }
 }

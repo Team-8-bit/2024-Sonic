@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkBase
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
-import org.team9432.lib.motors.neo.LoggedNeo
+import org.team9432.lib.logged.neo.LoggedNeo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
 import org.team9432.robot.MechanismSide
@@ -102,7 +102,7 @@ object Intake: KSubsystem() {
         return LoggedNeo.Config(
             canID = canID,
             motorType = Spark.MotorType.NEO,
-            motorName = "$side Side Intake",
+            deviceName = "$side Side Intake",
             sparkConfig = Spark.Config(
                 inverted = inverted,
                 idleMode = CANSparkBase.IdleMode.kCoast,
