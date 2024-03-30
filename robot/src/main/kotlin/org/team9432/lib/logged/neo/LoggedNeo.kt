@@ -10,7 +10,7 @@ import org.team9432.lib.wrappers.Spark
  * A generic neo wrapper that safely manages access to all config settings and the integrated encoder,
  * logs all robot code inputs, and uses a simulated motor when necessary.
  */
-class LoggedNeo(private val config: Config) {
+class LoggedNeo(val config: Config) {
     private val io: LoggedNeoIO
     private val inputs = LoggedNeoIO.NEOIOInputs(config.additionalQualifier)
 

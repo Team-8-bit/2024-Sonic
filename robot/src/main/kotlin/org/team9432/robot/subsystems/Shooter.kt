@@ -2,16 +2,14 @@ package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
 import edu.wpi.first.math.util.Units
-import edu.wpi.first.units.Units.Volts
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
-import org.team9432.lib.KSysIdConfig
-import org.team9432.lib.KSysIdMechanism
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.getSysIdTests
 import org.team9432.lib.logged.neo.LoggedNeo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
@@ -23,8 +21,6 @@ object Shooter: KSubsystem() {
     private val rightSide = LoggedNeo(getConfig(Devices.RIGHT_SHOOTER_ID, true, "Right"))
 
     private var isRunningAtSpeeds: Pair<Int, Int>? = null
-
-    private val sysId: SysIdRoutine
 
     init {
         when (State.mode) {
@@ -38,16 +34,6 @@ object Shooter: KSubsystem() {
                 rightSide.setPID(0.1, 0.0, 0.0)
             }
         }
-
-        sysId = SysIdRoutine(
-            KSysIdConfig(
-                recordState = { state -> Logger.recordOutput("SysIdState", state.toString()) }
-            ),
-            KSysIdMechanism(
-                { volts -> leftSide.setVoltage(volts.`in`(Volts)) },
-                name = "Left Shooter"
-            )
-        )
     }
 
     override fun periodic() {
@@ -121,6 +107,5 @@ object Shooter: KSubsystem() {
         )
     }
 
-    fun sysIdQuasistatic(direction: SysIdRoutine.Direction) = sysId.quasistatic(direction)
-    fun sysIdDynamic(direction: SysIdRoutine.Direction) = sysId.dynamic(direction)
+    fun getSysIdTests() = leftSide.getSysIdTests()
 }

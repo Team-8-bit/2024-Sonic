@@ -44,10 +44,11 @@ object Robot: LoggedRobot() {
 
     // Use the wpilib command scheduler while in test mode for sysid
     override fun testInit() {
-        WPITrigger { Controls.driver.a.asBoolean }.whileTrue(Shooter.sysIdDynamic(SysIdRoutine.Direction.kForward))
-        WPITrigger { Controls.driver.b.asBoolean }.whileTrue(Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse))
-        WPITrigger { Controls.driver.x.asBoolean }.whileTrue(Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward))
-        WPITrigger { Controls.driver.y.asBoolean }.whileTrue(Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse))
+        val tests = Shooter.getSysIdTests()
+        WPITrigger { Controls.driver.a.asBoolean }.whileTrue(tests.dynamicForward)
+        WPITrigger { Controls.driver.b.asBoolean }.whileTrue(tests.dynamicReverse)
+        WPITrigger { Controls.driver.x.asBoolean }.whileTrue(tests.quasistaticForward)
+        WPITrigger { Controls.driver.y.asBoolean }.whileTrue(tests.quasistaticReverse)
     }
 
     override fun testPeriodic() {
