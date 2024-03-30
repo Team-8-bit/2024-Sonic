@@ -4,16 +4,15 @@ import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
-import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.wrappers.Spark
 
 /**
  * A generic neo wrapper that safely manages access to all config settings and the integrated encoder,
  * logs all robot code inputs, and uses a simulated motor when necessary.
  */
-class Neo(private val config: Config): KPeriodic() {
+class Neo(private val config: Config) {
     private val io: NeoIO
-    val inputs = LoggedNEOIOInputs()
+    private val inputs = LoggedNEOIOInputs()
 
     init {
         io = when (State.mode) {
@@ -22,13 +21,9 @@ class Neo(private val config: Config): KPeriodic() {
         }
     }
 
-    override fun periodic() {
+    fun updateAndRecordInputs(): LoggedNEOIOInputs {
         io.updateInputs(inputs)
         Logger.processInputs(config.logName, inputs)
-    }
-
-    fun getCurrentInputs(): LoggedNEOIOInputs {
-        io.updateInputs(inputs)
         return inputs
     }
 

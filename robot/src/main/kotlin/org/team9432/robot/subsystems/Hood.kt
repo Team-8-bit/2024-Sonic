@@ -43,8 +43,8 @@ object Hood: KSubsystem() {
     }
 
     override fun periodic() {
-        Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, motor.inputs.angle.radians, 0.0)))
-
+        val inputs = motor.updateAndRecordInputs()
+        Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, inputs.angle.radians, 0.0)))
         if (EmergencySwitches.disableHood) motor.stop()
     }
 

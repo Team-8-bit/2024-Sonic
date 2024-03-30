@@ -12,6 +12,10 @@ import org.team9432.robot.MechanismSide
 object Hopper: KSubsystem() {
     private val motor = Neo(getConfig())
 
+    override fun periodic() {
+        motor.updateAndRecordInputs()
+    }
+
     fun setVoltage(volts: Double) {
         motor.setVoltage(volts)
     }

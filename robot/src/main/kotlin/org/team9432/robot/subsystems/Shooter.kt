@@ -51,6 +51,9 @@ object Shooter: KSubsystem() {
     }
 
     override fun periodic() {
+        val leftInputs = leftSide.updateAndRecordInputs()
+        val rightInputs = rightSide.updateAndRecordInputs()
+
         isRunningAtSpeeds?.let {
             val (rpmFast, rpmSlow) = it
 
@@ -63,11 +66,11 @@ object Shooter: KSubsystem() {
             rightSide.setSpeed(rightSpeed)
         }
 
-        Logger.recordOutput("Shooter/LeftSide/RPM", Units.radiansPerSecondToRotationsPerMinute(leftSide.inputs.velocityRadPerSec))
-        Logger.recordOutput("Shooter/RightSide/RPM", Units.radiansPerSecondToRotationsPerMinute(rightSide.inputs.velocityRadPerSec))
+        Logger.recordOutput("Shooter/LeftSide/RPM", Units.radiansPerSecondToRotationsPerMinute(leftInputs.velocityRadPerSec))
+        Logger.recordOutput("Shooter/RightSide/RPM", Units.radiansPerSecondToRotationsPerMinute(rightInputs.velocityRadPerSec))
         if (Robot.isTest) {
-            Logger.recordOutput("Shooter/LeftSide/PositionRadians", Units.radiansPerSecondToRotationsPerMinute(leftSide.inputs.angle.radians))
-            Logger.recordOutput("Shooter/RightSide/PositionRadians", Units.radiansPerSecondToRotationsPerMinute(rightSide.inputs.angle.radians))
+            Logger.recordOutput("Shooter/LeftSide/PositionRadians", Units.radiansPerSecondToRotationsPerMinute(leftInputs.angle.radians))
+            Logger.recordOutput("Shooter/RightSide/PositionRadians", Units.radiansPerSecondToRotationsPerMinute(rightInputs.angle.radians))
         }
     }
 

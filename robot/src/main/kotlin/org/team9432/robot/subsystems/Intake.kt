@@ -58,8 +58,8 @@ object Intake: KSubsystem() {
     }
 
     override fun periodic() {
-        ampSide.periodic()
-        speakerSide.periodic()
+        ampSide.updateAndRecordInputs()
+        speakerSide.updateAndRecordInputs()
     }
 
     object Commands {

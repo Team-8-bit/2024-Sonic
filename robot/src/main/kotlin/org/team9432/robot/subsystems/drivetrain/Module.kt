@@ -19,6 +19,7 @@ import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
 import org.team9432.lib.constants.SwerveConstants.MK4I_L2_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
+import org.team9432.lib.motors.neo.LoggedNEOIOInputs
 import org.team9432.lib.motors.neo.Neo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.oi.EmergencySwitches
@@ -43,6 +44,9 @@ class Module(private val module: ModuleConfig) {
     private val steerAbsolutePositionSignal: StatusSignal<Double>
 
     private var isBrakeMode: Boolean? = null
+
+    private var driveInputs: LoggedNEOIOInputs = LoggedNEOIOInputs()
+    private var steerInputs: LoggedNEOIOInputs = LoggedNEOIOInputs()
 
     init {
         when (State.mode) {
@@ -73,19 +77,20 @@ class Module(private val module: ModuleConfig) {
     }
 
     fun periodic() {
+        steerInputs = steer.updateAndRecordInputs()
+        driveInputs = drive.updateAndRecordInputs()
+
         if (EmergencySwitches.disableDrivetrain) {
             drive.stop()
             steer.stop()
 
             setBrakeMode(false)
+            return
         } else setBrakeMode(true)
 
         BaseStatusSignal.refreshAll(steerAbsolutePositionSignal)
 
         val steerAbsolutePosition = Rotation2d.fromRotations(steerAbsolutePositionSignal.valueAsDouble).minus(module.encoderOffset)
-
-        val steerInputs = steer.getCurrentInputs()
-        val driveInputs = drive.getCurrentInputs()
 
         // On first cycle, reset relative turn encoder
         // Wait until absolute angle is nonzero in case it wasn't initialized yet
@@ -117,7 +122,7 @@ class Module(private val module: ModuleConfig) {
     }
 
     private fun getAngle(): Rotation2d {
-        return steer.inputs.angle.plus(steerRelativeOffset ?: Rotation2d())
+        return steerInputs.angle.plus(steerRelativeOffset ?: Rotation2d())
     }
 
     fun runSetpoint(state: SwerveModuleState): SwerveModuleState {
@@ -144,8 +149,8 @@ class Module(private val module: ModuleConfig) {
         }
     }
 
-    val positionMeters get() = drive.inputs.angle.radians * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
-    val velocityMetersPerSec get() = drive.inputs.velocityRadPerSec * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
+    val positionMeters get() = driveInputs.angle.radians * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
+    val velocityMetersPerSec get() = driveInputs.velocityRadPerSec * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
     val position get() = SwerveModulePosition(positionMeters, getAngle())
     val state get() = SwerveModuleState(velocityMetersPerSec, getAngle())
 

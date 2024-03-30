@@ -10,6 +10,10 @@ import org.team9432.robot.Devices
 object Amp: KSubsystem() {
     private val motor = Neo(getConfig())
 
+    override fun periodic() {
+        motor.updateAndRecordInputs()
+    }
+
     fun setVoltage(volts: Double) = motor.setVoltage(volts)
     fun stop() = motor.stop()
 
