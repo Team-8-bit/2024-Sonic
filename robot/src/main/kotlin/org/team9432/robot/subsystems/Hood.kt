@@ -45,11 +45,11 @@ object Hood: KSubsystem() {
     override fun periodic() {
         Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, motor.inputs.angle.radians, 0.0)))
 
-        if (EmergencySwitches.isSubwooferOnly) motor.stop()
+        if (EmergencySwitches.disableHood) motor.stop()
     }
 
     fun setAngle(angle: Rotation2d) {
-        if (EmergencySwitches.isSubwooferOnly) return
+        if (EmergencySwitches.disableHood) return
         motor.setAngle(Rotation2d.fromDegrees(MathUtil.clamp(angle.degrees, 0.0, 30.0)))
 
         Logger.recordOutput("Hood/AngleSetpointDegrees", angle.degrees)
@@ -62,7 +62,7 @@ object Hood: KSubsystem() {
     }
 
     fun setVoltage(volts: Double) {
-        if (EmergencySwitches.isSubwooferOnly) return
+        if (EmergencySwitches.disableHood) return
         motor.setVoltage(volts)
     }
 
@@ -74,7 +74,7 @@ object Hood: KSubsystem() {
         fun followAngle(angle: () -> Rotation2d) = SimpleCommand(
             requirements = setOf(Hood),
             execute = { setAngle(angle.invoke()) },
-            isFinished = { EmergencySwitches.isSubwooferOnly },
+            isFinished = { EmergencySwitches.disableHood },
             end = { setAngle(0.0.degrees.asRotation2d) }
         )
 
