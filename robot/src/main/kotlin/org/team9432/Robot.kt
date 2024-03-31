@@ -1,6 +1,6 @@
 package org.team9432
 
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import org.littletonrobotics.junction.LoggedRobot
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.InstantCommand
@@ -10,8 +10,8 @@ import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AutoChooser
 import org.team9432.robot.auto.commands.PullFromSpeakerShooter
+import org.team9432.robot.commands.DefaultCommands
 import org.team9432.robot.commands.stop
-import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Shooter
 import edu.wpi.first.wpilibj2.command.CommandScheduler as WPICommandScheduler
@@ -44,14 +44,24 @@ object Robot: LoggedRobot() {
 
     // Use the wpilib command scheduler while in test mode for sysid
     override fun testInit() {
+        DefaultCommands.clearDefaultCommands()
+        KCommandScheduler.cancelAll()
+
+        WPICommandScheduler.getInstance().enable()
+        val controller = CommandXboxController(4)
         val tests = Shooter.getSysIdTests()
-        WPITrigger { Controls.driver.a.asBoolean }.whileTrue(tests.dynamicForward)
-        WPITrigger { Controls.driver.b.asBoolean }.whileTrue(tests.dynamicReverse)
-        WPITrigger { Controls.driver.x.asBoolean }.whileTrue(tests.quasistaticForward)
-        WPITrigger { Controls.driver.y.asBoolean }.whileTrue(tests.quasistaticReverse)
+        WPITrigger { controller.a().asBoolean }.whileTrue(tests.dynamicForward)
+        WPITrigger { controller.b().asBoolean }.whileTrue(tests.dynamicReverse)
+        WPITrigger { controller.x().asBoolean }.whileTrue(tests.quasistaticForward)
+        WPITrigger { controller.y().asBoolean }.whileTrue(tests.quasistaticReverse)
     }
 
     override fun testPeriodic() {
         WPICommandScheduler.getInstance().run()
+    }
+
+    override fun testExit() {
+        WPICommandScheduler.getInstance().disable()
+        DefaultCommands.setDefaultCommands()
     }
 }

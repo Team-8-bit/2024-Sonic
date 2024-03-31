@@ -2,14 +2,13 @@ package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
 import edu.wpi.first.math.util.Units
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
+import org.team9432.lib.SysIdUtil.getSysIdTests
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
-import org.team9432.lib.getSysIdTests
 import org.team9432.lib.logged.neo.LoggedNeo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
@@ -55,8 +54,8 @@ object Shooter: KSubsystem() {
         Logger.recordOutput("Shooter/LeftSide/RPM", Units.radiansPerSecondToRotationsPerMinute(leftInputs.velocityRadPerSec))
         Logger.recordOutput("Shooter/RightSide/RPM", Units.radiansPerSecondToRotationsPerMinute(rightInputs.velocityRadPerSec))
         if (Robot.isTest) {
-            Logger.recordOutput("Shooter/LeftSide/PositionRadians", Units.radiansPerSecondToRotationsPerMinute(leftInputs.angle.radians))
-            Logger.recordOutput("Shooter/RightSide/PositionRadians", Units.radiansPerSecondToRotationsPerMinute(rightInputs.angle.radians))
+            Logger.recordOutput("Shooter/LeftSide/PositionRadians", leftInputs.angle.radians)
+            Logger.recordOutput("Shooter/RightSide/PositionRadians", rightInputs.angle.radians)
         }
     }
 

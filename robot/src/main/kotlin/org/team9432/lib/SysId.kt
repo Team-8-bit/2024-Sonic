@@ -1,8 +1,10 @@
 package org.team9432.lib
 
-import edu.wpi.first.units.*
+import edu.wpi.first.units.Measure
+import edu.wpi.first.units.Units
 import edu.wpi.first.units.Units.Seconds
-import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog
+import edu.wpi.first.units.Velocity
+import edu.wpi.first.units.Voltage
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction
 import org.littletonrobotics.junction.Logger
@@ -25,26 +27,24 @@ class KSysIdConfig(
 class KSysIdMechanism(
     /** Sends the SysId-specified drive signal to the mechanism motors during test routines. */
     drive: Consumer<Measure<Voltage>>? = null,
+): SysIdRoutine.Mechanism(drive, null, object: WPISubsystem {}, "")
 
-    /** The name of the mechanism being tested. */
-    name: String,
-): SysIdRoutine.Mechanism(drive, null, object: WPISubsystem {}, name)
+object SysIdUtil {
+    fun LoggedNeo.getSysIdTests(config: KSysIdConfig = KSysIdConfig()) = getSysIdTests(config) { volts -> setVoltage(volts) }
 
-fun LoggedNeo.getSysIdTests(config: KSysIdConfig = KSysIdConfig()): SysIdTestContainer {
-    val routine = SysIdRoutine(
-        config,
-        KSysIdMechanism(
-            { volts -> setVoltage(volts.`in`(Units.Volts)) },
-            name = this.config.deviceName
+    fun getSysIdTests(config: KSysIdConfig = KSysIdConfig(), setMotors: (Double) -> Unit): SysIdTestContainer {
+        val routine = SysIdRoutine(
+            config,
+            KSysIdMechanism { volts -> setMotors(volts.`in`(Units.Volts)) }
         )
-    )
 
-    return SysIdTestContainer(
-        quasistaticForward = routine.quasistatic(Direction.kForward),
-        quasistaticReverse = routine.quasistatic(Direction.kReverse),
-        dynamicForward = routine.dynamic(Direction.kForward),
-        dynamicReverse = routine.dynamic(Direction.kReverse)
-    )
+        return SysIdTestContainer(
+            quasistaticForward = routine.quasistatic(Direction.kForward),
+            quasistaticReverse = routine.quasistatic(Direction.kReverse),
+            dynamicForward = routine.dynamic(Direction.kForward),
+            dynamicReverse = routine.dynamic(Direction.kReverse)
+        )
+    }
 }
 
 data class SysIdTestContainer(

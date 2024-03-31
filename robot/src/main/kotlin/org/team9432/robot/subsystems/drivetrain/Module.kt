@@ -1,10 +1,5 @@
 package org.team9432.robot.subsystems.drivetrain
 
-import com.ctre.phoenix6.BaseStatusSignal
-import com.ctre.phoenix6.StatusSignal
-import com.ctre.phoenix6.configs.CANcoderConfiguration
-import com.ctre.phoenix6.hardware.CANcoder
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue
 import com.revrobotics.CANSparkBase
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
@@ -13,6 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
+import org.team9432.Robot
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
@@ -109,6 +105,10 @@ class Module(private val module: ModuleConfig) {
         }
 
         Logger.recordOutput("Drive/${module.name}_Module/AbsoluteAngleDegrees", steerAbsolutePosition.degrees)
+
+        if (Robot.isTest) {
+            Logger.recordOutput("Drive/${module.name}_Module/DrivePositionRadians", driveInputs.angle.radians)
+        }
     }
 
     private fun getAngle(): Rotation2d {
@@ -137,6 +137,13 @@ class Module(private val module: ModuleConfig) {
             drive.setBrakeMode(enabled)
             steer.setBrakeMode(enabled)
         }
+    }
+
+    /** Set the module to run open loop drive control at the specified voltage while using the angle controller to lock the module in place. Used for sysid characterization. */
+    fun runCharacterization(volts: Double) {
+        angleSetpoint = Rotation2d()
+        speedSetpoint = null
+        drive.setVoltage(volts)
     }
 
     val positionMeters get() = driveInputs.angle.radians * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
