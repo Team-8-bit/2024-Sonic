@@ -42,18 +42,24 @@ object Robot: LoggedRobot() {
         }
     }
 
+    init {
+        val controller = CommandXboxController(4)
+        val tests = Shooter.getSysIdTests()
+        controller.a().whileTrue(tests.dynamicForward)
+        controller.b().whileTrue(tests.dynamicReverse)
+        controller.x().whileTrue(tests.quasistaticForward)
+        controller.y().whileTrue(tests.quasistaticReverse)
+    }
+
     // Use the wpilib command scheduler while in test mode for sysid
     override fun testInit() {
+        KCommandScheduler.disable()
         DefaultCommands.clearDefaultCommands()
+        KCommandScheduler.enable()
+
         KCommandScheduler.cancelAll()
 
         WPICommandScheduler.getInstance().enable()
-        val controller = CommandXboxController(4)
-        val tests = Shooter.getSysIdTests()
-        WPITrigger { controller.a().asBoolean }.whileTrue(tests.dynamicForward)
-        WPITrigger { controller.b().asBoolean }.whileTrue(tests.dynamicReverse)
-        WPITrigger { controller.x().asBoolean }.whileTrue(tests.quasistaticForward)
-        WPITrigger { controller.y().asBoolean }.whileTrue(tests.quasistaticReverse)
     }
 
     override fun testPeriodic() {
@@ -62,6 +68,9 @@ object Robot: LoggedRobot() {
 
     override fun testExit() {
         WPICommandScheduler.getInstance().disable()
+
+        KCommandScheduler.disable()
         DefaultCommands.setDefaultCommands()
+        KCommandScheduler.enable()
     }
 }
