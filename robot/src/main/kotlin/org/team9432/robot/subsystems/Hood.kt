@@ -13,7 +13,7 @@ import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
-import org.team9432.lib.motors.neo.Neo
+import org.team9432.lib.logged.neo.LoggedNeo
 import org.team9432.lib.unit.asRotation2d
 import org.team9432.lib.unit.degrees
 import org.team9432.lib.wrappers.Spark
@@ -22,7 +22,7 @@ import org.team9432.robot.RobotPosition
 import org.team9432.robot.oi.EmergencySwitches
 
 object Hood: KSubsystem() {
-    private val motor = Neo(getConfig())
+    private val motor = LoggedNeo(getConfig())
 
     private val ffTable = InterpolatingDoubleTreeMap()
     private val distanceAngleMap = InterpolatingDoubleTreeMap()
@@ -43,13 +43,13 @@ object Hood: KSubsystem() {
     }
 
     override fun periodic() {
-        Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, motor.inputs.angle.radians, 0.0)))
-
-        if (EmergencySwitches.isSubwooferOnly) motor.stop()
+        val inputs = motor.updateAndRecordInputs()
+        Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, inputs.angle.radians, 0.0)))
+        if (EmergencySwitches.disableHood) motor.stop()
     }
 
     fun setAngle(angle: Rotation2d) {
-        if (EmergencySwitches.isSubwooferOnly) return
+        if (EmergencySwitches.disableHood) return
         motor.setAngle(Rotation2d.fromDegrees(MathUtil.clamp(angle.degrees, 0.0, 30.0)))
 
         Logger.recordOutput("Hood/AngleSetpointDegrees", angle.degrees)
@@ -62,7 +62,7 @@ object Hood: KSubsystem() {
     }
 
     fun setVoltage(volts: Double) {
-        if (EmergencySwitches.isSubwooferOnly) return
+        if (EmergencySwitches.disableHood) return
         motor.setVoltage(volts)
     }
 
@@ -74,7 +74,7 @@ object Hood: KSubsystem() {
         fun followAngle(angle: () -> Rotation2d) = SimpleCommand(
             requirements = setOf(Hood),
             execute = { setAngle(angle.invoke()) },
-            isFinished = { EmergencySwitches.isSubwooferOnly },
+            isFinished = { EmergencySwitches.disableHood },
             end = { setAngle(0.0.degrees.asRotation2d) }
         )
 
@@ -84,10 +84,10 @@ object Hood: KSubsystem() {
         fun resetAngle() = InstantCommand(Hood) { Hood.resetAngle() }
     }
 
-    private fun getConfig() = Neo.Config(
+    private fun getConfig() = LoggedNeo.Config(
         canID = Devices.HOOD_ID,
         motorType = Spark.MotorType.NEO,
-        name = "Hood Motor",
+        deviceName = "Hood Motor",
         logName = "Hood",
         gearRatio = 2.0 * (150 / 15),
         simJkgMetersSquared = 0.01507,

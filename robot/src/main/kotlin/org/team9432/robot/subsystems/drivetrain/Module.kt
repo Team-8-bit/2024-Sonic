@@ -1,10 +1,5 @@
 package org.team9432.robot.subsystems.drivetrain
 
-import com.ctre.phoenix6.BaseStatusSignal
-import com.ctre.phoenix6.StatusSignal
-import com.ctre.phoenix6.configs.CANcoderConfiguration
-import com.ctre.phoenix6.hardware.CANcoder
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue
 import com.revrobotics.CANSparkBase
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
@@ -13,20 +8,24 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
+import org.team9432.Robot
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
 import org.team9432.lib.constants.SwerveConstants.MK4I_L2_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
-import org.team9432.lib.motors.neo.Neo
+import org.team9432.lib.logged.cancoder.LoggedCancoder
+import org.team9432.lib.logged.neo.LoggedNeo
+import org.team9432.lib.logged.neo.LoggedNeoIO
 import org.team9432.lib.wrappers.Spark
+import org.team9432.robot.oi.EmergencySwitches
 import kotlin.math.cos
 
 class Module(private val module: ModuleConfig) {
-    private val drive = Neo(getDriveConfig())
-    private val steer = Neo(getSteerConfig())
-    private val cancoder = CANcoder(module.encoderID)
+    private val drive = LoggedNeo(getDriveConfig())
+    private val steer = LoggedNeo(getSteerConfig())
+    private val cancoder = LoggedCancoder(getCancoderConfig())
 
     private val driveFeedforward: SimpleMotorFeedforward
     private val driveFeedback: PIDController
@@ -39,7 +38,10 @@ class Module(private val module: ModuleConfig) {
 
     private fun Double.adjustRatio() = (this / MK4I_L2_DRIVE_REDUCTION) * MK4I_L3_DRIVE_REDUCTION
 
-    private val steerAbsolutePositionSignal: StatusSignal<Double>
+    private var isBrakeMode: Boolean? = null
+
+    private var driveInputs: LoggedNeoIO.NEOIOInputs = LoggedNeoIO.NEOIOInputs()
+    private var steerInputs: LoggedNeoIO.NEOIOInputs = LoggedNeoIO.NEOIOInputs()
 
     init {
         when (State.mode) {
@@ -58,24 +60,23 @@ class Module(private val module: ModuleConfig) {
 
         steerFeedback.enableContinuousInput(-Math.PI, Math.PI)
 
-        val cancoderConfig = CANcoderConfiguration()
-        cancoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1
-        cancoder.configurator.apply(cancoderConfig)
-
-        steerAbsolutePositionSignal = cancoder.absolutePosition
-        BaseStatusSignal.setUpdateFrequencyForAll(50.0, steerAbsolutePositionSignal)
-        cancoder.optimizeBusUtilization()
-
         setBrakeMode(true)
     }
 
     fun periodic() {
-        BaseStatusSignal.refreshAll(steerAbsolutePositionSignal)
+        steerInputs = steer.updateAndRecordInputs()
+        driveInputs = drive.updateAndRecordInputs()
+        val cancoderInputs = cancoder.updateAndRecordInputs()
 
-        val steerAbsolutePosition = Rotation2d.fromRotations(steerAbsolutePositionSignal.valueAsDouble).minus(module.encoderOffset)
+        if (EmergencySwitches.disableDrivetrain) {
+            drive.stop()
+            steer.stop()
 
-        val steerInputs = steer.getCurrentInputs()
-        val driveInputs = drive.getCurrentInputs()
+            setBrakeMode(false)
+            return
+        } else setBrakeMode(true)
+
+        val steerAbsolutePosition = cancoderInputs.position.minus(module.encoderOffset)
 
         // On first cycle, reset relative turn encoder
         // Wait until absolute angle is nonzero in case it wasn't initialized yet
@@ -104,10 +105,14 @@ class Module(private val module: ModuleConfig) {
         }
 
         Logger.recordOutput("Drive/${module.name}_Module/AbsoluteAngleDegrees", steerAbsolutePosition.degrees)
+
+        if (Robot.isTest) {
+            Logger.recordOutput("Drive/${module.name}_Module/DrivePositionRadians", driveInputs.angle.radians)
+        }
     }
 
     private fun getAngle(): Rotation2d {
-        return steer.inputs.angle.plus(steerRelativeOffset ?: Rotation2d())
+        return steerInputs.angle.plus(steerRelativeOffset ?: Rotation2d())
     }
 
     fun runSetpoint(state: SwerveModuleState): SwerveModuleState {
@@ -127,44 +132,67 @@ class Module(private val module: ModuleConfig) {
     }
 
     fun setBrakeMode(enabled: Boolean) {
-        drive.setBrakeMode(enabled)
-        steer.setBrakeMode(enabled)
+        if (isBrakeMode != enabled) {
+            isBrakeMode = enabled
+            drive.setBrakeMode(enabled)
+            steer.setBrakeMode(enabled)
+        }
     }
 
-    val positionMeters get() = drive.inputs.angle.radians * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
-    val velocityMetersPerSec get() = drive.inputs.velocityRadPerSec * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
+    /** Set the module to run open loop drive control at the specified voltage while using the angle controller to lock the module in place. Used for sysid characterization. */
+    fun runCharacterization(volts: Double) {
+        angleSetpoint = Rotation2d()
+        speedSetpoint = null
+        drive.setVoltage(volts)
+    }
+
+    val positionMeters get() = driveInputs.angle.radians * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
+    val velocityMetersPerSec get() = driveInputs.velocityRadPerSec * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
     val position get() = SwerveModulePosition(positionMeters, getAngle())
     val state get() = SwerveModuleState(velocityMetersPerSec, getAngle())
 
-    private fun getDriveConfig(): Neo.Config {
-        return Neo.Config(
+    private fun getDriveConfig(): LoggedNeo.Config {
+        return LoggedNeo.Config(
             canID = module.driveID,
             motorType = Spark.MotorType.VORTEX,
-            name = "${module.name} Drive Motor",
+            deviceName = "${module.name} Drive Motor",
             sparkConfig = Spark.Config(
                 inverted = module.driveInverted,
                 idleMode = CANSparkBase.IdleMode.kBrake,
                 smartCurrentLimit = 50
             ),
-            logName = "Drive/${module.name}ModuleDrive",
+            logName = "Drive/${module.name}Module",
             gearRatio = MK4I_L3_DRIVE_REDUCTION,
-            simJkgMetersSquared = 0.025
+            simJkgMetersSquared = 0.025,
+            additionalQualifier = "Drive"
         )
     }
 
-    private fun getSteerConfig(): Neo.Config {
-        return Neo.Config(
+    private fun getSteerConfig(): LoggedNeo.Config {
+        return LoggedNeo.Config(
             canID = module.steerID,
             motorType = Spark.MotorType.NEO,
-            name = "${module.name} Steer Motor",
+            deviceName = "${module.name} Steer Motor",
             sparkConfig = Spark.Config(
                 inverted = module.steerInverted,
                 idleMode = CANSparkBase.IdleMode.kBrake,
                 smartCurrentLimit = 30
             ),
-            logName = "Drive/${module.name}ModuleSteer",
+            logName = "Drive/${module.name}Module",
             gearRatio = MK4I_STEER_REDUCTION,
-            simJkgMetersSquared = 0.004096955
+            simJkgMetersSquared = 0.004096955,
+            additionalQualifier = "Steer"
+        )
+    }
+
+    private fun getCancoderConfig(): LoggedCancoder.Config {
+        return LoggedCancoder.Config(
+            canID = module.encoderID,
+            deviceName = "${module.name} Cancoder",
+            logName = "Drive/${module.name}Module",
+            encoderOffset = module.encoderOffset,
+            simPositionSupplier = { steerInputs.angle },
+            additionalQualifier = "Cancoder"
         )
     }
 }

@@ -1,16 +1,17 @@
-package org.team9432.lib.motors.neo
+package org.team9432.lib.logged.neo
 
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
+import org.littletonrobotics.junction.Logger
 import org.team9432.lib.wrappers.Spark
 
-class NeoIOReal(val config: Neo.Config): NeoIO {
-    private val spark = Spark(config.canID, config.name, config.motorType)
+class LoggedNeoIOReal(val config: LoggedNeo.Config): LoggedNeoIO {
+    private val spark = Spark(config.canID, config.deviceName, config.motorType)
 
     private val encoder = spark.encoder
 
-    private var controlMode = Neo.ControlMode.VOLTAGE
+    private var controlMode = LoggedNeo.ControlMode.VOLTAGE
 
     private val pid = PIDController(0.0, 0.0, 0.0)
 
@@ -20,31 +21,33 @@ class NeoIOReal(val config: Neo.Config): NeoIO {
         pid.setTolerance(0.0)
     }
 
-    override fun updateInputs(inputs: NeoIO.NEOIOInputs) {
+    override fun updateInputs(inputs: LoggedNeoIO.NEOIOInputs) {
         when (controlMode) {
-            Neo.ControlMode.VOLTAGE -> {}
-            Neo.ControlMode.POSITION -> spark.setVoltage(pid.calculate(encoder.position) + config.feedForwardSupplier.invoke(pid.setpoint))
-            Neo.ControlMode.VELOCITY -> spark.setVoltage(pid.calculate(encoder.velocity) + config.feedForwardSupplier.invoke(pid.setpoint))
+            LoggedNeo.ControlMode.VOLTAGE -> {}
+            LoggedNeo.ControlMode.POSITION -> spark.setVoltage(pid.calculate(encoder.position) + config.feedForwardSupplier.invoke(pid.setpoint))
+            LoggedNeo.ControlMode.VELOCITY -> spark.setVoltage(pid.calculate(encoder.velocity) + config.feedForwardSupplier.invoke(pid.setpoint))
         }
 
         inputs.angle = Rotation2d.fromRotations(encoder.position) / config.gearRatio
         inputs.velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(encoder.velocity) / config.gearRatio
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
         inputs.currentAmps = spark.outputCurrent
+
+        Logger.recordOutput("${config.logName}/ControlMode", controlMode)
     }
 
     override fun setVoltage(volts: Double) {
-        controlMode = Neo.ControlMode.VOLTAGE
+        controlMode = LoggedNeo.ControlMode.VOLTAGE
         spark.setVoltage(volts)
     }
 
     override fun setAngle(angle: Rotation2d) {
-        controlMode = Neo.ControlMode.POSITION
+        controlMode = LoggedNeo.ControlMode.POSITION
         pid.setpoint = angle.rotations * config.gearRatio
     }
 
     override fun setSpeed(rpm: Int) {
-        controlMode = Neo.ControlMode.VELOCITY
+        controlMode = LoggedNeo.ControlMode.VELOCITY
         pid.setpoint = rpm * config.gearRatio
     }
 

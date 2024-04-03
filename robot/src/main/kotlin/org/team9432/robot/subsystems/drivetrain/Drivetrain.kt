@@ -12,6 +12,7 @@ import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
 import org.team9432.LOOP_PERIOD_SECS
+import org.team9432.lib.SysIdUtil
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.unit.*
@@ -47,12 +48,9 @@ object Drivetrain: KSubsystem() {
             Logger.recordOutput("SwerveStates/SetpointsOptimized", *emptyArray<SwerveModuleState>())
         }
 
-        // Read wheel positions and deltas from each module
-        val modulePositions = getModulePositions()
-
-        val speeds = getRobotRelativeSpeeds()
-
         Vision.getEstimatedPose2d()?.let { (pose, timestamp) ->
+            val speeds = getRobotRelativeSpeeds()
+
             if ((maxOf(
                     abs(speeds.vxMetersPerSecond),
                     abs(speeds.vyMetersPerSecond)
@@ -65,7 +63,7 @@ object Drivetrain: KSubsystem() {
             }
         }
 
-        poseEstimator.update(Gyro.getYaw(), modulePositions.toTypedArray())
+        poseEstimator.update(Gyro.getYaw(), getModulePositions().toTypedArray())
 
         Logger.recordOutput("Drive/Odometry", getPose())
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
@@ -110,6 +108,8 @@ object Drivetrain: KSubsystem() {
 
     fun getModulePositions() = modules.map { it.position }
     fun getModuleStates() = modules.map { it.state }
+
+    fun getSysIdTests() = SysIdUtil.getSysIdTests { volts -> modules.forEach { it.runCharacterization(volts) } }
 
     object Commands {
         fun stop() = InstantCommand(Drivetrain) { Drivetrain.stop() }

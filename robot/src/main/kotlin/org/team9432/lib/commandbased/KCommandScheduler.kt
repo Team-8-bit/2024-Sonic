@@ -152,12 +152,12 @@ object KCommandScheduler {
      * Any subsystems not being used as requirements have their default methods started.
      */
     fun run() {
-        registerSubsystem(*subsystemQueue.toTypedArray())
-        periodicQueue.forEach { addPeriodic(it) }
+        if (isDisabled) return
+
+        clearQueue()
 
         inLoop = true
 
-        if (isDisabled) return
         watchdog.reset()
 
         // Run the periodic method of all registered subsystems.
@@ -225,6 +225,18 @@ object KCommandScheduler {
         inLoop = false
     }
 
+    private fun clearQueue() {
+        // Copy queues
+        val subsystems = subsystemQueue.toMutableSet()
+        val periodics = periodicQueue.toMutableSet()
+
+        subsystemQueue.clear()
+        periodicQueue.clear()
+
+        subsystems.forEach { registerSubsystem(it) }
+        periodics.forEach { addPeriodic(it) }
+    }
+
     /**
      * Registers subsystems with the scheduler. This must be called for the subsystem's periodic block
      * to run when the scheduler is run, and for the subsystem's default command to be scheduled. It
@@ -232,18 +244,15 @@ object KCommandScheduler {
      *
      * @param subsystems the subsystem to register
      */
-    fun registerSubsystem(vararg subsystems: KSubsystem) {
+    fun registerSubsystem(subsystem: KSubsystem) {
         if (inLoop) {
-            subsystemQueue.addAll(subsystems)
+            subsystemQueue.add(subsystem)
             return
         }
-        for (subsystem in subsystems) {
-            if (this.subsystems.containsKey(subsystem)) {
-                DriverStation.reportWarning("Tried to register an already-registered subsystem", true)
-                continue
-            }
-            this.subsystems[subsystem] = null
+        if (this.subsystems.containsKey(subsystem)) {
+            DriverStation.reportWarning("Tried to register an already-registered subsystem", true)
         }
+        this.subsystems[subsystem] = null
     }
 
     /**
@@ -252,8 +261,8 @@ object KCommandScheduler {
      *
      * @param subsystems the subsystem to un-register
      */
-    fun unregisterSubsystem(vararg subsystems: KSubsystem?) {
-        this.subsystems.keys.removeAll(subsystems.toSet())
+    fun unregisterSubsystem(subsystem: KSubsystem) {
+        this.subsystems.keys.remove(subsystem)
     }
 
     /**
