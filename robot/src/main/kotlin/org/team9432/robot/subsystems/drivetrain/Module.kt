@@ -76,7 +76,7 @@ class Module(private val module: ModuleConfig) {
             return
         } else setBrakeMode(true)
 
-        val steerAbsolutePosition = cancoderInputs.position.minus(module.encoderOffset)
+        val steerAbsolutePosition = cancoderInputs.position
 
         // On first cycle, reset relative turn encoder
         // Wait until absolute angle is nonzero in case it wasn't initialized yet
