@@ -5,7 +5,8 @@ import edu.wpi.first.wpilibj.util.Color
 import org.team9432.robot.led.LEDModes
 import org.team9432.robot.led.LEDs
 
-class ChargeUp(private val duration: Double, private val extraEndTime: Double): LEDAnimation {
+/*
+class ChargeUp(private val duration: Double, private val extraEndTime: Double): Animation {
     private val steps = 22
     private val stepTime = duration / steps
 
@@ -39,4 +40,4 @@ class ChargeUp(private val duration: Double, private val extraEndTime: Double): 
         LEDs.Section.AMP_LEFT.reversed(),
         LEDs.Section.AMP_RIGHT
     )
-}
+}*/

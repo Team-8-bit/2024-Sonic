@@ -1,8 +1,9 @@
 package org.team9432.robot.led.animations
 
-interface LEDAnimation {
+interface Animation {
     /** Update the animation, returns true when finished **/
-    fun updateBuffer(): Boolean
+    fun update(): Boolean
 
-    fun reset() {}
+    fun start() {}
+    fun end() {}
 }

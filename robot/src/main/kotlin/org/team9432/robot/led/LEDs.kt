@@ -5,30 +5,28 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer
 import edu.wpi.first.wpilibj.Notifier
 import org.team9432.LOOP_PERIOD_SECS
 import org.team9432.lib.commandbased.KPeriodic
-import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.robot.Devices
 
-
 object LEDs: KPeriodic() {
-    private const val LENGTH = 118
+    const val LENGTH = 118
 
-    private val ledController = AddressableLED(Devices.LED_PORT)
+    //private val ledController = AddressableLED(Devices.LED_PORT)
     val buffer = AddressableLEDBuffer(LENGTH)
 
     object Section {
-        val SPEAKER_LEFT_TOP = (0..11).toList()
-        val SPEAKER_LEFT_BOTTOM = (12..21).toList()
+        val SPEAKER_LEFT_TOP = LEDSection((0..11).toList())
+        val SPEAKER_LEFT_BOTTOM = LEDSection((12..21).toList())
 
-        val SPEAKER_RIGHT_BOTTOM = (22..33).toList()
-        val SPEAKER_RIGHT_TOP = (34..43).toList()
+        val SPEAKER_RIGHT_BOTTOM = LEDSection((22..33).toList().reversed())
+        val SPEAKER_RIGHT_TOP = LEDSection((34..43).toList().reversed())
 
-        val AMP_LEFT_TOP = (44..55).toList()
-        val AMP_LEFT_BOTTOM = (56..65).toList()
+        val AMP_LEFT_TOP = LEDSection((44..55).toList())
+        val AMP_LEFT_BOTTOM = LEDSection((56..65).toList())
 
-        val AMP_RIGHT_BOTTOM = (66..77).toList()
-        val AMP_RIGHT_TOP = (78..87).toList()
+        val AMP_RIGHT_BOTTOM = LEDSection((66..77).toList().reversed())
+        val AMP_RIGHT_TOP = LEDSection((78..87).toList().reversed())
 
-        val TOP_BAR = (88..117).toList()
+        val TOP_BAR = LEDSection((88..117).toList())
 
         val SPEAKER_LEFT = SPEAKER_LEFT_TOP + SPEAKER_LEFT_BOTTOM
         val SPEAKER_RIGHT = SPEAKER_RIGHT_BOTTOM + SPEAKER_RIGHT_TOP
@@ -49,9 +47,9 @@ object LEDs: KPeriodic() {
     }
 
     init {
-        ledController.setLength(LENGTH)
-        ledController.setData(buffer)
-        ledController.start()
+       // ledController.setLength(LENGTH)
+       // ledController.setData(buffer)
+       // ledController.start()
     }
 
     private const val INIT_AFTER_LOOP_CYCLE = 10
@@ -63,15 +61,15 @@ object LEDs: KPeriodic() {
             return
         }
 
-        LEDState.updateBuffer()
-        ledController.setData(buffer)
+//        LEDState.updateBuffer()
+       // ledController.setData(buffer)
     }
 
     private val loadingNotifier = Notifier {
         synchronized(this) {
             // We need to provide a timestamp while robot code is loading
-            Chase.updateBuffer(timestamp = System.currentTimeMillis() / 1000.0)
-            ledController.setData(buffer)
+//            Chase.updateBuffer(timestamp = System.currentTimeMillis() / 1000.0)
+           // ledController.setData(buffer)
         }
     }
 

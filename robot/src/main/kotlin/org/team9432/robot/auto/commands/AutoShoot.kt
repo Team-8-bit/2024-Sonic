@@ -10,13 +10,11 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.drivetrain.TargetAim
 import org.team9432.robot.led.LEDState
-import org.team9432.robot.led.animations.ChargeUp
-import org.team9432.robot.led.animations.Rocket
 import org.team9432.robot.subsystems.Hopper
 import org.team9432.robot.subsystems.Intake
 
 fun AutoShoot() = ParallelDeadlineCommand(
-    InstantCommand { LEDState.animation = ChargeUp(0.5, 1.0) },
+   // InstantCommand { LEDState.animation = ChargeUp(0.5, 1.0) },
 
     deadline = SequentialCommand(
         TargetAim { FieldConstants.speakerPose },
@@ -31,7 +29,7 @@ fun AutoShoot() = ParallelDeadlineCommand(
         // Update the note position
         InstantCommand {
             RobotState.notePosition = RobotState.NotePosition.NONE
-            LEDState.animation = Rocket(0.5)
+//            LEDState.animation = Rocket(0.5)
         }
     )
 )

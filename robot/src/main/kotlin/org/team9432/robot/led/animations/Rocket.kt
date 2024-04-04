@@ -6,7 +6,8 @@ import edu.wpi.first.wpilibj.util.Color
 import org.team9432.robot.led.LEDModes
 import org.team9432.robot.led.LEDs
 
-class Rocket(private val duration: Double, private val cooldown: Double = 1.0, private val color: HSVColor? = null): LEDAnimation {
+/*
+class Rocket(private val duration: Double, private val cooldown: Double = 1.0, private val color: HSVColor? = null): Animation {
     data class HSVColor(val h: Int, val s: Int, val v: Int)
 
     private val stepTime = 0.04
@@ -66,4 +67,4 @@ class Rocket(private val duration: Double, private val cooldown: Double = 1.0, p
         LEDs.Section.TOP_BAR,
         LEDs.Section.TOP_BAR.reversed()
     )
-}
+}*/

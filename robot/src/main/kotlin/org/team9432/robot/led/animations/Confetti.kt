@@ -5,7 +5,8 @@ import edu.wpi.first.wpilibj.util.Color
 import org.team9432.robot.led.LEDModes
 import org.team9432.robot.led.LEDs
 
-class Confetti(private val duration: Double): LEDAnimation {
+/*
+class Confetti(private val duration: Double): Animation {
 
     private val stepTime = 0.5
 
@@ -48,4 +49,4 @@ class Confetti(private val duration: Double): LEDAnimation {
         LEDs.Section.TOP_BAR,
         LEDs.Section.TOP_BAR.reversed()
     )
-}
+}*/

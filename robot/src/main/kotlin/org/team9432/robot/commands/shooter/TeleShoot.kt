@@ -6,7 +6,6 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.led.LEDState
-import org.team9432.robot.led.animations.Rocket
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Hopper
@@ -34,7 +33,7 @@ fun TeleShoot() = ParallelDeadlineCommand(
 
             SimpleCommand(
                 isFinished = { !RobotState.noteInSpeakerSideHopperBeambreak() },
-                end = { LEDState.animation = Rocket(0.5) }
+//                end = { LEDState.animation = Rocket(0.5) }
             ),
 
             // Do this for one second
