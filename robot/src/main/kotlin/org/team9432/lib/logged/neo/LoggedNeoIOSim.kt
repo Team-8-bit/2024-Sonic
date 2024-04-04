@@ -56,9 +56,9 @@ class LoggedNeoIOSim(config: LoggedNeo.Config): LoggedNeoIO {
         pid.setpoint = angle.radians
     }
 
-    override fun setSpeed(rpm: Int) {
+    override fun setSpeed(rpm: Double) {
         controlMode = LoggedNeo.ControlMode.VELOCITY
-        pid.setpoint = rpm.toDouble()
+        pid.setpoint = rpm
     }
 
     override fun setPID(p: Double, i: Double, d: Double) = pid.setPID(p, i, d)

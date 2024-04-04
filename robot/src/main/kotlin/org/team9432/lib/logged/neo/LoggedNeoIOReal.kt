@@ -24,8 +24,8 @@ class LoggedNeoIOReal(val config: LoggedNeo.Config): LoggedNeoIO {
     override fun updateInputs(inputs: LoggedNeoIO.NEOIOInputs) {
         when (controlMode) {
             LoggedNeo.ControlMode.VOLTAGE -> {}
-            LoggedNeo.ControlMode.POSITION -> spark.setVoltage(pid.calculate(encoder.position) + config.feedForwardSupplier.invoke(pid.setpoint))
-            LoggedNeo.ControlMode.VELOCITY -> spark.setVoltage(pid.calculate(encoder.velocity) + config.feedForwardSupplier.invoke(pid.setpoint))
+            LoggedNeo.ControlMode.POSITION -> {} //spark.setVoltage(pid.calculate(encoder.position) + config.feedForwardSupplier.invoke(pid.setpoint))
+            LoggedNeo.ControlMode.VELOCITY -> {} //spark.setVoltage(pid.calculate(Units.rotationsPerMinuteToRadiansPerSecond(encoder.velocity)) + config.feedForwardSupplier.invoke(pid.setpoint))
         }
 
         inputs.angle = Rotation2d.fromRotations(encoder.position) / config.gearRatio
@@ -33,12 +33,13 @@ class LoggedNeoIOReal(val config: LoggedNeo.Config): LoggedNeoIO {
         inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
         inputs.currentAmps = spark.outputCurrent
 
-        Logger.recordOutput("${config.logName}/ControlMode", controlMode)
+        Logger.recordOutput("${config.logName}/${config.additionalQualifier}ControlMode", controlMode)
     }
 
     override fun setVoltage(volts: Double) {
         controlMode = LoggedNeo.ControlMode.VOLTAGE
         spark.setVoltage(volts)
+        Logger.recordOutput("${config.logName}/${config.additionalQualifier}VoltsSet", volts)
     }
 
     override fun setAngle(angle: Rotation2d) {
@@ -46,9 +47,9 @@ class LoggedNeoIOReal(val config: LoggedNeo.Config): LoggedNeoIO {
         pid.setpoint = angle.rotations * config.gearRatio
     }
 
-    override fun setSpeed(rpm: Int) {
+    override fun setSpeed(radPerSecond: Double) {
         controlMode = LoggedNeo.ControlMode.VELOCITY
-        pid.setpoint = rpm * config.gearRatio
+        pid.setpoint = radPerSecond
     }
 
     override fun setPID(p: Double, i: Double, d: Double) = pid.setPID(p, i, d)

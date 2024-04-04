@@ -34,7 +34,7 @@ class LoggedNeo(val config: Config) {
     fun setAngle(angle: Rotation2d) = io.setAngle(angle)
 
     /** Run closed loop velocity control */
-    fun setSpeed(rpm: Int) = io.setSpeed(rpm)
+    fun setSpeed(radPerSecond: Double) = io.setSpeed(radPerSecond)
 
     /** Set PID constants */
     fun setPID(p: Double, i: Double, d: Double) = io.setPID(p, i, d)

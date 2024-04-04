@@ -1,6 +1,8 @@
 package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
+import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
@@ -19,18 +21,34 @@ object Shooter: KSubsystem() {
     private val leftSide = LoggedNeo(getConfig(Devices.LEFT_SHOOTER_ID, false, "Left"))
     private val rightSide = LoggedNeo(getConfig(Devices.RIGHT_SHOOTER_ID, true, "Right"))
 
-    private var isRunningAtSpeeds: Pair<Int, Int>? = null
+    private var isRunningAtSpeeds: Pair<Double, Double>? = null
+
+    private val feedforward: SimpleMotorFeedforward
+
+    private val leftPID = PIDController(0.0, 0.0, 0.0)
+    private val rightPID = PIDController(0.0, 0.0, 0.0)
 
     init {
         when (State.mode) {
             REAL, REPLAY -> {
-                leftSide.setPID(0.0005, 0.0, 0.0)
-                rightSide.setPID(0.0005, 0.0, 0.0)
+                leftPID.setPID(0.0039231, 0.0, 0.0)
+                rightPID.setPID(0.0039231, 0.0, 0.0)
+
+//                leftPID.setPID(0.013175, 0.0, 0.0)
+//                rightPID.setPID(0.013175, 0.0, 0.0)
+                feedforward = SimpleMotorFeedforward(0.0, 0.0086634, 0.0038234)
+//                feedforward = SimpleMotorFeedforward(0.0, 0.0091634, 0.0038234)
+//                feedforward = SimpleMotorFeedforward(0.05611, 0.0091634, 0.0038234)
+
+//                leftSide.setPID(0.0005, 0.0, 0.0)
+//                rightSide.setPID(0.0005, 0.0, 0.0)
+//                feedforward = SimpleMotorFeedforward(0.0, 0.0, 0.0)
             }
 
             SIM -> {
                 leftSide.setPID(0.1, 0.0, 0.0)
                 rightSide.setPID(0.1, 0.0, 0.0)
+                feedforward = SimpleMotorFeedforward(0.0, 0.0, 0.0)
             }
         }
     }
@@ -47,8 +65,17 @@ object Shooter: KSubsystem() {
                 RobotPosition.SpeakerSide.RIGHT -> rpmSlow to rpmFast
                 RobotPosition.SpeakerSide.CENTER -> rpmSlow to rpmFast
             }
-            leftSide.setSpeed(leftSpeed)
-            rightSide.setSpeed(rightSpeed)
+
+            val leftRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(leftSpeed)
+            val rightRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(rightSpeed)
+            leftSide.setVoltage(leftPID.calculate(leftInputs.velocityRadPerSec, leftRadPerSec) + feedforward.calculate(leftRadPerSec))
+            rightSide.setVoltage(rightPID.calculate(rightInputs.velocityRadPerSec, rightRadPerSec) + feedforward.calculate(rightRadPerSec))
+
+            Logger.recordOutput("Shooter/LeftSide/SetpointRPM", leftSpeed)
+            Logger.recordOutput("Shooter/RightSide/SetpointRPM", rightSpeed)
+
+            Logger.recordOutput("Shooter/LeftSide/FFCalc", feedforward.calculate(leftRadPerSec))
+            Logger.recordOutput("Shooter/RightSide/FFCalc", feedforward.calculate(rightRadPerSec))
         }
 
         Logger.recordOutput("Shooter/LeftSide/RPM", Units.radiansPerSecondToRotationsPerMinute(leftInputs.velocityRadPerSec))
@@ -59,7 +86,7 @@ object Shooter: KSubsystem() {
         }
     }
 
-    fun startRunAtSpeeds(rpmFast: Int = 6000, rpmSlow: Int = 4000) {
+    fun startRunAtSpeeds(rpmFast: Double = 6000.0, rpmSlow: Double = 4000.0) {
         isRunningAtSpeeds = rpmFast to rpmSlow
     }
 
@@ -67,12 +94,6 @@ object Shooter: KSubsystem() {
         isRunningAtSpeeds = null
         leftSide.setVoltage(leftVolts)
         rightSide.setVoltage(rightVolts)
-    }
-
-    fun setSpeed(leftRPM: Int, rightRPM: Int) {
-        isRunningAtSpeeds = null
-        leftSide.setSpeed(leftRPM)
-        rightSide.setSpeed(rightRPM)
     }
 
     fun stop() {
@@ -83,10 +104,9 @@ object Shooter: KSubsystem() {
 
     object Commands {
         fun setVoltage(leftVolts: Double, rightVolts: Double) = InstantCommand(Shooter) { Shooter.setVoltage(leftVolts, rightVolts) }
-        fun setSpeed(leftRPM: Int, rightRPM: Int) = InstantCommand(Shooter) { Shooter.setSpeed(leftRPM, rightRPM) }
         fun stop() = InstantCommand(Shooter) { Shooter.stop() }
 
-        fun startRunAtSpeeds(rpmFast: Int = 6000, rpmSlow: Int = 4000) = InstantCommand(Shooter) { Shooter.startRunAtSpeeds(rpmFast, rpmSlow) }
+        fun startRunAtSpeeds(rpmFast: Double = 6000.0, rpmSlow: Double = 4000.0) = InstantCommand(Shooter) { Shooter.startRunAtSpeeds(rpmFast, rpmSlow) }
     }
 
     private fun getConfig(canID: Int, inverted: Boolean, side: String): LoggedNeo.Config {
@@ -99,6 +119,7 @@ object Shooter: KSubsystem() {
                 idleMode = CANSparkBase.IdleMode.kCoast,
                 smartCurrentLimit = 80
             ),
+            feedForwardSupplier = { feedforward.calculate(it) },
             additionalQualifier = side,
             logName = "Shooter",
             gearRatio = 0.5,

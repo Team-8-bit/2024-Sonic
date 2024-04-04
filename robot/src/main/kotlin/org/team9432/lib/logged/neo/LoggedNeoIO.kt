@@ -37,7 +37,7 @@ interface LoggedNeoIO {
     fun setAngle(angle: Rotation2d) {}
 
     /* Run closed loop velocity control */
-    fun setSpeed(rpm: Int) {}
+    fun setSpeed(rpm: Double) {}
 
     fun setPID(p: Double, i: Double, d: Double) {}
 
