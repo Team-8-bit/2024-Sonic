@@ -20,6 +20,7 @@ class Pulse(
             prolongedColor = Color.Black
             fadeColor = Color.Black
             temporaryColor = null
+            fadeSpeed = 15
         }
     }
 

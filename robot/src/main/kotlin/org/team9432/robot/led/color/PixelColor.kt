@@ -17,6 +17,7 @@ data class PixelColor(
     var fadeColor: Color? = null,
     var prolongedColor: Color = Color.Black,
     var temporaryColor: Color? = null,
+    var fadeSpeed: Int = 25
 ) {
     /**
      * Resets [temporaryColor] to `-1`, effectively reverting the pixel to

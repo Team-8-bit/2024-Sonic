@@ -38,7 +38,7 @@ object LEDStrip: KPeriodic() {
             color.actualColor = nextColor
 
             if (fadeColor != null) {
-                color.fadeColor = fadeColor.blendWith(prolongedColor, 25)
+                color.fadeColor = fadeColor.blendWith(prolongedColor, color.fadeSpeed)
                 if (fadeColor == prolongedColor) color.fadeColor = null
             }
         }
