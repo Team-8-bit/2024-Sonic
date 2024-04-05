@@ -1,6 +1,8 @@
-package org.team9432.robot.led.animations
+package org.team9432.robot.led.animation.groups
 
-class RepeatAnimationGroup(private val animation: Animation, private val runs: Int? = null) : Animation {
+import org.team9432.robot.led.animation.Animation
+
+class RepeatAnimationGroup(private val animation: Animation, private val runs: Int? = null): Animation {
     private var runCount = 0
 
     override fun start() {

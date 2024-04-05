@@ -1,8 +1,7 @@
-package org.team9432.robot.led
+package org.team9432.robot.led.animation
 
 import org.team9432.lib.commandbased.KPeriodic
-import org.team9432.robot.led.animations.Animation
-import org.team9432.robot.led.ledinterface.LEDStrip
+import org.team9432.robot.led.strip.LEDStrip
 
 object AnimationManager: KPeriodic() {
     private val runningAnimations = mutableSetOf<Animation>()

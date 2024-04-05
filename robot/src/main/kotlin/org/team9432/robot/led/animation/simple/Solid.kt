@@ -1,11 +1,10 @@
-package org.team9432.robot.led.animations.predefined.simple
+package org.team9432.robot.led.animation.simple
 
-import org.team9432.robot.led.LEDSection
-import org.team9432.robot.led.animations.Animation
+import org.team9432.robot.led.animation.Animation
 import org.team9432.robot.led.color.Color
-import org.team9432.robot.led.ledinterface.forEachColor
+import org.team9432.robot.led.strip.Section
 
-class Solid(private val section: LEDSection, private val color: Color): Animation {
+class Solid(private val section: Section, private val color: Color): Animation {
     override fun start() {
         section.forEachColor {
             prolongedColor = color

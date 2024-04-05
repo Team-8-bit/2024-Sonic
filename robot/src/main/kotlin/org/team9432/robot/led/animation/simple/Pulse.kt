@@ -1,15 +1,13 @@
-package org.team9432.robot.led.animations.predefined.simple
+package org.team9432.robot.led.animation.simple
 
 import edu.wpi.first.wpilibj.Timer
-import org.team9432.robot.led.LEDSection
-import org.team9432.robot.led.animations.Animation
+import org.team9432.robot.led.animation.Animation
 import org.team9432.robot.led.color.Color
-import org.team9432.robot.led.color.presets.Black
-import org.team9432.robot.led.ledinterface.applyToIndex
-import org.team9432.robot.led.ledinterface.forEachColor
+import org.team9432.robot.led.color.predefined.Black
+import org.team9432.robot.led.strip.Section
 
 class Pulse(
-    private val section: LEDSection,
+    private val section: Section,
     private val color: Color,
     private val duration: Double = 1.0,
     private val cooldown: Double = 1.0,

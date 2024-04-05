@@ -1,6 +1,6 @@
 package org.team9432.robot.led.color
 
-import org.team9432.robot.led.color.presets.Black
+import org.team9432.robot.led.color.predefined.Black
 
 /**
  * Actual Color - The color you see on the strip
@@ -17,7 +17,7 @@ data class PixelColor(
     var currentlyFadingColor: Color? = null,
     var prolongedColor: Color = Color.Black,
     var temporaryColor: Color? = null,
-    var fadeSpeed: Int = 25
+    var fadeSpeed: Int = 25,
 ) {
     /**
      * Resets [temporaryColor] to `-1`, effectively reverting the pixel to

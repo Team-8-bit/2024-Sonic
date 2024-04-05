@@ -1,4 +1,6 @@
-package org.team9432.robot.led.animations
+package org.team9432.robot.led.animation.groups
+
+import org.team9432.robot.led.animation.Animation
 
 class SequentialAnimationGroup(vararg animations: Animation): Animation {
     private val animationList = animations.toList()

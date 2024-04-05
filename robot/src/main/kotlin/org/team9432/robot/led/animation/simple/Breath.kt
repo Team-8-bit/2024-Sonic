@@ -1,19 +1,17 @@
-package org.team9432.robot.led.animations.predefined.simple
+package org.team9432.robot.led.animation.simple
 
 import edu.wpi.first.wpilibj.Timer
-import org.team9432.robot.led.LEDSection
-import org.team9432.robot.led.animations.Animation
+import org.team9432.robot.led.animation.Animation
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.getAsRgb
-import org.team9432.robot.led.color.presets.*
-import org.team9432.robot.led.ledinterface.forEachColor
-import kotlin.math.floor
+import org.team9432.robot.led.color.predefined.Black
+import org.team9432.robot.led.strip.Section
 
 class Breath(
-    private val section: LEDSection,
+    private val section: Section,
     colors: List<Color>,
     private val colorDuration: Double,
-    private val fadeSpeed: Int = 10
+    private val fadeSpeed: Int = 10,
 ): Animation {
 
     init {

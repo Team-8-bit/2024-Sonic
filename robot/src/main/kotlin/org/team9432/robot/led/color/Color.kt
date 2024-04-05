@@ -1,6 +1,9 @@
 package org.team9432.robot.led.color
 
-import kotlin.math.*
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
 import edu.wpi.first.wpilibj.util.Color as WPIColor
 
 /**

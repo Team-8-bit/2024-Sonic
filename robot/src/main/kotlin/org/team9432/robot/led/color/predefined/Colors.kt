@@ -1,4 +1,4 @@
-package org.team9432.robot.led.color.presets
+package org.team9432.robot.led.color.predefined
 
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.fromRGBString

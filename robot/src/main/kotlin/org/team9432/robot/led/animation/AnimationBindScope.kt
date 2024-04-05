@@ -1,6 +1,4 @@
-package org.team9432.robot.led
-
-import org.team9432.robot.led.animations.Animation
+package org.team9432.robot.led.animation
 
 data class AnimationWrapper(val animation: Animation, var lastEnabled: Boolean)
 

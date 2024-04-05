@@ -1,4 +1,4 @@
-package org.team9432.robot.led.ledinterface
+package org.team9432.robot.led.strip
 
 import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
@@ -8,7 +8,7 @@ import org.team9432.robot.led.color.PixelColor
 import org.team9432.robot.led.color.blendWith
 
 object LEDStrip {
-    const val LENGTH = 118
+    private const val LENGTH = 118
 
     private val controller = AddressableLED(Devices.LED_PORT)
     private val buffer = AddressableLEDBuffer(LENGTH)
