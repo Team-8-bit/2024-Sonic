@@ -1,7 +1,6 @@
 package org.team9432.lib.logged.neo
 
 import edu.wpi.first.math.MathUtil
-import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.math.util.Units
@@ -18,25 +17,9 @@ class LoggedNeoIOSim(config: LoggedNeo.Config): LoggedNeoIO {
         }, config.gearRatio, config.simJkgMetersSquared
     )
 
-    private var controlMode = LoggedNeo.ControlMode.VOLTAGE
-
-    private val pid = PIDController(0.0, 0.0, 0.0)
-
     private var appliedVolts = 0.0
 
     override fun updateInputs(inputs: LoggedNeoIO.NEOIOInputs) {
-        when (controlMode) {
-            LoggedNeo.ControlMode.VOLTAGE -> {}
-            LoggedNeo.ControlMode.POSITION -> {
-                appliedVolts = MathUtil.clamp(pid.calculate(sim.angularPositionRad), -12.0, 12.0)
-                sim.setInputVoltage(appliedVolts)
-            }
-            LoggedNeo.ControlMode.VELOCITY -> {
-                appliedVolts = MathUtil.clamp(pid.calculate(sim.angularVelocityRPM), -12.0, 12.0)
-                sim.setInputVoltage(appliedVolts)
-            }
-        }
-
         sim.update(LOOP_PERIOD_SECS)
 
         inputs.angle = Rotation2d(sim.angularPositionRad)
@@ -46,21 +29,9 @@ class LoggedNeoIOSim(config: LoggedNeo.Config): LoggedNeoIO {
     }
 
     override fun setVoltage(volts: Double) {
-        controlMode = LoggedNeo.ControlMode.VOLTAGE
         appliedVolts = MathUtil.clamp(volts, -12.0, 12.0)
         sim.setInputVoltage(appliedVolts)
     }
 
-    override fun setAngle(angle: Rotation2d) {
-        controlMode = LoggedNeo.ControlMode.POSITION
-        pid.setpoint = angle.radians
-    }
-
-    override fun setSpeed(rpm: Double) {
-        controlMode = LoggedNeo.ControlMode.VELOCITY
-        pid.setpoint = rpm
-    }
-
-    override fun setPID(p: Double, i: Double, d: Double) = pid.setPID(p, i, d)
     override fun stop() = setVoltage(0.0)
 }

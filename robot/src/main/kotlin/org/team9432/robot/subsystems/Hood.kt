@@ -2,11 +2,14 @@ package org.team9432.robot.subsystems
 
 import com.revrobotics.CANSparkBase
 import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.controller.ArmFeedforward
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.geometry.Pose3d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Translation3d
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
@@ -24,33 +27,56 @@ import org.team9432.robot.oi.EmergencySwitches
 object Hood: KSubsystem() {
     private val motor = LoggedNeo(getConfig())
 
-    private val ffTable = InterpolatingDoubleTreeMap()
     private val distanceAngleMap = InterpolatingDoubleTreeMap()
+
+    private val feedforward: ArmFeedforward
+    private val pid = ProfiledPIDController(0.0, 0.0, 0.0, TrapezoidProfile.Constraints(0.0, 0.0))
+
+    // The offset of the arm from the horizontal in its neutral position, measured from horizontal
+    val hoodOffset = Rotation2d()
 
     init {
         when (State.mode) {
-            REAL, REPLAY -> motor.setPID(2.25, 0.0, 0.0)
-            SIM -> motor.setPID(1.0, 0.0, 0.0)
+            REAL, REPLAY -> {
+                pid.setPID(2.25, 0.0, 0.0)
+                pid.constraints = TrapezoidProfile.Constraints(Math.toRadians(180.0), Math.toRadians(540.0))
+                feedforward = ArmFeedforward(0.0, 0.0, 0.0, 0.0)
+            }
+
+            SIM -> {
+                pid.setPID(1.0, 0.0, 0.0)
+                feedforward = ArmFeedforward(0.0, 0.0, 0.0, 0.0)
+            }
         }
 
         distanceAngleMap.put(1.0, 0.0)
         distanceAngleMap.put(1.8, 15.0)
         distanceAngleMap.put(2.8, 22.0)
 
-        ffTable.put(0.0, 0.0)
-        ffTable.put(15.0, 10.0)
-        ffTable.put(30.0, 0.0)
+        setAngle(Rotation2d())
     }
 
     override fun periodic() {
         val inputs = motor.updateAndRecordInputs()
+
         Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, inputs.angle.radians, 0.0)))
-        if (EmergencySwitches.disableHood) motor.stop()
+
+        if (EmergencySwitches.disableHood) {
+            motor.stop()
+            return
+        }
+
+        val feedback = pid.calculate((inputs.angle + hoodOffset).radians)
+        val feedforward = feedforward.calculate(pid.setpoint.position, pid.setpoint.velocity)
+        motor.setVoltage(feedback + feedforward)
     }
 
     fun setAngle(angle: Rotation2d) {
         if (EmergencySwitches.disableHood) return
-        motor.setAngle(Rotation2d.fromDegrees(MathUtil.clamp(angle.degrees, 0.0, 30.0)))
+
+        val angleTarget = Rotation2d.fromDegrees(MathUtil.clamp(angle.degrees, 0.0, 30.0)) + hoodOffset
+        val goal = TrapezoidProfile.State(angleTarget.radians, 0.0)
+        pid.setGoal(goal)
 
         Logger.recordOutput("Hood/AngleSetpointDegrees", angle.degrees)
     }
@@ -91,7 +117,6 @@ object Hood: KSubsystem() {
         logName = "Hood",
         gearRatio = 2.0 * (150 / 15),
         simJkgMetersSquared = 0.01507,
-        feedForwardSupplier = { setpoint -> ffTable.get(setpoint) },
         sparkConfig = Spark.Config(
             inverted = true,
             idleMode = CANSparkBase.IdleMode.kBrake,

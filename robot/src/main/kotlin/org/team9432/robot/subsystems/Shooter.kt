@@ -33,21 +33,10 @@ object Shooter: KSubsystem() {
             REAL, REPLAY -> {
                 leftPID.setPID(0.0039231, 0.0, 0.0)
                 rightPID.setPID(0.0039231, 0.0, 0.0)
-
-//                leftPID.setPID(0.013175, 0.0, 0.0)
-//                rightPID.setPID(0.013175, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0086634, 0.0038234)
-//                feedforward = SimpleMotorFeedforward(0.0, 0.0091634, 0.0038234)
-//                feedforward = SimpleMotorFeedforward(0.05611, 0.0091634, 0.0038234)
-
-//                leftSide.setPID(0.0005, 0.0, 0.0)
-//                rightSide.setPID(0.0005, 0.0, 0.0)
-//                feedforward = SimpleMotorFeedforward(0.0, 0.0, 0.0)
             }
 
             SIM -> {
-                leftSide.setPID(0.1, 0.0, 0.0)
-                rightSide.setPID(0.1, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0, 0.0)
             }
         }
@@ -119,7 +108,6 @@ object Shooter: KSubsystem() {
                 idleMode = CANSparkBase.IdleMode.kCoast,
                 smartCurrentLimit = 80
             ),
-            feedForwardSupplier = { feedforward.calculate(it) },
             additionalQualifier = side,
             logName = "Shooter",
             gearRatio = 0.5,
