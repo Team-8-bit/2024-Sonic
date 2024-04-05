@@ -15,7 +15,6 @@ class Solid(private val section: LEDSection, private val color: Color): Animatio
     }
 
     override fun update(): Boolean {
-        section.forEachColor { prolongedColor = color }
         return true
     }
 }

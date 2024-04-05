@@ -1,21 +1,29 @@
 package org.team9432.robot.led.animations
 
 class ParallelAnimationGroup(vararg animations: Animation): Animation {
-    private val animations = animations.toMutableList()
+    private val animationList = animations.toList()
+
+    private var unfinishedAnimations = animationList.toMutableList()
 
     override fun start() {
-        animations.forEach { it.start() }
+        unfinishedAnimations = animationList.toMutableList()
+        unfinishedAnimations.forEach { it.start() }
     }
 
     override fun update(): Boolean {
         val finishedAnimations = mutableListOf<Animation>()
-        for (animation in animations) {
+        for (animation in unfinishedAnimations) {
             val isFinished = animation.update()
             if (isFinished) finishedAnimations.add(animation)
         }
         finishedAnimations.forEach { it.end() }
-        animations.removeAll(finishedAnimations)
+        unfinishedAnimations.removeAll(finishedAnimations)
 
-        return animations.isEmpty()
+        return unfinishedAnimations.isEmpty()
+    }
+
+    override fun end() {
+        // End any remaining animations
+        unfinishedAnimations.forEach { it.end() }
     }
 }

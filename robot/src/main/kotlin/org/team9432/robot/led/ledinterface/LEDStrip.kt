@@ -8,7 +8,7 @@ import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.PixelColor
 import org.team9432.robot.led.color.blendWith
 
-object LEDStrip: KPeriodic() {
+object LEDStrip {
     const val LENGTH = 118
 
     private val controller = AddressableLED(Devices.LED_PORT)
@@ -21,7 +21,7 @@ object LEDStrip: KPeriodic() {
         controller.start()
     }
 
-    override fun periodic() {
+    fun updateColorsFromMap() {
         colorMap.forEach { color ->
             // Freeze immutable copies of each color state
             val temporaryColor = color.temporaryColor
@@ -42,15 +42,13 @@ object LEDStrip: KPeriodic() {
                 if (fadeColor == prolongedColor) color.fadeColor = null
             }
         }
-
-        render()
     }
 
     private fun setLED(index: Int, color: Color) {
         buffer.setLED(index, color.toWPILibColor())
     }
 
-    private fun render() {
+    fun render() {
         controller.setData(buffer)
     }
 }
