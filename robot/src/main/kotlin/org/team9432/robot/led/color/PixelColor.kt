@@ -14,7 +14,7 @@ import org.team9432.robot.led.color.presets.Black
 data class PixelColor(
     val pixelIndex: Int,
     var actualColor: Color = Color.Black,
-    var fadeColor: Color? = null,
+    var currentlyFadingColor: Color? = null,
     var prolongedColor: Color = Color.Black,
     var temporaryColor: Color? = null,
     var fadeSpeed: Int = 25

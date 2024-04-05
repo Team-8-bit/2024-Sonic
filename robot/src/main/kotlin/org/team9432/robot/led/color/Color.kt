@@ -1,9 +1,6 @@
 package org.team9432.robot.led.color
 
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.*
 import edu.wpi.first.wpilibj.util.Color as WPIColor
 
 /**
@@ -53,9 +50,6 @@ fun Color.blendWith(other: Color, amountOfOverlay: Int) = blend(this, other, amo
 fun blend(existing: Color, overlay: Color, amountOfOverlay: Int): Color {
     val existingRgb = existing.getAsRgb()
     val overlayRgb = overlay.getAsRgb()
-    if (amountOfOverlay == 0) return existingRgb
-    if (amountOfOverlay == 255) return overlayRgb
-    if (existingRgb == overlayRgb) return existingRgb
 
     val r = blend8(existingRgb.red, overlayRgb.red, amountOfOverlay)
     val g = blend8(existingRgb.green, overlayRgb.green, amountOfOverlay)
@@ -67,7 +61,7 @@ fun blend(existing: Color, overlay: Color, amountOfOverlay: Int): Color {
 /**
  * Blend a variable proportion (0-255) of one byte to another.
  *
- * Adapted from the FastLED Library.
+ * Adapted from a random stackoverflow post, not the FastLED Library.
  *
  * @param a The starting byte value
  * @param b The byte value to blend toward

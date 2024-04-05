@@ -9,7 +9,7 @@ class Solid(private val section: LEDSection, private val color: Color): Animatio
     override fun start() {
         section.forEachColor {
             prolongedColor = color
-            fadeColor = null
+            currentlyFadingColor = null
             temporaryColor = null
         }
     }

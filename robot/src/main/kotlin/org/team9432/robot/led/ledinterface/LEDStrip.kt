@@ -2,7 +2,6 @@ package org.team9432.robot.led.ledinterface
 
 import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
-import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.robot.Devices
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.PixelColor
@@ -25,21 +24,21 @@ object LEDStrip {
         colorMap.forEach { color ->
             // Freeze immutable copies of each color state
             val temporaryColor = color.temporaryColor
-            val fadeColor = color.fadeColor
+            val currentlyFadingColor = color.currentlyFadingColor
             val prolongedColor = color.prolongedColor
 
             val nextColor = when {
                 temporaryColor != null -> temporaryColor
-                fadeColor != null -> fadeColor
+                currentlyFadingColor != null -> currentlyFadingColor
                 else -> prolongedColor
             }
 
             setLED(color.pixelIndex, nextColor)
             color.actualColor = nextColor
 
-            if (fadeColor != null) {
-                color.fadeColor = fadeColor.blendWith(prolongedColor, color.fadeSpeed)
-                if (fadeColor == prolongedColor) color.fadeColor = null
+            if (currentlyFadingColor != null) {
+                color.currentlyFadingColor = currentlyFadingColor.blendWith(prolongedColor, color.fadeSpeed)
+                if (currentlyFadingColor == prolongedColor) color.currentlyFadingColor = null
             }
         }
     }

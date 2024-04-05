@@ -4,32 +4,32 @@ import edu.wpi.first.wpilibj.Timer
 import org.team9432.robot.led.LEDSection
 import org.team9432.robot.led.animations.Animation
 import org.team9432.robot.led.color.Color
-import org.team9432.robot.led.color.presets.*
 import org.team9432.robot.led.ledinterface.forEachColor
+import kotlin.math.abs
 
-class Strobe(
+class FadeToColor(
     private val section: LEDSection,
     private val color: Color,
-    private val duration: Double,
+    private val fadeSpeed: Int,
+    private val duration: Double
 ): Animation {
+    var initialTimestamp = Timer.getFPGATimestamp()
+
     override fun start() {
         section.forEachColor {
-            prolongedColor = Color.Black
-            currentlyFadingColor = null
-            temporaryColor = null
+            prolongedColor = color
+            currentlyFadingColor = actualColor
+            fadeSpeed = this@FadeToColor.fadeSpeed
         }
+
+        initialTimestamp = Timer.getFPGATimestamp()
     }
 
     override fun update(): Boolean {
-        val on = Timer.getFPGATimestamp() % duration / duration > 0.5
-        val colorToSet = if (on) color else Color.Black
-
-        section.forEachColor { prolongedColor = colorToSet }
-
-        return false
+        return abs(initialTimestamp - Timer.getFPGATimestamp()) > duration
     }
 
     override fun end() {
-        section.forEachColor { prolongedColor = Color.Black }
+        section.forEachColor { prolongedColor = color }
     }
 }
