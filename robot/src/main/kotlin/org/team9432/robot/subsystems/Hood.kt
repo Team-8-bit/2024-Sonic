@@ -11,8 +11,10 @@ import edu.wpi.first.math.geometry.Translation3d
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import org.littletonrobotics.junction.Logger
+import org.team9432.lib.KSysIdConfig
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
+import org.team9432.lib.SysIdUtil.getSysIdTests
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
@@ -92,7 +94,6 @@ object Hood: KSubsystem() {
         motor.setVoltage(volts)
     }
 
-    fun resetAngle() = motor.resetEncoder()
     fun stop() = motor.stop()
 
     object Commands {
@@ -105,9 +106,7 @@ object Hood: KSubsystem() {
         )
 
         fun aimAtSpeaker() = followAngle(::getAngleToSpeaker)
-
         fun setVoltage(volts: Double) = InstantCommand(Hood) { Hood.setVoltage(volts) }
-        fun resetAngle() = InstantCommand(Hood) { Hood.resetAngle() }
     }
 
     private fun getConfig() = LoggedNeo.Config(
@@ -115,7 +114,7 @@ object Hood: KSubsystem() {
         motorType = Spark.MotorType.NEO,
         deviceName = "Hood Motor",
         logName = "Hood",
-        gearRatio = 2.0 * (150 / 15),
+        gearRatio = 2.0 * (150 / 15), // 20
         simJkgMetersSquared = 0.01507,
         sparkConfig = Spark.Config(
             inverted = true,
@@ -123,4 +122,6 @@ object Hood: KSubsystem() {
             smartCurrentLimit = 20
         )
     )
+
+    fun getSysIdTests() = motor.getSysIdTests(KSysIdConfig())
 }
