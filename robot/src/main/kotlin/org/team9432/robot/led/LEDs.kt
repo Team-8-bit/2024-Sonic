@@ -26,7 +26,10 @@ object LEDs: KPeriodic() {
         val AMP_RIGHT_BOTTOM = LEDSection((66..77).toList().reversed())
         val AMP_RIGHT_TOP = LEDSection((78..87).toList().reversed())
 
-        val TOP_BAR = LEDSection((88..117).toList())
+        val TOP_LEFT = LEDSection((88..102).toList())
+        val TOP_RIGHT = LEDSection((103..117).toList())
+
+        val TOP_BAR = TOP_LEFT + TOP_RIGHT
 
         val SPEAKER_LEFT = SPEAKER_LEFT_TOP + SPEAKER_LEFT_BOTTOM
         val SPEAKER_RIGHT = SPEAKER_RIGHT_TOP + SPEAKER_RIGHT_BOTTOM

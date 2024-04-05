@@ -10,8 +10,8 @@ import kotlin.math.abs
 class FadeToColor(
     private val section: LEDSection,
     private val color: Color,
+    private val duration: Double,
     private val fadeSpeed: Int,
-    private val duration: Double
 ): Animation {
     var initialTimestamp = Timer.getFPGATimestamp()
 

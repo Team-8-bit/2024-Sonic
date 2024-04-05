@@ -1,25 +1,80 @@
 package org.team9432.robot.led
 
 import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.DriverStation.Alliance
 import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.robot.RobotState
-import org.team9432.robot.led.animations.Animation
 import org.team9432.robot.led.animations.ParallelAnimationGroup
-import org.team9432.robot.led.animations.RepeatAnimationGroup
-import org.team9432.robot.led.animations.SequentialAnimationGroup
-import org.team9432.robot.led.animations.predefined.simple.*
+import org.team9432.robot.led.animations.predefined.layered.ColorShift
+import org.team9432.robot.led.animations.predefined.simple.Pulse
+import org.team9432.robot.led.animations.predefined.simple.Solid
+import org.team9432.robot.led.animations.predefined.simple.Strobe
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.presets.*
 import org.team9432.robot.oi.EmergencySwitches
 import org.team9432.robot.sensors.vision.Vision
 
 object LEDState: KPeriodic() {
-    var allianceColor = Color.White
+    private val animationScope = AnimationBindScope.build {
+        If({ testEmergencySwitchActive }) {
+            addAnimation(
+                ParallelAnimationGroup(
+                    Solid(LEDs.Section.SPEAKER_LEFT, Color.Green),
+                    Solid(LEDs.Section.SPEAKER_RIGHT, Color.Red),
+                    Solid(LEDs.Section.AMP_LEFT, Color.Blue),
+                    Solid(LEDs.Section.AMP_RIGHT, Color.Yellow),
+                    Solid(LEDs.Section.TOP_BAR, Color.White)
+                )
+            )
+        }.ElseIf({ driverstationDisabled }) {
+            addAnimation(
+                ParallelAnimationGroup(
+                    Pulse(LEDs.Section.SPEAKER_LEFT, Color.White, 2.0, 1.0),
+                    Pulse(LEDs.Section.SPEAKER_RIGHT, Color.White, 2.0, 1.0),
+                    Pulse(LEDs.Section.AMP_LEFT, Color.White, 2.0, 1.0),
+                    Pulse(LEDs.Section.AMP_RIGHT, Color.White, 2.0, 1.0),
+                )
+            )
+
+            If({ alliance == null }) {
+                addAnimation(ColorShift(LEDs.Section.TOP_RIGHT, listOf(Color.Black, Color.White)))
+            }.ElseIf({ alliance == Alliance.Red }) {
+                addAnimation(Solid(LEDs.Section.TOP_RIGHT, Color.Red))
+            }.ElseIf({ alliance == Alliance.Blue }) {
+                addAnimation(Solid(LEDs.Section.TOP_RIGHT, Color.Blue))
+            }
+
+            If({ limelightNotConnected }) {
+                addAnimation(Strobe(LEDs.Section.TOP_LEFT, Color.Red, 0.5))
+            }.ElseIf({ hasVisionTarget }) {
+                addAnimation(Solid(LEDs.Section.TOP_LEFT, Color.LimeGreen))
+            }
+        }.ElseIf({ driverstationAutonomous }) {
+            addAnimation(Strobe(LEDs.Section.ALL, Color.Red, 0.25))
+        }.ElseIf({ driverstationTeleop }) {
+            // I think this will keep rainbowing even if there are other animations running
+            addAnimation(ColorShift(LEDs.Section.ALL, Color.RainbowColors, 1.0, 10))
+
+            If({ speakerShooterReady }) {
+                addAnimation(Strobe(LEDs.Section.SPEAKER, Color.Lime, 0.25))
+            }.ElseIf({ ampShooterReady }) {
+                If({ alliance == Alliance.Red }) {
+                    addAnimation(Strobe(LEDs.Section.LEFT, Color.Lime, 0.25))
+                }.Else {
+                    addAnimation(Strobe(LEDs.Section.RIGHT, Color.Lime, 0.25))
+                }
+            }.ElseIf({ noteInIntake }) {
+                addAnimation(Strobe(LEDs.Section.ALL, Color.Purple, 0.1))
+            }
+        }
+    }
+
+    var alliance: Alliance? = null
 
     var noteInIntake = false
     var hasVisionTarget = false
-    var limelightConnected = false
+    var limelightNotConnected = false
     var testEmergencySwitchActive = false
 
     var speakerShooterReady = false
@@ -29,216 +84,16 @@ object LEDState: KPeriodic() {
     var driverstationAutonomous = false
     var driverstationTeleop = false
 
-    private val noteInIntakeSupplier = { noteInIntake }
-    private val hasVisionTargetSupplier = { hasVisionTarget }
-    private val limelightConnectedSupplier = { limelightConnected }
-    private val testEmergencySwitchActiveSupplier = { testEmergencySwitchActive }
-
-    private val speakerShooterReadySupplier = { speakerShooterReady }
-    private val ampShooterReadySupplier = { ampShooterReady }
-    private val driverstationDisabledSupplier = { driverstationDisabled }
-    private val driverstationAutonomousSupplier = { driverstationAutonomous }
-    private val driverstationTeleopSupplier = { driverstationTeleop }
-
-    var animation: Animation? = null
-        set(value) {
-            value?.start()
-            field = value
-        }
-
-    private val testAnimation = ParallelAnimationGroup(
-        Solid(LEDs.Section.SPEAKER_LEFT, Color.Green),
-        Solid(LEDs.Section.SPEAKER_RIGHT, Color.Red),
-        Solid(LEDs.Section.AMP_LEFT, Color.Blue),
-        Solid(LEDs.Section.AMP_RIGHT, Color.Yellow),
-        Solid(LEDs.Section.TOP_BAR, Color.White)
-    )
-
-    private val pulseAnimation = ParallelAnimationGroup(
-        Pulse(LEDs.Section.SPEAKER_LEFT, Color.White, 2.0, 1.0),
-        Pulse(LEDs.Section.SPEAKER_RIGHT, Color.White, 2.0, 1.0),
-        Pulse(LEDs.Section.AMP_LEFT, Color.White, 2.0, 1.0),
-        Pulse(LEDs.Section.AMP_RIGHT, Color.White, 2.0, 1.0),
-
-//        Breath(LEDs.Section.TOP_BAR, listOf(Color.Green, Color.Blue, Color.Red), 3.0, 5)
-        RepeatAnimationGroup(
-            SequentialAnimationGroup(
-                FadeToColor(LEDs.Section.TOP_BAR, Color.Green, 5, 3.0),
-                FadeToColor(LEDs.Section.TOP_BAR, Color.Blue, 5, 3.0),
-                FadeToColor(LEDs.Section.TOP_BAR, Color.Red, 5, 3.0)
-            )
-        )
-    )
-
-    class AnimationBindScope(val enabled: () -> Boolean)
-
-    fun bindAnimations(bind: AnimationBindScope.() -> Unit) {
-        AnimationBindScope { true }.bind()
-    }
-
-    fun AnimationBindScope.kIf(enabled: () -> Boolean, bind: AnimationBindScope.() -> Unit): AnimationBindScope {
-        val scope = AnimationBindScope { this.enabled.invoke() && enabled.invoke() }
-        scope.bind()
-        return scope
-    }
-
-    fun AnimationBindScope.kElseIf(enabled: () -> Boolean, bind: AnimationBindScope.() -> Unit): AnimationBindScope {
-        val scope = AnimationBindScope { !this.enabled.invoke() && enabled.invoke() }
-        scope.bind()
-        return scope
-    }
-
-    fun AnimationBindScope.kElse(bind: AnimationBindScope.() -> Unit): AnimationBindScope {
-        val scope = AnimationBindScope { !this.enabled.invoke() }
-        scope.bind()
-        return scope
-    }
-
-    val periodicChecks = mutableListOf<() -> Unit>()
-    val booleanTrackingMap = mutableMapOf<Int, Boolean>()
-
-    fun AnimationBindScope.bindAnimation(animation: Animation) {
-        val booleanSupplier = this.enabled
-        periodicChecks.add {
-            val isActive = booleanSupplier.invoke()
-            val wasActiveLast = booleanTrackingMap.getOrPut(booleanSupplier.hashCode()) { !isActive }
-            if (isActive && !wasActiveLast) AnimationManager.addAnimation(animation)
-            else if (wasActiveLast && !isActive) AnimationManager.stopAnimation(animation)
-
-            booleanTrackingMap[booleanSupplier.hashCode()] = isActive
-        }
-    }
-
-    init {
-        bindAnimations {
-            kIf(testEmergencySwitchActiveSupplier) {
-                bindAnimation(testAnimation)
-            }.kElseIf(driverstationDisabledSupplier) {
-                bindAnimation(pulseAnimation)
-
-                kIf({ allianceColor == Color.White}) {
-
-                }
-
-            }.kElseIf(driverstationAutonomousSupplier) {
-                bindAnimation(Strobe(LEDs.Section.ALL, Color.Red, 0.25))
-            }.kElseIf(driverstationTeleopSupplier) {
-                bindAnimation(Solid(LEDs.Section.BOTTOM, Color.FloralWhite))
-            }
-        }
-/*
-        if (animation != null) {
-            animation?.let { animation ->
-                val isFinished = animation.update()
-                if (isFinished) LEDState.animation = null
-            }
-        } else if (testEmergencySwitchActive) {
-            testAnimation.update()
-        } else {
-            if (DriverStation.isDisabled()) {
-                AnimationManager.addAnimation(pulseAnimation)
-
-                // Set the top to the alliance color, this also shows when the fms is connected
-                if (State.alliance == null) {
-                    breath(Color.White, Color.Black, LEDs.Section.TOP_BAR, duration = 2.0)
-                } else {
-                    solid(allianceColor, LEDs.Section.TOP_BAR)
-                }
-
-                if (hasVisionTarget) { // Turn green when the robot can see an apriltag
-                    solid(LEDColors.MAIN_GREEN, LEDs.Section.TOP)
-                }
-
-                if (!limelightConnected) { // Lime and red when the limelight isn't connected
-                    breath(Color.Lime, Color.Red, LEDs.Section.BOTTOM, duration = 0.75)
-                }
-            } else if (DriverStation.isAutonomous()) {
-                strobe(Color.Red, 0.25, LEDs.Section.ALL)
-            } else { // Teleop
-                rainbow(30.0, 0.5, LEDs.Section.ALL) // This will be the default unless overwritten later
-
-                if (noteInIntake) { // Blink purple when there's a note in the intake
-                    strobe(Color.Purple, 0.1, LEDs.Section.ALL)
-                }
-
-                if (speakerShooterReady) {
-                    strobe(Color.Lime, 0.25, LEDs.Section.SPEAKER)
-                }
-                if (ampShooterReady) {
-                    if (State.alliance == DriverStation.Alliance.Red) {
-                        strobe(Color.Lime, 0.25, LEDs.Section.LEFT)
-                    } else {
-                        strobe(Color.Lime, 0.25, LEDs.Section.RIGHT)
-                    }
-                }
-            }
-        }*/
-
-        /*
-        if (animation != null) {
-            animation?.let { animation ->
-                val isFinished = animation.update()
-                if (isFinished) LEDState.animation = null
-            }
-        } else if (testEmergencySwitchActive) {
-            testAnimation.update()
-        } else {
-            if (DriverStation.isDisabled()) {
-                AnimationManager.addAnimation(pulseAnimation)
-
-                // Set the top to the alliance color, this also shows when the fms is connected
-                if (State.alliance == null) {
-                    breath(Color.White, Color.Black, LEDs.Section.TOP_BAR, duration = 2.0)
-                } else {
-                    solid(allianceColor, LEDs.Section.TOP_BAR)
-                }
-
-                if (hasVisionTarget) { // Turn green when the robot can see an apriltag
-                    solid(LEDColors.MAIN_GREEN, LEDs.Section.TOP)
-                }
-
-                if (!limelightConnected) { // Lime and red when the limelight isn't connected
-                    breath(Color.Lime, Color.Red, LEDs.Section.BOTTOM, duration = 0.75)
-                }
-            } else if (DriverStation.isAutonomous()) {
-                strobe(Color.Red, 0.25, LEDs.Section.ALL)
-            } else { // Teleop
-                rainbow(30.0, 0.5, LEDs.Section.ALL) // This will be the default unless overwritten later
-
-                if (noteInIntake) { // Blink purple when there's a note in the intake
-                    strobe(Color.Purple, 0.1, LEDs.Section.ALL)
-                }
-
-                if (speakerShooterReady) {
-                    strobe(Color.Lime, 0.25, LEDs.Section.SPEAKER)
-                }
-                if (ampShooterReady) {
-                    if (State.alliance == DriverStation.Alliance.Red) {
-                        strobe(Color.Lime, 0.25, LEDs.Section.LEFT)
-                    } else {
-                        strobe(Color.Lime, 0.25, LEDs.Section.RIGHT)
-                    }
-                }
-            }
-        }*/
-    }
-
-
     override fun periodic() {
         noteInIntake = RobotState.notePosition.isIntake
         hasVisionTarget = Vision.hasVisionTarget()
-        limelightConnected = Vision.connected
+        limelightNotConnected = !Vision.connected
         testEmergencySwitchActive = EmergencySwitches.testSwitchActive
         driverstationDisabled = DriverStation.isDisabled()
         driverstationAutonomous = DriverStation.isAutonomousEnabled()
         driverstationTeleop = DriverStation.isTeleopEnabled()
+        alliance = State.alliance
 
-        allianceColor = when (State.alliance) {
-            DriverStation.Alliance.Red -> Color.Red
-            DriverStation.Alliance.Blue -> Color.Blue
-            null -> Color.White
-        }
-
-        periodicChecks.forEach { it.invoke() }
+        animationScope.update()
     }
 }
