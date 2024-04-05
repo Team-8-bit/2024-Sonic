@@ -12,7 +12,7 @@ import org.team9432.robot.commands.drivetrain.DriveToPosition
 fun AmpSideTwo() = SequentialCommand(
     InitAuto(Rotation2d.fromDegrees(180.0)),
     ParallelCommand(
-        CollectPreloadAndStartShooter(),
+        CollectPreload(),
         DriveToPosition(AutoConstants.ampNoteAngledIntakePose)
     ),
     AutoShoot(),
