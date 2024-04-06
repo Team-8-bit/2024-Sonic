@@ -11,6 +11,7 @@ import org.team9432.lib.State.Mode.*
 import org.team9432.lib.SysIdUtil.getSysIdTests
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.lib.logged.neo.LoggedNeo
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
@@ -20,8 +21,6 @@ import org.team9432.robot.RobotPosition
 object Shooter: KSubsystem() {
     private val leftSide = LoggedNeo(getConfig(Devices.LEFT_SHOOTER_ID, false, "Left"))
     private val rightSide = LoggedNeo(getConfig(Devices.RIGHT_SHOOTER_ID, true, "Right"))
-
-    private var isRunningAtSpeeds: Pair<Double, Double>? = null
 
     private val feedforward: SimpleMotorFeedforward
 
@@ -33,21 +32,10 @@ object Shooter: KSubsystem() {
             REAL, REPLAY -> {
                 leftPID.setPID(0.0039231, 0.0, 0.0)
                 rightPID.setPID(0.0039231, 0.0, 0.0)
-
-//                leftPID.setPID(0.013175, 0.0, 0.0)
-//                rightPID.setPID(0.013175, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0086634, 0.0038234)
-//                feedforward = SimpleMotorFeedforward(0.0, 0.0091634, 0.0038234)
-//                feedforward = SimpleMotorFeedforward(0.05611, 0.0091634, 0.0038234)
-
-//                leftSide.setPID(0.0005, 0.0, 0.0)
-//                rightSide.setPID(0.0005, 0.0, 0.0)
-//                feedforward = SimpleMotorFeedforward(0.0, 0.0, 0.0)
             }
 
             SIM -> {
-                leftSide.setPID(0.1, 0.0, 0.0)
-                rightSide.setPID(0.1, 0.0, 0.0)
                 feedforward = SimpleMotorFeedforward(0.0, 0.0, 0.0)
             }
         }
@@ -57,26 +45,11 @@ object Shooter: KSubsystem() {
         val leftInputs = leftSide.updateAndRecordInputs()
         val rightInputs = rightSide.updateAndRecordInputs()
 
-        isRunningAtSpeeds?.let {
-            val (rpmFast, rpmSlow) = it
+        val feedforwardVolts = feedforward.calculate(leftPID.setpoint)
+        leftSide.setVoltage(leftPID.calculate(leftInputs.velocityRadPerSec) + feedforwardVolts)
+        rightSide.setVoltage(rightPID.calculate(rightInputs.velocityRadPerSec) + feedforward.calculate(rightPID.setpoint))
 
-            val (leftSpeed, rightSpeed) = when (RobotPosition.getSpeakerSide()) {
-                RobotPosition.SpeakerSide.LEFT -> rpmFast to rpmSlow
-                RobotPosition.SpeakerSide.RIGHT -> rpmSlow to rpmFast
-                RobotPosition.SpeakerSide.CENTER -> rpmSlow to rpmFast
-            }
-
-            val leftRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(leftSpeed)
-            val rightRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(rightSpeed)
-            leftSide.setVoltage(leftPID.calculate(leftInputs.velocityRadPerSec, leftRadPerSec) + feedforward.calculate(leftRadPerSec))
-            rightSide.setVoltage(rightPID.calculate(rightInputs.velocityRadPerSec, rightRadPerSec) + feedforward.calculate(rightRadPerSec))
-
-            Logger.recordOutput("Shooter/LeftSide/SetpointRPM", leftSpeed)
-            Logger.recordOutput("Shooter/RightSide/SetpointRPM", rightSpeed)
-
-            Logger.recordOutput("Shooter/LeftSide/FFCalc", feedforward.calculate(leftRadPerSec))
-            Logger.recordOutput("Shooter/RightSide/FFCalc", feedforward.calculate(rightRadPerSec))
-        }
+        Logger.recordOutput("Shooter/FFCalc", feedforwardVolts)
 
         Logger.recordOutput("Shooter/LeftSide/RPM", Units.radiansPerSecondToRotationsPerMinute(leftInputs.velocityRadPerSec))
         Logger.recordOutput("Shooter/RightSide/RPM", Units.radiansPerSecondToRotationsPerMinute(rightInputs.velocityRadPerSec))
@@ -86,18 +59,21 @@ object Shooter: KSubsystem() {
         }
     }
 
-    fun startRunAtSpeeds(rpmFast: Double = 6000.0, rpmSlow: Double = 4000.0) {
-        isRunningAtSpeeds = rpmFast to rpmSlow
+    fun setSpeeds(leftRPM: Double, rightRPM: Double) {
+        Logger.recordOutput("Shooter/LeftSide/SetpointRPM", leftRPM)
+        Logger.recordOutput("Shooter/RightSide/SetpointRPM", rightRPM)
+        val leftRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(leftRPM)
+        val rightRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(rightRPM)
+        leftPID.setpoint = leftRadPerSec
+        rightPID.setpoint = rightRadPerSec
     }
 
     fun setVoltage(leftVolts: Double, rightVolts: Double) {
-        isRunningAtSpeeds = null
         leftSide.setVoltage(leftVolts)
         rightSide.setVoltage(rightVolts)
     }
 
     fun stop() {
-        isRunningAtSpeeds = null
         leftSide.stop()
         rightSide.stop()
     }
@@ -106,7 +82,21 @@ object Shooter: KSubsystem() {
         fun setVoltage(leftVolts: Double, rightVolts: Double) = InstantCommand(Shooter) { Shooter.setVoltage(leftVolts, rightVolts) }
         fun stop() = InstantCommand(Shooter) { Shooter.stop() }
 
-        fun startRunAtSpeeds(rpmFast: Double = 6000.0, rpmSlow: Double = 4000.0) = InstantCommand(Shooter) { Shooter.startRunAtSpeeds(rpmFast, rpmSlow) }
+        private var lastSpeedsRanAt = 6000.0 to 4000.0
+        fun runAtSpeeds(rpmFast: Double = 6000.0, rpmSlow: Double = 4000.0) = SimpleCommand(
+            requirements = setOf(Shooter),
+            execute = {
+                when (RobotPosition.getSpeakerSide()) {
+                    RobotPosition.SpeakerSide.LEFT -> rpmFast to rpmSlow
+                    RobotPosition.SpeakerSide.RIGHT -> rpmSlow to rpmFast
+                    RobotPosition.SpeakerSide.CENTER -> null
+                }?.let { lastSpeedsRanAt = it }
+
+                val (leftSpeed, rightSpeed) = lastSpeedsRanAt
+                Shooter.setSpeeds(leftSpeed, rightSpeed)
+            },
+            end = { Shooter.stop() }
+        )
     }
 
     private fun getConfig(canID: Int, inverted: Boolean, side: String): LoggedNeo.Config {
@@ -119,7 +109,6 @@ object Shooter: KSubsystem() {
                 idleMode = CANSparkBase.IdleMode.kCoast,
                 smartCurrentLimit = 80
             ),
-            feedForwardSupplier = { feedforward.calculate(it) },
             additionalQualifier = side,
             logName = "Shooter",
             gearRatio = 0.5,

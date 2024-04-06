@@ -15,7 +15,6 @@ import org.team9432.robot.commands.stop
 import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Shooter
 import edu.wpi.first.wpilibj2.command.CommandScheduler as WPICommandScheduler
-import edu.wpi.first.wpilibj2.command.button.Trigger as WPITrigger
 
 val LOOP_PERIOD_SECS = Robot.period
 
@@ -27,7 +26,8 @@ object Robot: LoggedRobot() {
     override fun autonomousInit() {
         ParallelCommand(
             AutoChooser.getCommand(),
-            Hood.Commands.aimAtSpeaker()
+            Hood.Commands.aimAtSpeaker(),
+            Shooter.Commands.runAtSpeeds()
         ).schedule()
     }
 
@@ -44,7 +44,7 @@ object Robot: LoggedRobot() {
 
     init {
         val controller = CommandXboxController(4)
-        val tests = Shooter.getSysIdTests()
+        val tests = Hood.getSysIdTests()
         controller.a().whileTrue(tests.dynamicForward)
         controller.b().whileTrue(tests.dynamicReverse)
         controller.x().whileTrue(tests.quasistaticForward)

@@ -12,7 +12,7 @@ fun CenterNoteFiveFour() = SequentialCommand(
     InitAuto(Rotation2d(Math.PI)),
     // Shoot the preload
     ParallelCommand(
-        CollectPreloadAndStartShooter(),
+        CollectPreload(),
         DriveToPosition(AutoConstants.bottomCenterNoteShotPose)
     ),
     AutoShoot(),

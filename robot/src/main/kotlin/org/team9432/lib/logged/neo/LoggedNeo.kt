@@ -30,15 +30,6 @@ class LoggedNeo(val config: Config) {
     /** Run open loop at the specified voltage */
     fun setVoltage(volts: Double) = io.setVoltage(volts)
 
-    /** Run closed loop position control */
-    fun setAngle(angle: Rotation2d) = io.setAngle(angle)
-
-    /** Run closed loop velocity control */
-    fun setSpeed(radPerSecond: Double) = io.setSpeed(radPerSecond)
-
-    /** Set PID constants */
-    fun setPID(p: Double, i: Double, d: Double) = io.setPID(p, i, d)
-
     /** Set the motor in brake mode */
     fun setBrakeMode(enabled: Boolean) = io.setBrakeMode(enabled)
 
@@ -48,10 +39,6 @@ class LoggedNeo(val config: Config) {
     /** Stops the motor */
     fun stop() = io.stop()
 
-    enum class ControlMode {
-        VOLTAGE, POSITION, VELOCITY
-    }
-
     /** A class describing the configuration options of a neo */
     data class Config(
         val canID: Int,
@@ -60,7 +47,6 @@ class LoggedNeo(val config: Config) {
         val logName: String,
         val gearRatio: Double,
         val additionalQualifier: String = "",
-        val feedForwardSupplier: (Double) -> Double = { 0.0 },
         val simJkgMetersSquared: Double,
         val sparkConfig: Spark.Config,
     )

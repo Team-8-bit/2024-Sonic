@@ -7,7 +7,7 @@ import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.lib.util.PoseUtil
 import org.team9432.robot.auto.AutoBuilder
 import org.team9432.robot.auto.commands.AutoShoot
-import org.team9432.robot.auto.commands.CollectPreloadAndStartShooter
+import org.team9432.robot.auto.commands.CollectPreload
 import org.team9432.robot.commands.drivetrain.DriveFieldRelativeSpeeds
 import org.team9432.robot.subsystems.Shooter
 
@@ -15,7 +15,7 @@ fun PreloadAndTaxi() = SequentialCommand(
     SuppliedCommand {
         AutoBuilder.getInitCommand()
     },
-    CollectPreloadAndStartShooter(),
+    CollectPreload(),
     WaitCommand(1.0),
     AutoShoot(),
     WaitCommand(1.0),

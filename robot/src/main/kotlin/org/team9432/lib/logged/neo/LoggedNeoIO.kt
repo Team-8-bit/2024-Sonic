@@ -33,14 +33,6 @@ interface LoggedNeoIO {
     /* Run open loop at the specified voltage */
     fun setVoltage(volts: Double) {}
 
-    /* Run closed loop angle control */
-    fun setAngle(angle: Rotation2d) {}
-
-    /* Run closed loop velocity control */
-    fun setSpeed(rpm: Double) {}
-
-    fun setPID(p: Double, i: Double, d: Double) {}
-
     fun setBrakeMode(enabled: Boolean) {}
 
     fun resetEncoder(newAngle: Rotation2d = Rotation2d()) {}
