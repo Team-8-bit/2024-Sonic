@@ -61,16 +61,21 @@ class VisionIOPhotonvision: VisionIO {
             inputs.trackedTags = intArrayOf()
         }
 
-        val poses = mutableListOf<Pose3d>()
+        var poses = mutableListOf<VisionPose>()
 //        photonPoseEstimator.setLastPose(Drivetrain.getPose())
+
         for (target in result.targets) {
             val targetFiducialId = target.fiducialId
+            target.poseAmbiguity
             val targetPosition = aprilTagFieldLayout.getTagPose(targetFiducialId).getOrNull() ?: continue
             val estimatedPose = targetPosition.transformBy(target.bestCameraToTarget.inverse()).transformBy(robotToCameraArducam.inverse())
-            poses.add(estimatedPose)
+            poses.add(VisionPose(targetFiducialId, estimatedPose))
         }
 
-        Logger.recordOutput("Vision/AllPoses", *poses.toTypedArray())
+        var filteredPoses = poses.toList()
+        filteredPoses = filteredPoses.filter { it.pose.z < 0.5 }
+
+        Logger.recordOutput("Vision/AllPoses", *filteredPoses.map { it.pose }.toTypedArray())
 
         val estimatedPose = photonPoseEstimator.update().getOrNull()
 
@@ -79,6 +84,8 @@ class VisionIOPhotonvision: VisionIO {
         inputs.estimatedRobotPose = estimatedPose?.estimatedPose?.let { arrayOf(it) } ?: emptyArray()
         inputs.connected = camera.isConnected
     }
+
+    data class VisionPose(val id: Int, val pose: Pose3d)
 
     private fun List<PhotonTrackedTarget>.getCornerArray() =
         this.flatMap { t -> t.detectedCorners.map { Pose2d(it.x, it.y, Rotation2d()) } }.toTypedArray()
