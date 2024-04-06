@@ -6,7 +6,6 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.led.LEDState
-import org.team9432.robot.led.animations.Rocket
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Hopper
@@ -32,10 +31,10 @@ fun TeleShoot() = SequentialCommand(
                 Hopper.Commands.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
                 Intake.Commands.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
 
-                SimpleCommand(
-                    isFinished = { !RobotState.noteInSpeakerSideHopperBeambreak() },
-                    end = { LEDState.animation = Rocket(0.5) }
-                ),
+            SimpleCommand(
+                isFinished = { !RobotState.noteInSpeakerSideHopperBeambreak() },
+//                end = { LEDState.animation = Rocket(0.5) }
+            ),
 
                 // Do this for one second
                 deadline = WaitCommand(1.0)
