@@ -30,11 +30,8 @@ object Drivetrain: KSubsystem() {
 
     init {
         kinematics = SwerveDriveKinematics(*MODULE_TRANSLATIONS)
-        poseEstimator = SwerveDrivePoseEstimator(
-            kinematics, Rotation2d(), getModulePositions().toTypedArray(), Pose2d(),
-            VecBuilder.fill(3.0.inches.inMeters, 3.0.inches.inMeters, 4.0.degrees.inDegrees),
-            VecBuilder.fill(8.0.inches.inMeters, 8.0.inches.inMeters, 20.0.degrees.inDegrees)
-        )
+        poseEstimator = SwerveDrivePoseEstimator(kinematics, Rotation2d(), getModulePositions().toTypedArray(), Pose2d())
+        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(8.0.inches.inMeters, 8.0.inches.inMeters, 20.0.degrees.inDegrees))
         for (m in modules) m.setBrakeMode(true)
     }
 

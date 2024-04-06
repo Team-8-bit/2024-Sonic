@@ -53,20 +53,14 @@ object Hood: KSubsystem() {
         }
 
         distanceAngleMap.put(1.0, 0.0)
-        distanceAngleMap.put(1.8, 15.0)
-        distanceAngleMap.put(2.8, 22.0)
+        distanceAngleMap.put(2.0, 12.0)
+        distanceAngleMap.put(3.0, 22.0)
 
         setAngle(Rotation2d())
-
-        SmartDashboard.putNumber("angdeg", 0.0)
     }
 
     override fun periodic() {
-        val k = SmartDashboard.getNumber("angdeg", 0.0)
-
         val inputs = motor.updateAndRecordInputs()
-
-        setAngle(Rotation2d.fromDegrees(k))
 
         Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, inputs.angle.radians, 0.0)))
 

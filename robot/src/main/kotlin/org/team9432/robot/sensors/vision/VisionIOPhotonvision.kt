@@ -14,13 +14,13 @@ import kotlin.jvm.optionals.getOrNull
 class VisionIOPhotonvision: VisionIO {
     private val robotToCameraArducam = Transform3d(
         Translation3d(
-            Units.inchesToMeters(1.56),
+            Units.inchesToMeters(1.4),
             Units.inchesToMeters(-2.5),
-            Units.inchesToMeters(15.064) + 0.124460
+            Units.inchesToMeters(15.022) + 0.124460
         ),
         Rotation3d(
             0.0,
-            Math.toRadians(-15.0),
+            Math.toRadians(-12.0),
             0.0
         )
     )
@@ -61,19 +61,18 @@ class VisionIOPhotonvision: VisionIO {
             inputs.trackedTags = intArrayOf()
         }
 
-        var poses = mutableListOf<VisionPose>()
+        val poses = mutableListOf<VisionPose>()
 //        photonPoseEstimator.setLastPose(Drivetrain.getPose())
 
         for (target in result.targets) {
             val targetFiducialId = target.fiducialId
-            target.poseAmbiguity
             val targetPosition = aprilTagFieldLayout.getTagPose(targetFiducialId).getOrNull() ?: continue
             val estimatedPose = targetPosition.transformBy(target.bestCameraToTarget.inverse()).transformBy(robotToCameraArducam.inverse())
-            poses.add(VisionPose(targetFiducialId, estimatedPose))
+            poses.add(VisionPose(targetFiducialId, estimatedPose, target.poseAmbiguity))
         }
 
         var filteredPoses = poses.toList()
-        filteredPoses = filteredPoses.filter { it.pose.z < 0.5 }
+        filteredPoses = filteredPoses.filter { it.pose.z < 0.25 }
 
         Logger.recordOutput("Vision/AllPoses", *filteredPoses.map { it.pose }.toTypedArray())
 
@@ -81,11 +80,12 @@ class VisionIOPhotonvision: VisionIO {
 
         inputs.usedCorners = estimatedPose?.targetsUsed?.getCornerArray() ?: emptyArray()
         inputs.poseTimestamp = estimatedPose?.timestampSeconds?.let { doubleArrayOf(it) } ?: doubleArrayOf()
-        inputs.estimatedRobotPose = estimatedPose?.estimatedPose?.let { arrayOf(it) } ?: emptyArray()
+        // inputs.estimatedRobotPose = estimatedPose?.estimatedPose?.let { arrayOf(it) } ?: emptyArray()
+        inputs.estimatedRobotPose = filteredPoses.minByOrNull { it.ambiguity }?.let { target -> arrayOf(target.pose) } ?: emptyArray()
         inputs.connected = camera.isConnected
     }
 
-    data class VisionPose(val id: Int, val pose: Pose3d)
+    data class VisionPose(val id: Int, val pose: Pose3d, val ambiguity: Double)
 
     private fun List<PhotonTrackedTarget>.getCornerArray() =
         this.flatMap { t -> t.detectedCorners.map { Pose2d(it.x, it.y, Rotation2d()) } }.toTypedArray()

@@ -74,8 +74,7 @@ object Shooter: KSubsystem() {
     }
 
     fun stop() {
-        leftSide.stop()
-        rightSide.stop()
+        setSpeeds(0.0, 0.0)
     }
 
     object Commands {

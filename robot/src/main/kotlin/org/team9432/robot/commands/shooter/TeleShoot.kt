@@ -12,37 +12,31 @@ import org.team9432.robot.subsystems.Hopper
 import org.team9432.robot.subsystems.Intake
 import org.team9432.robot.subsystems.Shooter
 
-fun TeleShoot() = SequentialCommand(
-    ParallelDeadlineCommand(
-        Hood.Commands.aimAtSpeaker(),
-        Shooter.Commands.runAtSpeeds(),
+fun TeleShoot() = ParallelDeadlineCommand(
+    Hood.Commands.aimAtSpeaker(),
+    Shooter.Commands.runAtSpeeds(),
 
-        deadline = SequentialCommand(
-            ParallelCommand(
-                // Move the note to the speaker side of the hopper
-                MoveToSide(MechanismSide.SPEAKER),
-                WaitCommand(1.0),
-            ),
-            InstantCommand { LEDState.speakerShooterReady = true },
-            WaitUntilCommand { Controls.readyToShootSpeaker },
-            InstantCommand { LEDState.speakerShooterReady = false },
-            ParallelDeadlineCommand(
-                // Shoot the note
-                Hopper.Commands.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
-                Intake.Commands.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
+    deadline = SequentialCommand(
+        ParallelCommand(
+            // Move the note to the speaker side of the hopper
+            MoveToSide(MechanismSide.SPEAKER),
+            WaitCommand(1.0),
+        ),
+        InstantCommand { LEDState.speakerShooterReady = true },
+        WaitUntilCommand { Controls.readyToShootSpeaker },
+        InstantCommand { LEDState.speakerShooterReady = false },
 
-            SimpleCommand(
-                isFinished = { !RobotState.noteInSpeakerSideHopperBeambreak() },
-//                end = { LEDState.animation = Rocket(0.5) }
-            ),
 
-                // Do this for one second
-                deadline = WaitCommand(1.0)
-            ),
+        ParallelDeadlineCommand(
+            // Shoot the note
+            Hopper.Commands.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
+            Intake.Commands.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
 
-            // Update the note position
-            InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
-        )
-    ),
-    Shooter.Commands.stop()
+            // Do this for one second
+            deadline = WaitCommand(1.0)
+        ),
+
+        // Update the note position
+        InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
+    )
 )
