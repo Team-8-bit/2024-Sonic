@@ -13,10 +13,9 @@ import org.team9432.robot.subsystems.Hopper
 import org.team9432.robot.subsystems.Intake
 import org.team9432.robot.subsystems.Shooter
 
-fun TeleShoot() = ParallelDeadlineCommand(
-    Hood.Commands.aimAtSpeaker(),
-
-    deadline = ParallelDeadlineCommand(
+fun TeleShoot() = SequentialCommand(
+    ParallelDeadlineCommand(
+        Hood.Commands.aimAtSpeaker(),
         Shooter.Commands.runAtSpeeds(),
 
         deadline = SequentialCommand(
@@ -44,8 +43,7 @@ fun TeleShoot() = ParallelDeadlineCommand(
 
             // Update the note position
             InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
-
-            Shooter.Commands.stop()
         )
-    )
+    ),
+    Shooter.Commands.stop()
 )
