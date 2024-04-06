@@ -336,3 +336,5 @@ bin/
 /robot/ctre_sim/
 /robot/logs/
 /robot/networktables.json
+/robot/simgui.json
+/robot/simgui-ds.json
