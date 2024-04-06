@@ -66,7 +66,7 @@ class VisionIOPhotonvision: VisionIO {
         for (target in result.targets) {
             val targetFiducialId = target.fiducialId
             val targetPosition = aprilTagFieldLayout.getTagPose(targetFiducialId).getOrNull() ?: continue
-            val estimatedPose = targetPosition.transformBy(target.bestCameraToTarget.inverse()).transformBy(robotToCamera.inverse())
+            val estimatedPose = targetPosition.transformBy(target.bestCameraToTarget.inverse()).transformBy(robotToCameraArducam.inverse())
             poses.add(estimatedPose)
         }
 
