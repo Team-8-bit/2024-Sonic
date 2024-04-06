@@ -44,7 +44,7 @@ object Robot: LoggedRobot() {
 
     init {
         val controller = CommandXboxController(4)
-        val tests = Hood.getSysIdTests()
+        val tests = Shooter.getSysIdTests()
         controller.a().whileTrue(tests.dynamicForward)
         controller.b().whileTrue(tests.dynamicReverse)
         controller.x().whileTrue(tests.quasistaticForward)

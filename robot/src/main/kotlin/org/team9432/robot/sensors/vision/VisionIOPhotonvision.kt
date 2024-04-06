@@ -3,11 +3,12 @@ package org.team9432.robot.sensors.vision
 import edu.wpi.first.apriltag.AprilTagFields
 import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.util.Units
+import org.littletonrobotics.junction.Logger
 import org.photonvision.PhotonCamera
 import org.photonvision.PhotonPoseEstimator
 import org.photonvision.common.hardware.VisionLEDMode
 import org.photonvision.targeting.PhotonTrackedTarget
-import org.team9432.robot.subsystems.drivetrain.Drivetrain
+import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 class VisionIOPhotonvision: VisionIO {
@@ -47,7 +48,16 @@ class VisionIOPhotonvision: VisionIO {
             inputs.trackedTags = intArrayOf()
         }
 
+        val poses = mutableListOf<Pose3d>()
 //        photonPoseEstimator.setLastPose(Drivetrain.getPose())
+        for (target in result.targets) {
+            val targetFiducialId = target.fiducialId
+            val targetPosition = aprilTagFieldLayout.getTagPose(targetFiducialId).getOrNull() ?: continue
+            val estimatedPose = targetPosition.transformBy(target.bestCameraToTarget.inverse()).transformBy(robotToCamera.inverse())
+            poses.add(estimatedPose)
+        }
+
+        Logger.recordOutput("Vision/AllPoses", *poses.toTypedArray())
 
         val estimatedPose = photonPoseEstimator.update().getOrNull()
 

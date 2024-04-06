@@ -36,6 +36,7 @@ object Vision: KPeriodic() {
     val connected get() = inputs.connected
 
     fun forwardPorts() {
-        PortForwarder.add(5800, "photonvision.local", 5800)
+        PortForwarder.add(5800, "10.93.32.11", 5800)
+        PortForwarder.add(5800, "10.93.32.12", 5800)
     }
 }
