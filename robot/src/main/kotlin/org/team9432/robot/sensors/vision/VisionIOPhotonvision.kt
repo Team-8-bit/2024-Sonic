@@ -7,11 +7,23 @@ import org.photonvision.PhotonCamera
 import org.photonvision.PhotonPoseEstimator
 import org.photonvision.common.hardware.VisionLEDMode
 import org.photonvision.targeting.PhotonTrackedTarget
-import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.jvm.optionals.getOrNull
 
 class VisionIOPhotonvision: VisionIO {
-    private val robotToCamera = Transform3d(
+    private val robotToCameraArducam = Transform3d(
+        Translation3d(
+            Units.inchesToMeters(1.56),
+            Units.inchesToMeters(2.5), // May be negative
+            Units.inchesToMeters(15.064) + 0.124460
+        ),
+        Rotation3d(
+            0.0,
+            Math.toRadians(-15.0),
+            0.0
+        )
+    )
+
+    private val robotToCameraLimeLight = Transform3d(
         Translation3d(
             Units.inchesToMeters(1.342924),
             Units.inchesToMeters(0.0),
@@ -31,7 +43,7 @@ class VisionIOPhotonvision: VisionIO {
         PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY,
 //        PhotonPoseEstimator.PoseStrategy.CLOSEST_TO_LAST_POSE,
         camera,
-        robotToCamera
+        robotToCameraArducam
     )
 
     override fun updateInputs(inputs: VisionIO.VisionIOInputs) {
