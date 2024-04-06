@@ -15,7 +15,7 @@ class VisionIOPhotonvision: VisionIO {
     private val robotToCameraArducam = Transform3d(
         Translation3d(
             Units.inchesToMeters(1.56),
-            Units.inchesToMeters(2.5), // May be negative
+            Units.inchesToMeters(-2.5),
             Units.inchesToMeters(15.064) + 0.124460
         ),
         Rotation3d(
