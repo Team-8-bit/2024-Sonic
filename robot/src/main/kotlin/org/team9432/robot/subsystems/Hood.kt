@@ -41,9 +41,9 @@ object Hood: KSubsystem() {
     init {
         when (State.mode) {
             REAL, REPLAY -> {
-                pid.setPID(2.25, 0.0, 0.0)
+                pid.setPID(5.0, 0.0, 0.0)
                 pid.constraints = TrapezoidProfile.Constraints(Math.toRadians(180.0), Math.toRadians(540.0))
-                feedforward = ArmFeedforward(0.0, 0.0, 0.0, 0.0)
+                feedforward = ArmFeedforward(0.0, 0.21, 0.0, 0.0)
             }
 
             SIM -> {
