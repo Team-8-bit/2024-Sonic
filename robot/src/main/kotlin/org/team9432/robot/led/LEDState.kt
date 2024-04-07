@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
 import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
+import org.team9432.robot.RobotPosition
 import org.team9432.robot.RobotState
 import org.team9432.robot.led.animation.AnimationBindScope
 import org.team9432.robot.led.animation.groups.ParallelAnimationGroup
@@ -58,7 +59,9 @@ object LEDState: KPeriodic() {
             // I think this will keep rainbowing even if there are other animations running
             addAnimation(ColorShift(Sections.ALL, Color.RainbowColors, 1.0, 10))
 
-            If({ speakerShooterReady }) {
+            If({ inSpeakerRange }) {
+                addAnimation(Strobe(Sections.SPEAKER, Color.White, 0.5))
+            }.ElseIf({ speakerShooterReady }) {
                 addAnimation(Strobe(Sections.SPEAKER, Color.Lime, 0.25))
             }.ElseIf({ ampShooterReady }) {
                 If({ alliance == Alliance.Red }) {
@@ -79,6 +82,7 @@ object LEDState: KPeriodic() {
     var limelightNotConnected = false
     var testEmergencySwitchActive = false
 
+    var inSpeakerRange = false
     var speakerShooterReady = false
     var ampShooterReady = false
 
@@ -95,6 +99,7 @@ object LEDState: KPeriodic() {
         driverstationAutonomous = DriverStation.isAutonomousEnabled()
         driverstationTeleop = DriverStation.isTeleopEnabled()
         alliance = State.alliance
+        inSpeakerRange = (RobotPosition.distanceToSpeaker() < 3.0) && RobotState.noteInAnyIntake()
 
         animationScope.update()
     }

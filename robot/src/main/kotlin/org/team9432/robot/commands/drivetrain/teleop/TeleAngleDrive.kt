@@ -15,7 +15,7 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 class TeleAngleDrive(private val target: () -> Rotation2d): KCommand() {
     override val requirements = setOf(Drivetrain)
 
-    private var pid = ProfiledPIDController(0.06, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 2.0))
+    private var pid = ProfiledPIDController(0.055, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 2.0))
 
     init {
         pid.enableContinuousInput(-180.0, 180.0)

@@ -48,8 +48,8 @@ object Shooter: KSubsystem() {
             }
         }
 
-        leftPID.setTolerance(Units.rotationsPerMinuteToRadiansPerSecond(200.0))
-        rightPID.setTolerance(Units.rotationsPerMinuteToRadiansPerSecond(200.0))
+        leftPID.setTolerance(Units.rotationsPerMinuteToRadiansPerSecond(100.0))
+        rightPID.setTolerance(Units.rotationsPerMinuteToRadiansPerSecond(100.0))
     }
 
     private var leftInputs = LoggedNeoIO.NEOIOInputs()
@@ -89,27 +89,52 @@ object Shooter: KSubsystem() {
         rightSide.stop()
     }
 
+    private var currentShooterDirection = ShooterDirection.LEFT_FAST
+
+    enum class ShooterDirection {
+        LEFT_FAST, RIGHT_FAST
+    }
+
     object Commands {
         fun stop() = InstantCommand(Shooter) { Shooter.stop() }
 
-        private var lastSpeedsRanAt = 6000.0 to 3000.0
-        fun runAtSpeeds(rpmFast: Double = 6000.0, rpmSlow: Double = 3000.0) = SimpleCommand(
+        fun runAtSpeeds() = SimpleCommand(
             requirements = setOf(Shooter),
+            end = { Shooter.stop() },
             execute = {
-                when (RobotPosition.getSpeakerSide()) {
-                    RobotPosition.SpeakerSide.LEFT -> rpmFast to rpmSlow
-                    RobotPosition.SpeakerSide.RIGHT -> rpmSlow to rpmFast
-                    RobotPosition.SpeakerSide.CENTER -> null
-                }?.let { lastSpeedsRanAt = it }
+                val distanceToSpeaker = RobotPosition.distanceToSpeaker()
+                val (rpmFast, rpmSlow) = when {
+                    distanceToSpeaker < 1.0 -> 3000.0 to 2500.0
+                    distanceToSpeaker < 2.0 -> 4500.0 to 2500.0
+                    distanceToSpeaker < 3.0 -> 4500.0 to 2500.0
+                    distanceToSpeaker < 3.5 -> 5000.0 to 2500.0
+                    distanceToSpeaker >= 3.5 -> 5000.0 to 2500.0
+                    else -> 6000.0 to 3000.0
+                }
 
-                val (leftSpeed, rightSpeed) = lastSpeedsRanAt
-                Shooter.setSpeeds(leftSpeed, rightSpeed)
-            },
-            end = { Shooter.stop() }
+                when (RobotPosition.getSpeakerSide()) {
+                    RobotPosition.SpeakerSide.LEFT -> ShooterDirection.LEFT_FAST
+                    RobotPosition.SpeakerSide.RIGHT -> ShooterDirection.RIGHT_FAST
+                    RobotPosition.SpeakerSide.CENTER -> null
+                }?.let { currentShooterDirection = it }
+
+                when (currentShooterDirection) {
+                    ShooterDirection.LEFT_FAST -> Shooter.setSpeeds(rpmFast, rpmSlow)
+                    ShooterDirection.RIGHT_FAST -> Shooter.setSpeeds(rpmSlow, rpmFast)
+                }
+            }
+        )
+
+        fun runAtFastSpeeds() = SimpleCommand(
+            requirements = setOf(Shooter),
+            end = { Shooter.stop() },
+            execute = {
+                Shooter.setSpeeds(10000.0, 6000.0)
+            }
         )
     }
 
-    private val velocitySetpointTolerance = Units.rotationsPerMinuteToRadiansPerSecond(100.0)
+    private val velocitySetpointTolerance = Units.rotationsPerMinuteToRadiansPerSecond(250.0)
     fun atSetpoint(): Boolean {
         return abs(leftPID.setpoint - leftInputs.velocityRadPerSec) < velocitySetpointTolerance
                 && abs(rightPID.setpoint - rightInputs.velocityRadPerSec) < velocitySetpointTolerance
@@ -123,10 +148,7 @@ object Shooter: KSubsystem() {
             sparkConfig = Spark.Config(
                 inverted = inverted,
                 idleMode = CANSparkBase.IdleMode.kCoast,
-                stallCurrentLimit = 60,
-//                stallCurrentLimit = 80,
-//                freeCurrentLimit = 30,
-//                currentLimitRpm = 500
+                stallCurrentLimit = 60
             ),
             additionalQualifier = side,
             logName = "Shooter",

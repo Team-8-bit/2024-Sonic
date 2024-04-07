@@ -18,7 +18,7 @@ import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.Intake
 
 object Controls {
-    val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
+    private val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
 
     private val slowButton = driver.rightBumper
     private val readyToShootSpeakerButton = driver.rightTrigger.negate()
@@ -47,12 +47,19 @@ object Controls {
         driver.rightTrigger
             .onTrue(SuppliedCommand {
                 if (EmergencySwitches.useAmpForSpeaker) ScoreAmp(12.0)
-                else TeleShoot()
+                else
+                    TeleShoot()
+//                    ParallelDeadlineCommand(
+//                    TeleTargetDrive { FieldConstants.speakerPose },
+//                    deadline = TeleShoot()
+//                )
             })
 
         // Aim at the speaker
         driver.b
             .whileTrue(TeleTargetDrive { FieldConstants.speakerPose })
+
+        // driver.b.onTrue(SuperPoop())
 
         // Reset Drivetrain Heading
         driver.a
