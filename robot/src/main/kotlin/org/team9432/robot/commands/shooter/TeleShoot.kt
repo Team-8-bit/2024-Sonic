@@ -20,12 +20,14 @@ fun TeleShoot() = ParallelDeadlineCommand(
         ParallelCommand(
             // Move the note to the speaker side of the hopper
             MoveToSide(MechanismSide.SPEAKER),
-            WaitCommand(1.0),
+            SequentialCommand(
+                WaitCommand(0.1),
+                WaitUntilCommand { Shooter.atSetpoint() }
+            )
         ),
         InstantCommand { LEDState.speakerShooterReady = true },
         WaitUntilCommand { Controls.readyToShootSpeaker },
         InstantCommand { LEDState.speakerShooterReady = false },
-
 
         ParallelDeadlineCommand(
             // Shoot the note

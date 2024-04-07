@@ -159,7 +159,7 @@ class Module(private val module: ModuleConfig) {
             sparkConfig = Spark.Config(
                 inverted = module.driveInverted,
                 idleMode = CANSparkBase.IdleMode.kBrake,
-                smartCurrentLimit = 50
+                stallCurrentLimit = 50
             ),
             logName = "Drive/${module.name}Module",
             gearRatio = MK4I_L3_DRIVE_REDUCTION,
@@ -176,7 +176,7 @@ class Module(private val module: ModuleConfig) {
             sparkConfig = Spark.Config(
                 inverted = module.steerInverted,
                 idleMode = CANSparkBase.IdleMode.kBrake,
-                smartCurrentLimit = 30
+                stallCurrentLimit = 30
             ),
             logName = "Drive/${module.name}Module",
             gearRatio = MK4I_STEER_REDUCTION,

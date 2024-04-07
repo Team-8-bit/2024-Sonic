@@ -106,7 +106,7 @@ object Intake: KSubsystem() {
             sparkConfig = Spark.Config(
                 inverted = inverted,
                 idleMode = CANSparkBase.IdleMode.kCoast,
-                smartCurrentLimit = 80
+                stallCurrentLimit = 80
             ),
             logName = "Intake",
             additionalQualifier = side,

@@ -58,7 +58,7 @@ object Hopper: KSubsystem() {
         sparkConfig = Spark.Config(
             inverted = true,
             idleMode = CANSparkBase.IdleMode.kBrake,
-            smartCurrentLimit = 60
+            stallCurrentLimit = 60
         )
     )
 }

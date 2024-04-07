@@ -36,7 +36,7 @@ object Hood: KSubsystem() {
     private val pid = ProfiledPIDController(0.0, 0.0, 0.0, TrapezoidProfile.Constraints(0.0, 0.0))
 
     // The offset of the arm from the horizontal in its neutral position, measured from horizontal
-    val hoodOffset = Rotation2d()
+    private val hoodOffset = Rotation2d()
 
     init {
         when (State.mode) {
@@ -53,14 +53,22 @@ object Hood: KSubsystem() {
         }
 
         distanceAngleMap.put(1.0, 0.0)
-        distanceAngleMap.put(2.0, 12.0)
-        distanceAngleMap.put(3.0, 22.0)
+        distanceAngleMap.put(2.0, 19.0)
+        distanceAngleMap.put(3.0, 28.0)
+        distanceAngleMap.put(3.5, 30.0)
 
         setAngle(Rotation2d())
+
+        pid.setTolerance(Math.toRadians(1.0))
+
+        SmartDashboard.putNumber("tableValue", 0.0)
     }
 
     override fun periodic() {
         val inputs = motor.updateAndRecordInputs()
+
+        val tableValue = SmartDashboard.getNumber("tableValue", 0.0)
+        //distanceAngleMap.put(3.0, tableValue)
 
         Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, inputs.angle.radians, 0.0)))
 
@@ -127,7 +135,7 @@ object Hood: KSubsystem() {
         sparkConfig = Spark.Config(
             inverted = true,
             idleMode = CANSparkBase.IdleMode.kBrake,
-            smartCurrentLimit = 20
+            stallCurrentLimit = 20
         )
     )
 

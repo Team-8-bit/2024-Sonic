@@ -21,7 +21,7 @@ open class Spark(canID: Int, val name: String, motorType: MotorType): CANSparkBa
 
         applyAndErrorCheck("Inverted", { inverted = config.inverted }, { inverted == config.inverted })
         applyAndErrorCheck("Idle Mode") { setIdleMode(config.idleMode) }
-        applyAndErrorCheck("Current Limit") { setSmartCurrentLimit(config.smartCurrentLimit) }
+        applyAndErrorCheck("Current Limit") { setSmartCurrentLimit(config.stallCurrentLimit, config.freeCurrentLimit, config.currentLimitRpm) }
         applyAndErrorCheck("Voltage Compensation") { config.voltageCompensation?.let { enableVoltageCompensation(it) } ?: disableVoltageCompensation() }
         applyAndErrorCheck("Forwards Limit") { getForwardLimitSwitch(config.forwardLimitSwitchType).enableLimitSwitch(config.forwardLimitSwitchEnabled) }
         applyAndErrorCheck("Reverse Limit") { getReverseLimitSwitch(config.reverseLimitSwitchType).enableLimitSwitch(config.reverseLimitSwitchEnabled) }
@@ -68,7 +68,9 @@ open class Spark(canID: Int, val name: String, motorType: MotorType): CANSparkBa
     data class Config(
         val inverted: Boolean = true,
         val idleMode: IdleMode = IdleMode.kBrake,
-        val smartCurrentLimit: Int = 20,
+        val stallCurrentLimit: Int = 20,
+        val freeCurrentLimit: Int = 0,
+        val currentLimitRpm: Int = 20000,
         val voltageCompensation: Double? = 12.0,
         val forwardLimitSwitchType: SparkLimitSwitch.Type = SparkLimitSwitch.Type.kNormallyOpen,
         val forwardLimitSwitchEnabled: Boolean = false,

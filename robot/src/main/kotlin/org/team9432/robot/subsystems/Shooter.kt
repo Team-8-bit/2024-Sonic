@@ -13,9 +13,11 @@ import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.lib.logged.neo.LoggedNeo
+import org.team9432.lib.logged.neo.LoggedNeoIO
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
 import org.team9432.robot.RobotPosition
+import kotlin.math.abs
 
 
 object Shooter: KSubsystem() {
@@ -26,6 +28,12 @@ object Shooter: KSubsystem() {
 
     private val leftPID = PIDController(0.0, 0.0, 0.0)
     private val rightPID = PIDController(0.0, 0.0, 0.0)
+
+    private var mode: Mode = Mode.STOPPED
+
+    enum class Mode {
+        PID, STOPPED
+    }
 
     init {
         when (State.mode) {
@@ -39,17 +47,23 @@ object Shooter: KSubsystem() {
                 feedforward = SimpleMotorFeedforward(0.0, 0.0, 0.0)
             }
         }
+
+        leftPID.setTolerance(Units.rotationsPerMinuteToRadiansPerSecond(200.0))
+        rightPID.setTolerance(Units.rotationsPerMinuteToRadiansPerSecond(200.0))
     }
 
+    private var leftInputs = LoggedNeoIO.NEOIOInputs()
+    private var rightInputs = LoggedNeoIO.NEOIOInputs()
     override fun periodic() {
-        val leftInputs = leftSide.updateAndRecordInputs()
-        val rightInputs = rightSide.updateAndRecordInputs()
+        leftInputs = leftSide.updateAndRecordInputs()
+        rightInputs = rightSide.updateAndRecordInputs()
 
-        val feedforwardVolts = feedforward.calculate(leftPID.setpoint)
-        leftSide.setVoltage(leftPID.calculate(leftInputs.velocityRadPerSec) + feedforwardVolts)
-        rightSide.setVoltage(rightPID.calculate(rightInputs.velocityRadPerSec) + feedforward.calculate(rightPID.setpoint))
-
-        Logger.recordOutput("Shooter/FFCalc", feedforwardVolts)
+        if (mode == Mode.PID) {
+            val feedforwardVolts = feedforward.calculate(leftPID.setpoint)
+            leftSide.setVoltage(leftPID.calculate(leftInputs.velocityRadPerSec) + feedforwardVolts)
+            rightSide.setVoltage(rightPID.calculate(rightInputs.velocityRadPerSec) + feedforward.calculate(rightPID.setpoint))
+            Logger.recordOutput("Shooter/FFCalc", feedforwardVolts)
+        }
 
         Logger.recordOutput("Shooter/LeftSide/RPM", Units.radiansPerSecondToRotationsPerMinute(leftInputs.velocityRadPerSec))
         Logger.recordOutput("Shooter/RightSide/RPM", Units.radiansPerSecondToRotationsPerMinute(rightInputs.velocityRadPerSec))
@@ -60,6 +74,7 @@ object Shooter: KSubsystem() {
     }
 
     fun setSpeeds(leftRPM: Double, rightRPM: Double) {
+        mode = Mode.PID
         Logger.recordOutput("Shooter/LeftSide/SetpointRPM", leftRPM)
         Logger.recordOutput("Shooter/RightSide/SetpointRPM", rightRPM)
         val leftRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(leftRPM)
@@ -68,21 +83,17 @@ object Shooter: KSubsystem() {
         rightPID.setpoint = rightRadPerSec
     }
 
-    fun setVoltage(leftVolts: Double, rightVolts: Double) {
-        leftSide.setVoltage(leftVolts)
-        rightSide.setVoltage(rightVolts)
-    }
-
     fun stop() {
-        setSpeeds(0.0, 0.0)
+        mode = Mode.STOPPED
+        leftSide.stop()
+        rightSide.stop()
     }
 
     object Commands {
-        fun setVoltage(leftVolts: Double, rightVolts: Double) = InstantCommand(Shooter) { Shooter.setVoltage(leftVolts, rightVolts) }
         fun stop() = InstantCommand(Shooter) { Shooter.stop() }
 
-        private var lastSpeedsRanAt = 6000.0 to 4000.0
-        fun runAtSpeeds(rpmFast: Double = 6000.0, rpmSlow: Double = 4000.0) = SimpleCommand(
+        private var lastSpeedsRanAt = 6000.0 to 3000.0
+        fun runAtSpeeds(rpmFast: Double = 6000.0, rpmSlow: Double = 3000.0) = SimpleCommand(
             requirements = setOf(Shooter),
             execute = {
                 when (RobotPosition.getSpeakerSide()) {
@@ -98,6 +109,12 @@ object Shooter: KSubsystem() {
         )
     }
 
+    private val velocitySetpointTolerance = Units.rotationsPerMinuteToRadiansPerSecond(100.0)
+    fun atSetpoint(): Boolean {
+        return abs(leftPID.setpoint - leftInputs.velocityRadPerSec) < velocitySetpointTolerance
+                && abs(rightPID.setpoint - rightInputs.velocityRadPerSec) < velocitySetpointTolerance
+    }
+
     private fun getConfig(canID: Int, inverted: Boolean, side: String): LoggedNeo.Config {
         return LoggedNeo.Config(
             canID = canID,
@@ -106,7 +123,10 @@ object Shooter: KSubsystem() {
             sparkConfig = Spark.Config(
                 inverted = inverted,
                 idleMode = CANSparkBase.IdleMode.kCoast,
-                smartCurrentLimit = 80
+                stallCurrentLimit = 60,
+//                stallCurrentLimit = 80,
+//                freeCurrentLimit = 30,
+//                currentLimitRpm = 500
             ),
             additionalQualifier = side,
             logName = "Shooter",

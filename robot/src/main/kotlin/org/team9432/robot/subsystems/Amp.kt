@@ -32,7 +32,7 @@ object Amp: KSubsystem() {
         sparkConfig = Spark.Config(
             inverted = true,
             idleMode = CANSparkBase.IdleMode.kCoast,
-            smartCurrentLimit = 60
+            stallCurrentLimit = 60
         )
     )
 }
