@@ -4,14 +4,12 @@ import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
-import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.Hood
-import org.team9432.robot.subsystems.Hopper
-import org.team9432.robot.subsystems.Intake
 import org.team9432.robot.subsystems.Shooter
+import org.team9432.robot.subsystems.Superstructure
 
 fun SuperPoop() = ParallelDeadlineCommand(
     Hood.Commands.followAngle { Rotation2d.fromDegrees(30.0) },
@@ -29,8 +27,7 @@ fun SuperPoop() = ParallelDeadlineCommand(
 
         ParallelDeadlineCommand(
             // Shoot the note
-            Hopper.Commands.runLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
-            Intake.Commands.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
+            Superstructure.Commands.runShootSide(MechanismSide.SPEAKER),
 
             // Do this for one second
             deadline = WaitCommand(1.0)

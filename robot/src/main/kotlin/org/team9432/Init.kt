@@ -13,7 +13,10 @@ import org.team9432.robot.oi.Controls
 import org.team9432.robot.sensors.beambreaks.Beambreaks
 import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.sensors.vision.Vision
-import org.team9432.robot.subsystems.*
+import org.team9432.robot.subsystems.Amp
+import org.team9432.robot.subsystems.Hood
+import org.team9432.robot.subsystems.Shooter
+import org.team9432.robot.subsystems.Superstructure
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
 object Init {
@@ -38,8 +41,7 @@ object Init {
         Amp
         Drivetrain
         Hood
-        Hopper
-        Intake
+        Superstructure
         Shooter
 
         AutoBuilder.initChoosers()

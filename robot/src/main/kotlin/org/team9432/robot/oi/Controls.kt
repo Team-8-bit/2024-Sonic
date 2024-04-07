@@ -15,7 +15,7 @@ import org.team9432.robot.commands.shooter.TeleShoot
 import org.team9432.robot.commands.stopCommand
 import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
 import org.team9432.robot.sensors.gyro.Gyro
-import org.team9432.robot.subsystems.Intake
+import org.team9432.robot.subsystems.Superstructure
 
 object Controls {
     private val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
@@ -41,7 +41,7 @@ object Controls {
 
         // Outtake Intake
         driver.x
-            .whileTrue(Intake.Commands.runOuttake())
+            .whileTrue(Superstructure.Commands.runOuttake())
 
         // Shoot Speaker
         driver.rightTrigger

@@ -3,13 +3,11 @@ package org.team9432.robot.commands.amp
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
-import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.commands.hopper.MoveToSide
 import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.Amp
-import org.team9432.robot.subsystems.Hopper
-import org.team9432.robot.subsystems.Intake
+import org.team9432.robot.subsystems.Superstructure
 
 fun ScoreAmp(volts: Double) = SequentialCommand(
     Amp.Commands.setVoltage(volts),
@@ -26,8 +24,7 @@ fun ScoreAmp(volts: Double) = SequentialCommand(
 
     ParallelDeadlineCommand(
         // Shoot the note
-        Hopper.Commands.runLoadTo(MechanismSide.AMP, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
-        Intake.Commands.runIntakeSide(MechanismSide.AMP, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
+        Superstructure.Commands.runShootSide(MechanismSide.AMP),
         // Do this for one second
         deadline = WaitCommand(1.0)
     ),
