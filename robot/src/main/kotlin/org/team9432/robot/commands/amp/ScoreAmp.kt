@@ -24,7 +24,7 @@ fun ScoreAmp(volts: Double) = SequentialCommand(
 
     ParallelDeadlineCommand(
         // Shoot the note
-        Superstructure.Commands.runShootSide(MechanismSide.AMP),
+        Superstructure.Commands.runLoad(MechanismSide.AMP),
         // Do this for one second
         deadline = WaitCommand(1.0)
     ),

@@ -10,6 +10,7 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.commands.amp.ScoreAmp
 import org.team9432.robot.commands.drivetrain.teleop.TeleAngleDrive
 import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
+import org.team9432.robot.commands.hopper.MoveToPosition
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.TeleShoot
 import org.team9432.robot.commands.stopCommand
@@ -19,6 +20,7 @@ import org.team9432.robot.subsystems.Superstructure
 
 object Controls {
     private val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
+    private val test = KXboxController(1, squareJoysticks = true, joystickDeadband = 0.075)
 
     private val slowButton = driver.rightBumper
     private val readyToShootSpeakerButton = driver.rightTrigger.negate()
@@ -47,12 +49,7 @@ object Controls {
         driver.rightTrigger
             .onTrue(SuppliedCommand {
                 if (EmergencySwitches.useAmpForSpeaker) ScoreAmp(12.0)
-                else
-                    TeleShoot()
-//                    ParallelDeadlineCommand(
-//                    TeleTargetDrive { FieldConstants.speakerPose },
-//                    deadline = TeleShoot()
-//                )
+                else TeleShoot()
             })
 
         // Aim at the speaker
@@ -77,6 +74,11 @@ object Controls {
                     deadline = ScoreAmp(4.5)
                 )
             )
+
+        test.a.onTrue(MoveToPosition(RobotState.NotePosition.AMP_INTAKE))
+        test.b.onTrue(MoveToPosition(RobotState.NotePosition.SPEAKER_INTAKE))
+        test.x.onTrue(MoveToPosition(RobotState.NotePosition.AMP_HOPPER))
+        test.y.onTrue(MoveToPosition(RobotState.NotePosition.SPEAKER_HOPPER))
     }
 
     fun setDriverRumble(magnitude: Double) {

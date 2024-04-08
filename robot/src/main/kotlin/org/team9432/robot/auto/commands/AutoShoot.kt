@@ -18,7 +18,7 @@ fun AutoShoot() = ParallelDeadlineCommand(
         TargetAim { FieldConstants.speakerPose },
         ParallelDeadlineCommand(
             // Shoot the note
-            Superstructure.Commands.runLoadToHopper(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
+            Superstructure.Commands.runHopperToLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),
             Superstructure.Commands.runIntakeSide(MechanismSide.SPEAKER, CommandConstants.INTAKE_SHOOT_SPEAKER_VOLTS),
 
             deadline = WaitCommand(0.5)

@@ -9,7 +9,6 @@ import org.team9432.robot.subsystems.Shooter
 import org.team9432.robot.subsystems.Superstructure
 
 fun stop() {
-    RobotState.notePosition = RobotState.NotePosition.NONE
     KCommandScheduler.cancelAll()
     Superstructure.stop()
     Shooter.stop()

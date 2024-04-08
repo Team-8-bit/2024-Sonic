@@ -27,7 +27,7 @@ fun SuperPoop() = ParallelDeadlineCommand(
 
         ParallelDeadlineCommand(
             // Shoot the note
-            Superstructure.Commands.runShootSide(MechanismSide.SPEAKER),
+            Superstructure.Commands.runLoad(MechanismSide.SPEAKER),
 
             // Do this for one second
             deadline = WaitCommand(1.0)

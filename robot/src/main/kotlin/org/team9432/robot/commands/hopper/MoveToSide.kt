@@ -16,8 +16,8 @@ fun MoveToSide(side: MechanismSide) = SuppliedCommand {
     SequentialCommand(
         SuppliedCommand {
             when (side) {
-                MechanismSide.AMP -> Superstructure.Commands.startLoadToHopper(side, 2.0)
-                MechanismSide.SPEAKER -> Superstructure.Commands.startLoadToHopper(side, 1.5)
+                MechanismSide.AMP -> Superstructure.Commands.startHopperToLoadTo(side, 2.0)
+                MechanismSide.SPEAKER -> Superstructure.Commands.startHopperToLoadTo(side, 1.5)
             }
         },
         // Let the hopper spin up a bit
@@ -35,7 +35,7 @@ fun MoveToSide(side: MechanismSide) = SuppliedCommand {
 
         ParallelDeadlineCommand(
             // Unload the note until it is no longer blocking the beam break
-            Superstructure.Commands.runUnloadSide(side, 2.0),
+            Superstructure.Commands.runUnload(side, 2.0),
             deadline = WaitUntilCommand { !RobotState.noteInHopperSide(side) }.afterSimDelay(0.25) { BeambreakIOSim.setNoteInHopperSide(side, false) }
         ),
         // Update the note position in the robot

@@ -25,13 +25,13 @@ object Superstructure: KSubsystem() {
     fun outtake(ampVolts: Double, speakerVolts: Double) = setIntakeVoltage(-abs(ampVolts), -abs(speakerVolts))
 
     fun intakeSide(side: MechanismSide, volts: Double) = when (side) {
-        MechanismSide.AMP -> intake(volts, 0.0)
-        MechanismSide.SPEAKER -> intake(0.0, volts)
+        MechanismSide.AMP -> ampSide.setVoltage(volts)
+        MechanismSide.SPEAKER -> speakerSide.setVoltage(volts)
     }
 
     fun outtakeSide(side: MechanismSide, volts: Double) = when (side) {
-        MechanismSide.AMP -> outtake(volts, 0.0)
-        MechanismSide.SPEAKER -> outtake(0.0, volts)
+        MechanismSide.AMP -> ampSide.setVoltage(-volts)
+        MechanismSide.SPEAKER -> speakerSide.setVoltage(-volts)
     }
 
     fun stop() {
@@ -50,12 +50,8 @@ object Superstructure: KSubsystem() {
         } else intake(absVolts, absVolts)
     }
 
-    fun setHopperVoltage(volts: Double) {
-        hopper.setVoltage(volts)
-    }
-
-    fun loadToHopper(side: MechanismSide, volts: Double) = if (side == MechanismSide.SPEAKER) setHopperVoltage(-volts) else setHopperVoltage(volts)
-    fun unloadFromHopper(side: MechanismSide, volts: Double) = if (side == MechanismSide.SPEAKER) setHopperVoltage(volts) else setHopperVoltage(-volts)
+    fun loadToHopper(side: MechanismSide, volts: Double) = if (side == MechanismSide.SPEAKER) hopper.setVoltage(-volts) else hopper.setVoltage(volts)
+    fun unloadFromHopper(side: MechanismSide, volts: Double) = if (side == MechanismSide.SPEAKER) hopper.setVoltage(volts) else hopper.setVoltage(-volts)
 
     fun shootSide(side: MechanismSide, volts: Double = 5.0) {
         loadToHopper(side, volts)
@@ -66,6 +62,21 @@ object Superstructure: KSubsystem() {
         unloadFromHopper(side, volts)
         outtakeSide(side, volts)
     }
+
+    fun hopperToIntake(hopperSide: MechanismSide) {
+        unloadFromHopper(hopperSide, 3.0)
+        when (hopperSide) {
+            MechanismSide.AMP -> outtake(1.0, 3.0)
+            MechanismSide.SPEAKER -> outtake(3.0, 1.0)
+        }
+    }
+
+    fun intakeToIntake(initialSide: MechanismSide, targetSide: MechanismSide) {
+        unloadFromHopper(initialSide, 2.0)
+        intakeSide(initialSide, 2.0)
+        outtakeSide(targetSide, 2.0)
+    }
+
 
     override fun periodic() {
         ampSide.updateAndRecordInputs()
@@ -80,13 +91,13 @@ object Superstructure: KSubsystem() {
         fun startIntakeSide(side: MechanismSide, volts: Double) = InstantCommand(Superstructure) { intakeSide(side, volts) }
         fun startOuttakeSide(side: MechanismSide, volts: Double) = InstantCommand(Superstructure) { outtakeSide(side, volts) }
 
-        fun runShootSide(side: MechanismSide, volts: Double = 5.0) = SimpleCommand(
+        fun runLoad(side: MechanismSide, volts: Double = 5.0) = SimpleCommand(
             requirements = setOf(Superstructure),
             execute = { shootSide(side, volts) },
             end = { Superstructure.stop() }
         )
 
-        fun runUnloadSide(side: MechanismSide, volts: Double = 2.0) = SimpleCommand(
+        fun runUnload(side: MechanismSide, volts: Double = 2.0) = SimpleCommand(
             requirements = setOf(Superstructure),
             execute = { unloadSide(side, volts) },
             end = { Superstructure.stop() }
@@ -98,7 +109,7 @@ object Superstructure: KSubsystem() {
             end = { Superstructure.stop() }
         )
 
-        fun runIntakeSide(side: MechanismSide, volts: Double) = SimpleCommand(
+        fun runIntakeSide(side: MechanismSide, volts: Double = 2.0) = SimpleCommand(
             requirements = setOf(Superstructure),
             execute = { intakeSide(side, volts) },
             end = { Superstructure.stop() }
@@ -119,21 +130,32 @@ object Superstructure: KSubsystem() {
             }
         )
 
-        fun setHopperVoltage(volts: Double) = InstantCommand(Superstructure) { Superstructure.setHopperVoltage(volts) }
         fun stop() = InstantCommand(Superstructure) { Superstructure.stop() }
 
-        fun startLoadToHopper(side: MechanismSide, volts: Double) = InstantCommand(Superstructure) { loadToHopper(side, volts) }
-        fun startUnloadFromHopper(side: MechanismSide, volts: Double) = InstantCommand(Superstructure) { unloadFromHopper(side, volts) }
+        fun startHopperToLoadTo(side: MechanismSide, volts: Double) = InstantCommand(Superstructure) { loadToHopper(side, volts) }
+        fun startHopperToUnloadFrom(side: MechanismSide, volts: Double) = InstantCommand(Superstructure) { unloadFromHopper(side, volts) }
 
-        fun runLoadToHopper(side: MechanismSide, volts: Double) = SimpleCommand(
+        fun runHopperToLoadTo(side: MechanismSide, volts: Double) = SimpleCommand(
             requirements = setOf(Superstructure),
             execute = { loadToHopper(side, volts) },
             end = { Superstructure.stop() }
         )
 
-        fun runUnloadFromHopper(side: MechanismSide, volts: Double) = SimpleCommand(
+        fun runHopperUnloadFrom(side: MechanismSide, volts: Double) = SimpleCommand(
             requirements = setOf(Superstructure),
             execute = { unloadFromHopper(side, volts) },
+            end = { Superstructure.stop() }
+        )
+
+        fun runHopperToIntake(hopperSide: MechanismSide) = SimpleCommand(
+            requirements = setOf(Superstructure),
+            execute = { hopperToIntake(hopperSide) },
+            end = { Superstructure.stop() }
+        )
+
+        fun runIntakeToIntake(initialSide: MechanismSide, targetSide: MechanismSide) = SimpleCommand(
+            requirements = setOf(Superstructure),
+            execute = { intakeToIntake(initialSide, targetSide) },
             end = { Superstructure.stop() }
         )
     }
