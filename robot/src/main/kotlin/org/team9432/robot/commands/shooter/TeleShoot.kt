@@ -3,7 +3,8 @@ package org.team9432.robot.commands.shooter
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
-import org.team9432.robot.commands.hopper.MoveToSide
+import org.team9432.robot.RobotState.NotePosition
+import org.team9432.robot.commands.hopper.MoveToPosition
 import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.Hood
@@ -17,7 +18,7 @@ fun TeleShoot() = ParallelDeadlineCommand(
     deadline = SequentialCommand(
         ParallelCommand(
             // Move the note to the speaker side of the hopper
-            MoveToSide(MechanismSide.SPEAKER),
+            MoveToPosition(NotePosition.SPEAKER_HOPPER),
             SequentialCommand(
                 WaitCommand(0.1),
                 WaitUntilCommand { Shooter.atSetpoint() }
@@ -35,6 +36,6 @@ fun TeleShoot() = ParallelDeadlineCommand(
         ),
 
         // Update the note position
-        InstantCommand { RobotState.notePosition = RobotState.NotePosition.NONE },
+        InstantCommand { RobotState.notePosition = NotePosition.NONE },
     )
 )
