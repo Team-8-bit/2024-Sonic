@@ -8,6 +8,7 @@ import org.team9432.robot.RobotPosition
 import org.team9432.robot.RobotState
 import org.team9432.robot.led.animation.AnimationBindScope
 import org.team9432.robot.led.animation.groups.ParallelAnimationGroup
+import org.team9432.robot.led.animation.groups.RepeatAnimationGroup
 import org.team9432.robot.led.animation.groups.SequentialAnimationGroup
 import org.team9432.robot.led.animation.groups.WaitAnimation
 import org.team9432.robot.led.animation.layered.ColorShift
@@ -64,7 +65,14 @@ object LEDState: KPeriodic() {
             }
 
             If({ limelightNotConnected }) {
-                addAnimation(Strobe(Sections.TOP_LEFT, Color.Red, 0.5))
+                addAnimation(
+                    RepeatAnimationGroup(
+                        SequentialAnimationGroup(
+                            BounceToColor(Sections.TOP_LEFT, Color.Red, Color.Red, Color.Black),
+                            BounceToColor(Sections.TOP_LEFT, Color.Black, Color.Black, Color.Red)
+                        )
+                    )
+                )
             }.ElseIf({ hasVisionTarget }) {
                 addAnimation(Solid(Sections.TOP_LEFT, Color.LimeGreen))
             }
