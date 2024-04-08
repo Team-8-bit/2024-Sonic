@@ -12,7 +12,7 @@ class FadeToColor(
     private val duration: Double,
     private val fadeSpeed: Int,
 ): Animation {
-    var initialTimestamp = Timer.getFPGATimestamp()
+    private var initialTimestamp = Timer.getFPGATimestamp()
 
     override fun start() {
         section.forEachColor {

@@ -8,10 +8,10 @@ import org.team9432.robot.RobotPosition
 import org.team9432.robot.RobotState
 import org.team9432.robot.led.animation.AnimationBindScope
 import org.team9432.robot.led.animation.groups.ParallelAnimationGroup
+import org.team9432.robot.led.animation.groups.SequentialAnimationGroup
+import org.team9432.robot.led.animation.groups.WaitAnimation
 import org.team9432.robot.led.animation.layered.ColorShift
-import org.team9432.robot.led.animation.simple.Pulse
-import org.team9432.robot.led.animation.simple.Solid
-import org.team9432.robot.led.animation.simple.Strobe
+import org.team9432.robot.led.animation.simple.*
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.predefined.*
 import org.team9432.robot.led.strip.Sections
@@ -32,11 +32,26 @@ object LEDState: KPeriodic() {
             )
         }.ElseIf({ driverstationDisabled }) {
             addAnimation(
-                ParallelAnimationGroup(
-                    Pulse(Sections.SPEAKER_LEFT, Color.White, 2.0, 1.0),
-                    Pulse(Sections.SPEAKER_RIGHT, Color.White, 2.0, 1.0),
-                    Pulse(Sections.AMP_LEFT, Color.White, 2.0, 1.0),
-                    Pulse(Sections.AMP_RIGHT, Color.White, 2.0, 1.0),
+                SequentialAnimationGroup(
+                    ParallelAnimationGroup(
+                        BounceToColor(Sections.SPEAKER_LEFT, Color.White, Color.White, Color.Black, runReversed = true),
+                        BounceToColor(Sections.SPEAKER_RIGHT, Color.White, Color.White, Color.Black),
+                        BounceToColor(Sections.AMP_LEFT, Color.White, Color.White, Color.Black, runReversed = true),
+                        BounceToColor(Sections.AMP_RIGHT, Color.White, Color.White, Color.Black),
+                    ),
+                    ParallelAnimationGroup(
+                        FadeToColor(Sections.SPEAKER_LEFT, Color.Black, 3.0, 5),
+                        FadeToColor(Sections.SPEAKER_RIGHT, Color.Black, 3.0, 5),
+                        FadeToColor(Sections.AMP_LEFT, Color.Black, 3.0, 5),
+                        FadeToColor(Sections.AMP_RIGHT, Color.Black, 3.0, 5),
+                    ),
+                    WaitAnimation(1.0),
+                    ParallelAnimationGroup(
+                        Pulse(Sections.SPEAKER_LEFT, Color.White, 2.0, 1.0),
+                        Pulse(Sections.SPEAKER_RIGHT, Color.White, 2.0, 1.0),
+                        Pulse(Sections.AMP_LEFT, Color.White, 2.0, 1.0),
+                        Pulse(Sections.AMP_RIGHT, Color.White, 2.0, 1.0),
+                    )
                 )
             )
 

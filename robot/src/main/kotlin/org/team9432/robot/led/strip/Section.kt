@@ -13,4 +13,6 @@ class Section(private val baseStripPixels: List<Int>) {
 
     fun forEachColor(update: PixelColor.() -> Unit) = indices.forEach { index -> get(index).update() }
     fun applyToIndex(index: Int, update: PixelColor.() -> Unit) = get(index).update()
+
+    fun revertStrip() = indices.forEach { get(it).revertColor() }
 }
