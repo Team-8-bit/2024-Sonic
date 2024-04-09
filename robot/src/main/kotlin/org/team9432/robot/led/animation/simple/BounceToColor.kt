@@ -1,6 +1,5 @@
 package org.team9432.robot.led.animation.simple
 
-import edu.wpi.first.wpilibj.Timer
 import org.team9432.robot.led.animation.Animation
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.predefined.Black
@@ -10,18 +9,14 @@ class BounceToColor(
     private val section: Section,
     private val color: Color,
     private val leadColor: Color = color,
-    private val initialColor: Color = Color.Black,
+    private val initialColor: Color? = null,
     private val runReversed: Boolean = false,
 ): Animation {
-    private var initialTimestamp = Timer.getFPGATimestamp()
-
     override fun start() {
         section.forEachColor {
-            prolongedColor = initialColor
+            initialColor?.let { prolongedColor = it }
             currentlyFadingColor = null
         }
-
-        initialTimestamp = Timer.getFPGATimestamp()
 
         if (runReversed) {
             maxPosition = section.indices.last
@@ -47,7 +42,9 @@ class BounceToColor(
     override fun update(): Boolean {
         currentPosition += currentDirection
 
-        if (minPosition == maxPosition) { return true }
+        if (minPosition == maxPosition) {
+            return true
+        }
 
         if (currentPosition == maxPosition && currentDirection == 1) {
             section.applyToIndex(maxPosition) { prolongedColor = color }

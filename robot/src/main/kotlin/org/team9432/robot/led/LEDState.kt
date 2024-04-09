@@ -35,10 +35,10 @@ object LEDState: KPeriodic() {
             addAnimation(
                 SequentialAnimationGroup(
                     ParallelAnimationGroup(
-                        BounceToColor(Sections.SPEAKER_LEFT, Color.White, Color.White, Color.Black, runReversed = true),
-                        BounceToColor(Sections.SPEAKER_RIGHT, Color.White, Color.White, Color.Black),
-                        BounceToColor(Sections.AMP_LEFT, Color.White, Color.White, Color.Black, runReversed = true),
-                        BounceToColor(Sections.AMP_RIGHT, Color.White, Color.White, Color.Black),
+                        BounceToColor(Sections.SPEAKER_LEFT, Color.White, runReversed = true),
+                        BounceToColor(Sections.SPEAKER_RIGHT, Color.White),
+                        BounceToColor(Sections.AMP_LEFT, Color.White, runReversed = true),
+                        BounceToColor(Sections.AMP_RIGHT, Color.White),
                     ),
                     ParallelAnimationGroup(
                         FadeToColor(Sections.SPEAKER_LEFT, Color.Black, 3.0, 5),
@@ -68,8 +68,8 @@ object LEDState: KPeriodic() {
                 addAnimation(
                     RepeatAnimationGroup(
                         SequentialAnimationGroup(
-                            BounceToColor(Sections.TOP_LEFT, Color.Red, Color.Red, Color.Black),
-                            BounceToColor(Sections.TOP_LEFT, Color.Black, Color.Black, Color.Red)
+                            BounceToColor(Sections.TOP_LEFT, Color.Red),
+                            BounceToColor(Sections.TOP_LEFT, Color.Black)
                         )
                     )
                 )
