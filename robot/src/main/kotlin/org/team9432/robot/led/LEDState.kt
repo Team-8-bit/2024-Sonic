@@ -35,6 +35,12 @@ object LEDState: KPeriodic() {
             addAnimation(
                 SequentialAnimationGroup(
                     ParallelAnimationGroup(
+                        Sections.SPEAKER_LEFT.Solid(Color.Black),
+                        Sections.SPEAKER_RIGHT.Solid(Color.Black),
+                        Sections.AMP_LEFT.Solid(Color.Black),
+                        Sections.AMP_RIGHT.Solid(Color.Black)
+                    ),
+                    ParallelAnimationGroup(
                         Sections.SPEAKER_LEFT.BounceToColor(Color.White, runReversed = true),
                         Sections.SPEAKER_RIGHT.BounceToColor(Color.White),
                         Sections.AMP_LEFT.BounceToColor(Color.White, runReversed = true),
@@ -68,12 +74,20 @@ object LEDState: KPeriodic() {
                 If({ limelightNotConnected }) {
                     addAnimation(
                         SequentialAnimationGroup(
-                            Sections.TOP_BAR.BounceToColor(Color.Red),
-                            Sections.TOP_BAR.BounceToColor(Color.Black)
-                        ).repeat()
+                            Sections.TOP_BAR.Solid(Color.Black),
+                            SequentialAnimationGroup(
+                                Sections.TOP_BAR.BounceToColor(Color.Red),
+                                Sections.TOP_BAR.BounceToColor(Color.Black)
+                            ).repeat()
+                        )
                     )
                 }.Else {
-                    addAnimation(Sections.TOP_BAR.SlideToColor(Color.Green))
+                    addAnimation(
+                        SequentialAnimationGroup(
+                            Sections.TOP_BAR.Solid(Color.Black),
+                            Sections.TOP_BAR.SlideToColor(Color.Green)
+                        )
+                    )
                 }
             }
         }.ElseIf({ driverstationAutonomous }) {
@@ -86,7 +100,7 @@ object LEDState: KPeriodic() {
                 addAnimation(Sections.SPEAKER.Strobe(Color.White, 0.5))
             }.ElseIf({ noteInIntake }) {
                 addAnimation(Sections.ALL.Strobe(Color.Purple, 0.1))
-            }.Else{
+            }.Else {
                 If({ speakerShooterReady }) {
                     addAnimation(Sections.SPEAKER.Strobe(Color.Lime, 0.25))
                 }.ElseIf({ ampShooterReady }) {
