@@ -4,11 +4,9 @@ import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModuleState
-import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
 import org.team9432.LOOP_PERIOD_SECS
@@ -29,7 +27,7 @@ object Drivetrain: KSubsystem() {
     private val poseEstimator: SwerveDrivePoseEstimator
 
     init {
-        kinematics = SwerveDriveKinematics(*MODULE_TRANSLATIONS)
+        kinematics = SwerveDriveKinematics(*SwerveUtil.getMk4iModuleTranslations(26.0))
         poseEstimator = SwerveDrivePoseEstimator(kinematics, Rotation2d(), getModulePositions().toTypedArray(), Pose2d())
         poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(8.0.inches.inMeters, 8.0.inches.inMeters, 20.0.degrees.inDegrees))
         for (m in modules) m.setBrakeMode(true)
@@ -112,14 +110,4 @@ object Drivetrain: KSubsystem() {
         fun stop() = InstantCommand(Drivetrain) { Drivetrain.stop() }
         fun stopAndX() = InstantCommand(Drivetrain) { Drivetrain.stopAndX() }
     }
-
-    private val MODULE_TRANSLATIONS: Array<Translation2d>
-        get() {
-            val moduleDistance = Units.inchesToMeters(14.67246)
-            val frontLeft = Translation2d(moduleDistance, moduleDistance)
-            val frontRight = Translation2d(moduleDistance, -moduleDistance)
-            val backLeft = Translation2d(-moduleDistance, moduleDistance)
-            val backRight = Translation2d(-moduleDistance, -moduleDistance)
-            return arrayOf(frontLeft, frontRight, backLeft, backRight)
-        }
 }
