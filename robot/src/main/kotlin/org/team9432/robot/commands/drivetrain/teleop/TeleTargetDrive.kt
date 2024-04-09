@@ -20,6 +20,7 @@ class TeleTargetDrive(private val target: () -> Translation2d): KCommand() {
 
     init {
         pid.enableContinuousInput(-180.0, 180.0)
+        pid.setTolerance(3.0)
     }
 
     override fun initialize() {

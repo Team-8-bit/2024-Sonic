@@ -49,7 +49,10 @@ object Controls {
         driver.rightTrigger
             .onTrue(SuppliedCommand {
                 if (EmergencySwitches.useAmpForSpeaker) ScoreAmp(12.0)
-                else TeleShoot()
+                else ParallelDeadlineCommand(
+                    TeleTargetDrive { FieldConstants.speakerPose },
+                    deadline = TeleShoot()
+                )
             })
 
         // Aim at the speaker

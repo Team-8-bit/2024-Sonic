@@ -3,6 +3,7 @@ package org.team9432.robot.subsystems
 import com.revrobotics.CANSparkBase
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
 import org.team9432.Robot
@@ -29,6 +30,9 @@ object Shooter: KSubsystem() {
     private val leftPID = PIDController(0.0, 0.0, 0.0)
     private val rightPID = PIDController(0.0, 0.0, 0.0)
 
+    private val fastDistanceSpeedMap = InterpolatingDoubleTreeMap()
+    private val slowDistanceSpeedMap = InterpolatingDoubleTreeMap()
+
     private var mode: Mode = Mode.STOPPED
 
     enum class Mode {
@@ -50,6 +54,18 @@ object Shooter: KSubsystem() {
 
         leftPID.setTolerance(Units.rotationsPerMinuteToRadiansPerSecond(100.0))
         rightPID.setTolerance(Units.rotationsPerMinuteToRadiansPerSecond(100.0))
+
+        fastDistanceSpeedMap.put(1.0, 3000.0)
+        fastDistanceSpeedMap.put(1.5, 4500.0)
+        fastDistanceSpeedMap.put(2.0, 4500.0)
+        fastDistanceSpeedMap.put(3.0, 4500.0)
+        fastDistanceSpeedMap.put(4.0, 4500.0)
+
+        slowDistanceSpeedMap.put(1.0, 2500.0)
+        slowDistanceSpeedMap.put(1.5, 2500.0)
+        slowDistanceSpeedMap.put(2.0, 2500.0)
+        slowDistanceSpeedMap.put(3.0, 2500.0)
+        slowDistanceSpeedMap.put(4.0, 2500.0)
     }
 
     private var leftInputs = LoggedNeoIO.NEOIOInputs()
@@ -103,14 +119,8 @@ object Shooter: KSubsystem() {
             end = { Shooter.stop() },
             execute = {
                 val distanceToSpeaker = RobotPosition.distanceToSpeaker()
-                val (rpmFast, rpmSlow) = when {
-                    distanceToSpeaker < 1.0 -> 3000.0 to 2500.0
-                    distanceToSpeaker < 2.0 -> 4500.0 to 2500.0
-                    distanceToSpeaker < 3.0 -> 4500.0 to 2500.0
-                    distanceToSpeaker < 3.5 -> 5000.0 to 2500.0
-                    distanceToSpeaker >= 3.5 -> 5000.0 to 2500.0
-                    else -> 6000.0 to 3000.0
-                }
+                val rpmFast = fastDistanceSpeedMap.get(distanceToSpeaker)
+                val rpmSlow = slowDistanceSpeedMap.get(distanceToSpeaker)
 
                 when (RobotPosition.getSpeakerSide()) {
                     RobotPosition.SpeakerSide.LEFT -> ShooterDirection.LEFT_FAST

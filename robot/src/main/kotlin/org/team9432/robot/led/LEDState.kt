@@ -125,7 +125,7 @@ object LEDState: KPeriodic() {
         driverstationAutonomous = DriverStation.isAutonomousEnabled()
         driverstationTeleop = DriverStation.isTeleopEnabled()
         alliance = State.alliance
-        inSpeakerRange = (RobotPosition.distanceToSpeaker() < 3.0) && RobotState.noteInAnyIntake()
+        inSpeakerRange = (RobotPosition.distanceToSpeaker() < 3.0) && noteInIntake
 
         animationScope.update()
     }

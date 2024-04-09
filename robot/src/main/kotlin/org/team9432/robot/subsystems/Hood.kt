@@ -56,8 +56,8 @@ object Hood: KSubsystem() {
         distanceAngleMap.put(1.0, 0.0)
         distanceAngleMap.put(1.5, 15.0)
         distanceAngleMap.put(2.0, 18.0)
-        distanceAngleMap.put(3.0, 28.0)
-        distanceAngleMap.put(4.0, 30.0)
+        distanceAngleMap.put(3.0, 25.0)
+        distanceAngleMap.put(3.5, 30.0)
 
         setAngle(Rotation2d())
 

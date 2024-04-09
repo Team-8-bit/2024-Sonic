@@ -19,6 +19,7 @@ class TeleAngleDrive(private val target: () -> Rotation2d): KCommand() {
 
     init {
         pid.enableContinuousInput(-180.0, 180.0)
+        pid.setTolerance(3.0)
     }
 
     override fun initialize() {
