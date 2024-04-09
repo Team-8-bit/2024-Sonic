@@ -4,13 +4,12 @@ import org.team9432.robot.led.animation.Animation
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.strip.Section
 
-fun Section.SlideToColor(color: Color, leadColor: Color = color, initialColor: Color? = null, runReversed: Boolean = false) = SlideToColor(this, color, leadColor, initialColor, runReversed)
+fun Section.SlideToColor(color: Color, leadColor: Color = color, runReversed: Boolean = false) = SlideToColor(this, color, leadColor, runReversed)
 
 class SlideToColor(
     private val section: Section,
     private val color: Color,
     private val leadColor: Color = color,
-    private val initialColor: Color? = null,
     private val runReversed: Boolean = false,
 ): Animation {
     private val indicesInOrder = section.indices.toList()
@@ -18,10 +17,7 @@ class SlideToColor(
     private var runningIndices = indicesInOrder.toMutableSet()
 
     override fun start() {
-        section.forEachColor {
-            initialColor?.let { prolongedColor = it }
-            currentlyFadingColor = null
-        }
+        section.forEachColor { currentlyFadingColor = null }
 
         if (runReversed) {
             runningIndices = indicesInOrder.reversed().toMutableSet()

@@ -2,23 +2,18 @@ package org.team9432.robot.led.animation.simple
 
 import org.team9432.robot.led.animation.Animation
 import org.team9432.robot.led.color.Color
-import org.team9432.robot.led.color.predefined.Black
 import org.team9432.robot.led.strip.Section
 
-fun Section.BounceToColor(color: Color, leadColor: Color = color, initialColor: Color? = null, runReversed: Boolean = false) = BounceToColor(this, color, leadColor, initialColor, runReversed)
+fun Section.BounceToColor(color: Color, leadColor: Color = color, runReversed: Boolean = false) = BounceToColor(this, color, leadColor, runReversed)
 
 class BounceToColor(
     private val section: Section,
     private val color: Color,
     private val leadColor: Color = color,
-    private val initialColor: Color? = null,
     private val runReversed: Boolean = false,
 ): Animation {
     override fun start() {
-        section.forEachColor {
-            initialColor?.let { prolongedColor = it }
-            currentlyFadingColor = null
-        }
+        section.forEachColor { currentlyFadingColor = null }
 
         if (runReversed) {
             maxPosition = section.indices.last

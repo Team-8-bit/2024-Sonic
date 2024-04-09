@@ -56,31 +56,25 @@ object LEDState: KPeriodic() {
                 )
             )
 
-            If({ alliance == null }) {
-                addAnimation(ColorShift(Sections.TOP_RIGHT, listOf(Color.Black, Color.White)))
-            }.ElseIf({ alliance == Alliance.Red }) {
-                addAnimation(Sections.TOP_RIGHT.Solid(Color.Red))
-            }.ElseIf({ alliance == Alliance.Blue }) {
-                addAnimation(Sections.TOP_RIGHT.Solid(Color.Blue))
-            }
-
-            If({ alliance == null }) {
-                addAnimation(ColorShift(Sections.TOP_RIGHT, listOf(Color.Black, Color.White)))
-            }.ElseIf({ alliance == Alliance.Red }) {
-                addAnimation(Sections.TOP_RIGHT.Solid(Color.Red))
-            }.ElseIf({ alliance == Alliance.Blue }) {
-                addAnimation(Sections.TOP_RIGHT.Solid(Color.Blue))
-            }
-
-            If({ limelightNotConnected }) {
-                addAnimation(
-                    SequentialAnimationGroup(
-                        Sections.TOP_LEFT.BounceToColor(Color.Red),
-                        Sections.TOP_LEFT.BounceToColor(Color.Black)
-                    ).repeat()
-                )
-            }.ElseIf({ hasVisionTarget }) {
-                addAnimation(Sections.TOP_LEFT.Solid(Color.LimeGreen))
+            If({ hasVisionTarget }) {
+                If({ alliance == null }) {
+                    addAnimation(ColorShift(Sections.TOP_BAR, listOf(Color.Black, Color.White)))
+                }.ElseIf({ alliance == Alliance.Red }) {
+                    addAnimation(Sections.TOP_BAR.Solid(Color.Red))
+                }.ElseIf({ alliance == Alliance.Blue }) {
+                    addAnimation(Sections.TOP_BAR.Solid(Color.Blue))
+                }
+            }.Else {
+                If({ limelightNotConnected }) {
+                    addAnimation(
+                        SequentialAnimationGroup(
+                            Sections.TOP_BAR.BounceToColor(Color.Red),
+                            Sections.TOP_BAR.BounceToColor(Color.Black)
+                        ).repeat()
+                    )
+                }.Else {
+                    addAnimation(Sections.TOP_BAR.SlideToColor(Color.Green))
+                }
             }
         }.ElseIf({ driverstationAutonomous }) {
             addAnimation(Sections.ALL.Strobe(Color.Red, 0.25))
@@ -90,16 +84,18 @@ object LEDState: KPeriodic() {
 
             If({ inSpeakerRange }) {
                 addAnimation(Sections.SPEAKER.Strobe(Color.White, 0.5))
-            }.ElseIf({ speakerShooterReady }) {
-                addAnimation(Sections.SPEAKER.Strobe(Color.Lime, 0.25))
-            }.ElseIf({ ampShooterReady }) {
-                If({ alliance == Alliance.Red }) {
-                    addAnimation(Sections.LEFT.Strobe(Color.Lime, 0.25))
-                }.Else {
-                    addAnimation(Sections.RIGHT.Strobe(Color.Lime, 0.25))
-                }
             }.ElseIf({ noteInIntake }) {
                 addAnimation(Sections.ALL.Strobe(Color.Purple, 0.1))
+            }.Else{
+                If({ speakerShooterReady }) {
+                    addAnimation(Sections.SPEAKER.Strobe(Color.Lime, 0.25))
+                }.ElseIf({ ampShooterReady }) {
+                    If({ alliance == Alliance.Red }) {
+                        addAnimation(Sections.LEFT.Strobe(Color.Lime, 0.25))
+                    }.Else {
+                        addAnimation(Sections.RIGHT.Strobe(Color.Lime, 0.25))
+                    }
+                }
             }
         }
     }
