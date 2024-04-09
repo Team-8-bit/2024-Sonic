@@ -8,8 +8,10 @@ import org.photonvision.PhotonCamera
 import org.photonvision.PhotonPoseEstimator
 import org.photonvision.common.hardware.VisionLEDMode
 import org.photonvision.targeting.PhotonTrackedTarget
+import org.team9432.robot.RobotPosition
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
+import kotlin.math.abs
 
 class VisionIOPhotonvision: VisionIO {
     private val robotToCameraArducam = Transform3d(
@@ -72,16 +74,32 @@ class VisionIOPhotonvision: VisionIO {
         }
 
         var filteredPoses = poses.toList()
-        filteredPoses = filteredPoses.filter { it.pose.z < 0.25 }
+        filteredPoses = filteredPoses.filter {
+            abs(it.pose.z) < 0.25 && it.ambiguity < 0.075
+        }
 
-        Logger.recordOutput("Vision/AllPoses", *filteredPoses.map { it.pose }.toTypedArray())
+        filteredPoses.groupBy { it.id }.forEach { (k, v) ->
+            v.forEachIndexed { index, visionPose ->
+                Logger.recordOutput("Vision/Poses/${k}I$index", visionPose.ambiguity)
+            }
+        }
+
+        val finalPoses = mutableListOf<VisionPose>()
+        filteredPoses.groupBy { it.id }.values.forEach { tagPoses -> finalPoses.add(tagPoses.minBy { RobotPosition.distanceTo(it.pose.toPose2d().translation) }) }
+
+//        finalPoses.addAll(filteredPoses)
+
+        Logger.recordOutput("Vision/AllPoses", *finalPoses.map { it.pose }.toTypedArray())
 
         val estimatedPose = photonPoseEstimator.update().getOrNull()
+
+        val finalPose = finalPoses.minByOrNull { RobotPosition.distanceTo(it.pose.toPose2d().translation) }
 
         inputs.usedCorners = estimatedPose?.targetsUsed?.getCornerArray() ?: emptyArray()
         inputs.poseTimestamp = estimatedPose?.timestampSeconds?.let { doubleArrayOf(it) } ?: doubleArrayOf()
         // inputs.estimatedRobotPose = estimatedPose?.estimatedPose?.let { arrayOf(it) } ?: emptyArray()
-        inputs.estimatedRobotPose = filteredPoses.minByOrNull { it.ambiguity }?.let { target -> arrayOf(target.pose) } ?: emptyArray()
+//        inputs.estimatedRobotPose = finalPoses.minByOrNull { RobotPosition.distanceTo(it.pose.toPose2d().translation) }?.let { target -> arrayOf(target.pose) } ?: emptyArray()
+        inputs.estimatedRobotPose = finalPose?.let { target -> arrayOf(target.pose) } ?: emptyArray()
         inputs.connected = camera.isConnected
     }
 
