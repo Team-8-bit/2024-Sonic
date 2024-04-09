@@ -6,6 +6,8 @@ import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.predefined.Black
 import org.team9432.robot.led.strip.Section
 
+fun Section.Strobe(color: Color, duration: Double) = Strobe(this, color, duration)
+
 class Strobe(
     private val section: Section,
     private val color: Color,

@@ -6,6 +6,8 @@ import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.predefined.Black
 import org.team9432.robot.led.strip.Section
 
+fun Section.Pulse(color: Color, duration: Double = 1.0, cooldown: Double = 1.0) = Pulse(this, color, duration, cooldown)
+
 class Pulse(
     private val section: Section,
     private val color: Color,

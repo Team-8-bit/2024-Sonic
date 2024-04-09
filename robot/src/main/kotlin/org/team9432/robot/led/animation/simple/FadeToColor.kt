@@ -6,6 +6,8 @@ import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.strip.Section
 import kotlin.math.abs
 
+fun Section.FadeToColor(color: Color, duration: Double, fadeSpeed: Int) = FadeToColor(this, color, duration, fadeSpeed)
+
 class FadeToColor(
     private val section: Section,
     private val color: Color,

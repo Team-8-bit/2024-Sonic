@@ -7,6 +7,8 @@ import org.team9432.robot.led.color.getAsRgb
 import org.team9432.robot.led.color.predefined.Black
 import org.team9432.robot.led.strip.Section
 
+fun Section.Breath(colors: List<Color>, colorDuration: Double, fadeSpeed: Int = 10) = Breath(this, colors, colorDuration, fadeSpeed)
+
 class Breath(
     private val section: Section,
     colors: List<Color>,

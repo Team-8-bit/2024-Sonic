@@ -5,6 +5,8 @@ import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.predefined.Black
 import org.team9432.robot.led.strip.Section
 
+fun Section.BounceToColor(color: Color, leadColor: Color = color, initialColor: Color? = null, runReversed: Boolean = false) = BounceToColor(this, color, leadColor, initialColor, runReversed)
+
 class BounceToColor(
     private val section: Section,
     private val color: Color,
