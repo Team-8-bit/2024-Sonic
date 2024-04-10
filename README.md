@@ -46,3 +46,4 @@ _Code for Team 8-Bit's 2024 robot, Sonic_
 - Team 254's motor factories
 - Team 4099's unit library
 - Team 4481's led color
+- Team 3847's vision filtering

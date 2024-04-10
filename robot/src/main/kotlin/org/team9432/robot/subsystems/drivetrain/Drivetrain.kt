@@ -29,7 +29,6 @@ object Drivetrain: KSubsystem() {
     init {
         kinematics = SwerveDriveKinematics(*SwerveUtil.getMk4iModuleTranslations(26.0))
         poseEstimator = SwerveDrivePoseEstimator(kinematics, Rotation2d(), getModulePositions().toTypedArray(), Pose2d())
-        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(8.0.inches.inMeters, 8.0.inches.inMeters, 20.0.degrees.inDegrees))
         for (m in modules) m.setBrakeMode(true)
     }
 
@@ -41,21 +40,6 @@ object Drivetrain: KSubsystem() {
 
             Logger.recordOutput("SwerveStates/Setpoints", *emptyArray<SwerveModuleState>())
             Logger.recordOutput("SwerveStates/SetpointsOptimized", *emptyArray<SwerveModuleState>())
-        }
-
-        Vision.getEstimatedPose2d()?.let { (pose, timestamp) ->
-            val speeds = getRobotRelativeSpeeds()
-
-            if ((maxOf(
-                    abs(speeds.vxMetersPerSecond),
-                    abs(speeds.vyMetersPerSecond)
-                ) < 0.5) && abs(Math.toDegrees(speeds.omegaRadiansPerSecond)) < 10.0
-            ) {
-                Logger.recordOutput("Drive/UsingVision", true)
-                poseEstimator.addVisionMeasurement(pose, timestamp)
-            } else {
-                Logger.recordOutput("Drive/UsingVision", false)
-            }
         }
 
         poseEstimator.update(Gyro.getYaw(), getModulePositions().toTypedArray())
@@ -82,6 +66,14 @@ object Drivetrain: KSubsystem() {
 
     fun resetPosition(pose: Pose2d, angle: Rotation2d) {
         poseEstimator.resetPosition(angle, getModulePositions().toTypedArray(), pose)
+    }
+
+    fun setVisionStandardDeviations(xyDeviation: Length) {
+        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xyDeviation.inMeters, xyDeviation.inMeters, 20.0.degrees.inDegrees))
+    }
+
+    fun addVisionMeasurement(pose: Pose2d, timestamp: Double) {
+        poseEstimator.addVisionMeasurement(pose, timestamp)
     }
 
     fun stop() = setSpeeds(ChassisSpeeds())

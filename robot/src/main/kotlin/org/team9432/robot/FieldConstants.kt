@@ -1,9 +1,9 @@
 package org.team9432.robot
 
-import edu.wpi.first.math.geometry.Rotation2d
-import org.team9432.lib.geometry.Pose2d
+import edu.wpi.first.math.geometry.Pose2d
 import org.team9432.lib.geometry.Translation2d
 import org.team9432.lib.unit.feet
+import org.team9432.lib.unit.inMeters
 import org.team9432.lib.unit.inches
 import org.team9432.lib.unit.meters
 
@@ -30,4 +30,6 @@ object FieldConstants {
 
     val speakerYAxis = centerLine + allianceNoteYSpacing
     val speakerPose = Translation2d(0.35.meters, speakerYAxis)
+
+    fun Pose2d.onField() = (x <= 0 || x >= height.inMeters) || (y <= 0 || y >= width.inMeters)
 }
