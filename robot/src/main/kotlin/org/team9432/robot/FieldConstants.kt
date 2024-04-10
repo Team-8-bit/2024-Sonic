@@ -31,5 +31,5 @@ object FieldConstants {
     val speakerYAxis = centerLine + allianceNoteYSpacing
     val speakerPose = Translation2d(0.35.meters, speakerYAxis)
 
-    fun Pose2d.onField() = (x <= 0 || x >= height.inMeters) || (y <= 0 || y >= width.inMeters)
+    fun Pose2d.onField() = (x >= 0 && x <= height.inMeters) && (y >= 0 || y <= width.inMeters)
 }

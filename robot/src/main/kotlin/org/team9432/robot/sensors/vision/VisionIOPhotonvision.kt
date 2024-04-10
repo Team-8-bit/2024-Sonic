@@ -13,50 +13,64 @@ import org.team9432.robot.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.abs
+import kotlin.math.truncate
 
 class VisionIOPhotonvision: VisionIO {
     private val camera = PhotonCamera("Limelight")
     private val aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField()
     private val robotToCamera = robotToCameraArducam
 
-    private val useMultitag = false
+    private val useMultitag = true
 
     override fun updateInputs(inputs: VisionIO.VisionIOInputs) {
         inputs.connected = camera.isConnected
-        inputs.trackedTags = emptyArray()
 
         val result = camera.latestResult
 
-        if (!result.hasTargets()) return
+        // Record information
+        result.targets.forEach { target -> Logger.recordOutput("Vision/Tags/${target.fiducialId}/Area", target.area) }
+        result.targets.groupBy { it.fiducialId }.forEach { (id, targets) ->
+            targets.forEachIndexed { index, visionPose ->
+                Logger.recordOutput("Vision/Tags/$id/Ambiguity-$index", visionPose.poseAmbiguity)
+            }
+        }
+
+        val output = getVisionOutput(result)
+
+        if (output != null) {
+            val (xyDeviation, pose, tagsUsed) = output
+            Drivetrain.setVisionStandardDeviations(xyDeviation)
+            Drivetrain.addVisionMeasurement(pose.toPose2d(), result.timestampSeconds)
+            inputs.trackedTags = tagsUsed.mapNotNull { aprilTagFieldLayout.getTagPose(it).getOrNull() }.toTypedArray()
+            Logger.recordOutput("Vision/EstimatedRobotPose", *arrayOf(pose))
+        } else {
+            inputs.trackedTags = emptyArray()
+            Logger.recordOutput("Vision/EstimatedRobotPose", emptyArray())
+        }
+    }
+
+    private fun getVisionOutput(result: PhotonPipelineResult): VisionOutput? {
+        if (!result.hasTargets()) return null
 
         val (pose, tagArea, tagsUsed) = if (!useMultitag) {
             updateNonMultitag(result)
         } else {
             updateMultitag(result) ?: updateNonMultitag(result)
-        } ?: return
+        } ?: return null
 
         val speed = Drivetrain.getFieldRelativeSpeeds()
-        val poseDifference = RobotPosition.distanceTo(pose.translation)
-        var xyDeviation: Length
-        if (speed.vxMetersPerSecond + speed.vyMetersPerSecond <= 0.2 && tagArea > 0.4) {
-            xyDeviation = 0.1.meters
-        } else if (useMultitag && tagArea > 0.05) {
-            xyDeviation = 0.5.meters
-            if (tagArea > 0.09) {
-                xyDeviation = 0.1.meters
-            }
-        } else if (tagArea > 0.8 /* && poseDifference < 0.5 */) {
-            xyDeviation = 1.0.meters
-        } else if (tagArea > 0.1 /* && poseDifference < 0.3 */) {
-            xyDeviation = 2.0.meters
+
+        val xyDeviation = if (speed.vxMetersPerSecond + speed.vyMetersPerSecond <= 0.2 && tagArea > 0.3) {
+            0.05.meters
+        } else if (tagArea < 0.15) {
+            2.0.meters
+        } else if (tagArea < 0.4) {
+            1.0.meters
         } else {
-            return // The tag is really far away
+            return null // The tag is really far away
         }
 
-        Drivetrain.setVisionStandardDeviations(xyDeviation)
-        Drivetrain.addVisionMeasurement(pose, result.timestampSeconds)
-
-        inputs.trackedTags = tagsUsed.mapNotNull { aprilTagFieldLayout.getTagPose(it).getOrNull() }.toTypedArray()
+        return VisionOutput(xyDeviation, pose, tagsUsed)
     }
 
     private fun updateMultitag(result: PhotonPipelineResult): VisionResult? {
@@ -71,7 +85,7 @@ class VisionIOPhotonvision: VisionIO {
         val tagsUsed = result.getTargets().filter { multiTagResult.fiducialIDsUsed.contains(it.fiducialId) }
         val largestArea = tagsUsed.maxBy { it.area }.area
 
-        return VisionResult(pose.toPose2d(), largestArea, tagsUsed.map { it.fiducialId })
+        return VisionResult(pose, largestArea, tagsUsed.map { it.fiducialId })
     }
 
     private fun updateNonMultitag(result: PhotonPipelineResult): VisionResult? {
@@ -85,15 +99,7 @@ class VisionIOPhotonvision: VisionIO {
 
         // Filter out any bad estimations
         val filteredTargets = poses.filter {
-            isPositionValid(it.pose) && it.ambiguity < 0.075
-        }
-
-        // Record information
-        filteredTargets.forEach { target -> Logger.recordOutput("Vision/Tags/${target.id}/Area", target.area) }
-        filteredTargets.groupBy { it.id }.forEach { (id, targets) ->
-            targets.forEachIndexed { index, visionPose ->
-                Logger.recordOutput("Vision/Tags/$id/Ambiguity-$index", visionPose.ambiguity)
-            }
+            isPositionValid(it.pose) && it.ambiguity < 0.1
         }
 
         // Take the position closest to the current robot position from each tag
@@ -106,13 +112,14 @@ class VisionIOPhotonvision: VisionIO {
         // Return the one that's closest to where the robot already is
         val target = finalTargets.minByOrNull { RobotPosition.distanceTo(it.pose.toPose2d().translation) } ?: return null
 
-        return VisionResult(target.pose.toPose2d(), target.area, listOf(target.id))
+        return VisionResult(target.pose, target.area, listOf(target.id))
     }
 
     private fun isPositionValid(pose: Pose3d) = abs(pose.z) < 0.25 && pose.toPose2d().onField()
 
     data class VisionTarget(val id: Int, val pose: Pose3d, val ambiguity: Double, val area: Double)
-    data class VisionResult(val pose: Pose2d, val area: Double, val usedTags: List<Int>)
+    data class VisionResult(val pose: Pose3d, val area: Double, val usedTags: List<Int>)
+    data class VisionOutput(val visionStandardDeviation: Length, val pose: Pose3d, val tagsUsed: List<Int>)
 
     private val robotToCameraArducam
         get() = Transform3d(
