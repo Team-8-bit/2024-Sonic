@@ -15,7 +15,7 @@ fun AutoShoot() = ParallelDeadlineCommand(
     // InstantCommand { LEDState.animation = ChargeUp(0.5, 1.0) },
 
     deadline = SequentialCommand(
-        TargetAim { FieldConstants.speakerPose },
+        TargetAim { FieldConstants.speakerAimPose },
         ParallelDeadlineCommand(
             // Shoot the note
             Superstructure.Commands.runHopperToLoadTo(MechanismSide.SPEAKER, CommandConstants.HOPPER_SHOOT_SPEAKER_VOLTS),

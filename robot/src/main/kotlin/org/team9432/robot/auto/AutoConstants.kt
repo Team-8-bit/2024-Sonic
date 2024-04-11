@@ -52,8 +52,8 @@ object AutoConstants {
         AllianceNote.STAGE -> FieldConstants.blueStageNotePose
     }
 
-    private fun Pose2d.angleAtSpeaker() = Pose2d(x, y, RobotPosition.angleTo(FieldConstants.speakerPose, currentPose = Translation2d(x, y)))
-    private fun Translation2d.angleAtSpeaker() = Pose2d(x, y, RobotPosition.angleTo(FieldConstants.speakerPose, currentPose = Translation2d(x, y)))
+    private fun Pose2d.angleAtSpeaker() = Pose2d(x, y, RobotPosition.angleTo(FieldConstants.speakerAimPose, currentPose = Translation2d(x, y)))
+    private fun Translation2d.angleAtSpeaker() = Pose2d(x, y, RobotPosition.angleTo(FieldConstants.speakerAimPose, currentPose = Translation2d(x, y)))
 }
 
 enum class AllianceNote {

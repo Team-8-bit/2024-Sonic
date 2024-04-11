@@ -129,18 +129,16 @@ object Shooter: KSubsystem() {
                 }?.let { currentShooterDirection = it }
 
                 when (currentShooterDirection) {
-                    ShooterDirection.LEFT_FAST -> Shooter.setSpeeds(rpmFast, rpmSlow)
-                    ShooterDirection.RIGHT_FAST -> Shooter.setSpeeds(rpmSlow, rpmFast)
+                    ShooterDirection.LEFT_FAST -> setSpeeds(rpmFast, rpmSlow)
+                    ShooterDirection.RIGHT_FAST -> setSpeeds(rpmSlow, rpmFast)
                 }
             }
         )
 
-        fun runAtFastSpeeds() = SimpleCommand(
+        fun runAtFeedSpeeds() = SimpleCommand(
             requirements = setOf(Shooter),
             end = { Shooter.stop() },
-            execute = {
-                Shooter.setSpeeds(10000.0, 6000.0)
-            }
+            execute = { setSpeeds(6000.0, 4500.0) }
         )
     }
 

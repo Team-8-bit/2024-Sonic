@@ -29,7 +29,11 @@ object FieldConstants {
     val centerNoteFivePose = Translation2d(midLine, centerLine + (centerNoteYSpacing * -2))
 
     val speakerYAxis = centerLine + allianceNoteYSpacing
-    val speakerPose = Translation2d(0.35.meters, speakerYAxis)
 
     fun Pose2d.onField() = (x >= 0 && x <= height.inMeters) && (y >= 0 || y <= width.inMeters)
+
+    val speakerAimPose = Translation2d(0.35.meters, speakerYAxis)
+
+    // This should be in the amp corner
+    val feedAimPose = Translation2d(0.0.meters, width)
 }

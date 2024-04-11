@@ -55,7 +55,7 @@ object Controls {
 
         // Aim at the speaker
         driver.a
-            .whileTrue(TeleTargetDrive { FieldConstants.speakerPose })
+            .whileTrue(TeleTargetDrive { FieldConstants.speakerAimPose })
 
         // driver.b.onTrue(SuperPoop())
 

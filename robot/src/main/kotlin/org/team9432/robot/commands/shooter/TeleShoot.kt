@@ -16,11 +16,10 @@ import org.team9432.robot.subsystems.Superstructure
 fun TeleShoot() = ParallelDeadlineCommand(
     Hood.Commands.aimAtSpeaker(),
     Shooter.Commands.runAtSpeeds(),
-    TeleTargetDrive { FieldConstants.speakerPose },
 
     deadline = SequentialCommand(
         ParallelCommand(
-            TeleTargetDrive(waitUntilAtSetpoint = true) { FieldConstants.speakerPose },
+            TeleTargetDrive(waitUntilAtSetpoint = true) { FieldConstants.speakerAimPose },
             // Move the note to the speaker side of the hopper
             MoveToPosition(NotePosition.SPEAKER_HOPPER),
             SequentialCommand(
@@ -29,7 +28,11 @@ fun TeleShoot() = ParallelDeadlineCommand(
             )
         ),
         InstantCommand { LEDState.speakerShooterReady = true },
-        WaitUntilCommand { Controls.readyToShootSpeaker },
+        ParallelDeadlineCommand(
+            // Keep aiming while waiting for confirmation
+            TeleTargetDrive(waitUntilAtSetpoint = false) { FieldConstants.speakerAimPose },
+            deadline = WaitUntilCommand { Controls.readyToShootSpeaker }, // Wait for driver confirmation
+        ),
         InstantCommand { LEDState.speakerShooterReady = false },
 
         ParallelDeadlineCommand(

@@ -29,7 +29,7 @@ object RobotPosition {
     }
 
     fun distanceToSpeaker(): Double {
-        return distanceTo(FieldConstants.speakerPose.applyFlip())
+        return distanceTo(FieldConstants.speakerAimPose.applyFlip())
     }
 
     fun getSpeakerSide(): SpeakerSide {

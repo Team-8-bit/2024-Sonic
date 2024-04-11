@@ -26,7 +26,7 @@ fun TeleShootMultiple() = ParallelCommand(
                 SequentialCommand(
                     // Aim, load the note, and wait until the shooter is sped up
                     ParallelCommand(
-                        TeleTargetDrive(waitUntilAtSetpoint = true) { FieldConstants.speakerPose },
+                        TeleTargetDrive(waitUntilAtSetpoint = true) { FieldConstants.speakerAimPose },
                         MoveToPosition(NotePosition.SPEAKER_HOPPER),
                         SequentialCommand(
                             WaitCommand(0.1), // We need to wait here to make sure it actually sets the setpoint
@@ -37,7 +37,7 @@ fun TeleShootMultiple() = ParallelCommand(
                     InstantCommand { LEDState.speakerShooterReady = true },
                     ParallelDeadlineCommand(
                         // Keep aiming while waiting for confirmation
-                        TeleTargetDrive(waitUntilAtSetpoint = false) { FieldConstants.speakerPose },
+                        TeleTargetDrive(waitUntilAtSetpoint = false) { FieldConstants.speakerAimPose },
                         deadline = WaitUntilCommand { Controls.readyToShootSpeaker }, // Wait for driver confirmation
                     ),
                     InstantCommand { LEDState.speakerShooterReady = false },
