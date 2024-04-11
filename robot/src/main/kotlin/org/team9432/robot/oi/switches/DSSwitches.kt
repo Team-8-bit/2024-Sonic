@@ -1,5 +1,6 @@
 package org.team9432.robot.oi.switches
 
+import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.robot.MechanismSide
 
@@ -9,6 +10,9 @@ object DSSwitches: KPeriodic() {
 
     override fun periodic() {
         io.updateInputs(inputs)
+        Logger.processInputs("DSSwitches", inputs)
+
+        Logger.recordOutput("RobotState/PrimaryMechanism", primaryScoringMechanism)
     }
 
     val isTestSwitchActive get() = inputs.testSwitch

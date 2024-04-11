@@ -12,6 +12,6 @@ object DSSwitchIOReal: DSSwitchIO {
         inputs.disableDrivetrain = hid.getRawButton(8)
         inputs.useAmpForSpeaker = hid.getRawButton(1)
         inputs.testSwitch = hid.getRawButton(2)
-        inputs.primaryMechanismAmp = false
+        inputs.primaryMechanismAmp = hid.getRawButton(4)
     }
 }
