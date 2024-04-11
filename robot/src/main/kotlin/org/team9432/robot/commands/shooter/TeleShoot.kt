@@ -35,8 +35,11 @@ fun TeleShoot() = ParallelDeadlineCommand(
         ParallelDeadlineCommand(
             // Shoot the note
             Superstructure.Commands.runLoad(MechanismSide.SPEAKER),
-            // Do this for one second
-            deadline = WaitCommand(1.0)
+            // Do this until the note is no longer in the beam break, plus a little bit
+            deadline = SequentialCommand(
+                WaitUntilCommand { !RobotState.noteInSpeakerSideHopperBeambreak() },
+                WaitCommand(0.2)
+            )
         ),
 
         // Update the note position

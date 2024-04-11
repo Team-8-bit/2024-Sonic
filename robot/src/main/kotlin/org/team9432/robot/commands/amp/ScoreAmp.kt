@@ -10,26 +10,27 @@ import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.Amp
 import org.team9432.robot.subsystems.Superstructure
 
-fun ScoreAmp(volts: Double) = SequentialCommand(
-    Amp.Commands.setVoltage(volts),
+fun ScoreAmp(volts: Double) = ParallelDeadlineCommand(
+    Amp.Commands.runVoltage(volts),
 
-    ParallelCommand(
+    deadline = SequentialCommand(
         // Move the note to the speaker side of the hopper
         MoveToPosition(NotePosition.AMP_HOPPER),
-        WaitCommand(1.0),
-    ),
 
-    InstantCommand { LEDState.ampShooterReady = true },
-    WaitUntilCommand { Controls.readyToShootAmp },
-    InstantCommand { LEDState.ampShooterReady = false },
+        InstantCommand { LEDState.ampShooterReady = true },
+        WaitUntilCommand { Controls.readyToShootAmp },
+        InstantCommand { LEDState.ampShooterReady = false },
 
-    ParallelDeadlineCommand(
-        // Shoot the note
-        Superstructure.Commands.runLoad(MechanismSide.AMP),
-        // Do this for one second
-        deadline = WaitCommand(1.0)
-    ),
-    Amp.Commands.stop(),
-    // Update the note position
-    InstantCommand { RobotState.notePosition = NotePosition.NONE }
+        ParallelDeadlineCommand(
+            // Shoot the note
+            Superstructure.Commands.runLoad(MechanismSide.AMP),
+            // Do this until the note is no longer in the beam break, plus a little bit
+            deadline = SequentialCommand(
+                WaitUntilCommand { !RobotState.noteInAmpSideHopperBeambreak() },
+                WaitCommand(0.2)
+            )
+        ),
+        // Update the note position
+        InstantCommand { RobotState.notePosition = NotePosition.NONE }
+    )
 )
