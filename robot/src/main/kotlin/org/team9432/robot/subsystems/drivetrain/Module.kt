@@ -19,7 +19,7 @@ import org.team9432.lib.logged.cancoder.LoggedCancoder
 import org.team9432.lib.logged.neo.LoggedNeo
 import org.team9432.lib.logged.neo.LoggedNeoIO
 import org.team9432.lib.wrappers.Spark
-import org.team9432.robot.oi.EmergencySwitches
+import org.team9432.robot.oi.switches.DSSwitches
 import kotlin.math.cos
 
 class Module(private val module: ModuleConfig) {
@@ -68,7 +68,7 @@ class Module(private val module: ModuleConfig) {
         driveInputs = drive.updateAndRecordInputs()
         val cancoderInputs = cancoder.updateAndRecordInputs()
 
-        if (EmergencySwitches.disableDrivetrain) {
+        if (DSSwitches.drivetrainDisabled) {
             drive.stop()
             steer.stop()
 

@@ -16,7 +16,7 @@ import org.team9432.robot.led.animation.simple.*
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.predefined.*
 import org.team9432.robot.led.strip.Sections
-import org.team9432.robot.oi.EmergencySwitches
+import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.sensors.vision.Vision
 
 object LEDState: KPeriodic() {
@@ -134,7 +134,7 @@ object LEDState: KPeriodic() {
         noteInIntake = RobotState.notePosition.isIntake
         hasVisionTarget = Vision.hasVisionTarget()
         limelightNotConnected = !Vision.connected
-        testEmergencySwitchActive = EmergencySwitches.testSwitchActive
+        testEmergencySwitchActive = DSSwitches.isTestSwitchActive
         driverstationDisabled = DriverStation.isDisabled()
         driverstationAutonomous = DriverStation.isAutonomousEnabled()
         driverstationTeleop = DriverStation.isTeleopEnabled()

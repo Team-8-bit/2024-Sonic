@@ -14,6 +14,7 @@ import org.team9432.robot.commands.hopper.MoveToPosition
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.TeleShootMultiple
 import org.team9432.robot.commands.stopCommand
+import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
 import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.Superstructure
@@ -48,7 +49,7 @@ object Controls {
         // Shoot Speaker
         driver.rightTrigger
             .onTrue(SuppliedCommand {
-                if (EmergencySwitches.useAmpForSpeaker) ScoreAmp(12.0)
+                if (DSSwitches.shouldUseAmpForSpeaker) ScoreAmp(12.0)
                 else TeleShootMultiple()
             })
 
