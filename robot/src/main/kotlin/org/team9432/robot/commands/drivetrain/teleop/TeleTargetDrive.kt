@@ -13,7 +13,7 @@ import org.team9432.robot.oi.Controls
 import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
-class TeleTargetDrive(private val target: () -> Translation2d): KCommand() {
+class TeleTargetDrive(private val waitUntilAtSetpoint: Boolean = false, private val target: () -> Translation2d): KCommand() {
     override val requirements = setOf(Drivetrain)
 
     private var pid = ProfiledPIDController(0.055, 0.0, 0.0, TrapezoidProfile.Constraints(360.0, 360.0 * 2.0))
@@ -40,5 +40,13 @@ class TeleTargetDrive(private val target: () -> Translation2d): KCommand() {
 
         val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Gyro.getYaw())
         Drivetrain.setSpeeds(speeds)
+    }
+
+    override fun isFinished(): Boolean {
+        if (waitUntilAtSetpoint) {
+            return pid.atSetpoint()
+        } else {
+            return false
+        }
     }
 }
