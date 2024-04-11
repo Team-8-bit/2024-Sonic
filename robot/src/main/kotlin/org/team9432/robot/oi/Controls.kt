@@ -12,8 +12,9 @@ import org.team9432.robot.commands.drivetrain.teleop.TeleAngleDrive
 import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
 import org.team9432.robot.commands.hopper.MoveToPosition
 import org.team9432.robot.commands.intake.TeleIntake
-import org.team9432.robot.commands.shooter.TeleShoot
+import org.team9432.robot.commands.shooter.TeleShootMultiple
 import org.team9432.robot.commands.stopCommand
+import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
 import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.Superstructure
@@ -23,8 +24,8 @@ object Controls {
     private val test = KXboxController(1, squareJoysticks = true, joystickDeadband = 0.075)
 
     private val slowButton = driver.rightBumper
-    private val readyToShootSpeakerButton = driver.rightTrigger.negate()
-    private val readyToShootAmpButton = driver.leftTrigger.negate()
+    private val readyToShootSpeakerButton = driver.b
+    private val readyToShootAmpButton = driver.b
 
     val xSpeed get() = -driver.leftY
     val ySpeed get() = -driver.leftX
@@ -47,22 +48,19 @@ object Controls {
 
         // Shoot Speaker
         driver.rightTrigger
-            .onTrue(SuppliedCommand {
-                if (EmergencySwitches.useAmpForSpeaker) ScoreAmp(12.0)
-                else ParallelDeadlineCommand(
-                    TeleTargetDrive { FieldConstants.speakerPose },
-                    deadline = TeleShoot()
-                )
+            .whileTrue(SuppliedCommand {
+                if (DSSwitches.shouldUseAmpForSpeaker) ScoreAmp(12.0)
+                else TeleShootMultiple()
             })
 
         // Aim at the speaker
-        driver.b
+        driver.a
             .whileTrue(TeleTargetDrive { FieldConstants.speakerPose })
 
         // driver.b.onTrue(SuperPoop())
 
         // Reset Drivetrain Heading
-        driver.a
+        driver.start
             .onTrue(InstantCommand { Gyro.resetYaw() }.runsWhenDisabled(true))
 
         // Reset

@@ -1,8 +1,11 @@
 package org.team9432.robot.commands.intake
 
 import org.team9432.lib.commandbased.commands.*
+import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
+import org.team9432.robot.commands.hopper.MoveToPosition
 import org.team9432.robot.oi.Controls
+import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.subsystems.Superstructure
 
 fun FinishIntakingAndAlign() = SuppliedCommand(Superstructure) {
@@ -20,6 +23,14 @@ fun FinishIntakingAndAlign() = SuppliedCommand(Superstructure) {
 
         // Update the note position in the robot
         InstantCommand { RobotState.notePosition = side.getNotePositionIntake() },
+
+        // Move the note to the correct location based on our current primary scoring mode
+        SuppliedCommand {
+            when (DSSwitches.primaryScoringMechanism) {
+                MechanismSide.AMP -> MoveToPosition(RobotState.NotePosition.SPEAKER_INTAKE)
+                MechanismSide.SPEAKER -> MoveToPosition(RobotState.NotePosition.AMP_INTAKE)
+            }
+        },
 
         InstantCommand {
             SequentialCommand(

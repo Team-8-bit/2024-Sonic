@@ -25,7 +25,7 @@ import org.team9432.lib.unit.degrees
 import org.team9432.lib.wrappers.Spark
 import org.team9432.robot.Devices
 import org.team9432.robot.RobotPosition
-import org.team9432.robot.oi.EmergencySwitches
+import org.team9432.robot.oi.switches.DSSwitches
 
 object Hood: KSubsystem() {
     private val motor = LoggedNeo(getConfig())
@@ -56,6 +56,8 @@ object Hood: KSubsystem() {
         distanceAngleMap.put(1.0, 0.0)
         distanceAngleMap.put(1.5, 15.0)
         distanceAngleMap.put(2.0, 18.0)
+        distanceAngleMap.put(2.5, 22.0)
+        distanceAngleMap.put(2.75, 25.0)
         distanceAngleMap.put(3.0, 25.0)
         distanceAngleMap.put(3.5, 30.0)
 
@@ -77,7 +79,7 @@ object Hood: KSubsystem() {
         Logger.recordOutput("Hood/AngleSetpointDegrees", Math.toDegrees(pid.setpoint.position) - hoodOffset.degrees)
         Logger.recordOutput("Hood/AngleDegrees", inputs.angle.degrees)
 
-        if (EmergencySwitches.disableHood) {
+        if (DSSwitches.hoodDisabled) {
             motor.stop()
             return
         }
@@ -89,11 +91,11 @@ object Hood: KSubsystem() {
     }
 
     fun setAngle(angle: Rotation2d) {
-        if (EmergencySwitches.disableHood) return
+        if (DSSwitches.hoodDisabled) return
 
         val angleTarget = Rotation2d.fromDegrees(MathUtil.clamp(angle.degrees, 0.0, 30.0)) + hoodOffset
         val goal = TrapezoidProfile.State(angleTarget.radians, 0.0)
-        pid.setGoal(goal)
+        pid.goal = goal
     }
 
     fun getAngleToSpeaker(): Rotation2d {
@@ -103,7 +105,7 @@ object Hood: KSubsystem() {
     }
 
     fun setVoltage(volts: Double) {
-        if (EmergencySwitches.disableHood) return
+        if (DSSwitches.hoodDisabled) return
         motor.setVoltage(volts)
     }
 
@@ -119,7 +121,7 @@ object Hood: KSubsystem() {
         fun followAngle(angle: () -> Rotation2d) = SimpleCommand(
             requirements = setOf(Hood),
             execute = { setAngle(angle.invoke()) },
-            isFinished = { EmergencySwitches.disableHood },
+            isFinished = { DSSwitches.hoodDisabled },
             end = { setAngle(0.0.degrees.asRotation2d) }
         )
 
