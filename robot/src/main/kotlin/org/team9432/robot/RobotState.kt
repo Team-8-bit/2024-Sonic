@@ -10,7 +10,7 @@ object RobotState: KPeriodic() {
     override fun periodic() {
         Logger.recordOutput("RobotState/NotePosition", notePosition.name)
         Logger.recordOutput("RobotState/MovementDirection", getMovementDirection())
-        Logger.recordOutput("Drive/SpeakerDistance", RobotPosition.distanceToSpeaker())
+        Logger.recordOutput("RobotState/SpeakerDistance", RobotPosition.distanceToSpeaker())
         Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerPose)
     }
 

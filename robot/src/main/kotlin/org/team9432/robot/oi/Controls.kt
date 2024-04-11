@@ -24,8 +24,8 @@ object Controls {
     private val test = KXboxController(1, squareJoysticks = true, joystickDeadband = 0.075)
 
     private val slowButton = driver.rightBumper
-    private val readyToShootSpeakerButton = driver.a
-    private val readyToShootAmpButton = driver.a
+    private val readyToShootSpeakerButton = driver.b
+    private val readyToShootAmpButton = driver.b
 
     val xSpeed get() = -driver.leftY
     val ySpeed get() = -driver.leftX
@@ -48,13 +48,13 @@ object Controls {
 
         // Shoot Speaker
         driver.rightTrigger
-            .onTrue(SuppliedCommand {
+            .whileTrue(SuppliedCommand {
                 if (DSSwitches.shouldUseAmpForSpeaker) ScoreAmp(12.0)
                 else TeleShootMultiple()
             })
 
         // Aim at the speaker
-        driver.b
+        driver.a
             .whileTrue(TeleTargetDrive { FieldConstants.speakerPose })
 
         // driver.b.onTrue(SuperPoop())

@@ -44,7 +44,7 @@ class TeleTargetDrive(private val waitUntilAtSetpoint: Boolean = false, private 
 
     override fun isFinished(): Boolean {
         if (waitUntilAtSetpoint) {
-            return pid.atSetpoint()
+            return pid.atGoal()
         } else {
             return false
         }

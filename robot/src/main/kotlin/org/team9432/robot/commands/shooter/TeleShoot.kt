@@ -20,6 +20,7 @@ fun TeleShoot() = ParallelDeadlineCommand(
 
     deadline = SequentialCommand(
         ParallelCommand(
+            TeleTargetDrive(waitUntilAtSetpoint = true) { FieldConstants.speakerPose },
             // Move the note to the speaker side of the hopper
             MoveToPosition(NotePosition.SPEAKER_HOPPER),
             SequentialCommand(

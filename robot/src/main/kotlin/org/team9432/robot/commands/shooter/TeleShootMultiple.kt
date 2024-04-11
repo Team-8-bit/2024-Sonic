@@ -35,7 +35,11 @@ fun TeleShootMultiple() = ParallelCommand(
                     ),
 
                     InstantCommand { LEDState.speakerShooterReady = true },
-                    WaitUntilCommand { Controls.readyToShootSpeaker }, // Wait for driver confirmation
+                    ParallelDeadlineCommand(
+                        // Keep aiming while waiting for confirmation
+                        TeleTargetDrive(waitUntilAtSetpoint = false) { FieldConstants.speakerPose },
+                        deadline = WaitUntilCommand { Controls.readyToShootSpeaker }, // Wait for driver confirmation
+                    ),
                     InstantCommand { LEDState.speakerShooterReady = false },
 
                     ParallelDeadlineCommand(
