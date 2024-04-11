@@ -10,6 +10,7 @@ interface DSSwitchIO {
         var disableDrivetrain = false
         var useAmpForSpeaker = false
         var testSwitch = false
+        var teleAutoAimDisabled = false
         var primaryMechanismAmp = false
     }
 

@@ -13,5 +13,7 @@ object DSSwitchIOReal: DSSwitchIO {
         inputs.useAmpForSpeaker = hid.getRawButton(1)
         inputs.testSwitch = hid.getRawButton(2)
         inputs.primaryMechanismAmp = hid.getRawButton(4)
+
+        inputs.teleAutoAimDisabled = false
     }
 }

@@ -21,6 +21,8 @@ object DSSwitches: KPeriodic() {
     val hoodDisabled get() = inputs.disableHood
     val drivetrainDisabled get() = inputs.disableDrivetrain
 
+    val teleAutoAimDisabled get() = inputs.teleAutoAimDisabled
+
     val primaryScoringMechanism: MechanismSide
         get() {
             return if (!inputs.connected) MechanismSide.SPEAKER
