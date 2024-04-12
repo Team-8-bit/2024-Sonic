@@ -37,7 +37,7 @@ object Robot: LoggedRobot() {
         if (RobotState.noteInSpeakerSideHopperBeambreak()) {
             SequentialCommand(
                 PullFromSpeakerShooter(),
-                InstantCommand { RobotState.hasRemainingAutoNote = true }
+                InstantCommand { RobotState.notePosition = RobotState.NotePosition.SPEAKER_HOPPER }
             ).withTimeout(0.75).schedule()
         }
     }

@@ -44,8 +44,15 @@ object RobotState: KPeriodic() {
         return maxOf(abs(speeds.vxMetersPerSecond), abs(speeds.vyMetersPerSecond)) > 1
     }
 
+    fun findNote() = when {
+        noteInAmpSideIntakeBeambreak() -> NotePosition.AMP_INTAKE
+        noteInSpeakerSideIntakeBeambreak() -> NotePosition.SPEAKER_INTAKE
+        noteInAmpSideHopperBeambreak() -> NotePosition.AMP_HOPPER
+        noteInSpeakerSideHopperBeambreak() -> NotePosition.SPEAKER_HOPPER
+        else -> null
+    }
+
     var notePosition = NotePosition.NONE
-    var hasRemainingAutoNote = false
 
     enum class NotePosition {
         AMP_INTAKE, SPEAKER_INTAKE, AMP_HOPPER, SPEAKER_HOPPER, NONE;

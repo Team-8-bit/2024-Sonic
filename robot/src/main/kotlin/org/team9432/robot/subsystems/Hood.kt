@@ -65,13 +65,13 @@ object Hood: KSubsystem() {
 
         pid.setTolerance(Math.toRadians(1.0))
 
-        SmartDashboard.putNumber("tableValue", 0.0)
+//        SmartDashboard.putNumber("tableValue", 0.0)
     }
 
     override fun periodic() {
         val inputs = motor.updateAndRecordInputs()
 
-        val tableValue = SmartDashboard.getNumber("tableValue", 0.0)
+//        val tableValue = SmartDashboard.getNumber("tableValue", 0.0)
         //distanceAngleMap.put(3.0, tableValue)
 
         Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, inputs.angle.radians, 0.0)))

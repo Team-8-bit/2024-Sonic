@@ -9,6 +9,9 @@ import org.team9432.robot.subsystems.Shooter
 import org.team9432.robot.subsystems.Superstructure
 
 fun stop() {
+    // If the robot KNOWS where the note is, update its position
+    RobotState.findNote()?.let { RobotState.notePosition = it }
+
     KCommandScheduler.cancelAll()
     Superstructure.stop()
     Shooter.stop()
