@@ -36,18 +36,6 @@ object LEDState: KPeriodic() {
             addAnimation(
                 SequentialAnimationGroup(
                     ParallelAnimationGroup(
-                        Sections.SPEAKER_LEFT.Solid(Color.Black),
-                        Sections.SPEAKER_RIGHT.Solid(Color.Black),
-                        Sections.AMP_LEFT.Solid(Color.Black),
-                        Sections.AMP_RIGHT.Solid(Color.Black)
-                    ),
-                    ParallelAnimationGroup(
-                        Sections.SPEAKER_LEFT.BounceToColor(Color.White, runReversed = true),
-                        Sections.SPEAKER_RIGHT.BounceToColor(Color.White),
-                        Sections.AMP_LEFT.BounceToColor(Color.White, runReversed = true),
-                        Sections.AMP_RIGHT.BounceToColor(Color.White),
-                    ),
-                    ParallelAnimationGroup(
                         Sections.SPEAKER_LEFT.FadeToColor(Color.Black, 3.0, 5),
                         Sections.SPEAKER_RIGHT.FadeToColor(Color.Black, 3.0, 5),
                         Sections.AMP_LEFT.FadeToColor(Color.Black, 3.0, 5),
