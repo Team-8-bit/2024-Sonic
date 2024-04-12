@@ -22,10 +22,10 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
 object Init {
     fun initRobot() {
-//        LEDs.startLoadingThread()
+        AnimationManager.startAsync()
+
         LEDState
         LEDStrip
-        AnimationManager
 
         Logger.initAdvantagekit("2024 - Sonic")
 
@@ -50,6 +50,6 @@ object Init {
 
         RobotState.findNote()?.let { RobotState.notePosition = it }
 
-//        LEDs.stopLoadingThread()
+        AnimationManager.stopAsync()
     }
 }
