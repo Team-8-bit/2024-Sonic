@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler as WPICommandScheduler
 val LOOP_PERIOD_SECS = Robot.period
 
 object Robot: LoggedRobot() {
+    var hasBeenEnabled = false
+
     override fun robotInit() = Init.initRobot()
     override fun robotPeriodic() = KCommandScheduler.run()
     override fun disabledInit() = KCommandScheduler.cancelAll()
@@ -40,6 +42,10 @@ object Robot: LoggedRobot() {
                 InstantCommand { RobotState.notePosition = RobotState.NotePosition.SPEAKER_HOPPER }
             ).withTimeout(0.75).schedule()
         }
+    }
+
+    override fun disabledExit() {
+        hasBeenEnabled = true
     }
 
     init {

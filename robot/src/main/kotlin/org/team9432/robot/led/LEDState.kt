@@ -2,6 +2,7 @@ package org.team9432.robot.led
 
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
+import org.team9432.Robot
 import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.robot.RobotPosition
@@ -31,7 +32,7 @@ object LEDState: KPeriodic() {
                     Sections.TOP_BAR.Solid(Color.White)
                 )
             )
-        }.ElseIf({ driverstationDisabled }) {
+        }.ElseIf({ driverstationDisabled && !Robot.hasBeenEnabled }) {
             addAnimation(
                 SequentialAnimationGroup(
                     ParallelAnimationGroup(
@@ -90,6 +91,15 @@ object LEDState: KPeriodic() {
                     )
                 }
             }
+        }.ElseIf({ driverstationDisabled && Robot.hasBeenEnabled }) {
+            addAnimation(
+                ParallelAnimationGroup(
+                    Sections.SPEAKER_LEFT.Pulse(Color.White, 2.0, 1.0),
+                    Sections.SPEAKER_RIGHT.Pulse(Color.White, 2.0, 1.0),
+                    Sections.AMP_LEFT.Pulse(Color.White, 2.0, 1.0),
+                    Sections.AMP_RIGHT.Pulse(Color.White, 2.0, 1.0),
+                )
+            )
         }.ElseIf({ driverstationAutonomous }) {
             addAnimation(Sections.ALL.Strobe(Color.Red, 0.25))
         }.ElseIf({ driverstationTeleop }) {
