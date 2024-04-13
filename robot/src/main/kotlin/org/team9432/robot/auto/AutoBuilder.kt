@@ -4,12 +4,14 @@ import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.commands.InstantCommand
+import org.team9432.lib.commandbased.commands.ParallelDeadlineCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
-import org.team9432.robot.auto.commands.CollectPreload
-import org.team9432.robot.auto.commands.ExitAuto
 import org.team9432.robot.auto.commands.InitAuto
+import org.team9432.robot.auto.commands.PullFromSpeakerShooter
 import org.team9432.robot.auto.subsections.ScoreNote
 import org.team9432.robot.auto.subsections.StartNote
+import org.team9432.robot.subsystems.Hood
+import org.team9432.robot.subsystems.Shooter
 
 object AutoBuilder {
     private val initChooser = LoggedDashboardChooser<() -> KCommand>("Starting Rotation")
@@ -26,11 +28,17 @@ object AutoBuilder {
 
     fun getAuto() = SequentialCommand(
         initChooser.get().invoke(),
-        CollectPreload(),
-        firstChooser.get().invoke(),
-        secondChooser.get().invoke(),
-        thirdChooser.get().invoke(),
-        ExitAuto()
+        PullFromSpeakerShooter(),
+        ParallelDeadlineCommand(
+            Hood.Commands.aimAtSpeaker(),
+            Shooter.Commands.runAtSpeeds(),
+
+            deadline = SequentialCommand(
+                firstChooser.get().invoke(),
+                secondChooser.get().invoke(),
+                thirdChooser.get().invoke()
+            )
+        )
     )
 
     fun getInitCommand(): KCommand {

@@ -8,7 +8,7 @@ import org.team9432.robot.oi.Controls
 import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.subsystems.Superstructure
 
-fun FinishIntakingAndAlign() = SuppliedCommand(Superstructure) {
+fun FinishIntakingAndAlign(positionToLoadTo: RobotState.NotePosition? = null) = SuppliedCommand(Superstructure) {
     val side = RobotState.getOneIntakeBeambreak() ?: return@SuppliedCommand InstantCommand {}
 
     SequentialCommand(
@@ -26,7 +26,7 @@ fun FinishIntakingAndAlign() = SuppliedCommand(Superstructure) {
 
         // Move the note to the correct location based on our current primary scoring mode
         SuppliedCommand {
-            when (DSSwitches.primaryScoringMechanism) {
+            positionToLoadTo?.let { MoveToPosition(it) } ?: when (DSSwitches.primaryScoringMechanism) {
                 MechanismSide.AMP -> MoveToPosition(RobotState.NotePosition.SPEAKER_INTAKE)
                 MechanismSide.SPEAKER -> MoveToPosition(RobotState.NotePosition.AMP_INTAKE)
             }

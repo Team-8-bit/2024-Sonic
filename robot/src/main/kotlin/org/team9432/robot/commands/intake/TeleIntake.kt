@@ -3,13 +3,12 @@ package org.team9432.robot.commands.intake
 import org.team9432.lib.commandbased.KCommand.InterruptionBehavior
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.RobotState
-import org.team9432.robot.commands.CommandConstants
 import org.team9432.robot.subsystems.Superstructure
 
 fun TeleIntake(endOnlyAfterNoteIsFullyCollected: Boolean = false) = SequentialCommand(
     // This part just gets the note touching the first intake beam break
     ParallelDeadlineCommand(
-        Superstructure.Commands.runTeleIntake(CommandConstants.INITIAL_INTAKE_VOLTS),
+        Superstructure.Commands.runTeleIntake(),
         deadline = WaitUntilCommand { RobotState.noteInAnyIntake() }
     ),
 

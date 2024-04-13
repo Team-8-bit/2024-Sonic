@@ -103,7 +103,7 @@ object Superstructure: KSubsystem() {
             end = { Superstructure.stop() }
         )
 
-        fun runTeleIntake(volts: Double) = SimpleCommand(
+        fun runTeleIntake(volts: Double = 6.0) = SimpleCommand(
             requirements = setOf(Superstructure),
             execute = { Superstructure.runTeleIntake(volts) },
             end = { Superstructure.stop() }

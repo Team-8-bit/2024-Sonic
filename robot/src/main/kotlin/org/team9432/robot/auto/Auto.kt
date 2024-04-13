@@ -13,5 +13,4 @@ enum class Auto(val displayName: String, val command: () -> KCommand) {
     NOTHING("Nothing", { InstantCommand {} }),
     PRELOAD_AND_TAXI("Preload And Taxi", { PreloadAndTaxi() }),
     PRELOAD("Preload", { Preload() }),
-    AMP_SIDE_TWO("Amp Side Two", { AmpSideTwo() })
 }
