@@ -12,6 +12,7 @@ object RobotState: KPeriodic() {
         Logger.recordOutput("RobotState/MovementDirection", getMovementDirection())
         Logger.recordOutput("RobotState/SpeakerDistance", RobotPosition.distanceToSpeaker())
         Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerAimPose)
+        Logger.recordOutput("RobotState/TrapAimPoints", *FieldConstants.trapAimPoses.toTypedArray())
     }
 
     fun noteInAmpSideIntakeBeambreak() = !Beambreaks.getIntakeAmpSide()

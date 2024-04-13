@@ -8,6 +8,8 @@ import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.amp.ScoreAmp
+import org.team9432.robot.commands.bazooka.ApplyBazooka
+import org.team9432.robot.commands.bazooka.BazookaAlignmentTest
 import org.team9432.robot.commands.drivetrain.teleop.TeleAngleDrive
 import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
 import org.team9432.robot.commands.hopper.MoveToPosition
@@ -57,11 +59,12 @@ object Controls {
         driver.a
             .whileTrue(TeleTargetDrive { FieldConstants.speakerAimPose })
 
-        // driver.b.onTrue(SuperPoop())
-
         // Reset Drivetrain Heading
         driver.start
             .onTrue(InstantCommand { Gyro.resetYaw() }.runsWhenDisabled(true))
+
+        driver.back
+            .onTrue(ApplyBazooka())
 
         // Reset
         driver.y
