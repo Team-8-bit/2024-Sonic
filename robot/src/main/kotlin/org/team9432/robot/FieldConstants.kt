@@ -1,6 +1,7 @@
 package org.team9432.robot
 
-import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.apriltag.AprilTagFields
+import edu.wpi.first.math.geometry.*
 import org.team9432.lib.geometry.Translation2d
 import org.team9432.lib.unit.feet
 import org.team9432.lib.unit.inMeters
@@ -9,6 +10,8 @@ import org.team9432.lib.unit.meters
 
 // All positions are on the blue side of the field and are flipped as needed
 object FieldConstants {
+    val aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField()
+
     val width = 26.0.feet + 11.25.inches
     val height = 54.0.feet + 3.25.inches
     val centerLine = width / 2
@@ -36,4 +39,9 @@ object FieldConstants {
 
     // This should be in the amp corner
     val feedAimPose = Translation2d(0.0.meters, width)
+
+    val trapTags = listOf(14, 15, 16) // Blue
+    val trapAimPoses = trapTags.map { aprilTagFieldLayout.getTagPose(it).get().transformBy(Transform3d(1.0, 0.0, 0.0, Rotation3d(0.0, 0.0, Math.toRadians(180.0)))).toFloor() }
+
+    fun Pose3d.toFloor() = Pose2d(x, y, Rotation2d(rotation.y))
 }

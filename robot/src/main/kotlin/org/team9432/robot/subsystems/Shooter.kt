@@ -140,6 +140,11 @@ object Shooter: KSubsystem() {
             end = { Shooter.stop() },
             execute = { setSpeeds(6000.0, 4500.0) }
         )
+        fun runAtTrapSpeeds() = SimpleCommand(
+            requirements = setOf(Shooter),
+            end = { Shooter.stop() },
+            execute = { setSpeeds(3000.0, 2500.0) }
+        )
     }
 
     private val velocitySetpointTolerance = Units.rotationsPerMinuteToRadiansPerSecond(250.0)

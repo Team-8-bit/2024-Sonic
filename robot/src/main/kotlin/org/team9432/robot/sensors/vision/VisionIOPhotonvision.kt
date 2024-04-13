@@ -1,6 +1,5 @@
 package org.team9432.robot.sensors.vision
 
-import edu.wpi.first.apriltag.AprilTagFields
 import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
@@ -8,16 +7,15 @@ import org.photonvision.PhotonCamera
 import org.photonvision.targeting.PhotonPipelineResult
 import org.team9432.lib.unit.Length
 import org.team9432.lib.unit.meters
+import org.team9432.robot.FieldConstants
 import org.team9432.robot.FieldConstants.onField
 import org.team9432.robot.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.abs
-import kotlin.math.truncate
 
 class VisionIOPhotonvision: VisionIO {
     private val camera = PhotonCamera("Limelight")
-    private val aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField()
     private val robotToCamera = robotToCameraArducam
 
     private val useMultitag = true
@@ -41,7 +39,7 @@ class VisionIOPhotonvision: VisionIO {
             val (xyDeviation, pose, tagsUsed) = output
             Drivetrain.setVisionStandardDeviations(xyDeviation)
             Drivetrain.addVisionMeasurement(pose.toPose2d(), result.timestampSeconds)
-            inputs.trackedTags = tagsUsed.mapNotNull { aprilTagFieldLayout.getTagPose(it).getOrNull() }.toTypedArray()
+            inputs.trackedTags = tagsUsed.mapNotNull { FieldConstants.aprilTagFieldLayout.getTagPose(it).getOrNull() }.toTypedArray()
             Logger.recordOutput("Vision/EstimatedRobotPose", *arrayOf(pose))
         } else {
             inputs.trackedTags = emptyArray()
@@ -78,7 +76,7 @@ class VisionIOPhotonvision: VisionIO {
         if (!multiTagResult.estimatedPose.isPresent) return null
 
         val cameraToField = result.multiTagResult.estimatedPose.best
-        val pose = Pose3d().plus(cameraToField).relativeTo(aprilTagFieldLayout.origin).plus(robotToCamera.inverse())
+        val pose = Pose3d().plus(cameraToField).relativeTo(FieldConstants.aprilTagFieldLayout.origin).plus(robotToCamera.inverse())
 
         if (!isPositionValid(pose)) return null
 
@@ -92,7 +90,7 @@ class VisionIOPhotonvision: VisionIO {
         val poses = mutableListOf<VisionTarget>()
         for (target in result.targets) {
             val targetFiducialId = target.fiducialId
-            val targetPosition = aprilTagFieldLayout.getTagPose(targetFiducialId).getOrNull() ?: continue
+            val targetPosition = FieldConstants.aprilTagFieldLayout.getTagPose(targetFiducialId).getOrNull() ?: continue
             val estimatedPose = targetPosition.transformBy(target.bestCameraToTarget.inverse()).transformBy(robotToCamera.inverse())
             poses.add(VisionTarget(targetFiducialId, estimatedPose, target.poseAmbiguity, target.area))
         }
