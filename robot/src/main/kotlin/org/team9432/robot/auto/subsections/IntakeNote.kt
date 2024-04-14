@@ -12,35 +12,32 @@ import org.team9432.robot.commands.drivetrain.TargetAim
 import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.Superstructure
 
-fun IntakeNote(note: AllianceNote) = SequentialCommand(
-    // Move forwards until the note is touched
-    ParallelDeadlineCommand(
-        Superstructure.Commands.runIntakeSide(MechanismSide.AMP),
+fun IntakeNote(note: AllianceNote) = ParallelDeadlineCommand(
+    Superstructure.Commands.runIntakeSide(MechanismSide.AMP),
 
-        SequentialCommand(
-            TargetAim(MechanismSide.AMP) { AutoConstants.getNotePosition(note) },
-            ParallelDeadlineCommand(
-                DriveRobotRelativeSpeeds(vx = -1.0),
-                deadline = WaitCommand(1.0)
-            )
+    SequentialCommand(
+        TargetAim(MechanismSide.AMP) { AutoConstants.getNotePosition(note) },
+        PrintCommand("Finished Aiming"),
+        ParallelDeadlineCommand(
+            DriveRobotRelativeSpeeds(vx = -1.0),
+            deadline = WaitCommand(1.0)
         ),
+        PrintCommand("Finished Driving"),
+    ),
 
-        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.afterSimDelay(1.0) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }.withTimeout(2.0)
-    )
+    deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.afterSimDelay(1.0) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }.withTimeout(2.0)
 )
 
-fun IntakeNote(pose: Pose2d, timeout: Double = 1.0) = SequentialCommand(
-    // Move forwards until the note is touched
-    ParallelDeadlineCommand(
-        Superstructure.Commands.runIntakeSide(MechanismSide.AMP),
+// Move forwards until the note is touched
+fun IntakeNote(pose: Pose2d, timeout: Double = 1.0) = ParallelDeadlineCommand(
+    Superstructure.Commands.runIntakeSide(MechanismSide.AMP),
 
-        SequentialCommand(
-            DriveToPosition(pose),
-            ParallelDeadlineCommand(
-                DriveRobotRelativeSpeeds(vx = -1.0),
-                deadline = WaitCommand(timeout)
-            ).afterSimDelay(0.25) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }
-        ),
-        deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }
-    )
+    SequentialCommand(
+        DriveToPosition(pose),
+        ParallelDeadlineCommand(
+            DriveRobotRelativeSpeeds(vx = -1.0),
+            deadline = WaitCommand(timeout)
+        ).afterSimDelay(0.25) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }
+    ),
+    deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }
 )
