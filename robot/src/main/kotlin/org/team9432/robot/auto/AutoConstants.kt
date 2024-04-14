@@ -1,7 +1,9 @@
 package org.team9432.robot.auto
 
 import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
+import org.littletonrobotics.junction.Logger
 import org.team9432.lib.geometry.Pose2d
 import org.team9432.lib.geometry.Translation2d
 import org.team9432.lib.unit.degrees
@@ -39,6 +41,10 @@ object AutoConstants {
     val centerNoteThreeIntakePose = Pose2d(FieldConstants.centerNoteThreePose.plus(Translation2d(-centerNoteOffsetDistance, 0.0.meters)), 180.0.degrees)
     val centerNoteFourIntakePose = Pose2d(FieldConstants.centerNoteFourPose.plus(Translation2d(-centerNoteOffsetDistance, 0.0.meters)), 180.0.degrees)
     val centerNoteFiveIntakePose = Pose2d(FieldConstants.centerNoteFivePose.plus(Translation2d(-centerNoteOffsetDistance, 0.0.meters)), 180.0.degrees)
+
+    val centerStage = Pose2d(FieldConstants.midLine - 3.5.meters, FieldConstants.centerLine, Rotation2d(Math.PI))
+    val centerCenterShot = Translation2d(2.0, 3.5).angleAtSpeaker()
+    val centerCenterDriveOne = Pose2d(3.5, 3.0, Rotation2d(Math.PI))
 
     fun getIntakePosition(note: AllianceNote) = when (note) {
         AllianceNote.AMP -> listOf(ampNoteAngledIntakePose, ampNoteIntakePose).minBy { RobotPosition.distanceTo(it.translation) }

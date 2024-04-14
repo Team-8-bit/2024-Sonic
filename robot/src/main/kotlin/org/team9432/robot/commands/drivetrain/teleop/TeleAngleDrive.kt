@@ -41,8 +41,4 @@ class TeleAngleDrive(private val target: () -> Rotation2d): KCommand() {
         val speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, Gyro.getYaw())
         Drivetrain.setSpeeds(speeds)
     }
-
-    override fun isFinished(): Boolean {
-        return DSSwitches.teleAutoAimDisabled
-    }
 }

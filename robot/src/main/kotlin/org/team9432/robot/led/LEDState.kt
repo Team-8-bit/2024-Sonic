@@ -92,12 +92,11 @@ object LEDState: KPeriodic() {
             addAnimation(Sections.ALL.Strobe(Color.Red, 0.25))
         }.ElseIf({ driverstationTeleop }) {
             // I think this will keep rainbowing even if there are other animations running
-            addAnimation(ColorShift(Sections.ALL, Color.RainbowColors, 1.0, 10))
 
             If({ inSpeakerRange }) {
                 addAnimation(Sections.SPEAKER.Strobe(Color.White, 0.5))
-            }.ElseIf({ noteInIntake }) {
-                addAnimation(Sections.ALL.Strobe(Color.Purple, 0.1))
+            }.ElseIf({ noteIndicatorLights }) {
+                addAnimation(Sections.ALL.Strobe(Color.Purple, 0.25))
             }.Else {
                 If({ speakerShooterReady }) {
                     addAnimation(Sections.SPEAKER.Strobe(Color.Lime, 0.25))
@@ -107,6 +106,8 @@ object LEDState: KPeriodic() {
                     }.Else {
                         addAnimation(Sections.RIGHT.Strobe(Color.Lime, 0.25))
                     }
+                }.Else {
+                    addAnimation(ColorShift(Sections.ALL, Color.RainbowColors, 0.20, 5))
                 }
             }
         }
@@ -127,6 +128,8 @@ object LEDState: KPeriodic() {
     var driverstationDisabled = false
     var driverstationAutonomous = false
     var driverstationTeleop = false
+
+    var noteIndicatorLights = false
 
     override fun periodic() {
         noteInIntake = RobotState.notePosition.isIntake

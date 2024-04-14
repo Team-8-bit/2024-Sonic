@@ -15,10 +15,7 @@ fun AutoShoot() = SequentialCommand(
         // Shoot the note
         Superstructure.Commands.runLoad(MechanismSide.SPEAKER),
 
-        deadline = SequentialCommand(
-            WaitUntilCommand { !RobotState.noteInSpeakerSideHopperBeambreak() },
-            WaitCommand(0.2)
-        )
+        deadline = WaitCommand(1.0)
     ),
 
     // Update the note position

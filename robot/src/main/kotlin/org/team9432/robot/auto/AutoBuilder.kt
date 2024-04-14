@@ -2,10 +2,12 @@ package org.team9432.robot.auto
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
+import org.littletonrobotics.junction.networktables.LoggedDashboardNumber
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.ParallelDeadlineCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
+import org.team9432.lib.commandbased.commands.WaitCommand
 import org.team9432.robot.auto.commands.InitAuto
 import org.team9432.robot.auto.commands.PullFromSpeakerShooter
 import org.team9432.robot.auto.subsections.ScoreNote
@@ -15,8 +17,11 @@ import org.team9432.robot.subsystems.Shooter
 
 object AutoBuilder {
     private val initChooser = LoggedDashboardChooser<() -> KCommand>("Starting Rotation")
+    private val firstDelay = LoggedDashboardNumber("First Delay")
     private val firstChooser = LoggedDashboardChooser<() -> KCommand>("Start Note")
+    private val secondDelay = LoggedDashboardNumber("Second Delay")
     private val secondChooser = LoggedDashboardChooser<() -> KCommand>("Second Note")
+    private val thirdDelay = LoggedDashboardNumber("Third Delay")
     private val thirdChooser = LoggedDashboardChooser<() -> KCommand>("Third Note")
 
     fun initChoosers() {
@@ -34,8 +39,11 @@ object AutoBuilder {
             Shooter.Commands.runAtSpeeds(),
 
             deadline = SequentialCommand(
+                WaitCommand(firstDelay.get()),
                 firstChooser.get().invoke(),
+                WaitCommand(secondDelay.get()),
                 secondChooser.get().invoke(),
+                WaitCommand(thirdDelay.get()),
                 thirdChooser.get().invoke()
             )
         )

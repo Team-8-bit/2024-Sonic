@@ -44,6 +44,10 @@ class TeleTargetDrive(private val waitUntilAtSetpoint: Boolean = false, private 
     }
 
     override fun isFinished(): Boolean {
-        return (if (waitUntilAtSetpoint) pid.atGoal() else false) || DSSwitches.teleAutoAimDisabled
+        return (if (waitUntilAtSetpoint) pid.atGoal() else false)
+    }
+
+    override fun end(interrupted: Boolean) {
+        if (!interrupted) Drivetrain.stop()
     }
 }

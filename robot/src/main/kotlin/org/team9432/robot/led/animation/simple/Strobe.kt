@@ -22,7 +22,7 @@ class Strobe(
     }
 
     override fun update(): Boolean {
-        val on = Timer.getFPGATimestamp() % duration / duration > 0.5
+        val on = ((Timer.getFPGATimestamp() % duration) / duration) > 0.5
         val colorToSet = if (on) color else Color.Black
 
         section.forEachColor { prolongedColor = colorToSet }

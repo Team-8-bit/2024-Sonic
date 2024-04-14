@@ -1,10 +1,11 @@
 package org.team9432.robot.commands.shooter
 
-import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.commandbased.commands.*
+import org.team9432.robot.FieldConstants
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.RobotState.NotePosition
+import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
 import org.team9432.robot.commands.hopper.MoveToPosition
 import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
@@ -12,9 +13,8 @@ import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Shooter
 import org.team9432.robot.subsystems.Superstructure
 
-fun FeedNote() = ParallelDeadlineCommand(
-    Hood.Commands.followAngle { Rotation2d.fromDegrees(25.0) },
-    Shooter.Commands.runAtFeedSpeeds(),
+fun Subwoofer() = ParallelDeadlineCommand(
+    Shooter.Commands.runAtSubwooferSpeeds(),
 
     deadline = SequentialCommand(
         ParallelCommand(
@@ -26,7 +26,7 @@ fun FeedNote() = ParallelDeadlineCommand(
             )
         ),
         InstantCommand { LEDState.speakerShooterReady = true },
-        // Keep aiming while waiting for confirmation
+            // Keep aiming while waiting for confirmation
         WaitUntilCommand { Controls.readyToShootSpeaker }, // Wait for driver confirmation
         InstantCommand { LEDState.speakerShooterReady = false },
 
@@ -34,10 +34,7 @@ fun FeedNote() = ParallelDeadlineCommand(
             // Shoot the note
             Superstructure.Commands.runLoad(MechanismSide.SPEAKER),
             // Do this until the note is no longer in the beam break, plus a little bit
-            deadline = SequentialCommand(
-                WaitUntilCommand { !RobotState.noteInSpeakerSideHopperBeambreak() },
-                WaitCommand(0.2)
-            )
+            deadline = WaitCommand(0.75)
         ),
 
         // Update the note position

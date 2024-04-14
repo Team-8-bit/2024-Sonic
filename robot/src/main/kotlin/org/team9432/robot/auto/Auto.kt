@@ -8,6 +8,7 @@ enum class Auto(val displayName: String, val command: () -> KCommand) {
     CUSTOM("Custom", { throw Exception("This should be retrieved from the AutoBuilder ") }),
     ALLIANCE_FOUR_NOTE("Alliance Four Note", { FourAllianceNote() }),
     ALLIANCE_FOUR_NOTE_REVERSED("Reversed Alliance Four Note", { FourAllianceNoteReversed() }),
+    CENTER_CENTER("CenterCenter", { CenterCenterNote() }),
     CENTER_ONE_TWO("One Two Center", { CenterNoteOneTwo() }),
     CENTER_FIVE_FOUR("Five Four Center", { CenterNoteFiveFour() }),
     NOTHING("Nothing", { InstantCommand {} }),

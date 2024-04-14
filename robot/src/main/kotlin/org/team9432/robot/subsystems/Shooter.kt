@@ -138,9 +138,14 @@ object Shooter: KSubsystem() {
         fun runAtFeedSpeeds() = SimpleCommand(
             requirements = setOf(Shooter),
             end = { Shooter.stop() },
-            execute = { setSpeeds(6000.0, 4500.0) }
+            execute = { setSpeeds(5000.0, 3500.0) }
         )
         fun runAtTrapSpeeds() = SimpleCommand(
+            requirements = setOf(Shooter),
+            end = { Shooter.stop() },
+            execute = { setSpeeds(3000.0, 2500.0) }
+        )
+        fun runAtSubwooferSpeeds() = SimpleCommand(
             requirements = setOf(Shooter),
             end = { Shooter.stop() },
             execute = { setSpeeds(3000.0, 2500.0) }

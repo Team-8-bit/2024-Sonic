@@ -2,6 +2,7 @@ package org.team9432.robot
 
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KPeriodic
+import org.team9432.robot.auto.AutoConstants
 import org.team9432.robot.sensors.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
@@ -13,6 +14,11 @@ object RobotState: KPeriodic() {
         Logger.recordOutput("RobotState/SpeakerDistance", RobotPosition.distanceToSpeaker())
         Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerAimPose)
         Logger.recordOutput("RobotState/TrapAimPoints", *FieldConstants.trapAimPoses.toTypedArray())
+
+        Logger.recordOutput("AutoPoses/CenterCenter/Centerstage", AutoConstants.centerStage)
+        Logger.recordOutput("AutoPoses/CenterCenter/ShotPose", AutoConstants.centerCenterShot)
+        Logger.recordOutput("AutoPoses/CenterCenter/Intake", AutoConstants.centerNoteThreeIntakePose)
+        Logger.recordOutput("AutoPoses/CenterCenter/Drive", AutoConstants.centerCenterDriveOne)
     }
 
     fun noteInAmpSideIntakeBeambreak() = !Beambreaks.getIntakeAmpSide()

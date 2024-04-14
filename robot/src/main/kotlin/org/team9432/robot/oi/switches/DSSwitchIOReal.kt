@@ -14,6 +14,6 @@ object DSSwitchIOReal: DSSwitchIO {
         inputs.testSwitch = hid.getRawButton(2)
         inputs.primaryMechanismAmp = hid.getRawButton(4)
 
-        inputs.teleAutoAimDisabled = false
+        inputs.teleAutoAimDisabled = hid.getRawButton(3)
     }
 }

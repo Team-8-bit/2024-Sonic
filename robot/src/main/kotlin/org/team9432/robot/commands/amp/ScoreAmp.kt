@@ -25,10 +25,7 @@ fun ScoreAmp(volts: Double) = ParallelDeadlineCommand(
             // Shoot the note
             Superstructure.Commands.runLoad(MechanismSide.AMP),
             // Do this until the note is no longer in the beam break, plus a little bit
-            deadline = SequentialCommand(
-                WaitUntilCommand { !RobotState.noteInAmpSideHopperBeambreak() },
-                WaitCommand(0.2)
-            )
+            deadline = WaitCommand(1.0)
         ),
         // Update the note position
         InstantCommand { RobotState.notePosition = NotePosition.NONE }

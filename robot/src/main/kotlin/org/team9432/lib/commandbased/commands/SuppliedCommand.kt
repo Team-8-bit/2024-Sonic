@@ -12,15 +12,19 @@ class SuppliedCommand(vararg requirements: KSubsystem, private val supplier: () 
         command = supplier.invoke()
         name = "Supplied(" + command!!.name + ")"
 
-        command!!.initialize()
+        command?.initialize()
     }
 
-    override fun execute() = command!!.execute()
+    override fun execute() {
+        command?.execute()
+    }
 
-    override fun isFinished() = command!!.isFinished()
+    override fun isFinished(): Boolean {
+        return command?.isFinished() ?: true
+    }
 
     override fun end(interrupted: Boolean) {
-        command!!.end(interrupted)
+        command?.end(interrupted)
         command = null
     }
 }

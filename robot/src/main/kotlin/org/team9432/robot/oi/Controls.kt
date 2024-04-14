@@ -2,6 +2,7 @@ package org.team9432.robot.oi
 
 
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.GenericHID
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.lib.commandbased.input.KXboxController
@@ -9,11 +10,12 @@ import org.team9432.robot.FieldConstants
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.amp.ScoreAmp
 import org.team9432.robot.commands.bazooka.ApplyBazooka
-import org.team9432.robot.commands.bazooka.BazookaAlignmentTest
 import org.team9432.robot.commands.drivetrain.teleop.TeleAngleDrive
 import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
 import org.team9432.robot.commands.hopper.MoveToPosition
 import org.team9432.robot.commands.intake.TeleIntake
+import org.team9432.robot.commands.shooter.FeedNote
+import org.team9432.robot.commands.shooter.Subwoofer
 import org.team9432.robot.commands.shooter.TeleShootMultiple
 import org.team9432.robot.commands.stopCommand
 import org.team9432.robot.oi.switches.DSSwitches
@@ -52,12 +54,18 @@ object Controls {
         driver.rightTrigger
             .whileTrue(SuppliedCommand {
                 if (DSSwitches.shouldUseAmpForSpeaker) ScoreAmp(12.0)
+                else if (DSSwitches.teleAutoAimDisabled) Subwoofer()
                 else TeleShootMultiple()
             })
 
         // Aim at the speaker
         driver.a
-            .whileTrue(TeleTargetDrive { FieldConstants.speakerAimPose })
+            .whileTrue(
+                ParallelDeadlineCommand(
+                    TeleTargetDrive { FieldConstants.feedAimPose },
+                    deadline = FeedNote()
+                )
+            )
 
         // Reset Drivetrain Heading
         driver.start
@@ -73,10 +81,14 @@ object Controls {
         // Score amp
         driver.leftTrigger
             .onTrue(
-                ParallelDeadlineCommand(
-                    TeleAngleDrive { Rotation2d.fromDegrees(-90.0) },
-                    deadline = ScoreAmp(4.5)
-                )
+                SuppliedCommand {
+                    if (DSSwitches.teleAutoAimDisabled) ScoreAmp(4.5)
+                    else ParallelDeadlineCommand(
+                        TeleAngleDrive { Rotation2d.fromDegrees(-90.0) },
+                        deadline = ScoreAmp(4.5)
+                    )
+                }
+
             )
 
         test.a.onTrue(MoveToPosition(RobotState.NotePosition.AMP_INTAKE))
@@ -86,6 +98,7 @@ object Controls {
     }
 
     fun setDriverRumble(magnitude: Double) {
-        driver.setRumble(GenericHID.RumbleType.kBothRumble, magnitude)
+        if (DriverStation.isTeleopEnabled())
+            driver.setRumble(GenericHID.RumbleType.kBothRumble, magnitude)
     }
 }

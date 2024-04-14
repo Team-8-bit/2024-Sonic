@@ -18,7 +18,7 @@ import kotlin.math.withSign
 class DriveToPosition(
     private val position: Pose2d,
     private val maxSpeedMetersPerSecond: Double = 4.0,
-    private val maxAccelerationMetersPerSecond: Double = 3.0,
+    private val maxAccelerationMetersPerSecond: Double = 4.0,
     private val positionalTolerance: Double = 0.05, // Meters
     private val rotationalTolerance: Double = 3.0, // Degrees
     private val maxRotationalSpeedDegreesPerSecond: Double = 360.0,

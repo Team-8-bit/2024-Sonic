@@ -4,6 +4,7 @@ import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.hopper.MoveToPosition
+import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.subsystems.Superstructure
@@ -14,9 +15,18 @@ fun FinishIntakingAndAlign(positionToLoadTo: RobotState.NotePosition? = null) = 
     SequentialCommand(
         // Intake slowly until the note is fully in the intake
         Superstructure.Commands.startIntakeSide(side, 6.0),
-        WaitUntilCommand { !RobotState.noteInIntakeSide(side) },
+        WaitUntilCommand { RobotState.noteInCenterBeambreak() },
 
-        InstantCommand { Controls.setDriverRumble(1.0) },
+        InstantCommand {
+            Controls.setDriverRumble(1.0)
+            LEDState.noteIndicatorLights = true
+        },
+
+        Superstructure.Commands.startOuttakeSide(side, 4.0),
+        WaitUntilCommand { RobotState.noteInIntakeSide(side) },
+
+        Superstructure.Commands.startIntakeSide(side, 4.0),
+        WaitUntilCommand { !RobotState.noteInIntakeSide(side) },
 
         // Stop the intake
         Superstructure.Commands.stop(),
@@ -35,7 +45,10 @@ fun FinishIntakingAndAlign(positionToLoadTo: RobotState.NotePosition? = null) = 
         InstantCommand {
             SequentialCommand(
                 WaitCommand(3.0),
-                InstantCommand { Controls.setDriverRumble(0.0) }
+                InstantCommand {
+                    Controls.setDriverRumble(0.0)
+                    LEDState.noteIndicatorLights = false
+                }
             ).schedule()
         }
     )
