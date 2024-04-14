@@ -130,6 +130,23 @@ object Superstructure: KSubsystem() {
             }
         )
 
+        fun runOuttakeAmpFix() = SimpleCommand(
+            requirements = setOf(Superstructure),
+            initialize = { setIntakeVoltage(8.0, -8.0) },
+            end = {
+                Superstructure.stop()
+                if (!RobotState.noteInAnyIntake()) RobotState.notePosition = RobotState.NotePosition.NONE
+            }
+        )
+        fun runOuttakeSpeakerFix() = SimpleCommand(
+            requirements = setOf(Superstructure),
+            initialize = { setIntakeVoltage(-8.0, 8.0) },
+            end = {
+                Superstructure.stop()
+                if (!RobotState.noteInAnyIntake()) RobotState.notePosition = RobotState.NotePosition.NONE
+            }
+        )
+
         fun stop() = InstantCommand(Superstructure) { Superstructure.stop() }
 
         fun startHopperToLoadTo(side: MechanismSide, volts: Double) = InstantCommand(Superstructure) { loadToHopper(side, volts) }

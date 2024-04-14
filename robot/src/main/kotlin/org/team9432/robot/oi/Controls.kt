@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.GenericHID
 import org.team9432.lib.commandbased.commands.*
+import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.RobotState
@@ -39,6 +40,9 @@ object Controls {
     val readyToShootSpeaker get() = readyToShootSpeakerButton.asBoolean
     val readyToShootAmp get() = readyToShootAmpButton.asBoolean
 
+    val upPov = KTrigger { driver.getPOV(0) == 0 }
+    val downPov = KTrigger { driver.getPOV(0) == 180 }
+
     fun setButtons() {
         // Run Intake
         driver.leftBumper
@@ -47,8 +51,9 @@ object Controls {
             }) // Pretend to get a note after 2 seconds in sim
 
         // Outtake Intake
-        driver.x
-            .whileTrue(Superstructure.Commands.runOuttake())
+        driver.x.whileTrue(Superstructure.Commands.runOuttake())
+        upPov.whileTrue(Superstructure.Commands.runOuttakeAmpFix())
+        downPov.whileTrue(Superstructure.Commands.runOuttakeSpeakerFix())
 
         // Shoot Speaker
         driver.rightTrigger
