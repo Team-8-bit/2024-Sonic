@@ -1,11 +1,10 @@
-package org.team9432.lib.logged.cancoder
+package org.team9432.lib.wrappers.cancoder
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.team9432.lib.advantagekit.kGet
 import org.team9432.lib.advantagekit.kPut
-import org.team9432.lib.annotation.Logged
 
 interface LoggedCancoderIO {
     open class CancoderIOInputs(private val additionalQualifier: String = ""): LoggableInputs {

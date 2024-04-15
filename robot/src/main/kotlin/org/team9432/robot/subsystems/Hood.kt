@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Translation3d
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.math.trajectory.TrapezoidProfile
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.KSysIdConfig
 import org.team9432.lib.State
@@ -19,10 +18,10 @@ import org.team9432.lib.SysIdUtil.getSysIdTests
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
-import org.team9432.lib.logged.neo.LoggedNeo
 import org.team9432.lib.unit.asRotation2d
 import org.team9432.lib.unit.degrees
 import org.team9432.lib.wrappers.Spark
+import org.team9432.lib.wrappers.neo.LoggedNeo
 import org.team9432.robot.Devices
 import org.team9432.robot.RobotPosition
 import org.team9432.robot.oi.switches.DSSwitches

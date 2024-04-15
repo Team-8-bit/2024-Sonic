@@ -12,6 +12,9 @@ import org.team9432.lib.State
 import org.littletonrobotics.junction.Logger as AkitLogger
 
 object Logger {
+    /**
+     * Initializes and starts advantagekit with some default settings, records [projectName] as metadata.
+     */
     fun initAdvantagekit(projectName: String) {
         AkitLogger.recordMetadata("ProjectName", projectName)
         AkitLogger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE)

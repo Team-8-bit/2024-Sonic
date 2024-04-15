@@ -1,4 +1,4 @@
-package org.team9432.lib.logged.neo
+package org.team9432.lib.wrappers.neo
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.Logger

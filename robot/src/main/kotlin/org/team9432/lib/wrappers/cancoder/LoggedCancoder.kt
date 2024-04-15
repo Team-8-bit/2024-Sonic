@@ -1,4 +1,4 @@
-package org.team9432.lib.logged.cancoder
+package org.team9432.lib.wrappers.cancoder
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.Logger

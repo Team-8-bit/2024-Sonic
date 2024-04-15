@@ -13,9 +13,9 @@ import org.team9432.lib.SysIdUtil.getSysIdTests
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
-import org.team9432.lib.logged.neo.LoggedNeo
-import org.team9432.lib.logged.neo.LoggedNeoIO
 import org.team9432.lib.wrappers.Spark
+import org.team9432.lib.wrappers.neo.LoggedNeo
+import org.team9432.lib.wrappers.neo.LoggedNeoIO
 import org.team9432.robot.Devices
 import org.team9432.robot.RobotPosition
 import kotlin.math.abs
@@ -140,11 +140,13 @@ object Shooter: KSubsystem() {
             end = { Shooter.stop() },
             execute = { setSpeeds(5000.0, 3500.0) }
         )
+
         fun runAtTrapSpeeds() = SimpleCommand(
             requirements = setOf(Shooter),
             end = { Shooter.stop() },
             execute = { setSpeeds(3000.0, 2500.0) }
         )
+
         fun runAtSubwooferSpeeds() = SimpleCommand(
             requirements = setOf(Shooter),
             end = { Shooter.stop() },

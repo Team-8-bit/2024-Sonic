@@ -3,12 +3,7 @@ package org.team9432.robot.auto
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
-import org.littletonrobotics.junction.Logger
-import org.team9432.lib.geometry.Pose2d
-import org.team9432.lib.geometry.Translation2d
-import org.team9432.lib.unit.degrees
-import org.team9432.lib.unit.inMeters
-import org.team9432.lib.unit.meters
+import org.team9432.lib.unit.*
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.RobotPosition
 import kotlin.math.pow

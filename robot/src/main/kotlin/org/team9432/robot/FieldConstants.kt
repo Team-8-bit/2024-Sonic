@@ -2,11 +2,7 @@ package org.team9432.robot
 
 import edu.wpi.first.apriltag.AprilTagFields
 import edu.wpi.first.math.geometry.*
-import org.team9432.lib.geometry.Translation2d
-import org.team9432.lib.unit.feet
-import org.team9432.lib.unit.inMeters
-import org.team9432.lib.unit.inches
-import org.team9432.lib.unit.meters
+import org.team9432.lib.unit.*
 
 // All positions are on the blue side of the field and are flipped as needed
 object FieldConstants {

@@ -15,10 +15,10 @@ import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
 import org.team9432.lib.constants.SwerveConstants.MK4I_L2_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_L3_DRIVE_REDUCTION
 import org.team9432.lib.constants.SwerveConstants.MK4I_STEER_REDUCTION
-import org.team9432.lib.logged.cancoder.LoggedCancoder
-import org.team9432.lib.logged.neo.LoggedNeo
-import org.team9432.lib.logged.neo.LoggedNeoIO
 import org.team9432.lib.wrappers.Spark
+import org.team9432.lib.wrappers.cancoder.LoggedCancoder
+import org.team9432.lib.wrappers.neo.LoggedNeo
+import org.team9432.lib.wrappers.neo.LoggedNeoIO
 import org.team9432.robot.oi.switches.DSSwitches
 import kotlin.math.cos
 
