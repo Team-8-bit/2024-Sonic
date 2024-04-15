@@ -2,6 +2,7 @@
 package org.team9432
 
 import edu.wpi.first.wpilibj.RobotBase
+import kotlinx.coroutines.runBlocking
 
 /**
  * Main initialization function. Do not perform any initialization here
@@ -19,4 +20,4 @@ import edu.wpi.first.wpilibj.RobotBase
  * Refactoring when renaming the object, it will get changed everywhere
  * including here.)
  */
-fun main() = RobotBase.startRobot { Robot }
+fun main() = runBlocking { RobotBase.startRobot { Robot } }
