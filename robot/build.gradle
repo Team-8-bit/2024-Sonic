@@ -4,7 +4,7 @@ import groovy.json.JsonSlurper
 plugins {
     id("java")
     id("edu.wpi.first.GradleRIO").version("2024.2.1")
-    id("org.jetbrains.kotlin.jvm").version("1.9.20")
+    id("org.jetbrains.kotlin.jvm").version("1.9.21")
     id("com.peterabeles.gversion").version("1.10")
     id("com.google.devtools.ksp")
 }
