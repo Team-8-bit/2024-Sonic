@@ -2,7 +2,11 @@ package org.team9432
 
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.team9432.lib.advantagekit.Logger
+import org.team9432.lib.commandbased.KCommandScheduler
+import org.team9432.lib.coroutineshims.RobotBase
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AutoBuilder
 import org.team9432.robot.auto.AutoChooser
@@ -29,6 +33,7 @@ object Init {
 
         Logger.initAdvantagekit("2024 - Sonic")
 
+        HAL.report(FRCNetComm.tResourceType.kResourceType_Framework, FRCNetComm.tInstances.kFramework_AdvantageKit)
         HAL.report(FRCNetComm.tResourceType.kResourceType_Language, FRCNetComm.tInstances.kLanguage_Kotlin)
 
         DefaultCommands.setDefaultCommands()
@@ -49,6 +54,7 @@ object Init {
         AutoChooser.initChooser()
 
         RobotState.findNote()?.let { RobotState.notePosition = it }
+
 
         AnimationManager.stopAsync()
     }

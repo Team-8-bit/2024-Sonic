@@ -8,16 +8,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.DriverStation
+import org.littletonrobotics.junction.LOOP_PERIOD_SECS
 import org.littletonrobotics.junction.Logger
-import org.team9432.LOOP_PERIOD_SECS
 import org.team9432.lib.SysIdUtil
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.unit.*
 import org.team9432.lib.util.SwerveUtil
 import org.team9432.robot.sensors.gyro.Gyro
-import org.team9432.robot.sensors.vision.Vision
-import kotlin.math.abs
 
 
 object Drivetrain: KSubsystem() {

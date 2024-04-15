@@ -1,8 +1,7 @@
 @file:JvmName("Main") // set the compiled Java class name to "Main" rather than "MainKt"
 package org.team9432
 
-import edu.wpi.first.wpilibj.RobotBase
-import kotlinx.coroutines.runBlocking
+import org.team9432.lib.coroutineshims.RobotBase
 
 /**
  * Main initialization function. Do not perform any initialization here
@@ -20,4 +19,4 @@ import kotlinx.coroutines.runBlocking
  * Refactoring when renaming the object, it will get changed everywhere
  * including here.)
  */
-fun main() = runBlocking { RobotBase.startRobot { Robot } }
+suspend fun main() = RobotBase.startRobot { Robot }

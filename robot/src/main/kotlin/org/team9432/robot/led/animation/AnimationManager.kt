@@ -1,8 +1,11 @@
 package org.team9432.robot.led.animation
 
-import edu.wpi.first.wpilibj.Notifier
-import org.team9432.LOOP_PERIOD_SECS
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import org.team9432.lib.commandbased.KPeriodic
+import org.team9432.lib.coroutineshims.RobotBase
 import org.team9432.robot.led.animation.groups.ParallelAnimationGroup
 import org.team9432.robot.led.animation.simple.BounceToColor
 import org.team9432.robot.led.color.Color
@@ -57,19 +60,26 @@ object AnimationManager: KPeriodic() {
         Sections.AMP_RIGHT.BounceToColor(Color.White)
     )
 
-    private val thread = Notifier {
-        loadingAnimation.update()
-        LEDStrip.updateColorsFromMap()
-        LEDStrip.render()
-    }
+    private var asyncJob: Job? = null
 
     fun startAsync() {
         periodicEnabled = false
-        thread.startPeriodic(LOOP_PERIOD_SECS)
+        asyncJob = RobotBase.coroutineScope.launch {
+            println("launched")
+            loadingAnimation.start()
+
+            while (isActive) {
+                delay(20)
+                loadingAnimation.update()
+                LEDStrip.updateColorsFromMap()
+                LEDStrip.render()
+            }
+            loadingAnimation.end()
+        }
     }
 
     fun stopAsync() {
-        thread.stop()
+        asyncJob?.cancel()
         periodicEnabled = true
     }
 }

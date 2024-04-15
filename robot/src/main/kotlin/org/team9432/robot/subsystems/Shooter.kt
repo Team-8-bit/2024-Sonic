@@ -5,8 +5,8 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.math.util.Units
+import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
-import org.team9432.Robot
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 import org.team9432.lib.SysIdUtil.getSysIdTests
@@ -83,7 +83,7 @@ object Shooter: KSubsystem() {
 
         Logger.recordOutput("Shooter/LeftSide/RPM", Units.radiansPerSecondToRotationsPerMinute(leftInputs.velocityRadPerSec))
         Logger.recordOutput("Shooter/RightSide/RPM", Units.radiansPerSecondToRotationsPerMinute(rightInputs.velocityRadPerSec))
-        if (Robot.isTest) {
+        if (DriverStation.isTestEnabled()) {
             Logger.recordOutput("Shooter/LeftSide/PositionRadians", leftInputs.angle.radians)
             Logger.recordOutput("Shooter/RightSide/PositionRadians", rightInputs.angle.radians)
         }

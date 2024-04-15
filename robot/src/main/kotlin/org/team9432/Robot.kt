@@ -1,6 +1,6 @@
 package org.team9432
 
-import org.littletonrobotics.junction.LoggedRobot
+import org.littletonrobotics.junction.LoggedCoroutineRobot
 import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
@@ -11,13 +11,12 @@ import org.team9432.robot.auto.commands.PullFromSpeakerShooter
 import org.team9432.robot.commands.stop
 import org.team9432.robot.oi.Controls
 
-val LOOP_PERIOD_SECS = Robot.period
-
-object Robot: LoggedRobot() {
+object Robot: LoggedCoroutineRobot() {
     var hasBeenEnabled = false
 
     override fun robotInit() = Init.initRobot()
     override fun robotPeriodic() = KCommandScheduler.run()
+
     override fun disabledInit() {
         Controls.setDriverRumble(0.0)
         KCommandScheduler.cancelAll()

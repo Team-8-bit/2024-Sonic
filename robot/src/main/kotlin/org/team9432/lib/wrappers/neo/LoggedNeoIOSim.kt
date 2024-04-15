@@ -5,7 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.simulation.DCMotorSim
-import org.team9432.LOOP_PERIOD_SECS
+import org.littletonrobotics.junction.LOOP_PERIOD_SECS
 import org.team9432.lib.wrappers.Spark
 import kotlin.math.abs
 

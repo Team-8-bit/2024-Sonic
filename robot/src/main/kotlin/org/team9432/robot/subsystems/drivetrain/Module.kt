@@ -7,8 +7,8 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.math.util.Units
+import edu.wpi.first.wpilibj.DriverStation
 import org.littletonrobotics.junction.Logger
-import org.team9432.Robot
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 import org.team9432.lib.constants.SwerveConstants.MK4I_DRIVE_WHEEL_RADIUS
@@ -106,7 +106,7 @@ class Module(private val module: ModuleConfig) {
 
         Logger.recordOutput("Drive/${module.name}_Module/AbsoluteAngleDegrees", steerAbsolutePosition.degrees)
 
-        if (Robot.isTest) {
+        if (DriverStation.isTestEnabled()) {
             Logger.recordOutput("Drive/${module.name}_Module/DrivePositionRadians", driveInputs.angle.radians)
         }
     }
