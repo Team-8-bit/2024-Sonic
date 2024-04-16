@@ -1,7 +1,6 @@
 package org.team9432.lib.commandbased.commands
 
 import org.team9432.lib.commandbased.KCommand
-import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.KSubsystem
 
 /** A command that runs another command repeatedly, restarting it when it ends, until this command is interrupted */
@@ -11,7 +10,7 @@ class RepeatCommand(private val command: KCommand): KCommand() {
     override val requirements = mutableSetOf<KSubsystem>()
 
     init {
-        KCommandScheduler.registerComposedCommands(command)
+        command.isInGroup = true
         requirements.addAll(command.requirements)
         name = "Repeat(" + command.name + ")"
     }

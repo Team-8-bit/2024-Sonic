@@ -20,6 +20,8 @@ abstract class KCommand {
     val isScheduled: Boolean
         get() = KCommandScheduler.isScheduled(this)
 
+    var isInGroup = false
+
     /**
      * An enum describing the command's behavior when another command with a shared requirement is
      * scheduled.

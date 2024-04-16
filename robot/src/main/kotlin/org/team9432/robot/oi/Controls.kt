@@ -35,10 +35,10 @@ object Controls {
     val xSpeed get() = -driver.leftY
     val ySpeed get() = -driver.leftX
     val angle get() = -driver.rightX
-    val slowDrive get() = slowButton.asBoolean
+    val slowDrive get() = slowButton()
 
-    val readyToShootSpeaker get() = readyToShootSpeakerButton.asBoolean
-    val readyToShootAmp get() = readyToShootAmpButton.asBoolean
+    val readyToShootSpeaker get() = readyToShootSpeakerButton()
+    val readyToShootAmp get() = readyToShootAmpButton()
 
     val upPov = KTrigger { driver.getPOV(0) == 0 }
     val downPov = KTrigger { driver.getPOV(0) == 180 }

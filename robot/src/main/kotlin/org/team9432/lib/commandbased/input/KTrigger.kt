@@ -1,8 +1,5 @@
 package org.team9432.lib.commandbased.input
 
-import edu.wpi.first.math.filter.Debouncer
-import edu.wpi.first.math.filter.Debouncer.DebounceType
-import edu.wpi.first.wpilibj.event.EventLoop
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.lib.commandbased.KCommandScheduler
 import java.util.function.BooleanSupplier
@@ -20,7 +17,7 @@ import java.util.function.BooleanSupplier
  *
  * This class is provided by the NewCommands VendorDep
  */
-class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, private val condition: BooleanSupplier): BooleanSupplier {
+class KTrigger(private val condition: () -> Boolean): () -> Boolean {
     /**
      * Starts the given command whenever the condition changes from `false` to `true`.
      *
@@ -28,17 +25,18 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
      * @return this trigger, so calls can be chained
      */
     fun onTrue(command: KCommand): KTrigger {
-        loop.bind(
+        KCommandScheduler.registerPeriodic(
             object: Runnable {
-                private var pressedLast = condition.asBoolean
+                private var pressedLast = condition.invoke()
                 override fun run() {
-                    val pressed = condition.asBoolean
+                    val pressed = condition.invoke()
                     if (!pressedLast && pressed) {
                         command.schedule()
                     }
                     pressedLast = pressed
                 }
-            })
+            }
+        )
         return this
     }
 
@@ -49,17 +47,18 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
      * @return this trigger, so calls can be chained
      */
     fun onFalse(command: KCommand): KTrigger {
-        loop.bind(
+        KCommandScheduler.registerPeriodic(
             object: Runnable {
-                private var pressedLast = condition.asBoolean
+                private var pressedLast = condition.invoke()
                 override fun run() {
-                    val pressed = condition.asBoolean
+                    val pressed = condition.invoke()
                     if (pressedLast && !pressed) {
                         command.schedule()
                     }
                     pressedLast = pressed
                 }
-            })
+            }
+        )
         return this
     }
 
@@ -75,11 +74,11 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
      * @return this trigger, so calls can be chained
      */
     fun whileTrue(command: KCommand): KTrigger {
-        loop.bind(
+        KCommandScheduler.registerPeriodic(
             object: Runnable {
-                private var pressedLast = condition.asBoolean
+                private var pressedLast = condition.invoke()
                 override fun run() {
-                    val pressed = condition.asBoolean
+                    val pressed = condition.invoke()
                     if (!pressedLast && pressed) {
                         command.schedule()
                     } else if (pressedLast && !pressed) {
@@ -87,7 +86,8 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
                     }
                     pressedLast = pressed
                 }
-            })
+            }
+        )
         return this
     }
 
@@ -103,11 +103,11 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
      * @return this trigger, so calls can be chained
      */
     fun whileFalse(command: KCommand): KTrigger {
-        loop.bind(
+        KCommandScheduler.registerPeriodic(
             object: Runnable {
-                private var pressedLast = condition.asBoolean
+                private var pressedLast = condition.invoke()
                 override fun run() {
-                    val pressed = condition.asBoolean
+                    val pressed = condition.invoke()
                     if (pressedLast && !pressed) {
                         command.schedule()
                     } else if (!pressedLast && pressed) {
@@ -115,7 +115,8 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
                     }
                     pressedLast = pressed
                 }
-            })
+            }
+        )
         return this
     }
 
@@ -126,11 +127,11 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
      * @return this trigger, so calls can be chained
      */
     fun toggleOnTrue(command: KCommand): KTrigger {
-        loop.bind(
+        KCommandScheduler.registerPeriodic(
             object: Runnable {
-                private var pressedLast = condition.asBoolean
+                private var pressedLast = condition.invoke()
                 override fun run() {
-                    val pressed = condition.asBoolean
+                    val pressed = condition.invoke()
                     if (!pressedLast && pressed) {
                         if (command.isScheduled) {
                             command.cancel()
@@ -140,7 +141,8 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
                     }
                     pressedLast = pressed
                 }
-            })
+            }
+        )
         return this
     }
 
@@ -151,11 +153,11 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
      * @return this trigger, so calls can be chained
      */
     fun toggleOnFalse(command: KCommand): KTrigger {
-        loop.bind(
+        KCommandScheduler.registerPeriodic(
             object: Runnable {
-                private var pressedLast = condition.asBoolean
+                private var pressedLast = condition.invoke()
                 override fun run() {
-                    val pressed = condition.asBoolean
+                    val pressed = condition.invoke()
                     if (pressedLast && !pressed) {
                         if (command.isScheduled) {
                             command.cancel()
@@ -165,12 +167,9 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
                     }
                     pressedLast = pressed
                 }
-            })
+            }
+        )
         return this
-    }
-
-    override fun getAsBoolean(): Boolean {
-        return condition.asBoolean
     }
 
     /**
@@ -180,7 +179,7 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
      * @return A trigger which is active when both component triggers are active.
      */
     fun and(trigger: BooleanSupplier): KTrigger {
-        return KTrigger { condition.asBoolean && trigger.asBoolean }
+        return KTrigger { condition.invoke() && trigger.asBoolean }
     }
 
     /**
@@ -190,7 +189,7 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
      * @return A trigger which is active when either component trigger is active.
      */
     fun or(trigger: BooleanSupplier): KTrigger {
-        return KTrigger { condition.asBoolean || trigger.asBoolean }
+        return KTrigger { condition.invoke() || trigger.asBoolean }
     }
 
     /**
@@ -200,22 +199,8 @@ class KTrigger(private val loop: EventLoop = KCommandScheduler.buttonLoop, priva
      * @return the negated trigger
      */
     fun negate(): KTrigger {
-        return KTrigger { !condition.asBoolean }
+        return KTrigger { !condition.invoke() }
     }
 
-    /**
-     * Creates a new debounced trigger from this trigger - it will become active when this trigger has
-     * been active for longer than the specified period.
-     *
-     * @param seconds The debounce period.
-     * @param type The debounce type.
-     * @return The debounced trigger.
-     */
-    fun debounce(seconds: Double, type: DebounceType = DebounceType.kRising): KTrigger {
-        return KTrigger(
-            condition = object: BooleanSupplier {
-                val debouncer = Debouncer(seconds, type)
-                override fun getAsBoolean() = debouncer.calculate(condition.asBoolean)
-            })
-    }
+    override fun invoke() = condition.invoke()
 }

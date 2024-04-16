@@ -1,25 +1,17 @@
 package org.team9432.lib.commandbased.commands
 
 import org.team9432.lib.commandbased.KCommand
-import org.team9432.lib.commandbased.KCommandGroup
-import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.KSubsystem
 
 /** A command composition that runs a list of commands in sequence. */
-class SequentialCommand(vararg commands: KCommand): KCommandGroup() {
+class SequentialCommand(vararg commands: KCommand): KCommand() {
     private val commands = mutableListOf<KCommand>()
     private var currentCommandIndex = -1
 
     override val requirements = mutableSetOf<KSubsystem>()
 
-
     init {
-        addCommands(*commands)
-    }
-
-    override fun addCommands(vararg commands: KCommand) {
-        check(currentCommandIndex == -1) { "Commands cannot be added to a composition while it's running" }
-        KCommandScheduler.registerComposedCommands(*commands)
+        commands.forEach { it.isInGroup = true }
         for (command in commands) {
             this.commands.add(command)
             requirements.addAll(command.requirements)

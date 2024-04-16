@@ -1,25 +1,18 @@
 package org.team9432.lib.commandbased.commands
 
 import org.team9432.lib.commandbased.KCommand
-import org.team9432.lib.commandbased.KCommandGroup
-import org.team9432.lib.commandbased.KCommandScheduler
 import org.team9432.lib.commandbased.KSubsystem
 import java.util.*
 
 /** A command composition that runs a set of commands in parallel, ending when the last command ends. */
-class ParallelCommand(vararg commands: KCommand): KCommandGroup() {
+class ParallelCommand(vararg commands: KCommand): KCommand() {
     // maps commands in this composition to whether they are still running
     private val commands: MutableMap<KCommand, Boolean> = HashMap()
 
     override val requirements = mutableSetOf<KSubsystem>()
 
     init {
-        addCommands(*commands)
-    }
-
-    override fun addCommands(vararg commands: KCommand) {
-        check(!this.commands.containsValue(true)) { "Commands cannot be added to a composition while it's running" }
-        KCommandScheduler.registerComposedCommands(*commands)
+        commands.forEach { it.isInGroup = true }
 
         for (command in commands) {
             require(Collections.disjoint(command.requirements, requirements)) { "Multiple commands in a parallel composition cannot require the same subsystems" }
