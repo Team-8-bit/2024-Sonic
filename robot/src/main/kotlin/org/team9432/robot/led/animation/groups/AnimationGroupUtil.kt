@@ -1,5 +1,5 @@
 package org.team9432.robot.led.animation.groups
 
-import org.team9432.robot.led.animation.Animation
+import org.team9432.robot.led.animation.AnimationJob
 
-fun Animation.repeat() = RepeatAnimationGroup(this)
+fun AnimationJob.repeat() = RepeatAnimation(this)

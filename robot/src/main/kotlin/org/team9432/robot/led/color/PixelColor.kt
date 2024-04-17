@@ -12,8 +12,6 @@ import org.team9432.robot.led.color.predefined.Black
  * Temporary Color - A color that overrides the fade and prolonged colors until the pixel is reverted
  */
 data class PixelColor(
-    val pixelIndex: Int,
-    var actualColor: Color = Color.Black,
     var currentlyFadingColor: Color? = null,
     var prolongedColor: Color = Color.Black,
     var temporaryColor: Color? = null,
@@ -25,5 +23,23 @@ data class PixelColor(
      */
     fun revertColor() {
         temporaryColor = null
+    }
+
+    var actualColor: Color = Color.Black
+        private set
+
+    fun resetToDefault() {
+        currentlyFadingColor = null
+        prolongedColor = Color.Black
+        temporaryColor = null
+        fadeSpeed = 25
+    }
+
+    fun updateActualColor(color: Color) {
+        actualColor = color
+    }
+
+    companion object {
+        val default = PixelColor()
     }
 }

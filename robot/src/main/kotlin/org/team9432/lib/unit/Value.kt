@@ -12,6 +12,9 @@ value class Value<T: UnitType>(val value: Double) {
     operator fun div(other: Value<T>): Value<T> = Value(value / other.value)
     operator fun div(num: Double): Value<T> = Value(value / num)
     operator fun div(num: Number): Value<T> = Value(value / num.toDouble())
+    operator fun rem(other: Value<T>): Value<T> = Value(value % other.value)
+    operator fun rem(num: Double): Value<T> = Value(value % num)
+    operator fun rem(num: Number): Value<T> = Value(value % num.toDouble())
 
     operator fun unaryMinus(): Value<T> = Value(-value)
 

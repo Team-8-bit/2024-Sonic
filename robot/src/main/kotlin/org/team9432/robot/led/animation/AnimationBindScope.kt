@@ -1,11 +1,11 @@
 package org.team9432.robot.led.animation
 
-data class AnimationWrapper(val animation: Animation, var lastEnabled: Boolean)
+data class AnimationContianer(val animation: AnimationJob, var lastEnabled: Boolean = false)
 
 class AnimationBindScope(private val enabled: () -> Boolean) {
     private val onTrue: MutableList<AnimationBindScope> = mutableListOf()
     private val onFalse: MutableList<AnimationBindScope> = mutableListOf()
-    private val animations: MutableList<AnimationWrapper> = mutableListOf()
+    private val animations: MutableList<AnimationContianer> = mutableListOf()
 
     fun update() {
         val enabled = enabled.invoke()
@@ -42,8 +42,8 @@ class AnimationBindScope(private val enabled: () -> Boolean) {
         return scope
     }
 
-    fun addAnimation(animation: Animation) {
-        this.animations.add(AnimationWrapper(animation, false))
+    fun addAnimation(animation: AnimationJob) {
+        this.animations.add(AnimationContianer(animation))
     }
 
     private fun setAnimations(isActive: Boolean) {
@@ -52,8 +52,8 @@ class AnimationBindScope(private val enabled: () -> Boolean) {
             if (animation.lastEnabled == isActive) continue
             animation.lastEnabled = isActive
 
-            if (isActive) AnimationManager.addAnimation(animation.animation)
-            else AnimationManager.stopAnimation(animation.animation)
+            if (isActive) animation.animation.start()
+            else animation.animation.cancel()
         }
     }
 

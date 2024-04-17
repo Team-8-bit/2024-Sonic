@@ -1,36 +1,27 @@
 package org.team9432.robot.led.animation.simple
 
-import edu.wpi.first.wpilibj.Timer
+import kotlinx.coroutines.CoroutineScope
+import org.team9432.lib.delay
+import org.team9432.lib.unit.Time
 import org.team9432.robot.led.animation.Animation
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.strip.Section
-import kotlin.math.abs
-
-fun Section.FadeToColor(color: Color, duration: Double, fadeSpeed: Int) = FadeToColor(this, color, duration, fadeSpeed)
 
 class FadeToColor(
-    private val section: Section,
     private val color: Color,
-    private val duration: Double,
+    private val duration: Time,
     private val fadeSpeed: Int,
-): Animation {
-    private var initialTimestamp = Timer.getFPGATimestamp()
+    override val section: Section,
+): Animation() {
+    override val colors = section.getColorSet()
 
-    override fun start() {
-        section.forEachColor {
+    override suspend fun runAnimation(scope: CoroutineScope) {
+        colors.applyToEach {
             prolongedColor = color
             currentlyFadingColor = actualColor
             fadeSpeed = this@FadeToColor.fadeSpeed
         }
 
-        initialTimestamp = Timer.getFPGATimestamp()
-    }
-
-    override fun update(): Boolean {
-        return abs(initialTimestamp - Timer.getFPGATimestamp()) > duration
-    }
-
-    override fun end() {
-        section.forEachColor { prolongedColor = color }
+        delay(duration)
     }
 }

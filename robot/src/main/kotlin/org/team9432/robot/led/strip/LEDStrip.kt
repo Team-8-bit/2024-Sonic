@@ -10,18 +10,26 @@ import org.team9432.robot.led.color.blendWith
 object LEDStrip {
     private const val LENGTH = 118
 
+    val emptyColorList = List<PixelColor?>(LENGTH) { null }
+
     private val controller = AddressableLED(Devices.LED_PORT)
     private val buffer = AddressableLEDBuffer(LENGTH)
-
-    val colorMap = List(LENGTH) { PixelColor(it) }
 
     init {
         controller.setLength(LENGTH)
         controller.start()
     }
 
-    fun updateColorsFromMap() {
-        colorMap.forEach { color ->
+    var currentColors = List(LENGTH) { PixelColor() }
+        private set
+
+    fun updateColorsFromMap(colors: List<PixelColor?>) {
+        val nonNullColors = colors.map { it ?: PixelColor.default }
+        currentColors = nonNullColors
+
+        for ((index, nullableColor) in nonNullColors.withIndex()) {
+            val color = nullableColor
+
             // Freeze immutable copies of each color state
             val temporaryColor = color.temporaryColor
             val currentlyFadingColor = color.currentlyFadingColor
@@ -33,8 +41,8 @@ object LEDStrip {
                 else -> prolongedColor
             }
 
-            setLED(color.pixelIndex, nextColor)
-            color.actualColor = nextColor
+            setLED(index, nextColor)
+            color.updateActualColor(nextColor)
 
             if (currentlyFadingColor != null) {
                 color.currentlyFadingColor = currentlyFadingColor.blendWith(prolongedColor, color.fadeSpeed)

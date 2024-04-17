@@ -1,63 +1,49 @@
 package org.team9432.robot.led.animation.simple
 
-import edu.wpi.first.wpilibj.Timer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.yield
+import org.team9432.lib.delay
+import org.team9432.lib.unit.Time
 import org.team9432.robot.led.animation.Animation
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.getAsRgb
-import org.team9432.robot.led.color.predefined.Black
 import org.team9432.robot.led.strip.Section
 
-fun Section.Breath(colors: List<Color>, colorDuration: Double, fadeSpeed: Int = 10) = Breath(this, colors, colorDuration, fadeSpeed)
-
 class Breath(
-    private val section: Section,
     colors: List<Color>,
-    private val colorDuration: Double,
+    private val colorDuration: Time,
     private val fadeSpeed: Int = 10,
-): Animation {
+    override val section: Section,
+): Animation() {
+    override val colors = section.getColorSet()
 
     init {
         assert(colors.isNotEmpty())
     }
 
-    private val colors = colors.map { it.getAsRgb() }
-    private var currentColor = 1
+    private val animationColors = colors.map { it.getAsRgb() }
 
-    private val colorCount = colors.size
-
-    override fun start() {
-        section.forEachColor {
-            prolongedColor = colors.first()
+    override suspend fun runAnimation(scope: CoroutineScope) {
+        colors.applyToEach {
+            prolongedColor = animationColors.first()
             currentlyFadingColor = null
             fadeSpeed = this@Breath.fadeSpeed
         }
 
-        currentColor = 1
-        lastColorSet = 1
-    }
+        while (scope.isActive) {
+            var currentColor = 0
 
-    private var lastColorSet = 0
+            while (currentColor < this.animationColors.size) {
+                colors.applyToEach {
+                    prolongedColor = animationColors[currentColor]
+                    currentlyFadingColor = actualColor
+                }
+                currentColor++
+                delay(colorDuration)
 
-    override fun update(): Boolean {
-        val timestamp = Timer.getFPGATimestamp()
-
-        val currentTimeInCycle = timestamp % (colorDuration * colorCount)
-
-        val currentColor = (currentTimeInCycle / colorDuration).toInt()
-        println(currentColor)
-
-        if (currentColor != lastColorSet) {
-            section.forEachColor {
-                prolongedColor = colors[currentColor]
-                currentlyFadingColor = actualColor
+                yield()
             }
-            lastColorSet = currentColor
         }
-
-        return false
-    }
-
-    override fun end() {
-        section.forEachColor { prolongedColor = Color.Black }
     }
 }

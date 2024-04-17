@@ -2,11 +2,7 @@ package org.team9432
 
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.team9432.lib.advantagekit.Logger
-import org.team9432.lib.commandbased.KCommandScheduler
-import org.team9432.lib.coroutineshims.RobotBase
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AutoBuilder
 import org.team9432.robot.auto.AutoChooser
@@ -54,8 +50,5 @@ object Init {
         AutoChooser.initChooser()
 
         RobotState.findNote()?.let { RobotState.notePosition = it }
-
-
-        AnimationManager.stopAsync()
     }
 }

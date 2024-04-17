@@ -1,51 +1,40 @@
 package org.team9432.robot.led.animation.simple
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.isActive
+import org.team9432.lib.delay
+import org.team9432.lib.unit.Time
+import org.team9432.lib.unit.milliseconds
 import org.team9432.robot.led.animation.Animation
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.strip.Section
 
-fun Section.SlideToColor(color: Color, leadColor: Color = color, runReversed: Boolean = false) = SlideToColor(this, color, leadColor, runReversed)
-
 class SlideToColor(
-    private val section: Section,
     private val color: Color,
+    override val section: Section,
     private val leadColor: Color = color,
     private val runReversed: Boolean = false,
-): Animation {
-    private val indicesInOrder = section.indices.toList()
+    private val timePerStep: Time = 20.milliseconds,
+): Animation() {
+    override val colors = section.getColorSet()
 
-    private var runningIndices = indicesInOrder.toMutableSet()
+    override suspend fun runAnimation(scope: CoroutineScope) {
+        colors.setCurrentlyFadingColor(null)
 
-    override fun start() {
-        section.forEachColor { currentlyFadingColor = null }
+        var runningIndices = colors.indices.toList().let { if (runReversed) it.reversed() else it }
 
-        if (runReversed) {
-            runningIndices = indicesInOrder.reversed().toMutableSet()
-        } else {
-            runningIndices = indicesInOrder.toMutableSet()
-        }
-    }
+        while (runningIndices.isNotEmpty() && scope.isActive) {
+            val currentPosition = runningIndices.first()
+            runningIndices = runningIndices.drop(1)
 
-    override fun update(): Boolean {
-        val currentPosition = runningIndices.first()
-        runningIndices = runningIndices.drop(1).toMutableSet()
+            colors.revert()
 
-        section.revertStrip()
+            colors.applyTo(currentPosition) {
+                prolongedColor = color
+                temporaryColor = leadColor
+            }
 
-        section.applyToIndex(currentPosition) {
-            prolongedColor = color
-            temporaryColor = leadColor
-        }
-
-        return runningIndices.isEmpty()
-    }
-
-    override fun end() {
-        section.forEachColor {
-            prolongedColor = color
-            actualColor = color
-            currentlyFadingColor = null
-            temporaryColor = null
+            delay(timePerStep)
         }
     }
 }

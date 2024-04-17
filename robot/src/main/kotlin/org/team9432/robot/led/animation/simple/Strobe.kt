@@ -1,36 +1,33 @@
 package org.team9432.robot.led.animation.simple
 
-import edu.wpi.first.wpilibj.Timer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.yield
+import org.team9432.lib.delay
+import org.team9432.lib.unit.Time
 import org.team9432.robot.led.animation.Animation
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.predefined.Black
 import org.team9432.robot.led.strip.Section
 
-fun Section.Strobe(color: Color, duration: Double) = Strobe(this, color, duration)
-
 class Strobe(
-    private val section: Section,
     private val color: Color,
-    private val duration: Double,
-): Animation {
-    override fun start() {
-        section.forEachColor {
-            prolongedColor = Color.Black
-            currentlyFadingColor = null
-            temporaryColor = null
+    private val duration: Time,
+    override val section: Section,
+): Animation() {
+    override val colors = section.getColorSet()
+
+    override suspend fun runAnimation(scope: CoroutineScope) {
+        colors.resetToDefault()
+
+        var isOn = false
+        while (true) {
+            delay(duration / 2)
+            isOn = !isOn
+
+            val color = if (isOn) color else Color.Black
+            colors.setProlongedColor(color)
+
+            yield()
         }
-    }
-
-    override fun update(): Boolean {
-        val on = ((Timer.getFPGATimestamp() % duration) / duration) > 0.5
-        val colorToSet = if (on) color else Color.Black
-
-        section.forEachColor { prolongedColor = colorToSet }
-
-        return false
-    }
-
-    override fun end() {
-        section.forEachColor { prolongedColor = Color.Black }
     }
 }
