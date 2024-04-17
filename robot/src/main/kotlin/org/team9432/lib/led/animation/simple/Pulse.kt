@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.yield
 import org.team9432.lib.delay
+import org.team9432.lib.led.animation.Animation
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.strip.Section
 import org.team9432.lib.unit.Time
@@ -15,7 +16,7 @@ class Pulse(
     private val cooldown: Time = 1.seconds,
     override val section: Section,
     private val runReversed: Boolean = false,
-): org.team9432.lib.led.animation.Animation() {
+): Animation() {
     override val colors = section.getColorSet()
 
     override suspend fun runAnimation(scope: CoroutineScope) {

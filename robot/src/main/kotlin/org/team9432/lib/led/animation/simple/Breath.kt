@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.yield
 import org.team9432.lib.delay
+import org.team9432.lib.led.animation.Animation
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.getAsRgb
 import org.team9432.lib.led.strip.Section
@@ -14,7 +15,7 @@ class Breath(
     private val colorDuration: Time,
     private val fadeSpeed: Int = 10,
     override val section: Section,
-): org.team9432.lib.led.animation.Animation() {
+): Animation() {
     override val colors = section.getColorSet()
 
     init {

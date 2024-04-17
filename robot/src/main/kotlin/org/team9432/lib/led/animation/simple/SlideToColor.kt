@@ -3,6 +3,7 @@ package org.team9432.lib.led.animation.simple
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
 import org.team9432.lib.delay
+import org.team9432.lib.led.animation.Animation
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.strip.Section
 import org.team9432.lib.unit.Time
@@ -14,7 +15,7 @@ class SlideToColor(
     private val leadColor: Color = color,
     private val runReversed: Boolean = false,
     private val timePerStep: Time = 20.milliseconds,
-): org.team9432.lib.led.animation.Animation() {
+): Animation() {
     override val colors = section.getColorSet()
 
     override suspend fun runAnimation(scope: CoroutineScope) {

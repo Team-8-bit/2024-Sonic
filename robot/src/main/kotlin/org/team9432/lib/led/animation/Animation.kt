@@ -4,11 +4,10 @@ import kotlinx.coroutines.CoroutineScope
 import org.team9432.lib.led.color.PixelColor
 import org.team9432.lib.led.strip.LEDStrip
 import org.team9432.lib.led.strip.Section
-import org.team9432.lib.led.strip.StripColorSet
 
 abstract class Animation {
     abstract val section: Section
-    abstract val colors: StripColorSet
+    abstract val colors: Section.ColorSet
     abstract suspend fun runAnimation(scope: CoroutineScope)
 
     fun getIdealBaseStripColors(): MutableList<PixelColor?> {
