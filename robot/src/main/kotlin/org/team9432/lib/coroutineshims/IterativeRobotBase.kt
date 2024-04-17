@@ -9,7 +9,8 @@ import edu.wpi.first.wpilibj.Watchdog
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import org.littletonrobotics.junction.LOOP_PERIOD_SECS
+import org.littletonrobotics.junction.LOOP_PERIOD
+import org.team9432.lib.unit.inSeconds
 
 /**
  * IterativeRobotBase implements a specific type of robot program framework, extending the RobotBase class.
@@ -27,7 +28,7 @@ abstract class IterativeRobotBase protected constructor(): RobotBase() {
     }
 
     private val dsStatus = DSControlWord()
-    private val watchdog = Watchdog(LOOP_PERIOD_SECS) { DriverStation.reportWarning("Loop time of " + LOOP_PERIOD_SECS + "s overrun\n", false) }
+    private val watchdog = Watchdog(LOOP_PERIOD.inSeconds) { DriverStation.reportWarning("Loop time of " + LOOP_PERIOD.inSeconds + "s overrun\n", false) }
 
     private var lastMode: Mode? = null
 

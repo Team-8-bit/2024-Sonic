@@ -8,7 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.DriverStation
-import org.littletonrobotics.junction.LOOP_PERIOD_SECS
+import org.littletonrobotics.junction.LOOP_PERIOD
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.SysIdUtil
 import org.team9432.lib.commandbased.KSubsystem
@@ -47,7 +47,7 @@ object Drivetrain: KSubsystem() {
     }
 
     fun setSpeeds(speeds: ChassisSpeeds) {
-        val discreteSpeeds = SwerveUtil.correctForDynamics(speeds, LOOP_PERIOD_SECS)
+        val discreteSpeeds = SwerveUtil.correctForDynamics(speeds, LOOP_PERIOD.inSeconds)
         val targetStates = kinematics.toSwerveModuleStates(discreteSpeeds)
         SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, 5.0)
 

@@ -5,8 +5,10 @@ package org.littletonrobotics.junction
 import edu.wpi.first.hal.DriverStationJNI
 import kotlinx.coroutines.delay
 import org.team9432.lib.coroutineshims.IterativeRobotBase
+import org.team9432.lib.unit.inSeconds
+import org.team9432.lib.unit.milliseconds
 
-const val LOOP_PERIOD_SECS = 0.02
+val LOOP_PERIOD = 20.milliseconds
 
 /*
  * LoggedRobot implements the IterativeRobotBase robot program framework. This is a modified version that uses coroutines to run the periodic loop.
@@ -14,7 +16,7 @@ const val LOOP_PERIOD_SECS = 0.02
  * The LoggedRobot class is intended to be subclassed by a user creating a robot program, and will call all required AdvantageKit periodic methods.
  */
 open class LoggedCoroutineRobot: IterativeRobotBase() {
-    private val periodUs = (LOOP_PERIOD_SECS * 1000000).toLong()
+    private val periodUs = (LOOP_PERIOD.inSeconds * 1000000).toLong()
     private var nextCycleUs: Long = 0
     private var useTiming = true
 

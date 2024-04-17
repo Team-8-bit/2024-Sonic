@@ -31,5 +31,5 @@ inline val Time.inSeconds: Double
 inline val Time.inMilliseconds: Double
     get() = value / SECONDS_PER_MILLISECOND
 
-inline val Time.inNanoseconds: Double
-    get() = value / SECONDS_PER_NANOSECOND
+inline val Time.inNanoseconds: Long
+    get() = (value / SECONDS_PER_NANOSECOND).toLong()

@@ -6,8 +6,9 @@ import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotState
 import edu.wpi.first.wpilibj.Watchdog
-import org.littletonrobotics.junction.LOOP_PERIOD_SECS
+import org.littletonrobotics.junction.LOOP_PERIOD
 import org.team9432.lib.commandbased.KCommand.InterruptionBehavior
+import org.team9432.lib.unit.inSeconds
 import java.util.*
 
 object KCommandScheduler {
@@ -29,7 +30,7 @@ object KCommandScheduler {
     private var inRunLoop = false
     private val afterLoopQueue = mutableListOf<() -> Unit>()
 
-    private val watchdog = Watchdog(LOOP_PERIOD_SECS) {}
+    private val watchdog = Watchdog(LOOP_PERIOD.inSeconds) {}
 
     init {
         HAL.report(tResourceType.kResourceType_Command, tInstances.kCommand2_Scheduler)
