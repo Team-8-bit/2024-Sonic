@@ -5,7 +5,7 @@ import org.team9432.lib.led.color.PixelColor
 
 class Section(private val baseStripPixels: Set<Int>) {
     operator fun plus(other: Section) = Section(this.baseStripPixels + other.baseStripPixels)
-    fun getColorSet() = ColorSet(baseStripPixels.map { LEDStrip.currentColors[it] to it })
+    fun getColorSet() = ColorSet(baseStripPixels.map { LEDStrip.getInstance().currentColors[it] to it })
 
     // Color and base strip index
     class ColorSet internal constructor(private val map: List<Pair<PixelColor, Int>>) {

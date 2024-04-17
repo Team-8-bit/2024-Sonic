@@ -5,6 +5,8 @@ import edu.wpi.first.hal.HAL
 import org.team9432.lib.advantagekit.Logger
 import org.team9432.lib.led.animation.AnimationManager
 import org.team9432.lib.led.strip.LEDStrip
+import org.team9432.lib.led.strip.RioLedStrip
+import org.team9432.robot.Devices
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AutoBuilder
 import org.team9432.robot.auto.AutoChooser
@@ -22,10 +24,11 @@ import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
 object Init {
     fun initRobot() {
+        LEDStrip.create(RioLedStrip(118, Devices.LED_PORT))
+
         AnimationManager.startAsync()
 
         LEDState
-        LEDStrip
 
         Logger.initAdvantagekit("2024 - Sonic")
 

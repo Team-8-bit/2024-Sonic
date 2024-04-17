@@ -11,7 +11,7 @@ abstract class Animation {
     abstract suspend fun runAnimation(scope: CoroutineScope)
 
     fun getIdealBaseStripColors(): MutableList<PixelColor?> {
-        val list = LEDStrip.emptyColorList.toMutableList()
+        val list = LEDStrip.getInstance().emptyColorList.toMutableList()
         colors.getBasePixelList().forEach { (color, baseIndex) ->
             list[baseIndex] = color
         }

@@ -1,35 +1,18 @@
 package org.team9432.lib.led.strip
 
-import edu.wpi.first.wpilibj.AddressableLED
-import edu.wpi.first.wpilibj.AddressableLEDBuffer
-import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.PixelColor
 import org.team9432.lib.led.color.blendWith
-import org.team9432.robot.Devices
 
-object LEDStrip {
-    private const val LENGTH = 118
+class LEDStrip private constructor(val strip: NativeLedStrip) {
+    val emptyColorList = List<PixelColor?>(strip.ledCount) { null }
 
-    val emptyColorList = List<PixelColor?>(LENGTH) { null }
-
-    private val controller = AddressableLED(Devices.LED_PORT)
-    private val buffer = AddressableLEDBuffer(LENGTH)
-
-    init {
-        controller.setLength(LENGTH)
-        controller.start()
-    }
-
-    var currentColors = List(LENGTH) { PixelColor() }
+    var currentColors = List(strip.ledCount) { PixelColor() }
         private set
 
-    fun updateColorsFromMap(colors: List<PixelColor?>) {
-        val nonNullColors = colors.map { it ?: PixelColor.default }
-        currentColors = nonNullColors
+    fun updateColorsFromMap(colors: List<PixelColor>) {
+        currentColors = colors
 
-        for ((index, nullableColor) in nonNullColors.withIndex()) {
-            val color = nullableColor
-
+        for ((index, color) in colors.withIndex()) {
             // Freeze immutable copies of each color state
             val temporaryColor = color.temporaryColor
             val currentlyFadingColor = color.currentlyFadingColor
@@ -41,7 +24,7 @@ object LEDStrip {
                 else -> prolongedColor
             }
 
-            setLED(index, nextColor)
+            strip.setLed(index, nextColor)
             color.updateActualColor(nextColor)
 
             if (currentlyFadingColor != null) {
@@ -51,11 +34,14 @@ object LEDStrip {
         }
     }
 
-    private fun setLED(index: Int, color: Color) {
-        buffer.setLED(index, color.toWPILibColor())
-    }
+    fun render() = strip.render()
 
-    fun render() {
-        controller.setData(buffer)
+    companion object {
+        private var instance: LEDStrip? = null
+        fun getInstance() = instance ?: throw Exception("Please call the create() method before attempting to access the instance!")
+        fun create(strip: NativeLedStrip) {
+            if (instance == null) instance = LEDStrip(strip)
+            else throw Exception("The led strip was already initialized!")
+        }
     }
 }

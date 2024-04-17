@@ -24,7 +24,7 @@ import org.team9432.robot.led.Sections
 object AnimationManager {
     private var periodicEnabled = false
 
-    private val baseStripPixels = LEDStrip.currentColors.toMutableList()
+    private val baseStripPixels = LEDStrip.getInstance().currentColors.toMutableList()
 
     val animationScope = RobotBase.coroutineScope
 
@@ -46,8 +46,8 @@ object AnimationManager {
             }
         }
 
-        LEDStrip.updateColorsFromMap(baseStripPixels)
-        LEDStrip.render()
+        LEDStrip.getInstance().updateColorsFromMap(baseStripPixels)
+        LEDStrip.getInstance().render()
     }
 
     private val loadingAnimation = ParallelAnimation(
