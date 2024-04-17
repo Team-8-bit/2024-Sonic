@@ -51,10 +51,10 @@ object AnimationManager {
     }
 
     private val loadingAnimation = ParallelAnimation(
-        RunningAnimation(BounceToColor(Color.White, Sections.SPEAKER_LEFT, runReversed = true)),
-        RunningAnimation(BounceToColor(Color.White, Sections.SPEAKER_RIGHT)),
-        RunningAnimation(BounceToColor(Color.White, Sections.AMP_LEFT, runReversed = true)),
-        RunningAnimation(BounceToColor(Color.White, Sections.AMP_RIGHT))
+        BounceToColor(Color.White, Sections.SPEAKER_LEFT, runReversed = true),
+        BounceToColor(Color.White, Sections.SPEAKER_RIGHT),
+        BounceToColor(Color.White, Sections.AMP_LEFT, runReversed = true),
+        BounceToColor(Color.White, Sections.AMP_RIGHT)
     )
 
     fun startAsync() {

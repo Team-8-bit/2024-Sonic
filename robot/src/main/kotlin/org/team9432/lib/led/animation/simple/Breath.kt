@@ -14,10 +14,8 @@ class Breath(
     colors: List<Color>,
     private val colorDuration: Time,
     private val fadeSpeed: Int = 10,
-    override val section: Section,
-): Animation() {
-    override val colors = section.getColorSet()
-
+    val section: Section,
+): Animation(section) {
     init {
         assert(colors.isNotEmpty())
     }

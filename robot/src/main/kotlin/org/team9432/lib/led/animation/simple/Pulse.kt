@@ -14,11 +14,9 @@ class Pulse(
     private val color: Color,
     private val duration: Time = 1.seconds,
     private val cooldown: Time = 1.seconds,
-    override val section: Section,
+    val section: Section,
     private val runReversed: Boolean = false,
-): Animation() {
-    override val colors = section.getColorSet()
-
+): Animation(section) {
     override suspend fun runAnimation(scope: CoroutineScope) {
         colors.resetToDefault()
 

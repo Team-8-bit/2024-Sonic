@@ -11,10 +11,8 @@ class FadeToColor(
     private val color: Color,
     private val duration: Time,
     private val fadeSpeed: Int,
-    override val section: Section,
-): Animation() {
-    override val colors = section.getColorSet()
-
+    val section: Section,
+): Animation(section) {
     override suspend fun runAnimation(scope: CoroutineScope) {
         colors.applyToEach {
             prolongedColor = color

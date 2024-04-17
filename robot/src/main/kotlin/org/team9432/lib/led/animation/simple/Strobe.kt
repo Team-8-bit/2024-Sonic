@@ -12,10 +12,8 @@ import org.team9432.lib.unit.Time
 class Strobe(
     private val color: Color,
     private val duration: Time,
-    override val section: Section,
-): Animation() {
-    override val colors = section.getColorSet()
-
+    val section: Section,
+): Animation(section) {
     override suspend fun runAnimation(scope: CoroutineScope) {
         colors.resetToDefault()
 

@@ -6,7 +6,6 @@ import org.team9432.Robot
 import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.led.animation.AnimationBindScope
-import org.team9432.lib.led.animation.RunningAnimation
 import org.team9432.lib.led.animation.groups.ParallelAnimation
 import org.team9432.lib.led.animation.groups.SequentialAnimation
 import org.team9432.lib.led.animation.groups.WaitAnimation
@@ -26,34 +25,34 @@ object LEDState: KPeriodic() {
         If({ testEmergencySwitchActive }) {
             addAnimation(
                 ParallelAnimation(
-                    RunningAnimation(Solid(Color.Green, Sections.SPEAKER_LEFT)),
-                    RunningAnimation(Solid(Color.Red, Sections.SPEAKER_RIGHT)),
-                    RunningAnimation(Solid(Color.Blue, Sections.AMP_LEFT)),
-                    RunningAnimation(Solid(Color.Yellow, Sections.AMP_RIGHT)),
-                    RunningAnimation(Solid(Color.White, Sections.TOP_BAR)),
+                    Solid(Color.Green, Sections.SPEAKER_LEFT),
+                    Solid(Color.Red, Sections.SPEAKER_RIGHT),
+                    Solid(Color.Blue, Sections.AMP_LEFT),
+                    Solid(Color.Yellow, Sections.AMP_RIGHT),
+                    Solid(Color.White, Sections.TOP_BAR),
                 )
             )
         }.ElseIf({ driverstationDisabled && !Robot.hasBeenEnabled }) {
             addAnimation(
                 SequentialAnimation(
                     ParallelAnimation(
-                        RunningAnimation(Solid(Color.White, Sections.SPEAKER_LEFT)),
-                        RunningAnimation(Solid(Color.White, Sections.SPEAKER_RIGHT)),
-                        RunningAnimation(Solid(Color.White, Sections.AMP_LEFT)),
-                        RunningAnimation(Solid(Color.White, Sections.AMP_RIGHT))
+                        Solid(Color.White, Sections.SPEAKER_LEFT),
+                        Solid(Color.White, Sections.SPEAKER_RIGHT),
+                        Solid(Color.White, Sections.AMP_LEFT),
+                        Solid(Color.White, Sections.AMP_RIGHT)
                     ),
                     ParallelAnimation(
-                        RunningAnimation(FadeToColor(Color.Black, 3.seconds, 5, Sections.SPEAKER_LEFT)),
-                        RunningAnimation(FadeToColor(Color.Black, 3.seconds, 5, Sections.SPEAKER_RIGHT)),
-                        RunningAnimation(FadeToColor(Color.Black, 3.seconds, 5, Sections.AMP_LEFT)),
-                        RunningAnimation(FadeToColor(Color.Black, 3.seconds, 5, Sections.AMP_RIGHT)),
+                        FadeToColor(Color.Black, 3.seconds, 5, Sections.SPEAKER_LEFT),
+                        FadeToColor(Color.Black, 3.seconds, 5, Sections.SPEAKER_RIGHT),
+                        FadeToColor(Color.Black, 3.seconds, 5, Sections.AMP_LEFT),
+                        FadeToColor(Color.Black, 3.seconds, 5, Sections.AMP_RIGHT),
                     ),
                     WaitAnimation(1.seconds),
                     ParallelAnimation(
-                        RunningAnimation(Pulse(Color.White, 2.seconds, 1.seconds, Sections.SPEAKER_LEFT)),
-                        RunningAnimation(Pulse(Color.White, 2.seconds, 1.seconds, Sections.SPEAKER_RIGHT)),
-                        RunningAnimation(Pulse(Color.White, 2.seconds, 1.seconds, Sections.AMP_LEFT)),
-                        RunningAnimation(Pulse(Color.White, 2.seconds, 1.seconds, Sections.AMP_RIGHT)),
+                        Pulse(Color.White, 2.seconds, 1.seconds, Sections.SPEAKER_LEFT),
+                        Pulse(Color.White, 2.seconds, 1.seconds, Sections.SPEAKER_RIGHT),
+                        Pulse(Color.White, 2.seconds, 1.seconds, Sections.AMP_LEFT),
+                        Pulse(Color.White, 2.seconds, 1.seconds, Sections.AMP_RIGHT),
                     )
                 )
             )
@@ -62,26 +61,26 @@ object LEDState: KPeriodic() {
                 If({ alliance == null }) {
                     addAnimation(ColorShift(Sections.TOP_BAR, listOf(Color.Black, Color.White)))
                 }.ElseIf({ alliance == Alliance.Red }) {
-                    addAnimation(RunningAnimation(Solid(Color.Red, Sections.TOP_BAR)))
+                    addAnimation(Solid(Color.Red, Sections.TOP_BAR))
                 }.ElseIf({ alliance == Alliance.Blue }) {
-                    addAnimation(RunningAnimation(Solid(Color.Blue, Sections.TOP_BAR)))
+                    addAnimation(Solid(Color.Blue, Sections.TOP_BAR))
                 }
             }.Else {
                 If({ limelightNotConnected }) {
                     addAnimation(
                         SequentialAnimation(
-                            RunningAnimation(Solid(Color.Black, Sections.TOP_BAR)),
+                            Solid(Color.Black, Sections.TOP_BAR),
                             SequentialAnimation(
-                                RunningAnimation(BounceToColor(Color.Red, Sections.TOP_BAR)),
-                                RunningAnimation(BounceToColor(Color.Black, Sections.TOP_BAR))
+                                BounceToColor(Color.Red, Sections.TOP_BAR),
+                                BounceToColor(Color.Black, Sections.TOP_BAR)
                             ).repeat()
                         )
                     )
                 }.Else {
                     addAnimation(
                         SequentialAnimation(
-                            RunningAnimation(Solid(Color.Black, Sections.TOP_BAR)),
-                            RunningAnimation(SlideToColor(Color.Green, Sections.TOP_BAR))
+                            Solid(Color.Black, Sections.TOP_BAR),
+                            SlideToColor(Color.Green, Sections.TOP_BAR)
                         )
                     )
                 }
@@ -89,30 +88,30 @@ object LEDState: KPeriodic() {
         }.ElseIf({ driverstationDisabled && Robot.hasBeenEnabled }) {
             addAnimation(
                 ParallelAnimation(
-                    RunningAnimation(Pulse(Color.White, 2.seconds, 1.seconds, Sections.SPEAKER_LEFT)),
-                    RunningAnimation(Pulse(Color.White, 2.seconds, 1.seconds, Sections.SPEAKER_RIGHT)),
-                    RunningAnimation(Pulse(Color.White, 2.seconds, 1.seconds, Sections.AMP_LEFT)),
-                    RunningAnimation(Pulse(Color.White, 2.seconds, 1.seconds, Sections.AMP_RIGHT)),
+                    Pulse(Color.White, 2.seconds, 1.seconds, Sections.SPEAKER_LEFT),
+                    Pulse(Color.White, 2.seconds, 1.seconds, Sections.SPEAKER_RIGHT),
+                    Pulse(Color.White, 2.seconds, 1.seconds, Sections.AMP_LEFT),
+                    Pulse(Color.White, 2.seconds, 1.seconds, Sections.AMP_RIGHT),
                 )
             )
         }.ElseIf({ driverstationAutonomous }) {
-            addAnimation(RunningAnimation(Strobe(Color.Red, 0.25.seconds, Sections.ALL)))
+            addAnimation(Strobe(Color.Red, 0.25.seconds, Sections.ALL))
         }.ElseIf({ driverstationTeleop }) {
             addAnimation(ColorShift(Sections.ALL, Color.RainbowColors, 0.20.seconds, 5, priority = 100))
 
             // I think this will keep rainbowing even if there are other animations running
             If({ inSpeakerRange }) {
-                addAnimation(RunningAnimation(Strobe(Color.White, 0.5.seconds, Sections.SPEAKER)))
+                addAnimation(Strobe(Color.White, 0.5.seconds, Sections.SPEAKER))
             }.ElseIf({ noteIndicatorLights }) {
-                addAnimation(RunningAnimation(Strobe(Color.Purple, 0.25.seconds, Sections.ALL)))
+                addAnimation(Strobe(Color.Purple, 0.25.seconds, Sections.ALL))
             }.Else {
                 If({ speakerShooterReady }) {
-                    addAnimation(RunningAnimation(Strobe(Color.Lime, 0.25.seconds, Sections.SPEAKER)))
+                    addAnimation(Strobe(Color.Lime, 0.25.seconds, Sections.SPEAKER))
                 }.ElseIf({ ampShooterReady }) {
                     If({ alliance == Alliance.Red }) {
-                        addAnimation(RunningAnimation(Strobe(Color.Lime, 0.25.seconds, Sections.LEFT)))
+                        addAnimation(Strobe(Color.Lime, 0.25.seconds, Sections.LEFT))
                     }.Else {
-                        addAnimation(RunningAnimation(Strobe(Color.Lime, 0.25.seconds, Sections.RIGHT)))
+                        addAnimation(Strobe(Color.Lime, 0.25.seconds, Sections.RIGHT))
                     }
                 }
             }

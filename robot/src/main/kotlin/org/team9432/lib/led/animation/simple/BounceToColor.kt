@@ -12,13 +12,11 @@ import org.team9432.lib.unit.milliseconds
 
 class BounceToColor(
     private val color: Color,
-    override val section: Section,
+    val section: Section,
     private val leadColor: Color = color,
     private val runReversed: Boolean = false,
     private val timePerStep: Time = 20.milliseconds,
-): Animation() {
-    override val colors = section.getColorSet()
-
+): Animation(section) {
     override suspend fun runAnimation(scope: CoroutineScope) {
         colors.setCurrentlyFadingColor(null)
 
