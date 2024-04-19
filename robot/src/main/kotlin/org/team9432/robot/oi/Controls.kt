@@ -9,6 +9,8 @@ import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.RobotState
+import org.team9432.robot.commands.CheckIfNoteIsOuttaked
+import org.team9432.robot.commands.amp.OuttakeAmp
 import org.team9432.robot.commands.amp.ScoreAmp
 import org.team9432.robot.commands.bazooka.ApplyBazooka
 import org.team9432.robot.commands.drivetrain.teleop.TeleAngleDrive
@@ -16,6 +18,7 @@ import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
 import org.team9432.robot.commands.hopper.MoveToPosition
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.FeedNote
+import org.team9432.robot.commands.shooter.OuttakeShooter
 import org.team9432.robot.commands.shooter.Subwoofer
 import org.team9432.robot.commands.shooter.TeleShootMultiple
 import org.team9432.robot.commands.stopCommand
@@ -52,8 +55,11 @@ object Controls {
 
         // Outtake Intake
         driver.x.whileTrue(Superstructure.Commands.runOuttake())
+
         upPov.whileTrue(Superstructure.Commands.runOuttakeAmpFix())
         downPov.whileTrue(Superstructure.Commands.runOuttakeSpeakerFix())
+        leftPov.whileTrue(OuttakeAmp()).onFalse(CheckIfNoteIsOuttaked())
+        rightPov.whileTrue(OuttakeShooter()).onFalse(CheckIfNoteIsOuttaked())
 
         // Shoot Speaker
         driver.rightTrigger
