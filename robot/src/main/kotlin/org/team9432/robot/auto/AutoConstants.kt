@@ -43,8 +43,8 @@ object AutoConstants {
     val centerNoteFiveIntakePose = Pose2d(FieldConstants.centerNoteFivePose.plus(Translation2d(-centerNoteOffsetDistance, 0.0.meters)), 180.0.degrees)
 
     val centerStage = Pose2d(FieldConstants.midLine - 3.5.meters, FieldConstants.centerLine, Rotation2d(Math.PI))
-    val centerCenterShot = Translation2d(2.0, 3.5).angleAtSpeaker()
-    val centerCenterDriveOne = Pose2d(3.5, 3.0, Rotation2d(Math.PI))
+    val centerCenterShot = Translation2d(2.0, 4.0).angleAtSpeaker()
+    val centerCenterDriveOne = Pose2d(3.5, 2.5, Rotation2d(Math.PI))
 
     fun getIntakePosition(note: AllianceNote) = when (note) {
         AllianceNote.AMP -> listOf(ampNoteAngledIntakePose, ampNoteIntakePose).minBy { RobotPosition.distanceTo(it.translation) }

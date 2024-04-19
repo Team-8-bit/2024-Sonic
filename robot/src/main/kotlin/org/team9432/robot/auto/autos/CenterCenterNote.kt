@@ -15,7 +15,7 @@ import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Shooter
 
 fun CenterCenterNote() = SequentialCommand(
-    InitAuto(Rotation2d()),
+    InitAuto(Rotation2d.fromDegrees(-90.0)),
 
     ParallelDeadlineCommand(
         Hood.Commands.aimAtSpeaker(),
@@ -27,11 +27,11 @@ fun CenterCenterNote() = SequentialCommand(
                 DriveToPosition(AutoConstants.centerCenterShot) // Shooting position
             ),
             AutoShoot(),
-            DriveToPosition(AutoConstants.centerCenterDriveOne),
+            DriveToPosition(AutoConstants.centerCenterDriveOne, positionalTolerance = 0.5),
             DriveToPosition(AutoConstants.centerStage),
             IntakeNote(AutoConstants.centerNoteThreeIntakePose, timeout = 0.5),
             FinishIntakingThen(DriveToPosition(AutoConstants.centerStage)),
-            DriveToPosition(AutoConstants.centerCenterDriveOne),
+            DriveToPosition(AutoConstants.centerCenterDriveOne, positionalTolerance = 0.5),
             DriveToPosition(AutoConstants.centerCenterShot),
             AutoShoot()
         )
