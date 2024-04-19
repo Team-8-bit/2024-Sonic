@@ -28,10 +28,8 @@ fun TrapNote() = ParallelDeadlineCommand(
             )
         ),
         InstantCommand { LEDState.speakerShooterReady = true },
-        ParallelDeadlineCommand(
-            // Keep aiming while waiting for confirmation
-            deadline = WaitUntilCommand { Controls.readyToShootSpeaker }, // Wait for driver confirmation
-        ),
+        // Wait for confirmation
+        WaitUntilCommand { Controls.readyToShootSpeaker },
         InstantCommand { LEDState.speakerShooterReady = false },
 
         ParallelDeadlineCommand(

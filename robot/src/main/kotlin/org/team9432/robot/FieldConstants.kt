@@ -7,6 +7,7 @@ import org.team9432.lib.unit.feet
 import org.team9432.lib.unit.inMeters
 import org.team9432.lib.unit.inches
 import org.team9432.lib.unit.meters
+import org.team9432.lib.util.PoseUtil.applyFlip
 
 // All positions are on the blue side of the field and are flipped as needed
 object FieldConstants {
@@ -41,7 +42,7 @@ object FieldConstants {
     val feedAimPose = Translation2d(0.0.meters, width)
 
     val trapTags = listOf(14, 15, 16) // Blue
-    val trapAimPoses = trapTags.map { aprilTagFieldLayout.getTagPose(it).get().transformBy(Transform3d(1.0, 0.0, 0.0, Rotation3d(0.0, 0.0, Math.toRadians(180.0)))).toFloor() }
+    val trapAimPoses = trapTags.map { tag -> aprilTagFieldLayout.getTagPose(tag).get().transformBy(Transform3d(1.0, 0.0, 0.0, Rotation3d(0.0, 0.0, Math.toRadians(180.0)))).toPose2d() }
 
-    fun Pose3d.toFloor() = Pose2d(x, y, Rotation2d(rotation.y))
+    fun getTrapAimPosition() = trapAimPoses.map { it.applyFlip() }.minBy { RobotPosition.distanceTo(it.translation) }
 }
