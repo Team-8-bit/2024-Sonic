@@ -9,6 +9,8 @@ import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.RobotState
+import org.team9432.robot.commands.CheckIfNoteIsOuttaked
+import org.team9432.robot.commands.amp.OuttakeAmp
 import org.team9432.robot.commands.amp.ScoreAmp
 import org.team9432.robot.commands.bazooka.ApplyBazooka
 import org.team9432.robot.commands.drivetrain.teleop.TeleAngleDrive
@@ -16,6 +18,7 @@ import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
 import org.team9432.robot.commands.hopper.MoveToPosition
 import org.team9432.robot.commands.intake.TeleIntake
 import org.team9432.robot.commands.shooter.FeedNote
+import org.team9432.robot.commands.shooter.OuttakeShooter
 import org.team9432.robot.commands.shooter.Subwoofer
 import org.team9432.robot.commands.shooter.TeleShootMultiple
 import org.team9432.robot.commands.stopCommand
@@ -26,6 +29,7 @@ import org.team9432.robot.subsystems.Superstructure
 
 object Controls {
     private val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
+    private val operator = KXboxController(1, squareJoysticks = true, joystickDeadband = 0.075)
     private val test = KXboxController(1, squareJoysticks = true, joystickDeadband = 0.075)
 
     private val slowButton = driver.rightBumper
@@ -42,6 +46,8 @@ object Controls {
 
     val upPov = KTrigger { driver.getPOV(0) == 0 }
     val downPov = KTrigger { driver.getPOV(0) == 180 }
+    val leftPov = KTrigger { driver.getPOV(0) == 270 }
+    val rightPov = KTrigger { driver.getPOV(0) == 90 }
 
     fun setButtons() {
         // Run Intake
@@ -52,8 +58,11 @@ object Controls {
 
         // Outtake Intake
         driver.x.whileTrue(Superstructure.Commands.runOuttake())
+
         upPov.whileTrue(Superstructure.Commands.runOuttakeAmpFix())
         downPov.whileTrue(Superstructure.Commands.runOuttakeSpeakerFix())
+        leftPov.whileTrue(OuttakeAmp()).onFalse(CheckIfNoteIsOuttaked())
+        rightPov.whileTrue(OuttakeShooter()).onFalse(CheckIfNoteIsOuttaked())
 
         // Shoot Speaker
         driver.rightTrigger
@@ -67,7 +76,8 @@ object Controls {
         driver.a
             .whileTrue(
                 ParallelDeadlineCommand(
-                    TeleTargetDrive { FieldConstants.feedAimPose },
+                    TeleAngleDrive { FieldConstants.feedPose.rotation },
+//                    TeleTargetDrive { FieldConstants.feedAimPose },
                     deadline = FeedNote()
                 )
             )
@@ -87,19 +97,23 @@ object Controls {
         driver.leftTrigger
             .onTrue(
                 SuppliedCommand {
-                    if (DSSwitches.teleAutoAimDisabled) ScoreAmp(4.5)
+                    if (DSSwitches.teleAutoAimDisabled) ScoreAmp(4.75)
                     else ParallelDeadlineCommand(
                         TeleAngleDrive { Rotation2d.fromDegrees(-90.0) },
-                        deadline = ScoreAmp(4.5)
+                        deadline = ScoreAmp(4.75)
                     )
                 }
-
             )
 
         test.a.onTrue(MoveToPosition(RobotState.NotePosition.AMP_INTAKE))
         test.b.onTrue(MoveToPosition(RobotState.NotePosition.SPEAKER_INTAKE))
         test.x.onTrue(MoveToPosition(RobotState.NotePosition.AMP_HOPPER))
         test.y.onTrue(MoveToPosition(RobotState.NotePosition.SPEAKER_HOPPER))
+
+//        operator.rightBumper.whileTrue(Climbers.Commands.runRightVoltage(12.0))
+//        operator.leftBumper.whileTrue(Climbers.Commands.runLeftVoltage(12.0))
+//        operator.rightTrigger.whileTrue(Climbers.Commands.runRightVoltage(-12.0))
+//        operator.leftTrigger.whileTrue(Climbers.Commands.runLeftVoltage(-12.0))
     }
 
     fun setDriverRumble(magnitude: Double) {

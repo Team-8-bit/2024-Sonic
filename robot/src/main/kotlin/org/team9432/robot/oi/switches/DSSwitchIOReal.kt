@@ -11,9 +11,12 @@ object DSSwitchIOReal: DSSwitchIO {
         inputs.disableHood = hid.getRawButton(7)
         inputs.disableDrivetrain = hid.getRawButton(8)
         inputs.useAmpForSpeaker = hid.getRawButton(1)
-        inputs.testSwitch = hid.getRawButton(2)
+        inputs.testSwitch = hid.getRawButton(6)
         inputs.primaryMechanismAmp = hid.getRawButton(4)
 
         inputs.teleAutoAimDisabled = hid.getRawButton(3)
+
+        inputs.feedFast = hid.getRawButton(2)
+        inputs.feedSlow = hid.getRawButton(5)
     }
 }

@@ -9,6 +9,7 @@ import org.team9432.lib.wrappers.neo.LoggedNeo
 import org.team9432.robot.Devices
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
+import org.team9432.robot.commands.checkIfNoteIsOuttaked
 import kotlin.math.abs
 
 object Superstructure: KSubsystem() {
@@ -126,7 +127,7 @@ object Superstructure: KSubsystem() {
             initialize = { outtake(8.0, 8.0) },
             end = {
                 Superstructure.stop()
-                if (!RobotState.noteInAnyIntake()) RobotState.notePosition = RobotState.NotePosition.NONE
+                checkIfNoteIsOuttaked()
             }
         )
 
@@ -135,7 +136,7 @@ object Superstructure: KSubsystem() {
             initialize = { setIntakeVoltage(8.0, -8.0) },
             end = {
                 Superstructure.stop()
-                if (!RobotState.noteInAnyIntake()) RobotState.notePosition = RobotState.NotePosition.NONE
+                checkIfNoteIsOuttaked()
             }
         )
 
@@ -144,7 +145,7 @@ object Superstructure: KSubsystem() {
             initialize = { setIntakeVoltage(-8.0, 8.0) },
             end = {
                 Superstructure.stop()
-                if (!RobotState.noteInAnyIntake()) RobotState.notePosition = RobotState.NotePosition.NONE
+                checkIfNoteIsOuttaked()
             }
         )
 

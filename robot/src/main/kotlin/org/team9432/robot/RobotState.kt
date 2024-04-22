@@ -1,5 +1,6 @@
 package org.team9432.robot
 
+import edu.wpi.first.math.geometry.Pose2d
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.robot.auto.AutoConstants
@@ -14,11 +15,15 @@ object RobotState: KPeriodic() {
         Logger.recordOutput("RobotState/SpeakerDistance", RobotPosition.distanceToSpeaker())
         Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerAimPose)
         Logger.recordOutput("RobotState/TrapAimPoints", *FieldConstants.trapAimPoses.toTypedArray())
+        Logger.recordOutput("RobotState/TrapAimPose", FieldConstants.getTrapAimPosition())
 
         Logger.recordOutput("AutoPoses/CenterCenter/Centerstage", AutoConstants.centerStage)
         Logger.recordOutput("AutoPoses/CenterCenter/ShotPose", AutoConstants.centerCenterShot)
         Logger.recordOutput("AutoPoses/CenterCenter/Intake", AutoConstants.centerNoteThreeIntakePose)
         Logger.recordOutput("AutoPoses/CenterCenter/Drive", AutoConstants.centerCenterDriveOne)
+
+        Logger.recordOutput("FeedThing", FieldConstants.feedPose)
+        Logger.recordOutput("FeedThingAngle", FieldConstants.feedPose.rotation.degrees)
     }
 
     fun noteInAmpSideIntakeBeambreak() = !Beambreaks.getIntakeAmpSide()
