@@ -12,6 +12,9 @@ interface DSSwitchIO {
         var testSwitch = false
         var teleAutoAimDisabled = false
         var primaryMechanismAmp = false
+
+        var feedSlow = false
+        var feedFast = false
     }
 
     fun updateInputs(inputs: DSSwitchIOInputs) {}
