@@ -16,7 +16,7 @@ class FadeToColor(
     override suspend fun runAnimation() {
         colors.applyToEachIndexedBaseStrip { index ->
             prolongedColor = color
-            currentlyFadingColor = LEDStrip.getInstance().currentColors[index]
+            currentlyFadingColor = LEDStrip.getColor(index)
             fadeSpeed = this@FadeToColor.fadeSpeed
         }
 

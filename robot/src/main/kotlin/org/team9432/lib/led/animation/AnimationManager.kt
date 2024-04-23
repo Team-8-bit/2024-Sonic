@@ -38,17 +38,17 @@ object AnimationManager {
         animationAddQueue.forEach { runningAnimations.add(it) }
         animationAddQueue.clear()
 
-        val newList = List(LEDStrip.getInstance().strip.ledCount) { index ->
+        val newList = List(LEDStrip.ledCount) { index ->
             val animationsUsingThisIndex = runningAnimations.filter { it.section.containsBaseStripPixel(index) }
 
             if (animationsUsingThisIndex.isNotEmpty()) {
                 animationsUsingThisIndex.maxBy { it.priority ?: 0 }.colors[index]
             } else { // If there aren't any animations using this pixel, just use the color it's already set to
-                LEDStrip.getInstance().currentPixelColors[index]
+                LEDStrip.getPixelColor(index)
             }
         }
 
-        LEDStrip.getInstance().updateColorsFromMap(newList)
-        LEDStrip.getInstance().render()
+        LEDStrip.updateColorsFromMap(newList)
+        LEDStrip.render()
     }
 }

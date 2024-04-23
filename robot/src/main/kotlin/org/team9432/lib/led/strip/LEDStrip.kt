@@ -5,14 +5,16 @@ import org.team9432.lib.led.color.PixelColor
 import org.team9432.lib.led.color.blendWith
 import org.team9432.lib.led.color.predefined.Black
 
-class LEDStrip private constructor(val strip: NativeLedStrip) {
-    var currentPixelColors = List(strip.ledCount) { PixelColor() }
-        private set
-    var currentColors = MutableList(strip.ledCount) { Color.Black }
-        private set
+object LEDStrip {
+    private val strip: NativeLedStrip
+        get(): NativeLedStrip = stripInstance ?: throw Exception("Please call the create() method before attempting to access the instance!")
+
+    val ledCount get() = strip.ledCount
+
+    private val currentPixelColors = mutableMapOf<Int, PixelColor>()
+    private val currentColors = mutableMapOf<Int, Color>()
 
     fun updateColorsFromMap(colors: List<PixelColor>) {
-        currentPixelColors = colors
 
         for ((index, color) in colors.withIndex()) {
             // Freeze immutable copies of each color state
@@ -27,23 +29,25 @@ class LEDStrip private constructor(val strip: NativeLedStrip) {
             }
 
             strip.setLed(index, nextColor)
-            currentColors[index] = nextColor
 
             if (currentlyFadingColor != null) {
                 color.currentlyFadingColor = currentlyFadingColor.blendWith(prolongedColor, color.fadeSpeed)
                 if (currentlyFadingColor == prolongedColor) color.currentlyFadingColor = null
             }
+
+            currentColors[index] = nextColor
+            currentPixelColors[index] = color
         }
     }
 
+    fun getColor(index: Int) = currentColors[index] ?: Color.Black
+    fun getPixelColor(index: Int) = currentPixelColors[index] ?: PixelColor()
+
     fun render() = strip.render()
 
-    companion object {
-        private var instance: LEDStrip? = null
-        fun getInstance() = instance ?: throw Exception("Please call the create() method before attempting to access the instance!")
-        fun create(strip: NativeLedStrip) {
-            if (instance == null) instance = LEDStrip(strip)
-            else throw Exception("The led strip was already initialized!")
-        }
+    private var stripInstance: NativeLedStrip? = null
+    fun create(strip: NativeLedStrip) {
+        if (stripInstance == null) stripInstance = strip
+        else throw Exception("The led strip was already initialized!")
     }
 }

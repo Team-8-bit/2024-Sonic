@@ -33,7 +33,7 @@ class Breath(
             while (currentColor < this.animationColors.size) {
                 colors.applyToEachIndexedBaseStrip { index ->
                     prolongedColor = animationColors[currentColor]
-                    currentlyFadingColor = LEDStrip.getInstance().currentColors[index]
+                    currentlyFadingColor = LEDStrip.getColor(index)
                 }
                 currentColor++
                 delay(colorDuration)
