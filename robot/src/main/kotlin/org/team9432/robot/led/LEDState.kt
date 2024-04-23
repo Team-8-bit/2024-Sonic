@@ -6,15 +6,15 @@ import org.team9432.Robot
 import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.led.animation.AnimationBindScope
-import org.team9432.lib.led.animation.groups.parallelAnimation
-import org.team9432.lib.led.animation.groups.repeat
-import org.team9432.lib.led.animation.groups.sequentialAnimation
-import org.team9432.lib.led.animation.groups.waitAnimation
 import org.team9432.lib.led.animation.layered.colorShift
 import org.team9432.lib.led.animation.simple.*
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.predefined.*
 import org.team9432.lib.led.strip.Section
+import org.team9432.lib.tasks.repeat
+import org.team9432.lib.tasks.runParallel
+import org.team9432.lib.tasks.runSequential
+import org.team9432.lib.tasks.wait
 import org.team9432.lib.unit.seconds
 import org.team9432.robot.RobotPosition
 import org.team9432.robot.RobotState
@@ -61,7 +61,7 @@ object LEDState: KPeriodic() {
     private val animationScope = AnimationBindScope.build {
         If({ testEmergencySwitchActive }) {
             addAnimation(
-                parallelAnimation(
+                runParallel(
                     speakerLeft.solid(Color.Green),
                     speakerRight.solid(Color.Red),
                     ampLeft.solid(Color.Blue),
@@ -71,21 +71,21 @@ object LEDState: KPeriodic() {
             )
         }.ElseIf({ driverstationDisabled && !Robot.hasBeenEnabled }) {
             addAnimation(
-                sequentialAnimation(
-                    parallelAnimation(
+                runSequential(
+                    runParallel(
                         speakerLeft.solid(Color.White, 0.5.seconds),
                         speakerRight.solid(Color.White, 0.5.seconds),
                         ampLeft.solid(Color.White, 0.5.seconds),
                         ampRight.solid(Color.White, 0.5.seconds),
                     ),
-                    parallelAnimation(
+                    runParallel(
                         speakerLeft.fadeToColor(Color.Black, 2.seconds, 5),
                         speakerRight.fadeToColor(Color.Black, 2.seconds, 5),
                         ampLeft.fadeToColor(Color.Black, 2.seconds, 5),
                         ampRight.fadeToColor(Color.Black, 2.seconds, 5),
                     ),
-                    waitAnimation(0.5.seconds),
-                    parallelAnimation(
+                    wait(0.5.seconds),
+                    runParallel(
                         speakerLeft.pulse(Color.White, 2.seconds),
                         speakerRight.pulse(Color.White, 2.seconds),
                         ampLeft.pulse(Color.White, 2.seconds),
@@ -105,14 +105,14 @@ object LEDState: KPeriodic() {
             }.Else {
                 If({ limelightNotConnected }) {
                     addAnimation(
-                        sequentialAnimation(
+                        runSequential(
                             topBar.bounceToColor(Color.Red),
                             topBar.bounceToColor(Color.Black)
                         ).repeat()
                     )
                 }.Else {
                     addAnimation(
-                        sequentialAnimation(
+                        runSequential(
                             topBar.solid(Color.Black),
                             topBar.slideToColor(Color.Green)
                         )
@@ -121,7 +121,7 @@ object LEDState: KPeriodic() {
             }
         }.ElseIf({ driverstationDisabled && Robot.hasBeenEnabled }) {
             addAnimation(
-                parallelAnimation(
+                runParallel(
                     speakerLeft.pulse(Color.White, 2.seconds),
                     speakerRight.pulse(Color.White, 2.seconds),
                     ampLeft.pulse(Color.White, 2.seconds),

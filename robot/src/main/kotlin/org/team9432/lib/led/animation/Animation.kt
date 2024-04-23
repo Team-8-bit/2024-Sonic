@@ -1,12 +1,13 @@
 package org.team9432.lib.led.animation
 
 import org.team9432.lib.led.strip.Section
+import org.team9432.lib.tasks.SuspendRunnable
 
-abstract class Animation(val section: Section, var priority: Int? = null, var name: String = ""): AnimationJob {
+abstract class Animation(val section: Section, var priority: Int? = null, var name: String = ""): SuspendRunnable {
     val colors = section.getColorSet()
     abstract suspend fun runAnimation()
 
-    override suspend fun run() {
+    override suspend fun invoke() {
         try {
             AnimationManager.animationAddQueue.add(this@Animation)
             runAnimation()
