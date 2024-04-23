@@ -26,8 +26,7 @@ object Init {
     fun initRobot() {
         LEDStrip.create(RioLedStrip(118, Devices.LED_PORT))
 
-        AnimationManager.startAsync()
-
+        AnimationManager
         LEDState
 
         Logger.initAdvantagekit("2024 - Sonic")

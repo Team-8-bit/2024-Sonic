@@ -1,7 +1,5 @@
 package org.team9432.lib.led.animation.simple
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.yield
 import org.team9432.lib.delay
 import org.team9432.lib.led.animation.Animation
 import org.team9432.lib.led.color.Color
@@ -12,9 +10,9 @@ import org.team9432.lib.unit.Time
 class Strobe(
     private val color: Color,
     private val duration: Time,
-    val section: Section,
+    section: Section,
 ): Animation(section) {
-    override suspend fun runAnimation(scope: CoroutineScope) {
+    override suspend fun runAnimation() {
         colors.resetToDefault()
 
         var isOn = false
@@ -24,8 +22,6 @@ class Strobe(
 
             val color = if (isOn) color else Color.Black
             colors.setProlongedColor(color)
-
-            yield()
         }
     }
 }

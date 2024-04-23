@@ -8,6 +8,6 @@ import org.team9432.lib.led.strip.Section
 import org.team9432.lib.unit.Time
 import org.team9432.lib.unit.seconds
 
-fun ColorShift(section: Section, colors: List<Color>, colorDuration: Time = 3.seconds, speed: Int = 5, priority: Int = 99) = SequentialAnimation(
-    *colors.map { FadeToColor(it, colorDuration, speed, section).withPriority(priority) }.toTypedArray()
+fun ColorShift(section: Section, colors: List<Color>, colorDuration: Time = 3.seconds, speed: Int = 5, priority: Int? = null, name: String = "") = SequentialAnimation(
+    *colors.map { FadeToColor(it, colorDuration, speed, section).withPriority(priority).withName(name) }.toTypedArray()
 ).repeat()

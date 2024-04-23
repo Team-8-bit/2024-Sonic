@@ -1,16 +1,18 @@
 package org.team9432.lib.led.strip
 
+import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.PixelColor
 import org.team9432.lib.led.color.blendWith
+import org.team9432.lib.led.color.predefined.Black
 
 class LEDStrip private constructor(val strip: NativeLedStrip) {
-    val emptyColorList = List<PixelColor?>(strip.ledCount) { null }
-
-    var currentColors = List(strip.ledCount) { PixelColor() }
+    var currentPixelColors = List(strip.ledCount) { PixelColor() }
+        private set
+    var currentColors = MutableList(strip.ledCount) { Color.Black }
         private set
 
     fun updateColorsFromMap(colors: List<PixelColor>) {
-        currentColors = colors
+        currentPixelColors = colors
 
         for ((index, color) in colors.withIndex()) {
             // Freeze immutable copies of each color state
@@ -25,7 +27,7 @@ class LEDStrip private constructor(val strip: NativeLedStrip) {
             }
 
             strip.setLed(index, nextColor)
-            color.updateActualColor(nextColor)
+            currentColors[index] = nextColor
 
             if (currentlyFadingColor != null) {
                 color.currentlyFadingColor = currentlyFadingColor.blendWith(prolongedColor, color.fadeSpeed)

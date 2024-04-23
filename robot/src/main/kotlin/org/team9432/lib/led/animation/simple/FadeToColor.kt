@@ -1,9 +1,9 @@
 package org.team9432.lib.led.animation.simple
 
-import kotlinx.coroutines.CoroutineScope
 import org.team9432.lib.delay
 import org.team9432.lib.led.animation.Animation
 import org.team9432.lib.led.color.Color
+import org.team9432.lib.led.strip.LEDStrip
 import org.team9432.lib.led.strip.Section
 import org.team9432.lib.unit.Time
 
@@ -11,12 +11,12 @@ class FadeToColor(
     private val color: Color,
     private val duration: Time,
     private val fadeSpeed: Int,
-    val section: Section,
+    section: Section,
 ): Animation(section) {
-    override suspend fun runAnimation(scope: CoroutineScope) {
-        colors.applyToEach {
+    override suspend fun runAnimation() {
+        colors.applyToEachIndexedBaseStrip { index ->
             prolongedColor = color
-            currentlyFadingColor = actualColor
+            currentlyFadingColor = LEDStrip.getInstance().currentColors[index]
             fadeSpeed = this@FadeToColor.fadeSpeed
         }
 

@@ -25,21 +25,10 @@ data class PixelColor(
         temporaryColor = null
     }
 
-    var actualColor: Color = Color.Black
-        private set
-
     fun resetToDefault() {
         currentlyFadingColor = null
         prolongedColor = Color.Black
         temporaryColor = null
         fadeSpeed = 25
-    }
-
-    fun updateActualColor(color: Color) {
-        actualColor = color
-    }
-
-    companion object {
-        val default = PixelColor()
     }
 }

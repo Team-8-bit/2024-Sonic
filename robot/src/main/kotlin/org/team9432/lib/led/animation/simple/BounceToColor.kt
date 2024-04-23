@@ -1,8 +1,5 @@
 package org.team9432.lib.led.animation.simple
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.yield
 import org.team9432.lib.delay
 import org.team9432.lib.led.animation.Animation
 import org.team9432.lib.led.color.Color
@@ -12,12 +9,12 @@ import org.team9432.lib.unit.milliseconds
 
 class BounceToColor(
     private val color: Color,
-    val section: Section,
+    section: Section,
     private val leadColor: Color = color,
     private val runReversed: Boolean = false,
     private val timePerStep: Time = 20.milliseconds,
 ): Animation(section) {
-    override suspend fun runAnimation(scope: CoroutineScope) {
+    override suspend fun runAnimation() {
         colors.setCurrentlyFadingColor(null)
 
         var maxPosition = colors.indices.last
@@ -33,7 +30,7 @@ class BounceToColor(
             currentDirection = 1
         }
 
-        while (scope.isActive) {
+        while (true) {
             currentPosition += currentDirection
 
             if (currentPosition == maxPosition && currentDirection == 1) {
@@ -54,8 +51,6 @@ class BounceToColor(
             colors.setTemporaryColor(currentPosition, leadColor)
 
             delay(timePerStep)
-
-            yield()
         }
 
         colors.applyToEach {

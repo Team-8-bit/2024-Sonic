@@ -1,6 +1,9 @@
 package org.team9432.lib.led.animation
 
-data class AnimationContianer(val animation: AnimationJob, var lastEnabled: Boolean = false)
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+
+data class AnimationContianer(val animation: AnimationJob, var lastEnabled: Boolean = false, var job: Job? = null)
 
 class AnimationBindScope(private val enabled: () -> Boolean) {
     private val onTrue: MutableList<AnimationBindScope> = mutableListOf()
@@ -52,8 +55,14 @@ class AnimationBindScope(private val enabled: () -> Boolean) {
             if (animation.lastEnabled == isActive) continue
             animation.lastEnabled = isActive
 
-            if (isActive) animation.animation.start()
-            else animation.animation.cancel()
+            if (isActive) {
+                animation.job = AnimationManager.animationScope.launch {
+                    animation.animation.run()
+                }
+            } else {
+                animation.job?.cancel()
+                animation.job = null
+            }
         }
     }
 
