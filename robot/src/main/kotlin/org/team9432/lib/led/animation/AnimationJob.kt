@@ -1,5 +1,5 @@
 package org.team9432.lib.led.animation
 
-interface AnimationJob {
+fun interface AnimationJob {
     suspend fun run()
 }

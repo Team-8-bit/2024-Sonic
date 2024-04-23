@@ -6,11 +6,11 @@ import org.team9432.Robot
 import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.led.animation.AnimationBindScope
-import org.team9432.lib.led.animation.groups.ParallelAnimation
-import org.team9432.lib.led.animation.groups.SequentialAnimation
-import org.team9432.lib.led.animation.groups.WaitAnimation
+import org.team9432.lib.led.animation.groups.parallelAnimation
 import org.team9432.lib.led.animation.groups.repeat
-import org.team9432.lib.led.animation.layered.ColorShift
+import org.team9432.lib.led.animation.groups.sequentialAnimation
+import org.team9432.lib.led.animation.groups.waitAnimation
+import org.team9432.lib.led.animation.layered.colorShift
 import org.team9432.lib.led.animation.simple.*
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.predefined.*
@@ -61,7 +61,7 @@ object LEDState: KPeriodic() {
     private val animationScope = AnimationBindScope.build {
         If({ testEmergencySwitchActive }) {
             addAnimation(
-                ParallelAnimation(
+                parallelAnimation(
                     speakerLeft.solid(Color.Green),
                     speakerRight.solid(Color.Red),
                     ampLeft.solid(Color.Blue),
@@ -71,21 +71,21 @@ object LEDState: KPeriodic() {
             )
         }.ElseIf({ driverstationDisabled && !Robot.hasBeenEnabled }) {
             addAnimation(
-                SequentialAnimation(
-                    ParallelAnimation(
+                sequentialAnimation(
+                    parallelAnimation(
                         speakerLeft.solid(Color.White, 0.5.seconds),
                         speakerRight.solid(Color.White, 0.5.seconds),
                         ampLeft.solid(Color.White, 0.5.seconds),
                         ampRight.solid(Color.White, 0.5.seconds),
                     ),
-                    ParallelAnimation(
+                    parallelAnimation(
                         speakerLeft.fadeToColor(Color.Black, 2.seconds, 5),
                         speakerRight.fadeToColor(Color.Black, 2.seconds, 5),
                         ampLeft.fadeToColor(Color.Black, 2.seconds, 5),
                         ampRight.fadeToColor(Color.Black, 2.seconds, 5),
                     ),
-                    WaitAnimation(0.5.seconds),
-                    ParallelAnimation(
+                    waitAnimation(0.5.seconds),
+                    parallelAnimation(
                         speakerLeft.pulse(Color.White, 2.seconds),
                         speakerRight.pulse(Color.White, 2.seconds),
                         ampLeft.pulse(Color.White, 2.seconds),
@@ -96,7 +96,7 @@ object LEDState: KPeriodic() {
 
             If({ hasVisionTarget }) {
                 If({ alliance == null }) {
-                    addAnimation(ColorShift(topBar, listOf(Color.Black, Color.White)))
+                    addAnimation(topBar.colorShift(listOf(Color.Black, Color.White)))
                 }.ElseIf({ alliance == Alliance.Red }) {
                     addAnimation(topBar.solid(Color.Red))
                 }.ElseIf({ alliance == Alliance.Blue }) {
@@ -105,14 +105,14 @@ object LEDState: KPeriodic() {
             }.Else {
                 If({ limelightNotConnected }) {
                     addAnimation(
-                        SequentialAnimation(
+                        sequentialAnimation(
                             topBar.bounceToColor(Color.Red),
                             topBar.bounceToColor(Color.Black)
                         ).repeat()
                     )
                 }.Else {
                     addAnimation(
-                        SequentialAnimation(
+                        sequentialAnimation(
                             topBar.solid(Color.Black),
                             topBar.slideToColor(Color.Green)
                         )
@@ -121,7 +121,7 @@ object LEDState: KPeriodic() {
             }
         }.ElseIf({ driverstationDisabled && Robot.hasBeenEnabled }) {
             addAnimation(
-                ParallelAnimation(
+                parallelAnimation(
                     speakerLeft.pulse(Color.White, 2.seconds),
                     speakerRight.pulse(Color.White, 2.seconds),
                     ampLeft.pulse(Color.White, 2.seconds),
@@ -132,7 +132,7 @@ object LEDState: KPeriodic() {
         }.ElseIf({ driverstationAutonomous }) {
             addAnimation(all.strobe(Color.Red, 0.25.seconds))
         }.ElseIf({ driverstationTeleop }) {
-            addAnimation(ColorShift(all, Color.RainbowColors, 0.20.seconds, 5, priority = -100)) // Priority is low so this is covered by other animations
+            addAnimation(all.colorShift(Color.RainbowColors, 0.20.seconds, 5, priority = -100)) // Priority is low so this is covered by other animations
 
             If({ inSpeakerRange }) {
                 addAnimation(speaker.strobe(Color.White, 0.5.seconds))
