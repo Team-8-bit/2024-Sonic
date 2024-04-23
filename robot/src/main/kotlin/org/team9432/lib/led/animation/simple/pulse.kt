@@ -7,13 +7,12 @@ import org.team9432.lib.led.strip.Section
 import org.team9432.lib.unit.Time
 import org.team9432.lib.unit.seconds
 
-class Pulse(
-    private val color: Color,
-    section: Section,
-    private val duration: Time = 1.seconds,
-    private val cooldown: Time = 1.seconds,
-    private val runReversed: Boolean = false,
-): Animation(section) {
+fun Section.pulse(
+    color: Color,
+    duration: Time = 1.seconds,
+    cooldown: Time = 1.seconds,
+    runReversed: Boolean = false,
+) = object: Animation(this) {
     override suspend fun runAnimation() {
         colors.resetToDefault()
 

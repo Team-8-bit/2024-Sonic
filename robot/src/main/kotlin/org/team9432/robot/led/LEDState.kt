@@ -14,6 +14,7 @@ import org.team9432.lib.led.animation.layered.ColorShift
 import org.team9432.lib.led.animation.simple.*
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.predefined.*
+import org.team9432.lib.led.strip.Section
 import org.team9432.lib.unit.seconds
 import org.team9432.robot.RobotPosition
 import org.team9432.robot.RobotState
@@ -21,63 +22,99 @@ import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.sensors.vision.Vision
 
 object LEDState: KPeriodic() {
+
+    /* -------- LED Sections -------- */
+
+    private val speakerLeftTop = Section((0..11).toSet())
+    private val speakerLeftBottom = Section((12..21).toSet())
+
+    private val speakerRightBottom = Section((22..33).toList().reversed().toSet())
+    private val speakerRightTop = Section((34..43).toList().reversed().toSet())
+
+    private val ampLeftTop = Section((44..55).toSet())
+    private val ampLeftBottom = Section((56..65).toSet())
+
+    private val ampRightBottom = Section((66..77).toList().reversed().toSet())
+    private val ampRightTop = Section((78..87).toList().reversed().toSet())
+
+    private val topLeft = Section((88..102).toSet())
+    private val topRight = Section((103..117).toSet())
+
+    private val topBar = topLeft + topRight
+
+    private val speakerLeft = speakerLeftTop + speakerLeftBottom
+    private val speakerRight = speakerRightTop + speakerRightBottom
+    private val ampLeft = ampLeftTop + ampLeftBottom
+    private val ampRight = ampRightTop + ampRightBottom
+
+    private val left = speakerLeft + ampRight
+    private val right = speakerRight + ampLeft
+
+    private val speaker = speakerLeft + speakerRight
+    private val amp = ampLeft + ampRight
+
+    private val all = speaker + amp + topBar
+
+
+    /* -------- Animation States -------- */
+
     private val animationScope = AnimationBindScope.build {
         If({ testEmergencySwitchActive }) {
             addAnimation(
                 ParallelAnimation(
-                    Solid(Color.Green, Sections.SPEAKER_LEFT),
-                    Solid(Color.Red, Sections.SPEAKER_RIGHT),
-                    Solid(Color.Blue, Sections.AMP_LEFT),
-                    Solid(Color.Yellow, Sections.AMP_RIGHT),
-                    Solid(Color.White, Sections.TOP_BAR),
+                    speakerLeft.solid(Color.Green),
+                    speakerRight.solid(Color.Red),
+                    ampLeft.solid(Color.Blue),
+                    ampRight.solid(Color.Yellow),
+                    topBar.solid(Color.White),
                 )
             )
         }.ElseIf({ driverstationDisabled && !Robot.hasBeenEnabled }) {
             addAnimation(
                 SequentialAnimation(
                     ParallelAnimation(
-                        Solid(Color.White, Sections.SPEAKER_LEFT, 0.5.seconds),
-                        Solid(Color.White, Sections.SPEAKER_RIGHT, 0.5.seconds),
-                        Solid(Color.White, Sections.AMP_LEFT, 0.5.seconds),
-                        Solid(Color.White, Sections.AMP_RIGHT, 0.5.seconds),
+                        speakerLeft.solid(Color.White, 0.5.seconds),
+                        speakerRight.solid(Color.White, 0.5.seconds),
+                        ampLeft.solid(Color.White, 0.5.seconds),
+                        ampRight.solid(Color.White, 0.5.seconds),
                     ),
                     ParallelAnimation(
-                        FadeToColor(Color.Black, 2.seconds, 5, Sections.SPEAKER_LEFT),
-                        FadeToColor(Color.Black, 2.seconds, 5, Sections.SPEAKER_RIGHT),
-                        FadeToColor(Color.Black, 2.seconds, 5, Sections.AMP_LEFT),
-                        FadeToColor(Color.Black, 2.seconds, 5, Sections.AMP_RIGHT),
+                        speakerLeft.fadeToColor(Color.Black, 2.seconds, 5),
+                        speakerRight.fadeToColor(Color.Black, 2.seconds, 5),
+                        ampLeft.fadeToColor(Color.Black, 2.seconds, 5),
+                        ampRight.fadeToColor(Color.Black, 2.seconds, 5),
                     ),
                     WaitAnimation(0.5.seconds),
                     ParallelAnimation(
-                        Pulse(Color.White, Sections.SPEAKER_LEFT, 2.seconds),
-                        Pulse(Color.White, Sections.SPEAKER_RIGHT, 2.seconds),
-                        Pulse(Color.White, Sections.AMP_LEFT, 2.seconds),
-                        Pulse(Color.White, Sections.AMP_RIGHT, 2.seconds),
+                        speakerLeft.pulse(Color.White, 2.seconds),
+                        speakerRight.pulse(Color.White, 2.seconds),
+                        ampLeft.pulse(Color.White, 2.seconds),
+                        ampRight.pulse(Color.White, 2.seconds),
                     )
                 )
             )
 
             If({ hasVisionTarget }) {
                 If({ alliance == null }) {
-                    addAnimation(ColorShift(Sections.TOP_BAR, listOf(Color.Black, Color.White)))
+                    addAnimation(ColorShift(topBar, listOf(Color.Black, Color.White)))
                 }.ElseIf({ alliance == Alliance.Red }) {
-                    addAnimation(Solid(Color.Red, Sections.TOP_BAR))
+                    addAnimation(topBar.solid(Color.Red))
                 }.ElseIf({ alliance == Alliance.Blue }) {
-                    addAnimation(Solid(Color.Blue, Sections.TOP_BAR))
+                    addAnimation(topBar.solid(Color.Blue))
                 }
             }.Else {
                 If({ limelightNotConnected }) {
                     addAnimation(
                         SequentialAnimation(
-                            BounceToColor(Color.Red, Sections.TOP_BAR),
-                            BounceToColor(Color.Black, Sections.TOP_BAR)
+                            topBar.bounceToColor(Color.Red),
+                            topBar.bounceToColor(Color.Black)
                         ).repeat()
                     )
                 }.Else {
                     addAnimation(
                         SequentialAnimation(
-                            Solid(Color.Black, Sections.TOP_BAR),
-                            SlideToColor(Color.Green, Sections.TOP_BAR)
+                            topBar.solid(Color.Black),
+                            topBar.slideToColor(Color.Green)
                         )
                     )
                 }
@@ -85,30 +122,30 @@ object LEDState: KPeriodic() {
         }.ElseIf({ driverstationDisabled && Robot.hasBeenEnabled }) {
             addAnimation(
                 ParallelAnimation(
-                    Pulse(Color.White, Sections.SPEAKER_LEFT, 2.seconds),
-                    Pulse(Color.White, Sections.SPEAKER_RIGHT, 2.seconds),
-                    Pulse(Color.White, Sections.AMP_LEFT, 2.seconds),
-                    Pulse(Color.White, Sections.AMP_RIGHT, 2.seconds),
-                    Solid(Color.Black, Sections.TOP_BAR)
+                    speakerLeft.pulse(Color.White, 2.seconds),
+                    speakerRight.pulse(Color.White, 2.seconds),
+                    ampLeft.pulse(Color.White, 2.seconds),
+                    ampRight.pulse(Color.White, 2.seconds),
+                    topBar.solid(Color.Black)
                 )
             )
         }.ElseIf({ driverstationAutonomous }) {
-            addAnimation(Strobe(Color.Red, 0.25.seconds, Sections.ALL))
+            addAnimation(all.strobe(Color.Red, 0.25.seconds))
         }.ElseIf({ driverstationTeleop }) {
-            addAnimation(ColorShift(Sections.ALL, Color.RainbowColors, 0.20.seconds, 5, priority = -100)) // Priority is low so this is covered by other animations
+            addAnimation(ColorShift(all, Color.RainbowColors, 0.20.seconds, 5, priority = -100)) // Priority is low so this is covered by other animations
 
             If({ inSpeakerRange }) {
-                addAnimation(Strobe(Color.White, 0.5.seconds, Sections.SPEAKER))
+                addAnimation(speaker.strobe(Color.White, 0.5.seconds))
             }.ElseIf({ noteIndicatorLights }) {
-                addAnimation(Strobe(Color.Purple, 0.25.seconds, Sections.ALL))
+                addAnimation(all.strobe(Color.Purple, 0.25.seconds))
             }.Else {
                 If({ speakerShooterReady }) {
-                    addAnimation(Strobe(Color.Lime, 0.25.seconds, Sections.SPEAKER))
+                    addAnimation(speaker.strobe(Color.Lime, 0.25.seconds))
                 }.ElseIf({ ampShooterReady }) {
                     If({ alliance == Alliance.Red }) {
-                        addAnimation(Strobe(Color.Lime, 0.25.seconds, Sections.LEFT))
+                        addAnimation(left.strobe(Color.Lime, 0.25.seconds))
                     }.Else {
-                        addAnimation(Strobe(Color.Lime, 0.25.seconds, Sections.RIGHT))
+                        addAnimation(right.strobe(Color.Lime, 0.25.seconds))
                     }
                 }
             }
@@ -116,20 +153,22 @@ object LEDState: KPeriodic() {
     }
 
 
-    var alliance: Alliance? = null
+    /* -------- States -------- */
 
-    var noteInIntake = false
-    var hasVisionTarget = false
-    var limelightNotConnected = false
-    var testEmergencySwitchActive = false
+    private var alliance: Alliance? = null
 
-    var inSpeakerRange = false
+    private var noteInIntake = false
+    private var hasVisionTarget = false
+    private var limelightNotConnected = false
+    private var testEmergencySwitchActive = false
+
+    private var inSpeakerRange = false
     var speakerShooterReady = false
     var ampShooterReady = false
 
-    var driverstationDisabled = false
-    var driverstationAutonomous = false
-    var driverstationTeleop = false
+    private var driverstationDisabled = false
+    private var driverstationAutonomous = false
+    private var driverstationTeleop = false
 
     var noteIndicatorLights = false
 

@@ -7,13 +7,12 @@ import org.team9432.lib.led.strip.Section
 import org.team9432.lib.unit.Time
 import org.team9432.lib.unit.milliseconds
 
-class BounceToColor(
-    private val color: Color,
-    section: Section,
-    private val leadColor: Color = color,
-    private val runReversed: Boolean = false,
-    private val timePerStep: Time = 20.milliseconds,
-): Animation(section) {
+fun Section.bounceToColor(
+    color: Color,
+    leadColor: Color = color,
+    runReversed: Boolean = false,
+    timePerStep: Time = 20.milliseconds,
+) = object: Animation(this) {
     override suspend fun runAnimation() {
         colors.setCurrentlyFadingColor(null)
 

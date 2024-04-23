@@ -7,17 +7,16 @@ import org.team9432.lib.led.strip.LEDStrip
 import org.team9432.lib.led.strip.Section
 import org.team9432.lib.unit.Time
 
-class FadeToColor(
-    private val color: Color,
-    private val duration: Time,
-    private val fadeSpeed: Int,
-    section: Section,
-): Animation(section) {
+fun Section.fadeToColor(
+    color: Color,
+    duration: Time,
+    fadeSpeed: Int,
+) = object: Animation(this) {
     override suspend fun runAnimation() {
         colors.applyToEachIndexedBaseStrip { index ->
             prolongedColor = color
             currentlyFadingColor = LEDStrip.getColor(index)
-            fadeSpeed = this@FadeToColor.fadeSpeed
+            this.fadeSpeed = fadeSpeed
         }
 
         delay(duration)

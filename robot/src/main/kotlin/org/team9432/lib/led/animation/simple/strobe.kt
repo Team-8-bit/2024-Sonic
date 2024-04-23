@@ -7,11 +7,10 @@ import org.team9432.lib.led.color.predefined.Black
 import org.team9432.lib.led.strip.Section
 import org.team9432.lib.unit.Time
 
-class Strobe(
-    private val color: Color,
-    private val duration: Time,
-    section: Section,
-): Animation(section) {
+fun Section.strobe(
+    color: Color,
+    duration: Time,
+) = object: Animation(this) {
     override suspend fun runAnimation() {
         colors.resetToDefault()
 
@@ -20,8 +19,7 @@ class Strobe(
             delay(duration / 2)
             isOn = !isOn
 
-            val color = if (isOn) color else Color.Black
-            colors.setProlongedColor(color)
+            colors.setProlongedColor(if (isOn) color else Color.Black)
         }
     }
 }

@@ -8,23 +8,22 @@ import org.team9432.lib.led.strip.LEDStrip
 import org.team9432.lib.led.strip.Section
 import org.team9432.lib.unit.Time
 
-class Breath(
-    colors: List<Color>,
-    private val colorDuration: Time,
-    private val fadeSpeed: Int = 10,
-    section: Section,
-): Animation(section) {
+fun Section.breath(
+    breathColors: List<Color>,
+    colorDuration: Time,
+    fadeSpeed: Int = 10,
+) = object: Animation(this) {
     init {
-        assert(colors.isNotEmpty())
+        assert(breathColors.isNotEmpty())
     }
 
-    private val animationColors = colors.map { it.getAsRgb() }
+    private val animationColors = breathColors.map { it.getAsRgb() }
 
     override suspend fun runAnimation() {
         colors.applyToEach {
             prolongedColor = animationColors.first()
             currentlyFadingColor = null
-            fadeSpeed = this@Breath.fadeSpeed
+            this.fadeSpeed = fadeSpeed
         }
 
         while (true) {
