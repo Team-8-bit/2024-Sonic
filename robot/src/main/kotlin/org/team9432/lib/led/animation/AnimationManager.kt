@@ -1,7 +1,6 @@
 package org.team9432.lib.led.animation
 
 import org.team9432.lib.commandbased.KCommandScheduler
-import org.team9432.lib.coroutineshims.RobotBase
 import org.team9432.lib.led.strip.LEDStrip
 
 /**
@@ -20,8 +19,6 @@ import org.team9432.lib.led.strip.LEDStrip
  * Priorities are integers (defaulting to zero) with higher numbers being higher priority.
  */
 object AnimationManager {
-    val animationScope = RobotBase.coroutineScope
-
     init {
         KCommandScheduler.registerPeriodic(::periodic)
     }

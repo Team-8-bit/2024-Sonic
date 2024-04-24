@@ -2,6 +2,7 @@ package org.team9432.lib.led.animation
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.team9432.lib.coroutineshims.RobotBase
 import org.team9432.lib.tasks.SuspendRunnable
 
 data class AnimationContainer(val lambda: SuspendRunnable, var lastEnabled: Boolean = false, var job: Job? = null)
@@ -57,7 +58,7 @@ class AnimationBindScope private constructor(private val enabled: () -> Boolean)
             animation.lastEnabled = isActive
 
             if (isActive) {
-                animation.job = AnimationManager.animationScope.launch {
+                animation.job = RobotBase.coroutineScope.launch {
                     animation.lambda.invoke()
                 }
             } else {

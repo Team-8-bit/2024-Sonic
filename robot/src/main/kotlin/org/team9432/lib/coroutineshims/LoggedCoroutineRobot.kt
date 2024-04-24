@@ -3,7 +3,7 @@ package org.littletonrobotics.junction
 
 
 import edu.wpi.first.hal.DriverStationJNI
-import kotlinx.coroutines.delay
+import edu.wpi.first.hal.NotifierJNI
 import org.team9432.lib.coroutineshims.IterativeRobotBase
 import org.team9432.lib.unit.inSeconds
 import org.team9432.lib.unit.milliseconds
@@ -11,19 +11,22 @@ import org.team9432.lib.unit.milliseconds
 val LOOP_PERIOD = 20.milliseconds
 
 /*
- * LoggedRobot implements the IterativeRobotBase robot program framework. This is a modified version that uses coroutines to run the periodic loop.
+ * LoggedRobot implements the IterativeRobotBase robot program framework.
  *
  * The LoggedRobot class is intended to be subclassed by a user creating a robot program, and will call all required AdvantageKit periodic methods.
  */
 open class LoggedCoroutineRobot: IterativeRobotBase() {
     private val periodUs = (LOOP_PERIOD.inSeconds * 1000000).toLong()
+    private val notifier = NotifierJNI.initializeNotifier()
     private var nextCycleUs: Long = 0
-    private var useTiming = true
+    var useTiming = true
 
-    private var isRunning = true
+    init {
+        NotifierJNI.setNotifierName(notifier, "LoggedCoroutineRobot")
+    }
 
     /** Provide an alternate "main loop" via startCompetition().  */
-    override suspend fun startCompetition() {
+    override fun startCompetition() {
         // Check for invalid AdvantageKit install in sim
         if (isSimulation) {
             CheckInstall.run()
@@ -48,7 +51,7 @@ open class LoggedCoroutineRobot: IterativeRobotBase() {
         DriverStationJNI.observeUserProgramStarting()
 
         // Loop forever, calling the appropriate mode-dependent function
-        while (isRunning) {
+        while (true) {
             if (useTiming) {
                 val currentTimeUs = Logger.getRealTimestamp()
                 if (nextCycleUs < currentTimeUs) {
@@ -56,7 +59,8 @@ open class LoggedCoroutineRobot: IterativeRobotBase() {
                     nextCycleUs = currentTimeUs
                 } else {
                     // Wait before next cycle
-                    delay((nextCycleUs - currentTimeUs) / 1000)
+                    NotifierJNI.updateNotifierAlarm(notifier, nextCycleUs)
+                    NotifierJNI.waitForNotifierAlarm(notifier)
                 }
                 nextCycleUs += periodUs
             }
@@ -73,11 +77,6 @@ open class LoggedCoroutineRobot: IterativeRobotBase() {
 
     /** Ends the main loop in startCompetition().  */
     override fun endCompetition() {
-        isRunning = false
-    }
-
-    /** Sets whether to use standard timing or run as fast as possible.  */
-    fun setUseTiming(useTiming: Boolean) {
-        this.useTiming = useTiming
+        NotifierJNI.stopNotifier(notifier)
     }
 }

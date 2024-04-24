@@ -19,13 +19,13 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.util.WPILibVersion
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 import java.util.function.Supplier
 import kotlin.system.exitProcess
@@ -46,7 +46,7 @@ abstract class RobotBase protected constructor(): AutoCloseable {
     }
 
     /** Start the main robot code. This function will be called once and should not exit until signalled by [endCompetition]. */
-    abstract suspend fun startCompetition()
+    abstract fun startCompetition()
 
     /** Ends the main loop in [startCompetition].  */
     abstract fun endCompetition()
@@ -189,7 +189,7 @@ abstract class RobotBase protected constructor(): AutoCloseable {
         private var suppressExitWarning = false
 
         /** Run the robot main loop.  */
-        private suspend fun <T: RobotBase> runRobot(robotSupplier: Supplier<T>) {
+        private fun <T: RobotBase> runRobot(robotSupplier: Supplier<T>) {
             println("********** Robot program starting **********")
 
             val robot: T
@@ -225,13 +225,11 @@ abstract class RobotBase protected constructor(): AutoCloseable {
                         throw IOException("Failed to delete FRC_Lib_Version.ini")
                     }
 
-                    if (!withContext(Dispatchers.IO) { file.createNewFile() }) {
+                    if (!file.createNewFile()) {
                         throw IOException("Failed to create new FRC_Lib_Version.ini")
                     }
 
-                    withContext(Dispatchers.IO) {
-                        Files.newOutputStream(file.toPath())
-                    }.use { output ->
+                    Files.newOutputStream(file.toPath()).use { output ->
                         output.write("Java ".toByteArray(StandardCharsets.UTF_8))
                         output.write(WPILibVersion.Version.toByteArray(StandardCharsets.UTF_8))
                     }
@@ -286,7 +284,7 @@ abstract class RobotBase protected constructor(): AutoCloseable {
             private set
 
         /** Starting point for the robot. */
-        suspend fun startRobot(robotSupplier: Supplier<RobotBase>) {
+        fun startRobot(robotSupplier: Supplier<RobotBase>) {
             if (!HAL.initialize(500, 0)) {
                 throw IllegalStateException("Failed to initialize. Terminating")
             }
@@ -301,7 +299,7 @@ abstract class RobotBase protected constructor(): AutoCloseable {
             if (HAL.hasMain()) {
                 val userCodeThread = Thread(
                     {
-                        runBlocking {
+                        runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
                             coroutineScope = this
                             runRobot(robotSupplier)
                         }
@@ -319,9 +317,7 @@ abstract class RobotBase protected constructor(): AutoCloseable {
                 robot?.endCompetition()
 
                 try {
-                    withContext(Dispatchers.IO) {
-                        userCodeThread.join(1000)
-                    }
+                    userCodeThread.join(1000)
                 } catch (ex: InterruptedException) {
                     Thread.currentThread().interrupt()
                 }

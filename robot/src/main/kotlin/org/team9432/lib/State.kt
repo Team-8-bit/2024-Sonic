@@ -1,8 +1,8 @@
 package org.team9432.lib
 
 import edu.wpi.first.wpilibj.DriverStation
-import org.littletonrobotics.junction.LoggedRobot
 import org.team9432.lib.commandbased.KPeriodic
+import org.team9432.lib.coroutineshims.RobotBase
 import kotlin.jvm.optionals.getOrNull
 
 object State: KPeriodic() {
@@ -11,7 +11,7 @@ object State: KPeriodic() {
         private set
 
     /** The mode the robot is currently running in, always uses real when running on the robot. */
-    val mode = if (LoggedRobot.isReal()) Mode.REAL else Mode.SIM
+    val mode = if (RobotBase.isReal) Mode.REAL else Mode.SIM
 
     override fun periodic() {
         DriverStation.getAlliance().getOrNull()?.let { alliance = it }

@@ -19,4 +19,4 @@ import org.team9432.lib.coroutineshims.RobotBase
  * Refactoring when renaming the object, it will get changed everywhere
  * including here.)
  */
-suspend fun main() = RobotBase.startRobot { Robot }
+fun main() = RobotBase.startRobot { Robot }

@@ -33,7 +33,7 @@ abstract class IterativeRobotBase protected constructor(): RobotBase() {
     private var lastMode: Mode? = null
 
     /** Provide an alternate "main loop" via startCompetition().  */
-    abstract override suspend fun startCompetition()
+    abstract override fun startCompetition()
 
     protected fun loopFunc() {
         DriverStation.refreshData()
