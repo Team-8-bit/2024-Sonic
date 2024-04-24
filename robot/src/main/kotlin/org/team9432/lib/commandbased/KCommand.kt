@@ -1,5 +1,14 @@
 package org.team9432.lib.commandbased
 
+
+/**
+ * A state machine representing a complete action to be performed by the robot. Commands are run by
+ * the [KCommandScheduler], and can be composed into groups to allow users to build
+ * complicated multistep actions without the need to roll the state machine logic themselves.
+ *
+ * Commands are run synchronously from the main robot loop; no multithreading is used, unless
+ * specified explicitly from the command implementation.
+ */
 abstract class KCommand {
     open fun initialize() {}
     open fun execute() {}

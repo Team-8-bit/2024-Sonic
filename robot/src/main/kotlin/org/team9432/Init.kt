@@ -3,7 +3,7 @@ package org.team9432
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
 import org.team9432.lib.advantagekit.Logger
-import org.team9432.lib.led.animation.AnimationManager
+import org.team9432.lib.led.management.AnimationManager
 import org.team9432.lib.led.strip.LEDStrip
 import org.team9432.lib.led.strip.RioLedStrip
 import org.team9432.robot.Devices

@@ -5,16 +5,15 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance
 import org.team9432.Robot
 import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
-import org.team9432.lib.led.animation.AnimationBindScope
-import org.team9432.lib.led.animation.layered.colorShift
-import org.team9432.lib.led.animation.simple.*
+import org.team9432.lib.coroutines.repeat
+import org.team9432.lib.coroutines.runParallel
+import org.team9432.lib.coroutines.runSequential
+import org.team9432.lib.coroutines.wait
+import org.team9432.lib.led.animations.*
+import org.team9432.lib.led.management.AnimationBindScope
+import org.team9432.lib.led.management.Section
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.predefined.*
-import org.team9432.lib.led.strip.Section
-import org.team9432.lib.tasks.repeat
-import org.team9432.lib.tasks.runParallel
-import org.team9432.lib.tasks.runSequential
-import org.team9432.lib.tasks.wait
 import org.team9432.lib.unit.seconds
 import org.team9432.robot.RobotPosition
 import org.team9432.robot.RobotState
@@ -60,7 +59,7 @@ object LEDState: KPeriodic() {
 
     private val animationScope = AnimationBindScope.build {
         If({ testEmergencySwitchActive }) {
-            addAnimation(
+            setAnimation(
                 runParallel(
                     speakerLeft.solid(Color.Green),
                     speakerRight.solid(Color.Red),
@@ -70,7 +69,7 @@ object LEDState: KPeriodic() {
                 )
             )
         }.ElseIf({ driverstationDisabled && !Robot.hasBeenEnabled }) {
-            addAnimation(
+            setAnimation(
                 runSequential(
                     runParallel(
                         speakerLeft.solid(Color.White, 0.5.seconds),
@@ -96,22 +95,22 @@ object LEDState: KPeriodic() {
 
             If({ hasVisionTarget }) {
                 If({ alliance == null }) {
-                    addAnimation(topBar.colorShift(listOf(Color.Black, Color.White)))
+                    setAnimation(topBar.breath(listOf(Color.Black, Color.White)))
                 }.ElseIf({ alliance == Alliance.Red }) {
-                    addAnimation(topBar.solid(Color.Red))
+                    setAnimation(topBar.solid(Color.Red))
                 }.ElseIf({ alliance == Alliance.Blue }) {
-                    addAnimation(topBar.solid(Color.Blue))
+                    setAnimation(topBar.solid(Color.Blue))
                 }
             }.Else {
                 If({ limelightNotConnected }) {
-                    addAnimation(
+                    setAnimation(
                         runSequential(
                             topBar.bounceToColor(Color.Red),
                             topBar.bounceToColor(Color.Black)
                         ).repeat()
                     )
                 }.Else {
-                    addAnimation(
+                    setAnimation(
                         runSequential(
                             topBar.solid(Color.Black),
                             topBar.slideToColor(Color.Green)
@@ -120,7 +119,7 @@ object LEDState: KPeriodic() {
                 }
             }
         }.ElseIf({ driverstationDisabled && Robot.hasBeenEnabled }) {
-            addAnimation(
+            setAnimation(
                 runParallel(
                     speakerLeft.pulse(Color.White, 2.seconds),
                     speakerRight.pulse(Color.White, 2.seconds),
@@ -130,22 +129,22 @@ object LEDState: KPeriodic() {
                 )
             )
         }.ElseIf({ driverstationAutonomous }) {
-            addAnimation(all.strobe(Color.Red, 0.25.seconds))
+            setAnimation(all.strobe(Color.Red, 0.25.seconds))
         }.ElseIf({ driverstationTeleop }) {
-            addAnimation(all.colorShift(Color.RainbowColors, 0.20.seconds, 5, priority = -100)) // Priority is low so this is covered by other animations
+            setAnimation(all.breath(Color.RainbowColors, 0.20.seconds, 5).withPriority(-100)) // Priority is low so this is covered by other animations
 
             If({ inSpeakerRange }) {
-                addAnimation(speaker.strobe(Color.White, 0.5.seconds))
+                setAnimation(speaker.strobe(Color.White, 0.5.seconds))
             }.ElseIf({ noteIndicatorLights }) {
-                addAnimation(all.strobe(Color.Purple, 0.25.seconds))
+                setAnimation(all.strobe(Color.Purple, 0.25.seconds))
             }.Else {
                 If({ speakerShooterReady }) {
-                    addAnimation(speaker.strobe(Color.Lime, 0.25.seconds))
+                    setAnimation(speaker.strobe(Color.Lime, 0.25.seconds))
                 }.ElseIf({ ampShooterReady }) {
                     If({ alliance == Alliance.Red }) {
-                        addAnimation(left.strobe(Color.Lime, 0.25.seconds))
+                        setAnimation(left.strobe(Color.Lime, 0.25.seconds))
                     }.Else {
-                        addAnimation(right.strobe(Color.Lime, 0.25.seconds))
+                        setAnimation(right.strobe(Color.Lime, 0.25.seconds))
                     }
                 }
             }

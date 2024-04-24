@@ -2,7 +2,7 @@ package org.team9432.lib
 
 import edu.wpi.first.wpilibj.DriverStation
 import org.team9432.lib.commandbased.KPeriodic
-import org.team9432.lib.coroutineshims.RobotBase
+import org.team9432.lib.robot.RobotBase
 import kotlin.jvm.optionals.getOrNull
 
 object State: KPeriodic() {

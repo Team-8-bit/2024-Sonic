@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
 import org.team9432.lib.led.color.Color
 
+/** A class that describes interaction with a led strip powered of the PWM rail of the roboRIO. */
 class RioLedStrip(override val ledCount: Int, pwmPort: Int): NativeLedStrip {
     private val controller = AddressableLED(pwmPort)
     private val buffer = AddressableLEDBuffer(ledCount)

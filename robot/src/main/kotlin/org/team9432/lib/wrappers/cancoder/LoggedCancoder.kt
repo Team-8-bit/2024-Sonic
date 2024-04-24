@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 
+/** A generic cancoder wrapper that safely manages access to all config settings and logs all robot code inputs. */
 class LoggedCancoder(private val config: Config) {
     private val io: LoggedCancoderIO
     private val inputs = LoggedCancoderIO.CancoderIOInputs(config.additionalQualifier)
@@ -22,7 +23,7 @@ class LoggedCancoder(private val config: Config) {
         return inputs
     }
 
-    /** A class describing the configuration options of a logged cancoder */
+    /** A class describing the configuration options of a cancoder */
     data class Config(
         val canID: Int,
         val deviceName: String,

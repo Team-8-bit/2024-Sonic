@@ -7,6 +7,7 @@ import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.withSign
 
+/** XboxController with Trigger factories for easier command binding. */
 class KXboxController(
     port: Int,
     private val joystickDeadband: Double = 0.2,

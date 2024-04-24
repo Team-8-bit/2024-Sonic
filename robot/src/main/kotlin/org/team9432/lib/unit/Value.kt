@@ -2,6 +2,10 @@ package org.team9432.lib.unit
 
 sealed interface UnitType
 
+/**
+ * A class representing a value of [UnitType]. It's primary purpose
+ * is to provide mathematical operations for all the unit classes.
+ */
 @JvmInline
 value class Value<T: UnitType>(val value: Double) {
     operator fun plus(other: Value<T>): Value<T> = Value(value + other.value)

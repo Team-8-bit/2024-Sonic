@@ -1,7 +1,7 @@
 @file:JvmName("Main") // set the compiled Java class name to "Main" rather than "MainKt"
 package org.team9432
 
-import org.team9432.lib.coroutineshims.RobotBase
+import org.team9432.lib.robot.RobotBase
 
 /**
  * Main initialization function. Do not perform any initialization here

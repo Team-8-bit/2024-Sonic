@@ -8,9 +8,21 @@ import edu.wpi.first.wpilibj.RobotState
 import edu.wpi.first.wpilibj.Watchdog
 import org.littletonrobotics.junction.LOOP_PERIOD
 import org.team9432.lib.commandbased.KCommand.InterruptionBehavior
+import org.team9432.lib.commandbased.KCommandScheduler.registerPeriodic
+import org.team9432.lib.commandbased.KCommandScheduler.registerSubsystem
+import org.team9432.lib.commandbased.KCommandScheduler.run
 import org.team9432.lib.unit.inSeconds
 import java.util.*
 
+/**
+ * The scheduler responsible for running [KCommand]s. A Command-based robot should call [run]
+ * on the object in its periodic block in order to run commands
+ * synchronously from the main loop. Subsystems and other periodic calls should be registered with the scheduler using
+ * [registerSubsystem] and [registerPeriodic] respectively in order for their periodic()
+ * methods to be called and for their default commands to be scheduled.
+ *
+ * Based on the wpilib commandscheduler
+ */
 object KCommandScheduler {
     // A set of the currently-running commands.
     private val scheduledCommands: MutableSet<KCommand> = LinkedHashSet()

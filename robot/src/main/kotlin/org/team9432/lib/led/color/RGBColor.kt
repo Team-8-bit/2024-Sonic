@@ -4,8 +4,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Represents a color in RGB.
- * With red, green, and blue in the range [0-255].
+ * Represents a color in RGB with red, green, and blue in the range [0-255].
  */
 data class RGBColor(val red: Int, val green: Int, val blue: Int): Color {
     override fun toWPILibColor() = edu.wpi.first.wpilibj.util.Color(red, green, blue)

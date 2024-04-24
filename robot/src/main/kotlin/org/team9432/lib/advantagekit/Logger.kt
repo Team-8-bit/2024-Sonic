@@ -8,7 +8,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.BuildConstants
 import org.team9432.Robot
 import org.team9432.lib.State
-import org.team9432.lib.coroutineshims.RobotBase
+import org.team9432.lib.robot.RobotBase
 import org.littletonrobotics.junction.Logger as AkitLogger
 
 object Logger {
