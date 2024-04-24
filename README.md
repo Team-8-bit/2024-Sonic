@@ -29,3 +29,9 @@ _Thanks to these teams and organizations for providing open-source code to take 
 - Team 4099's unit library
 - Team 4481's led color classes
 - Team 3847's vision filtering
+
+---
+
+<div style="display: flex; justify-content: space-around; margin-top: 50px">
+  <img width="75%" src="https://github.com/Team-8-bit/2024-Sonic/assets/87742096/8a432cf1-0032-4958-a78f-74e8bbb66fa7" alt="Team Logo">
+</div>
