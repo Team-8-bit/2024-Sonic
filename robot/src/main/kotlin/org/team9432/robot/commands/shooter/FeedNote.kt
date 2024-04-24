@@ -8,13 +8,20 @@ import org.team9432.robot.RobotState.NotePosition
 import org.team9432.robot.commands.hopper.MoveToPosition
 import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
+import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Shooter
 import org.team9432.robot.subsystems.Superstructure
 
 fun FeedNote() = ParallelDeadlineCommand(
     Hood.Commands.followAngle { Rotation2d.fromDegrees(25.0) },
-    Shooter.Commands.runAtFeedSpeeds(),
+    SuppliedCommand {
+        when {
+            DSSwitches.shouldFeedSlow -> Shooter.Commands.runAtFeedSpeedsSlow()
+            DSSwitches.shouldFeedFast -> Shooter.Commands.runAtFeedSpeedsFast()
+            else -> Shooter.Commands.runAtFeedSpeeds()
+        }
+    },
 
     deadline = SequentialCommand(
         ParallelCommand(

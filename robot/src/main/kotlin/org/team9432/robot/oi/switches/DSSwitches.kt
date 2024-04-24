@@ -23,6 +23,9 @@ object DSSwitches: KPeriodic() {
 
     val teleAutoAimDisabled get() = inputs.teleAutoAimDisabled
 
+    val shouldFeedFast get() = inputs.feedFast
+    val shouldFeedSlow get() = inputs.feedSlow
+
     val primaryScoringMechanism: MechanismSide
         get() {
             return if (!inputs.connected) MechanismSide.SPEAKER

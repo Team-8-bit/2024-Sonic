@@ -37,7 +37,7 @@ fun FinishIntakingAndAlign(positionToLoadTo: RobotState.NotePosition? = null) = 
         // Move the note to the correct location based on our current primary scoring mode
         SuppliedCommand {
             positionToLoadTo?.let { MoveToPosition(it) } ?: when (DSSwitches.primaryScoringMechanism) {
-                MechanismSide.AMP -> MoveToPosition(RobotState.NotePosition.SPEAKER_INTAKE)
+                MechanismSide.AMP -> InstantCommand {} /*MoveToPosition(RobotState.NotePosition.SPEAKER_INTAKE)*/
                 MechanismSide.SPEAKER -> MoveToPosition(RobotState.NotePosition.AMP_INTAKE)
             }
         },
