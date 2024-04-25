@@ -2,7 +2,6 @@ package org.team9432.robot.commands.drivetrain
 
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import org.littletonrobotics.junction.Logger
@@ -12,9 +11,9 @@ import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
 import kotlin.math.hypot
-import kotlin.math.min
 import kotlin.math.withSign
 
+/** Drive to a specified position on the field. All positions should be according to the blue alliance and will be flipped accordingly. */
 class DriveToPosition(
     private val position: Pose2d,
     private val maxSpeedMetersPerSecond: Double = 4.0,
@@ -49,7 +48,7 @@ class DriveToPosition(
         positionPid.reset(hypot(xDistance, yDistance))
         rotationPid.reset(Gyro.getYaw().degrees, Math.toDegrees(currentSpeeds.omegaRadiansPerSecond))
 
-        positionPid.setGoal(TrapezoidProfile.State(0.0, velocityGoal))
+        positionPid.goal = TrapezoidProfile.State(0.0, velocityGoal)
         rotationPid.setGoal(finalPosition.rotation.degrees)
     }
 
@@ -92,27 +91,10 @@ class DriveToPosition(
         }
     }
 
+    /** Get x and y distance to the goal. */
     private fun getDistancesToGoal(pose: Pose2d = Drivetrain.getPose()): Pair<Double, Double> {
         val xDistance = finalPosition.x - pose.x
         val yDistance = finalPosition.y - pose.y
         return xDistance to yDistance
-    }
-
-    private fun getSpeedToGoal(speeds: ChassisSpeeds): Double {
-        val currentPose = Drivetrain.getPose()
-
-        return abs(
-            min(
-                0.0,
-                -Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)
-                    .rotateBy(
-                        finalPosition
-                            .translation
-                            .minus(currentPose.translation)
-                            .angle
-                            .unaryMinus()
-                    ).x
-            )
-        )
     }
 }

@@ -1,8 +1,8 @@
 package org.team9432.robot
 
-import edu.wpi.first.math.geometry.Pose2d
 import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KPeriodic
+import org.team9432.lib.unit.inMeters
 import org.team9432.robot.auto.AutoConstants
 import org.team9432.robot.sensors.beambreaks.Beambreaks
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
@@ -12,7 +12,7 @@ object RobotState: KPeriodic() {
     override fun periodic() {
         Logger.recordOutput("RobotState/NotePosition", notePosition.name)
         Logger.recordOutput("RobotState/MovementDirection", getMovementDirection())
-        Logger.recordOutput("RobotState/SpeakerDistance", RobotPosition.distanceToSpeaker())
+        Logger.recordOutput("RobotState/SpeakerDistance", RobotPosition.distanceToSpeaker().inMeters)
         Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerAimPose)
         Logger.recordOutput("RobotState/TrapAimPoints", *FieldConstants.trapAimPoses.toTypedArray())
         Logger.recordOutput("RobotState/TrapAimPose", FieldConstants.getTrapAimPosition())
@@ -39,23 +39,27 @@ object RobotState: KPeriodic() {
     fun noteInAnyIntake() = noteInAmpSideIntakeBeambreak() || noteInSpeakerSideIntakeBeambreak()
     fun noteInAnyBeambreak() = noteInAmpSideIntakeBeambreak() || noteInSpeakerSideIntakeBeambreak() || noteInCenterBeambreak() || noteInAmpSideHopperBeambreak() || noteInSpeakerSideHopperBeambreak()
 
-    // This prioritizes the amp side, but it should be really hard to actually get a note in both
+    // This prioritizes the amp side, but it should be really hard to actually get a note in both (did not age well)
+    /** Return which side intake beam break is on, or Amp if both are. */
     fun getOneIntakeBeambreak(): MechanismSide? {
         return if (noteInAmpSideIntakeBeambreak()) MechanismSide.AMP
         else if (noteInSpeakerSideIntakeBeambreak()) MechanismSide.SPEAKER
         else null
     }
 
+    /** Get the direction that the robot is moving in. */
     fun getMovementDirection(): MechanismSide {
         val speeds = Drivetrain.getRobotRelativeSpeeds()
         if (speeds.vxMetersPerSecond > 0) return MechanismSide.SPEAKER else return MechanismSide.AMP
     }
 
+    /** Returns whether the robot should only run one intake to conserve power. */
     fun shouldRunOneIntake(): Boolean {
         val speeds = Drivetrain.getRobotRelativeSpeeds()
         return maxOf(abs(speeds.vxMetersPerSecond), abs(speeds.vyMetersPerSecond)) > 1
     }
 
+    /** Returns the note position in the robot or null if it can't tell (center or missing). */
     fun findNote() = when {
         noteInAmpSideIntakeBeambreak() -> NotePosition.AMP_INTAKE
         noteInSpeakerSideIntakeBeambreak() -> NotePosition.SPEAKER_INTAKE

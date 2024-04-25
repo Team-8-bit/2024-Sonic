@@ -5,6 +5,7 @@ import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.Superstructure
 
+/** Move a note from an intake to a hopper. */
 fun MoveFromIntakeToHopper(intakeSide: MechanismSide, hopperSide: MechanismSide) = SuppliedCommand {
     // If the note is going to a different side than the one it's already on
     val noteIsCrossing = intakeSide != hopperSide

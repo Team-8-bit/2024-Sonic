@@ -13,6 +13,7 @@ import org.team9432.lib.SysIdUtil.getSysIdTests
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
+import org.team9432.lib.unit.inMeters
 import org.team9432.lib.wrappers.Spark
 import org.team9432.lib.wrappers.neo.LoggedNeo
 import org.team9432.lib.wrappers.neo.LoggedNeoIO
@@ -55,6 +56,7 @@ object Shooter: KSubsystem() {
         leftPID.setTolerance(Units.rotationsPerMinuteToRadiansPerSecond(100.0))
         rightPID.setTolerance(Units.rotationsPerMinuteToRadiansPerSecond(100.0))
 
+        // Distance to the shooter to wheel speed in rpms
         fastDistanceSpeedMap.put(1.0, 3000.0)
         fastDistanceSpeedMap.put(1.5, 4500.0)
         fastDistanceSpeedMap.put(2.0, 4500.0)
@@ -74,11 +76,9 @@ object Shooter: KSubsystem() {
         leftInputs = leftSide.updateAndRecordInputs()
         rightInputs = rightSide.updateAndRecordInputs()
 
-        if (mode == Mode.PID) {
-            val feedforwardVolts = feedforward.calculate(leftPID.setpoint)
-            leftSide.setVoltage(leftPID.calculate(leftInputs.velocityRadPerSec) + feedforwardVolts)
+        if (mode == Mode.PID) { // If the shooter isn't disabled, calculate and set both motors.
+            leftSide.setVoltage(leftPID.calculate(leftInputs.velocityRadPerSec) + feedforward.calculate(leftPID.setpoint))
             rightSide.setVoltage(rightPID.calculate(rightInputs.velocityRadPerSec) + feedforward.calculate(rightPID.setpoint))
-            Logger.recordOutput("Shooter/FFCalc", feedforwardVolts)
         }
 
         Logger.recordOutput("Shooter/LeftSide/RPM", Units.radiansPerSecondToRotationsPerMinute(leftInputs.velocityRadPerSec))
@@ -114,14 +114,16 @@ object Shooter: KSubsystem() {
     object Commands {
         fun stop() = InstantCommand(Shooter) { Shooter.stop() }
 
+        /** Run the shooter at speaker shooting speeds. */
         fun runAtSpeeds() = SimpleCommand(
             requirements = setOf(Shooter),
             end = { Shooter.stop() },
             execute = {
-                val distanceToSpeaker = RobotPosition.distanceToSpeaker()
+                val distanceToSpeaker = RobotPosition.distanceToSpeaker().inMeters
                 val rpmFast = fastDistanceSpeedMap.get(distanceToSpeaker)
                 val rpmSlow = slowDistanceSpeedMap.get(distanceToSpeaker)
 
+                // Choose which side spins faster depending on which side of the speaker the robot is on so the note always "rolls" in
                 when (RobotPosition.getSpeakerSide()) {
                     RobotPosition.SpeakerSide.LEFT -> ShooterDirection.LEFT_FAST
                     RobotPosition.SpeakerSide.RIGHT -> ShooterDirection.RIGHT_FAST
@@ -135,44 +137,16 @@ object Shooter: KSubsystem() {
             }
         )
 
-        fun runAtFeedSpeedsSlow() = SimpleCommand(
+        fun runAtSpeeds(leftRPM: Double, rightRPM: Double) = SimpleCommand(
             requirements = setOf(Shooter),
             end = { Shooter.stop() },
-            execute = { setSpeeds(4000.0, 2750.0) }
-        )
-        fun runAtFeedSpeeds() = SimpleCommand(
-            requirements = setOf(Shooter),
-            end = { Shooter.stop() },
-            execute = { setSpeeds(4500.0, 3250.0) }
-        )
-        fun runAtFeedSpeedsFast() = SimpleCommand(
-            requirements = setOf(Shooter),
-            end = { Shooter.stop() },
-            execute = { setSpeeds(5000.0, 3500.0) }
-        )
-
-        fun runAtTrapSpeeds() = SimpleCommand(
-            requirements = setOf(Shooter),
-            end = { Shooter.stop() },
-            execute = { setSpeeds(3000.0, 2500.0) }
-        )
-
-        fun runAtSubwooferSpeeds() = SimpleCommand(
-            requirements = setOf(Shooter),
-            end = { Shooter.stop() },
-            execute = { setSpeeds(3000.0, 2500.0) }
-        )
-        fun runAtOuttakeSpeeds() = SimpleCommand(
-            requirements = setOf(Shooter),
-            end = { Shooter.stop() },
-            execute = { setSpeeds(500.0, 500.0) }
+            execute = { setSpeeds(leftRPM, rightRPM) }
         )
     }
 
     private val velocitySetpointTolerance = Units.rotationsPerMinuteToRadiansPerSecond(250.0)
     fun atSetpoint(): Boolean {
-        return abs(leftPID.setpoint - leftInputs.velocityRadPerSec) < velocitySetpointTolerance
-                && abs(rightPID.setpoint - rightInputs.velocityRadPerSec) < velocitySetpointTolerance
+        return abs(leftPID.setpoint - leftInputs.velocityRadPerSec) < velocitySetpointTolerance && abs(rightPID.setpoint - rightInputs.velocityRadPerSec) < velocitySetpointTolerance
     }
 
     private fun getConfig(canID: Int, inverted: Boolean, side: String): LoggedNeo.Config {

@@ -91,8 +91,7 @@ class Module(private val module: ModuleConfig) {
             // Run closed loop drive control
             // Only allowed if closed loop turn control is running
             if (speedSetpoint != null) {
-                // Scale velocity based on turn error
-
+                // Scale velocity based on turn error.
                 // When the error is 90°, the velocity setpoint should be 0. As the wheel turns
                 // towards the setpoint, its velocity should increase. This is achieved by
                 // taking the component of the velocity in the direction of the setpoint.
@@ -111,10 +110,12 @@ class Module(private val module: ModuleConfig) {
         }
     }
 
+    /** Get the current angle of the module. */
     private fun getAngle(): Rotation2d {
         return steerInputs.angle.plus(steerRelativeOffset ?: Rotation2d())
     }
 
+    /** Runs the swerve module towards the given setpoints. */
     fun runSetpoint(state: SwerveModuleState): SwerveModuleState {
         val optimizedState = SwerveModuleState.optimize(state, getAngle())
         angleSetpoint = optimizedState.angle
@@ -122,6 +123,7 @@ class Module(private val module: ModuleConfig) {
         return optimizedState
     }
 
+    /** Stop and clear all setpoints. */
     fun stop() {
         steer.stop()
         drive.stop()
@@ -131,6 +133,7 @@ class Module(private val module: ModuleConfig) {
         speedSetpoint = null
     }
 
+    /** Set the brake mode of both motors. */
     fun setBrakeMode(enabled: Boolean) {
         if (isBrakeMode != enabled) {
             isBrakeMode = enabled
@@ -146,9 +149,16 @@ class Module(private val module: ModuleConfig) {
         drive.setVoltage(volts)
     }
 
+    /** The position of the drive motor in meters. */
     val positionMeters get() = driveInputs.angle.radians * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
+
+    /** The velocity of the drive motor in meters per second. */
     val velocityMetersPerSec get() = driveInputs.velocityRadPerSec * Units.inchesToMeters(MK4I_DRIVE_WHEEL_RADIUS)
+
+    /** The module's current [SwerveModulePosition]. */
     val position get() = SwerveModulePosition(positionMeters, getAngle())
+
+    /** The module's current [SwerveModuleState]. */
     val state get() = SwerveModuleState(velocityMetersPerSec, getAngle())
 
     private fun getDriveConfig(): LoggedNeo.Config {

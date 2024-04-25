@@ -116,7 +116,7 @@ object KCommandScheduler {
         }
 
         watchdog.disable()
-        if (watchdog.isExpired()) {
+        if (watchdog.isExpired) {
             println("CommandScheduler loop overrun")
             watchdog.printEpochs()
         }

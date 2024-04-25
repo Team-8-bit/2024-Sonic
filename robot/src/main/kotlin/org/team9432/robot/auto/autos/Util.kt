@@ -1,4 +1,4 @@
-package org.team9432.robot.auto.commands
+package org.team9432.robot.auto.autos
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.team9432.lib.commandbased.KCommand

@@ -1,17 +1,18 @@
 package org.team9432.robot.commands.shooter
 
 import org.team9432.lib.commandbased.commands.*
+import org.team9432.robot.LEDState
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.RobotState.NotePosition
 import org.team9432.robot.commands.hopper.MoveToPosition
-import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.Shooter
 import org.team9432.robot.subsystems.Superstructure
 
+/** Runs the shooter and at the speeds required to shoot from the subwoofer. This doesn't use aim or use the hood and is only used if something is broken. */
 fun Subwoofer() = ParallelDeadlineCommand(
-    Shooter.Commands.runAtSubwooferSpeeds(),
+    Shooter.Commands.runAtSpeeds(3000.0, 2500.0),
 
     deadline = SequentialCommand(
         ParallelCommand(

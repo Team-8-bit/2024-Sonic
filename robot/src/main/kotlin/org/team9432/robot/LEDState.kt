@@ -1,4 +1,4 @@
-package org.team9432.robot.led
+package org.team9432.robot
 
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
@@ -10,13 +10,12 @@ import org.team9432.lib.coroutines.runParallel
 import org.team9432.lib.coroutines.runSequential
 import org.team9432.lib.coroutines.wait
 import org.team9432.lib.led.animations.*
-import org.team9432.lib.led.management.AnimationBindScope
-import org.team9432.lib.led.management.Section
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.predefined.*
+import org.team9432.lib.led.management.AnimationBindScope
+import org.team9432.lib.led.management.Section
+import org.team9432.lib.unit.meters
 import org.team9432.lib.unit.seconds
-import org.team9432.robot.RobotPosition
-import org.team9432.robot.RobotState
 import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.sensors.vision.Vision
 
@@ -180,7 +179,7 @@ object LEDState: KPeriodic() {
         driverstationAutonomous = DriverStation.isAutonomousEnabled()
         driverstationTeleop = DriverStation.isTeleopEnabled()
         alliance = State.alliance
-        inSpeakerRange = (RobotPosition.distanceToSpeaker() < 3.0) && noteInIntake
+        inSpeakerRange = (RobotPosition.distanceToSpeaker() < 3.0.meters) && noteInIntake
 
         animationScope.update()
     }

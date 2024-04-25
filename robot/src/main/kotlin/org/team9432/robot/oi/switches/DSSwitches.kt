@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.robot.MechanismSide
 
+/** Manages the switch set on the driver station. */
 object DSSwitches: KPeriodic() {
     private val io = DSSwitchIOReal
     private val inputs = LoggedDSSwitchIOInputs()

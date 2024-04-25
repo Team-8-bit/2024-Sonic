@@ -7,7 +7,7 @@ import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.lib.commandbased.commands.withTimeout
 import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AutoChooser
-import org.team9432.robot.auto.commands.PullFromSpeakerShooter
+import org.team9432.robot.commands.hopper.PullFromSpeakerShooter
 import org.team9432.robot.commands.stop
 import org.team9432.robot.oi.Controls
 
@@ -23,6 +23,7 @@ object Robot: LoggedCoroutineRobot() {
     }
 
     override fun autonomousInit() {
+        // Pull preload note in, then run the selected auto
         SequentialCommand(
             PullFromSpeakerShooter(),
             AutoChooser.getCommand(),

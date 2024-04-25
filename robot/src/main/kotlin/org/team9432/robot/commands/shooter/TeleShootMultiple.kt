@@ -2,18 +2,22 @@ package org.team9432.robot.commands.shooter
 
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.FieldConstants
+import org.team9432.robot.LEDState
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.RobotState.NotePosition
 import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
 import org.team9432.robot.commands.hopper.MoveToPosition
 import org.team9432.robot.commands.intake.TeleIntake
-import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Shooter
 import org.team9432.robot.subsystems.Superstructure
 
+/**
+ *  Runs the shooter and hood at the speeds required to score a note in the speaker from the current position.
+ *  Instead of ending, this command will run the intake, so we can try and collect more notes until it is cancelled.
+ */
 fun TeleShootMultiple() = ParallelCommand(
     Hood.Commands.aimAtSpeaker(),
     Shooter.Commands.runAtSpeeds(),

@@ -13,31 +13,31 @@ import org.team9432.robot.commands.checkIfNoteIsOuttaked
 import kotlin.math.abs
 
 object Superstructure: KSubsystem() {
-    private val ampSide = LoggedNeo(getIntakeConfig(Devices.AMP_SIDE_INTAKE_ID, true, "Amp"))
-    private val speakerSide = LoggedNeo(getIntakeConfig(Devices.SPEAKER_SIDE_INTAKE_ID, false, "Speaker"))
+    private val ampIntake = LoggedNeo(getIntakeConfig(Devices.AMP_SIDE_INTAKE_ID, true, "Amp"))
+    private val speakerIntake = LoggedNeo(getIntakeConfig(Devices.SPEAKER_SIDE_INTAKE_ID, false, "Speaker"))
     private val hopper = LoggedNeo(getHopperConfig())
 
     private fun setIntakeVoltage(ampVolts: Double, speakerVolts: Double) {
-        ampSide.setVoltage(ampVolts)
-        speakerSide.setVoltage(speakerVolts)
+        ampIntake.setVoltage(ampVolts)
+        speakerIntake.setVoltage(speakerVolts)
     }
 
     fun intake(ampVolts: Double, speakerVolts: Double) = setIntakeVoltage(abs(ampVolts), abs(speakerVolts))
     fun outtake(ampVolts: Double, speakerVolts: Double) = setIntakeVoltage(-abs(ampVolts), -abs(speakerVolts))
 
     fun intakeSide(side: MechanismSide, volts: Double) = when (side) {
-        MechanismSide.AMP -> ampSide.setVoltage(volts)
-        MechanismSide.SPEAKER -> speakerSide.setVoltage(volts)
+        MechanismSide.AMP -> ampIntake.setVoltage(volts)
+        MechanismSide.SPEAKER -> speakerIntake.setVoltage(volts)
     }
 
     fun outtakeSide(side: MechanismSide, volts: Double) = when (side) {
-        MechanismSide.AMP -> ampSide.setVoltage(-volts)
-        MechanismSide.SPEAKER -> speakerSide.setVoltage(-volts)
+        MechanismSide.AMP -> ampIntake.setVoltage(-volts)
+        MechanismSide.SPEAKER -> speakerIntake.setVoltage(-volts)
     }
 
     fun stop() {
-        ampSide.stop()
-        speakerSide.stop()
+        ampIntake.stop()
+        speakerIntake.stop()
         hopper.stop()
     }
 
@@ -80,8 +80,8 @@ object Superstructure: KSubsystem() {
 
 
     override fun periodic() {
-        ampSide.updateAndRecordInputs()
-        speakerSide.updateAndRecordInputs()
+        ampIntake.updateAndRecordInputs()
+        speakerIntake.updateAndRecordInputs()
         hopper.updateAndRecordInputs()
     }
 

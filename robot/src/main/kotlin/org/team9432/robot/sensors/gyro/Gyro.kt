@@ -6,7 +6,6 @@ import org.littletonrobotics.junction.Logger
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 import org.team9432.lib.commandbased.KPeriodic
-import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import org.team9432.robot.subsystems.drivetrain.Drivetrain.kinematics
 import org.team9432.robot.subsystems.drivetrain.Drivetrain.modules

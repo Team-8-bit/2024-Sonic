@@ -1,11 +1,15 @@
 package org.team9432.robot.sensors.vision
 
-import edu.wpi.first.math.geometry.*
+import edu.wpi.first.math.geometry.Pose3d
+import edu.wpi.first.math.geometry.Rotation3d
+import edu.wpi.first.math.geometry.Transform3d
+import edu.wpi.first.math.geometry.Translation3d
 import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
 import org.photonvision.PhotonCamera
 import org.photonvision.targeting.PhotonPipelineResult
 import org.team9432.lib.unit.Length
+import org.team9432.lib.unit.inMeters
 import org.team9432.lib.unit.meters
 import org.team9432.robot.FieldConstants
 import org.team9432.robot.FieldConstants.onField
@@ -33,8 +37,10 @@ class VisionIOPhotonvision: VisionIO {
             }
         }
 
+        // Get the vision output
         val output = getVisionOutput(result)
 
+        // Update the robot pose if the vision output isn't null
         if (output != null) {
             val (xyDeviation, pose, tagsUsed) = output
             Drivetrain.setVisionStandardDeviations(xyDeviation)
@@ -48,16 +54,18 @@ class VisionIOPhotonvision: VisionIO {
     }
 
     private fun getVisionOutput(result: PhotonPipelineResult): VisionOutput? {
-        if (!result.hasTargets()) return null
+        if (!result.hasTargets()) return null // If the robot can't see any tags, don't bother
 
         val (pose, tagArea, tagsUsed) = if (!useMultitag) {
             updateNonMultitag(result)
         } else {
+            // Attempt to run multitag, run non-multitag if it fails
             updateMultitag(result) ?: updateNonMultitag(result)
         } ?: return null
 
         val speed = Drivetrain.getFieldRelativeSpeeds()
 
+        // If the robot isn't really moving, and the tag is close, trust it a lot
         val xyDeviation = if (speed.vxMetersPerSecond + speed.vyMetersPerSecond <= 0.2 && tagArea > 0.3) {
             0.05.meters
         } else if (tagArea < 0.15) {
@@ -72,14 +80,18 @@ class VisionIOPhotonvision: VisionIO {
     }
 
     private fun updateMultitag(result: PhotonPipelineResult): VisionResult? {
+        // Get the multitag result if possible
         val multiTagResult = result.multiTagResult
         if (!multiTagResult.estimatedPose.isPresent) return null
 
+        // Calculate the robot position
         val cameraToField = result.multiTagResult.estimatedPose.best
         val pose = Pose3d().plus(cameraToField).relativeTo(FieldConstants.aprilTagFieldLayout.origin).plus(robotToCamera.inverse())
 
+        // Check position validity
         if (!isPositionValid(pose)) return null
 
+        // Return the vision result if everything worked
         val tagsUsed = result.getTargets().filter { multiTagResult.fiducialIDsUsed.contains(it.fiducialId) }
         val largestArea = tagsUsed.maxBy { it.area }.area
 
@@ -87,6 +99,7 @@ class VisionIOPhotonvision: VisionIO {
     }
 
     private fun updateNonMultitag(result: PhotonPipelineResult): VisionResult? {
+        // Convert everything into visiontargets
         val poses = mutableListOf<VisionTarget>()
         for (target in result.targets) {
             val targetFiducialId = target.fiducialId
@@ -102,17 +115,18 @@ class VisionIOPhotonvision: VisionIO {
 
         // Take the position closest to the current robot position from each tag
         val finalTargets = mutableListOf<VisionTarget>()
-        filteredTargets.groupBy { it.id }.values.forEach { tagPoses -> finalTargets.add(tagPoses.minBy { RobotPosition.distanceTo(it.pose.toPose2d().translation) }) }
+        filteredTargets.groupBy { it.id }.values.forEach { tagPoses -> finalTargets.add(tagPoses.minBy { RobotPosition.distanceTo(it.pose.toPose2d().translation).inMeters }) }
 
         // Record these final positions
         Logger.recordOutput("Vision/AllPoses", *finalTargets.map { it.pose }.toTypedArray())
 
         // Return the one that's closest to where the robot already is
-        val target = finalTargets.minByOrNull { RobotPosition.distanceTo(it.pose.toPose2d().translation) } ?: return null
+        val target = finalTargets.minByOrNull { RobotPosition.distanceTo(it.pose.toPose2d().translation).inMeters } ?: return null
 
         return VisionResult(target.pose, target.area, listOf(target.id))
     }
 
+    /** Check that the given position is close to the floor and within the field walls. */
     private fun isPositionValid(pose: Pose3d) = abs(pose.z) < 0.25 && pose.toPose2d().onField()
 
     data class VisionTarget(val id: Int, val pose: Pose3d, val ambiguity: Double, val area: Double)

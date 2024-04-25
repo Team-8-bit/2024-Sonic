@@ -21,18 +21,18 @@ import org.team9432.robot.sensors.gyro.Gyro
 object Drivetrain: KSubsystem() {
     val modules = ModuleConfig.entries.map { Module(it) }
 
-    val kinematics: SwerveDriveKinematics
-    private val poseEstimator: SwerveDrivePoseEstimator
+    val kinematics = SwerveDriveKinematics(*SwerveUtil.getMk4iModuleTranslations(26.0))
+    private val poseEstimator = SwerveDrivePoseEstimator(kinematics, Rotation2d(), getModulePositions().toTypedArray(), Pose2d())
 
     init {
-        kinematics = SwerveDriveKinematics(*SwerveUtil.getMk4iModuleTranslations(26.0))
-        poseEstimator = SwerveDrivePoseEstimator(kinematics, Rotation2d(), getModulePositions().toTypedArray(), Pose2d())
         for (m in modules) m.setBrakeMode(true)
     }
 
     override fun periodic() {
+        // Run module periodics
         modules.forEach(Module::periodic)
 
+        // Stop everything and record empty setpoints while disabled
         if (DriverStation.isDisabled()) {
             modules.forEach(Module::stop)
 
@@ -40,12 +40,14 @@ object Drivetrain: KSubsystem() {
             Logger.recordOutput("SwerveStates/SetpointsOptimized", *emptyArray<SwerveModuleState>())
         }
 
+        // Update odometry
         poseEstimator.update(Gyro.getYaw(), getModulePositions().toTypedArray())
 
         Logger.recordOutput("Drive/Odometry", getPose())
         Logger.recordOutput("Drive/RealStates", *getModuleStates().toTypedArray())
     }
 
+    /** Sets the drivetrain to move at the given speeds. */
     fun setSpeeds(speeds: ChassisSpeeds) {
         val discreteSpeeds = SwerveUtil.correctForDynamics(speeds, LOOP_PERIOD.inSeconds)
         val targetStates = kinematics.toSwerveModuleStates(discreteSpeeds)
@@ -62,14 +64,17 @@ object Drivetrain: KSubsystem() {
         Logger.recordOutput("Drive/SetpointsOptimized", *optimizedSetpointStates)
     }
 
+    /** Resets the robot's estimated position. */
     fun resetPosition(pose: Pose2d, angle: Rotation2d) {
         poseEstimator.resetPosition(angle, getModulePositions().toTypedArray(), pose)
     }
 
+    /** Update the X and Y standard deviation of vision measurements. */
     fun setVisionStandardDeviations(xyDeviation: Length) {
         poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xyDeviation.inMeters, xyDeviation.inMeters, 20.0.degrees.inDegrees))
     }
 
+    /** Add a vision measurement to the pose estimator. */
     fun addVisionMeasurement(pose: Pose2d, timestamp: Double) {
         poseEstimator.addVisionMeasurement(pose, timestamp)
     }
@@ -88,8 +93,8 @@ object Drivetrain: KSubsystem() {
 
     fun getPose(): Pose2d = poseEstimator.estimatedPosition
 
-    fun getRobotRelativeSpeeds() = kinematics.toChassisSpeeds(*getModuleStates().toTypedArray())
-    fun getFieldRelativeSpeeds() = ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeeds(), Gyro.getYaw())
+    fun getRobotRelativeSpeeds(): ChassisSpeeds = kinematics.toChassisSpeeds(*getModuleStates().toTypedArray())
+    fun getFieldRelativeSpeeds(): ChassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeeds(), Gyro.getYaw())
 
     fun getModulePositions() = modules.map { it.position }
     fun getModuleStates() = modules.map { it.state }

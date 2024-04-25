@@ -5,6 +5,7 @@ import org.team9432.lib.commandbased.KCommand
 import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
+/** Move field-relative at the specified speeds. */
 class DriveFieldRelativeSpeeds(private val vx: Double = 0.0, private val vy: Double = 0.0, private val vr: Double = 0.0): KCommand() {
     override val requirements = setOf(Drivetrain)
 

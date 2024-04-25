@@ -1,14 +1,15 @@
 package org.team9432.robot.commands.intake
 
 import org.team9432.lib.commandbased.commands.*
+import org.team9432.robot.LEDState
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.hopper.MoveToPosition
-import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.subsystems.Superstructure
 
+/** Pull a note that's already partially in the intake the rest of the way it. It also aligns the note, and moves the note to the provided position if one was given. */
 fun FinishIntakingAndAlign(positionToLoadTo: RobotState.NotePosition? = null) = SuppliedCommand(Superstructure) {
     val side = RobotState.getOneIntakeBeambreak() ?: return@SuppliedCommand InstantCommand {}
 

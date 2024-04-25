@@ -1,4 +1,4 @@
-package org.team9432.robot.auto.subsections
+package org.team9432.robot.auto.builder.subsections
 
 import edu.wpi.first.math.geometry.Pose2d
 import org.team9432.lib.commandbased.commands.*
@@ -12,23 +12,22 @@ import org.team9432.robot.commands.drivetrain.TargetAim
 import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.Superstructure
 
+/** Points at a note, then moves forwards until it is collected, or the timeout expires. Usually run after [AlignToIntakeNote]. */
 fun IntakeNote(note: AllianceNote) = ParallelDeadlineCommand(
     Superstructure.Commands.runIntakeSide(MechanismSide.AMP),
 
     SequentialCommand(
         TargetAim(MechanismSide.AMP) { AutoConstants.getNotePosition(note) },
-        PrintCommand("Finished Aiming"),
         ParallelDeadlineCommand(
             DriveRobotRelativeSpeeds(vx = -1.0),
             deadline = WaitCommand(1.0)
-        ),
-        PrintCommand("Finished Driving"),
+        )
     ),
 
     deadline = WaitUntilCommand { RobotState.noteInAmpSideIntakeBeambreak() }.afterSimDelay(1.0) { BeambreakIOSim.setNoteInIntakeAmpSide(true) }.withTimeout(2.0)
 )
 
-// Move forwards until the note is touched
+/** Drives to a position, then moves forwards and intakes until a note is collected, or the timeout expires. */
 fun IntakeNote(pose: Pose2d, timeout: Double = 1.0) = ParallelDeadlineCommand(
     Superstructure.Commands.runIntakeSide(MechanismSide.AMP),
 

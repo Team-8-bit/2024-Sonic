@@ -1,4 +1,4 @@
-package org.team9432.robot.auto
+package org.team9432.robot.auto.builder
 
 import edu.wpi.first.math.geometry.Rotation2d
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
@@ -8,10 +8,11 @@ import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.ParallelDeadlineCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.lib.commandbased.commands.WaitCommand
-import org.team9432.robot.auto.commands.InitAuto
-import org.team9432.robot.auto.commands.PullFromSpeakerShooter
-import org.team9432.robot.auto.subsections.ScoreNote
-import org.team9432.robot.auto.subsections.StartNote
+import org.team9432.robot.auto.AllianceNote
+import org.team9432.robot.auto.autos.InitAuto
+import org.team9432.robot.auto.builder.subsections.ScoreNote
+import org.team9432.robot.auto.builder.subsections.StartNote
+import org.team9432.robot.commands.hopper.PullFromSpeakerShooter
 import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Shooter
 
@@ -31,6 +32,7 @@ object AutoBuilder {
         thirdChooser.initStep()
     }
 
+    /** Returns an auto built on the values from each chooser. */
     fun getAuto() = SequentialCommand(
         initChooser.get().invoke(),
         PullFromSpeakerShooter(),
@@ -49,10 +51,9 @@ object AutoBuilder {
         )
     )
 
-    fun getInitCommand(): KCommand {
-        return initChooser.get().invoke()
-    }
+    fun getInitCommand() = initChooser.get().invoke()
 
+    /** Initializes a [LoggedDashboardChooser] with options for the first note in auto. */
     private fun LoggedDashboardChooser<() -> KCommand>.initStart() {
         addDefaultOption("None") { InstantCommand {} }
         addOption("Amp Note") { StartNote(AllianceNote.AMP) }
@@ -60,6 +61,7 @@ object AutoBuilder {
         addOption("Stage Note") { StartNote(AllianceNote.STAGE) }
     }
 
+    /** Initializes a [LoggedDashboardChooser] with options for notes after the first in auto. */
     private fun LoggedDashboardChooser<() -> KCommand>.initStep() {
         addDefaultOption("None") { InstantCommand {} }
         addOption("Amp Note") { ScoreNote(AllianceNote.AMP) }
@@ -67,6 +69,7 @@ object AutoBuilder {
         addOption("Stage Note") { ScoreNote(AllianceNote.STAGE) }
     }
 
+    /** Initializes a [LoggedDashboardChooser] with options to initialize the robot. */
     private fun LoggedDashboardChooser<() -> KCommand>.initInit() {
         addDefaultOption("Backwards") { InitAuto(Rotation2d(Math.PI)) }
         addOption("Forwards") { InitAuto(Rotation2d()) }

@@ -10,10 +10,10 @@ import org.team9432.lib.util.PoseUtil
 import org.team9432.lib.util.PoseUtil.applyFlip
 import org.team9432.robot.RobotPosition
 import org.team9432.robot.oi.Controls
-import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
+/** Point at a specified position while driving with the controller. */
 class TeleTargetDrive(private val waitUntilAtSetpoint: Boolean = false, private val target: () -> Translation2d): KCommand() {
     override val requirements = setOf(Drivetrain)
 

@@ -14,6 +14,7 @@ import org.team9432.robot.sensors.gyro.Gyro
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.math.abs
 
+/** Point a specified side of the robot at a specified position. Ends when the error is less than [toleranceDegrees]. */
 class TargetAim(
     private val side: MechanismSide = MechanismSide.SPEAKER,
     private val toleranceDegrees: Double = 3.0,

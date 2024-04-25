@@ -9,6 +9,10 @@ import org.team9432.robot.MechanismSide.SPEAKER
 import org.team9432.robot.RobotState
 import org.team9432.robot.RobotState.NotePosition.*
 
+/**
+ * Move a note to anywhere in the robot.
+ * This moves the first step, then recursively calls itself until it gets to the right position.
+ */
 fun MoveToPosition(finalPosition: RobotState.NotePosition): KCommand = SuppliedCommand {
     // Don't move if it's already in the right position
     if (finalPosition == RobotState.notePosition) return@SuppliedCommand InstantCommand {}

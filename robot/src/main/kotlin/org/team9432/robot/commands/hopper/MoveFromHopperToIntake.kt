@@ -8,6 +8,7 @@ import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.Superstructure
 
+/** Move a note from a hopper to an intake. */
 fun MoveFromHopperToIntake(hopperSide: MechanismSide, intakeSide: MechanismSide) = SequentialCommand(
     // Unload from the hopper
     ParallelDeadlineCommand(

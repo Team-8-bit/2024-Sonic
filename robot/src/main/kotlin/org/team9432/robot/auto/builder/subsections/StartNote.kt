@@ -1,13 +1,12 @@
-package org.team9432.robot.auto.subsections
+package org.team9432.robot.auto.builder.subsections
 
-import org.team9432.lib.commandbased.commands.PrintCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.robot.auto.AllianceNote
-import org.team9432.robot.auto.commands.AutoShoot
-import org.team9432.robot.auto.commands.FinishIntakingAndLoadToSpeaker
+import org.team9432.robot.auto.autos.FinishIntakingAndLoadToSpeaker
+import org.team9432.robot.commands.shooter.AutoShoot
 
+/** Drives to the note, shoots the preload, collects the second note, and shoots from that spot. */
 fun StartNote(note: AllianceNote) = SequentialCommand(
-    // Drive to the position and then slowly move forwards
     AlignToIntakeNote(note),
     AutoShoot(),
     IntakeNote(note),

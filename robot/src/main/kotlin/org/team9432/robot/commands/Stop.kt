@@ -8,6 +8,7 @@ import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Shooter
 import org.team9432.robot.subsystems.Superstructure
 
+/** Stops all motors, cancels all commands, and resets the note position in the robot. */
 fun stop() {
     // If the robot KNOWS where the note is, update its position
     RobotState.findNote()?.let { RobotState.notePosition = it }
@@ -19,4 +20,5 @@ fun stop() {
     Hood.stop()
 }
 
+/** Stops all motors, cancels all commands, and resets the note position in the robot. */
 fun stopCommand() = InstantCommand { stop() }

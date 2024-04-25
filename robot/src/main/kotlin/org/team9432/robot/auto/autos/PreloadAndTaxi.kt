@@ -2,10 +2,10 @@ package org.team9432.robot.auto.autos
 
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.lib.util.PoseUtil
-import org.team9432.robot.auto.AutoBuilder
-import org.team9432.robot.auto.commands.AutoShoot
-import org.team9432.robot.auto.commands.PullFromSpeakerShooter
+import org.team9432.robot.auto.builder.AutoBuilder
 import org.team9432.robot.commands.drivetrain.DriveFieldRelativeSpeeds
+import org.team9432.robot.commands.hopper.PullFromSpeakerShooter
+import org.team9432.robot.commands.shooter.AutoShoot
 import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Shooter
 

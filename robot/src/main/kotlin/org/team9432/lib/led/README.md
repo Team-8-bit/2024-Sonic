@@ -1,4 +1,4 @@
-## org/team9432/lib/led
+## org/team9432/lib/led/
 
 This package contains a custom led management library that allows for complex control and patterns using kotlin
 coroutines.
@@ -17,7 +17,7 @@ Each time the strip attempts to "render" the current pattern, it finds the highe
 each light on the strip and takes the color from there.
 
 When each pattern runs is determined by using an [AnimationBindScope](management/AnimationBindScope.kt), the
-implementation from this year is available [here](../../robot/led/LEDState.kt). Inspired by 6328's way of writing led
+implementation from this year is available [here](../../robot/LEDState.kt). Inspired by 6328's way of writing led
 code, it defines which animation is running as a series of nested if/else statements, and animations are stopped/started
 by running the update() method.
 

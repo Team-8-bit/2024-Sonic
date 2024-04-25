@@ -5,6 +5,7 @@ import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.RobotState
 import org.team9432.robot.subsystems.Superstructure
 
+/** Run the intake. Once a note is detected, it starts a new command to finish collecting it, so it isn't interrupted. */
 fun TeleIntake(endOnlyAfterNoteIsFullyCollected: Boolean = false) = SequentialCommand(
     // This part just gets the note touching the first intake beam break
     ParallelDeadlineCommand(

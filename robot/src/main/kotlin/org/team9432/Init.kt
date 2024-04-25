@@ -7,11 +7,11 @@ import org.team9432.lib.led.management.AnimationManager
 import org.team9432.lib.led.strip.LEDStrip
 import org.team9432.lib.led.strip.RioLedStrip
 import org.team9432.robot.Devices
+import org.team9432.robot.LEDState
 import org.team9432.robot.RobotState
-import org.team9432.robot.auto.AutoBuilder
 import org.team9432.robot.auto.AutoChooser
+import org.team9432.robot.auto.builder.AutoBuilder
 import org.team9432.robot.commands.DefaultCommands
-import org.team9432.robot.led.LEDState
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.sensors.beambreaks.Beambreaks
 import org.team9432.robot.sensors.gyro.Gyro
@@ -23,6 +23,7 @@ import org.team9432.robot.subsystems.Superstructure
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
 object Init {
+    /** Preforms all initialization needed. */
     fun initRobot() {
         LEDStrip.create(RioLedStrip(118, Devices.LED_PORT))
 

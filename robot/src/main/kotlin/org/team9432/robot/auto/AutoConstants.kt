@@ -13,12 +13,6 @@ object AutoConstants {
     val fourNoteFirstShotPose = Translation2d(2.359.meters, 4.418.meters).angleAtSpeaker()
     val fourNoteFirstShotPoseReversed = Translation2d(2.159.meters, 6.617.meters).angleAtSpeaker()
 
-    val topCenterNotePath = Pose2d(5.635.meters, 6.381.meters, 180.0.degrees)
-    val topCenterNoteShotPose = Pose2d(2.944.meters, 6.375.meters, 0.0.degrees).angleAtSpeaker()
-
-    val bottomCenterNotePath = Pose2d(5.326.meters, 1.628.meters, 180.0.degrees)
-    val bottomCenterNoteShotPose = Pose2d(2.0.meters, 3.5.meters, 0.0.degrees).angleAtSpeaker()
-
     private val targetNoteOffsetDistance = 0.8.meters
     private val angledIntakeDistance = sqrt(targetNoteOffsetDistance.inMeters.pow(2) / 2).meters
 
@@ -41,19 +35,21 @@ object AutoConstants {
     val centerCenterShot = Translation2d(2.0, 4.0).angleAtSpeaker()
     val centerCenterDriveOne = Pose2d(3.5, 2.5, Rotation2d(Math.PI))
 
-    fun getIntakePosition(note: AllianceNote) = when (note) {
-        AllianceNote.AMP -> listOf(ampNoteAngledIntakePose, ampNoteIntakePose).minBy { RobotPosition.distanceTo(it.translation) }
-        AllianceNote.CENTER -> listOf(centerNoteIntakePose).minBy { RobotPosition.distanceTo(it.translation) }
-        AllianceNote.STAGE -> listOf(stageNoteAngledIntakePose, stageNoteIntakePose).minBy { RobotPosition.distanceTo(it.translation) }
+    /** Gets the closest intaking position for a given note. */
+    fun getClosestIntakePosition(note: AllianceNote) = when (note) {
+        AllianceNote.AMP -> listOf(ampNoteAngledIntakePose, ampNoteIntakePose).minBy { RobotPosition.distanceTo(it.translation).inMeters }
+        AllianceNote.CENTER -> listOf(centerNoteIntakePose).minBy { RobotPosition.distanceTo(it.translation).inMeters }
+        AllianceNote.STAGE -> listOf(stageNoteAngledIntakePose, stageNoteIntakePose).minBy { RobotPosition.distanceTo(it.translation).inMeters }
     }
 
+    /** Get position of a given note. */
     fun getNotePosition(note: AllianceNote) = when (note) {
         AllianceNote.AMP -> FieldConstants.blueAmpNotePose
         AllianceNote.CENTER -> FieldConstants.blueCenterNotePose
         AllianceNote.STAGE -> FieldConstants.blueStageNotePose
     }
 
-    private fun Pose2d.angleAtSpeaker() = Pose2d(x, y, RobotPosition.angleTo(FieldConstants.speakerAimPose, currentPose = Translation2d(x, y)))
+    /** Returns a [Pose2d] using this [Translation2d]'s coordinates, rotated to point at the speaker. */
     private fun Translation2d.angleAtSpeaker() = Pose2d(x, y, RobotPosition.angleTo(FieldConstants.speakerAimPose, currentPose = Translation2d(x, y)))
 }
 

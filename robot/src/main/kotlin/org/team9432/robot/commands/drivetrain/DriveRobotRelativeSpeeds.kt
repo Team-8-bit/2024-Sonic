@@ -4,6 +4,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team9432.lib.commandbased.KCommand
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 
+/** Move robot-relative at the specified speeds. */
 class DriveRobotRelativeSpeeds(private val vx: Double = 0.0, private val vy: Double = 0.0, private val vr: Double = 0.0): KCommand() {
     override val requirements = setOf(Drivetrain)
 

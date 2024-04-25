@@ -11,15 +11,14 @@ import edu.wpi.first.math.geometry.Translation3d
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import org.littletonrobotics.junction.Logger
-import org.team9432.lib.KSysIdConfig
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
-import org.team9432.lib.SysIdUtil.getSysIdTests
 import org.team9432.lib.commandbased.KSubsystem
 import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.SimpleCommand
 import org.team9432.lib.unit.asRotation2d
 import org.team9432.lib.unit.degrees
+import org.team9432.lib.unit.inMeters
 import org.team9432.lib.wrappers.Spark
 import org.team9432.lib.wrappers.neo.LoggedNeo
 import org.team9432.robot.Devices
@@ -52,6 +51,7 @@ object Hood: KSubsystem() {
         }
 
 
+        // Distance to the speaker to hood angle in degrees
         distanceAngleMap.put(1.0, 3.0)
         distanceAngleMap.put(1.5, 15.0)
         distanceAngleMap.put(2.0, 18.0)
@@ -62,15 +62,10 @@ object Hood: KSubsystem() {
         setAngle(Rotation2d())
 
         pid.setTolerance(Math.toRadians(1.0))
-
-//        SmartDashboard.putNumber("tableValue", 0.0)
     }
 
     override fun periodic() {
         val inputs = motor.updateAndRecordInputs()
-
-//        val tableValue = SmartDashboard.getNumber("tableValue", 0.0)
-        //distanceAngleMap.put(3.0, tableValue)
 
         Logger.recordOutput("Subsystems/Hood", Pose3d(Translation3d(0.266700, 0.0, 0.209550 + 0.124460), Rotation3d(0.0, inputs.angle.radians, 0.0)))
 
@@ -82,12 +77,14 @@ object Hood: KSubsystem() {
             return
         }
 
+        // Calculate feedforward and feedback and set the motor
         val feedback = pid.calculate((inputs.angle + hoodOffset).radians)
         val feedforward = feedforward.calculate(pid.setpoint.position, pid.setpoint.velocity)
 
         motor.setVoltage(feedforward + feedback)
     }
 
+    /** Sets the hood to run towards the given angle setpoint. */
     fun setAngle(angle: Rotation2d) {
         if (DSSwitches.hoodDisabled) return
 
@@ -96,8 +93,9 @@ object Hood: KSubsystem() {
         pid.goal = goal
     }
 
+    /** Get the angle th hood would need to be at to make a shot in the speaker from the current robot position. */
     fun getAngleToSpeaker(): Rotation2d {
-        val angle = Rotation2d.fromDegrees(distanceAngleMap.get(RobotPosition.distanceToSpeaker()))
+        val angle = Rotation2d.fromDegrees(distanceAngleMap.get(RobotPosition.distanceToSpeaker().inMeters))
         Logger.recordOutput("Hood/SpeakerAngleTarget", angle.degrees)
         return angle
     }
@@ -107,11 +105,6 @@ object Hood: KSubsystem() {
         motor.setVoltage(volts)
     }
 
-    fun setSysIdVoltage(volts: Double) {
-        motor.setVoltage(volts)
-    }
-
-    fun resetAngle() = motor.resetEncoder()
     fun stop() = motor.stop()
 
     object Commands {
@@ -140,6 +133,4 @@ object Hood: KSubsystem() {
             stallCurrentLimit = 20
         )
     )
-
-    fun getSysIdTests() = motor.getSysIdTests(KSysIdConfig())
 }

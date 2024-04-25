@@ -1,10 +1,14 @@
 package org.team9432.robot
 
 import edu.wpi.first.apriltag.AprilTagFields
-import edu.wpi.first.math.geometry.*
+import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation3d
+import edu.wpi.first.math.geometry.Transform3d
+import edu.wpi.first.math.geometry.Translation2d
 import org.team9432.lib.unit.*
 
 // All positions are on the blue side of the field and are flipped as needed
+// TODO: EvergreenFieldConstants class with things like field size
 object FieldConstants {
     val aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField()
 
@@ -41,7 +45,8 @@ object FieldConstants {
 
     val feedPose = Translation2d(midLine + 1.0.meters, 1.0.meters).angleAtFeedCorner()
 
-    fun getTrapAimPosition() = trapAimPoses.minBy { RobotPosition.distanceTo(it.translation) }
+    fun getTrapAimPosition() = trapAimPoses.minBy { RobotPosition.distanceTo(it.translation).inMeters }
 
+    /** Returns a [Pose2d] using this [Translation2d]'s coordinates, rotated to point at the corner where notes should be fed to. */
     private fun Translation2d.angleAtFeedCorner() = Pose2d(x, y, RobotPosition.angleTo(feedAimPose, currentPose = Translation2d(x, y)))
 }

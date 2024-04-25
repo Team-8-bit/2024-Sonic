@@ -14,6 +14,7 @@ import org.team9432.robot.Devices.FRONT_RIGHT_CANCODER_ID
 import org.team9432.robot.Devices.FRONT_RIGHT_DRIVE_ID
 import org.team9432.robot.Devices.FRONT_RIGHT_STEER_ID
 
+/** Swerve drive module configuration. */
 enum class ModuleConfig(
     val encoderID: Int,
     val driveID: Int,

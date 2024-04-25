@@ -3,11 +3,25 @@ package org.team9432.robot.sensors.beambreaks
 import org.team9432.robot.MechanismSide
 
 object BeambreakIOSim: BeambreakIO {
-    fun setNoteInIntakeAmpSide(boolean: Boolean) { intakeAmpSide = !boolean }
-    fun setNoteInIntakeSpeakerSide(boolean: Boolean) { intakeSpeakerSide = !boolean }
-    fun setNoteInHopperAmpSide(boolean: Boolean) { hopperAmpSide = !boolean }
-    fun setNoteInHopperSpeakerSide(boolean: Boolean) { hopperSpeakerSide = !boolean }
-    fun setNoteInCenter(boolean: Boolean) { center = !boolean }
+    fun setNoteInIntakeAmpSide(boolean: Boolean) {
+        intakeAmpSide = !boolean
+    }
+
+    fun setNoteInIntakeSpeakerSide(boolean: Boolean) {
+        intakeSpeakerSide = !boolean
+    }
+
+    fun setNoteInHopperAmpSide(boolean: Boolean) {
+        hopperAmpSide = !boolean
+    }
+
+    fun setNoteInHopperSpeakerSide(boolean: Boolean) {
+        hopperSpeakerSide = !boolean
+    }
+
+    fun setNoteInCenter(boolean: Boolean) {
+        center = !boolean
+    }
 
     fun setNoteInIntakeSide(side: MechanismSide, boolean: Boolean) {
         when (side) {
