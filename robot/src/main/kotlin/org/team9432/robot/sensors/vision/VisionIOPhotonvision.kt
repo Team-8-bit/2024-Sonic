@@ -8,11 +8,11 @@ import edu.wpi.first.math.util.Units
 import org.littletonrobotics.junction.Logger
 import org.photonvision.PhotonCamera
 import org.photonvision.targeting.PhotonPipelineResult
+import org.team9432.lib.constants.EvergreenFieldConstants.isOnField
 import org.team9432.lib.unit.Length
 import org.team9432.lib.unit.inMeters
 import org.team9432.lib.unit.meters
 import org.team9432.robot.FieldConstants
-import org.team9432.robot.FieldConstants.onField
 import org.team9432.robot.RobotPosition
 import org.team9432.robot.subsystems.drivetrain.Drivetrain
 import kotlin.jvm.optionals.getOrNull
@@ -127,7 +127,7 @@ class VisionIOPhotonvision: VisionIO {
     }
 
     /** Check that the given position is close to the floor and within the field walls. */
-    private fun isPositionValid(pose: Pose3d) = abs(pose.z) < 0.25 && pose.toPose2d().onField()
+    private fun isPositionValid(pose: Pose3d) = abs(pose.z) < 0.25 && pose.toPose2d().isOnField()
 
     data class VisionTarget(val id: Int, val pose: Pose3d, val ambiguity: Double, val area: Double)
     data class VisionResult(val pose: Pose3d, val area: Double, val usedTags: List<Int>)

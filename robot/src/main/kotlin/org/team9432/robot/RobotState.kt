@@ -13,17 +13,14 @@ object RobotState: KPeriodic() {
         Logger.recordOutput("RobotState/NotePosition", notePosition.name)
         Logger.recordOutput("RobotState/MovementDirection", getMovementDirection())
         Logger.recordOutput("RobotState/SpeakerDistance", RobotPosition.distanceToSpeaker().inMeters)
-        Logger.recordOutput("RobotState/SpeakerPose", FieldConstants.speakerAimPose)
-        Logger.recordOutput("RobotState/TrapAimPoints", *FieldConstants.trapAimPoses.toTypedArray())
-        Logger.recordOutput("RobotState/TrapAimPose", FieldConstants.getTrapAimPosition())
+        Logger.recordOutput("RobotState/SpeakerPose", PositionConstants.speakerAimPose)
+        Logger.recordOutput("RobotState/TrapAimPoints", *PositionConstants.trapAimPoses.toTypedArray())
+        Logger.recordOutput("RobotState/TrapAimPose", PositionConstants.getTrapAimPosition())
 
         Logger.recordOutput("AutoPoses/CenterCenter/Centerstage", AutoConstants.centerStage)
         Logger.recordOutput("AutoPoses/CenterCenter/ShotPose", AutoConstants.centerCenterShot)
         Logger.recordOutput("AutoPoses/CenterCenter/Intake", AutoConstants.centerNoteThreeIntakePose)
         Logger.recordOutput("AutoPoses/CenterCenter/Drive", AutoConstants.centerCenterDriveOne)
-
-        Logger.recordOutput("FeedThing", FieldConstants.feedPose)
-        Logger.recordOutput("FeedThingAngle", FieldConstants.feedPose.rotation.degrees)
     }
 
     fun noteInAmpSideIntakeBeambreak() = !Beambreaks.getIntakeAmpSide()

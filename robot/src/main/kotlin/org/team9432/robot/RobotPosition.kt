@@ -35,16 +35,16 @@ object RobotPosition {
 
     /** Return the distance from the robot to the speaker. */
     fun distanceToSpeaker(): Length {
-        return distanceTo(FieldConstants.speakerAimPose.applyFlip())
+        return distanceTo(PositionConstants.speakerAimPose.applyFlip())
     }
 
     /** Get which side of the speaker the robot is on as though you are standing behind the driver station. */
     fun getSpeakerSide(): SpeakerSide {
         val currentY = Drivetrain.getPose().y
         return when {
-            currentY.isCloseTo(FieldConstants.speakerYAxis.inMeters, 0.5) -> SpeakerSide.CENTER
-            currentY < FieldConstants.speakerYAxis -> SpeakerSide.LEFT ifBlueElse SpeakerSide.RIGHT
-            currentY > FieldConstants.speakerYAxis -> SpeakerSide.RIGHT ifBlueElse SpeakerSide.LEFT
+            currentY.isCloseTo(FieldConstants.speakerYCoordinate.inMeters, 0.5) -> SpeakerSide.CENTER
+            currentY < FieldConstants.speakerYCoordinate -> SpeakerSide.LEFT ifBlueElse SpeakerSide.RIGHT
+            currentY > FieldConstants.speakerYCoordinate -> SpeakerSide.RIGHT ifBlueElse SpeakerSide.LEFT
             else -> SpeakerSide.CENTER
         }
     }

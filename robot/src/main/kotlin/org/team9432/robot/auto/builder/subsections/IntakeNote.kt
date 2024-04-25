@@ -4,8 +4,8 @@ import edu.wpi.first.math.geometry.Pose2d
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.robot.MechanismSide
 import org.team9432.robot.RobotState
-import org.team9432.robot.auto.AllianceNote
 import org.team9432.robot.auto.AutoConstants
+import org.team9432.robot.auto.SpikeNote
 import org.team9432.robot.commands.drivetrain.DriveRobotRelativeSpeeds
 import org.team9432.robot.commands.drivetrain.DriveToPosition
 import org.team9432.robot.commands.drivetrain.TargetAim
@@ -13,7 +13,7 @@ import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
 import org.team9432.robot.subsystems.Superstructure
 
 /** Points at a note, then moves forwards until it is collected, or the timeout expires. Usually run after [AlignToIntakeNote]. */
-fun IntakeNote(note: AllianceNote) = ParallelDeadlineCommand(
+fun IntakeNote(note: SpikeNote) = ParallelDeadlineCommand(
     Superstructure.Commands.runIntakeSide(MechanismSide.AMP),
 
     SequentialCommand(

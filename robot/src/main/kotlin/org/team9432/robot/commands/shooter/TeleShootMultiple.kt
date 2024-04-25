@@ -1,9 +1,9 @@
 package org.team9432.robot.commands.shooter
 
 import org.team9432.lib.commandbased.commands.*
-import org.team9432.robot.FieldConstants
 import org.team9432.robot.LEDState
 import org.team9432.robot.MechanismSide
+import org.team9432.robot.PositionConstants
 import org.team9432.robot.RobotState
 import org.team9432.robot.RobotState.NotePosition
 import org.team9432.robot.commands.drivetrain.teleop.TeleTargetDrive
@@ -30,7 +30,7 @@ fun TeleShootMultiple() = ParallelCommand(
                 SequentialCommand(
                     // Aim, load the note, and wait until the shooter is sped up
                     ParallelCommand(
-                        TeleTargetDrive(waitUntilAtSetpoint = true) { FieldConstants.speakerAimPose },
+                        TeleTargetDrive(waitUntilAtSetpoint = true) { PositionConstants.speakerAimPose },
                         MoveToPosition(NotePosition.SPEAKER_HOPPER),
                         SequentialCommand(
                             WaitCommand(0.1), // We need to wait here to make sure it actually sets the setpoint
@@ -41,7 +41,7 @@ fun TeleShootMultiple() = ParallelCommand(
                     InstantCommand { LEDState.speakerShooterReady = true },
                     ParallelDeadlineCommand(
                         // Keep aiming while waiting for confirmation
-                        TeleTargetDrive(waitUntilAtSetpoint = false) { FieldConstants.speakerAimPose },
+                        TeleTargetDrive(waitUntilAtSetpoint = false) { PositionConstants.speakerAimPose },
                         deadline = WaitUntilCommand { Controls.readyToShootSpeaker }, // Wait for driver confirmation
                     ),
                     InstantCommand { LEDState.speakerShooterReady = false },

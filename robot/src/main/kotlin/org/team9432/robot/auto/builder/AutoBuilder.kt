@@ -8,7 +8,7 @@ import org.team9432.lib.commandbased.commands.InstantCommand
 import org.team9432.lib.commandbased.commands.ParallelDeadlineCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.lib.commandbased.commands.WaitCommand
-import org.team9432.robot.auto.AllianceNote
+import org.team9432.robot.auto.SpikeNote
 import org.team9432.robot.auto.autos.InitAuto
 import org.team9432.robot.auto.builder.subsections.ScoreNote
 import org.team9432.robot.auto.builder.subsections.StartNote
@@ -56,17 +56,17 @@ object AutoBuilder {
     /** Initializes a [LoggedDashboardChooser] with options for the first note in auto. */
     private fun LoggedDashboardChooser<() -> KCommand>.initStart() {
         addDefaultOption("None") { InstantCommand {} }
-        addOption("Amp Note") { StartNote(AllianceNote.AMP) }
-        addOption("Center Note") { StartNote(AllianceNote.CENTER) }
-        addOption("Stage Note") { StartNote(AllianceNote.STAGE) }
+        addOption("Amp Note") { StartNote(SpikeNote.AMP) }
+        addOption("Center Note") { StartNote(SpikeNote.CENTER) }
+        addOption("Stage Note") { StartNote(SpikeNote.STAGE) }
     }
 
     /** Initializes a [LoggedDashboardChooser] with options for notes after the first in auto. */
     private fun LoggedDashboardChooser<() -> KCommand>.initStep() {
         addDefaultOption("None") { InstantCommand {} }
-        addOption("Amp Note") { ScoreNote(AllianceNote.AMP) }
-        addOption("Center Note") { ScoreNote(AllianceNote.CENTER) }
-        addOption("Stage Note") { ScoreNote(AllianceNote.STAGE) }
+        addOption("Amp Note") { ScoreNote(SpikeNote.AMP) }
+        addOption("Center Note") { ScoreNote(SpikeNote.CENTER) }
+        addOption("Stage Note") { ScoreNote(SpikeNote.STAGE) }
     }
 
     /** Initializes a [LoggedDashboardChooser] with options to initialize the robot. */

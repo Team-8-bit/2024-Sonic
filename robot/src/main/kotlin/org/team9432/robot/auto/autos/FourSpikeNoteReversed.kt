@@ -5,8 +5,8 @@ import org.team9432.lib.commandbased.commands.ParallelCommand
 import org.team9432.lib.commandbased.commands.ParallelDeadlineCommand
 import org.team9432.lib.commandbased.commands.SequentialCommand
 import org.team9432.lib.commandbased.commands.WaitUntilCommand
-import org.team9432.robot.auto.AllianceNote
 import org.team9432.robot.auto.AutoConstants
+import org.team9432.robot.auto.SpikeNote
 import org.team9432.robot.auto.builder.subsections.AlignToIntakeNote
 import org.team9432.robot.auto.builder.subsections.IntakeNote
 import org.team9432.robot.commands.drivetrain.DriveToPosition
@@ -15,7 +15,7 @@ import org.team9432.robot.commands.shooter.AutoShoot
 import org.team9432.robot.subsystems.Hood
 import org.team9432.robot.subsystems.Shooter
 
-fun FourAllianceNote() = SequentialCommand(
+fun FourAllianceNoteReversed() = SequentialCommand(
     InitAuto(Rotation2d.fromDegrees(180.0)),
     ParallelDeadlineCommand(
         Hood.Commands.aimAtSpeaker(),
@@ -26,14 +26,14 @@ fun FourAllianceNote() = SequentialCommand(
                 WaitUntilCommand { Shooter.atSetpoint() }
             ),
             AutoShoot(),
-            DriveToPosition(AutoConstants.fourNoteFirstShotPose),
-            IntakeNote(AllianceNote.STAGE),
+            DriveToPosition(AutoConstants.fourNoteFirstShotPoseReversed),
+            IntakeNote(SpikeNote.AMP),
             FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
             AutoShoot(),
-            IntakeNote(AllianceNote.CENTER),
-            FinishIntakingThen(AlignToIntakeNote(AllianceNote.AMP)),
+            IntakeNote(SpikeNote.CENTER),
+            FinishIntakingThen(AlignToIntakeNote(SpikeNote.STAGE)),
             AutoShoot(),
-            IntakeNote(AllianceNote.AMP),
+            IntakeNote(SpikeNote.STAGE),
             FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
             AutoShoot()
         )

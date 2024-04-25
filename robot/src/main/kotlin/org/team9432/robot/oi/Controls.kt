@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import org.team9432.lib.commandbased.commands.*
 import org.team9432.lib.commandbased.input.KTrigger
 import org.team9432.lib.commandbased.input.KXboxController
-import org.team9432.robot.FieldConstants
+import org.team9432.robot.PositionConstants
 import org.team9432.robot.RobotState
 import org.team9432.robot.commands.CheckIfNoteIsOuttaked
 import org.team9432.robot.commands.amp.OuttakeAmp
@@ -71,7 +71,7 @@ object Controls {
         driver.a
             .whileTrue(
                 ParallelDeadlineCommand(
-                    TeleAngleDrive { FieldConstants.feedPose.rotation },
+                    TeleAngleDrive { PositionConstants.feedPose.rotation },
                     deadline = FeedNote()
                 )
             )
