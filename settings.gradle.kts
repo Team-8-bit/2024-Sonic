@@ -33,9 +33,10 @@ pluginManagement {
 }
 
 val props: Properties = System.getProperties()
-props.setProperty("org.gradle.internal.native.headers.unresolved.dependencies.ignore", "true");
+props.setProperty("org.gradle.internal.native.headers.unresolved.dependencies.ignore", "true")
 
 rootProject.name = "robotbase"
 
 include(":robot")
 include(":annotation")
+include(":dashboard")

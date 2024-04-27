@@ -9,13 +9,6 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-def javaVersion = JavaVersion.VERSION_17
-
-java {
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-}
-
 def ROBOT_MAIN_CLASS = "org.team9432.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -72,6 +65,8 @@ def includeDesktopSupport = false
 dependencies {
     implementation implementation(project(':annotation'))
     ksp ksp(project(':annotation'))
+
+    implementation implementation(project(':dashboard'))
 
     wpi.java.deps.wpilib().forEach { implementation(it) }
     wpi.java.vendor.java().forEach { implementation(it) }

@@ -27,6 +27,8 @@ object Init {
     fun initRobot() {
         LEDStrip.create(RioLedStrip(118, Devices.LED_PORT))
 
+        Dashboard.start()
+
         AnimationManager
         LEDState
 
