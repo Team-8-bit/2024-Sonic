@@ -1,9 +1,17 @@
 package org.team9432.lib.coroutines
 
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.team9432.lib.unit.Time
 import org.team9432.lib.unit.inMilliseconds
+import java.util.concurrent.Executors
+
+
+val RIODispatcher = Executors.newFixedThreadPool(2).asCoroutineDispatcher()
+
+fun CoroutineScope.rioLaunch(
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit,
+) = launch(RIODispatcher, start, block)
 
 /** A suspending function. */
 typealias SuspendFunction = suspend () -> Unit
@@ -37,4 +45,4 @@ fun runSequential(vararg operations: SuspendFunction): SuspendFunction = {
 fun wait(time: Time): SuspendFunction = { delay(time) }
 
 /** Delay for a given [Time]. */
-suspend fun delay(time: Time) = kotlinx.coroutines.delay(time.inMilliseconds.toLong())
+suspend fun delay(time: Time) = delay(time.inMilliseconds.toLong())

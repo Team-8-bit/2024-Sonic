@@ -1,4 +1,4 @@
-package org.team9432.plugins
+package org.team9432.lib.dashboard.ktor.plugins
 
 import io.ktor.http.*
 import io.ktor.server.application.*

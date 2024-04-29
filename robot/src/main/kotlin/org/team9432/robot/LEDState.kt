@@ -9,6 +9,8 @@ import org.team9432.lib.coroutines.repeat
 import org.team9432.lib.coroutines.runParallel
 import org.team9432.lib.coroutines.runSequential
 import org.team9432.lib.coroutines.wait
+import org.team9432.lib.dashboard.booleanDashboardModule
+import org.team9432.lib.dashboard.textDashboardModule
 import org.team9432.lib.led.animations.*
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.predefined.*
@@ -153,6 +155,7 @@ object LEDState: KPeriodic() {
 
     /* -------- States -------- */
 
+    private var allianceDashboard by textDashboardModule("Alliance", "Unknown")
     private var alliance: Alliance? = null
 
     private var noteInIntake = false
@@ -164,9 +167,9 @@ object LEDState: KPeriodic() {
     var speakerShooterReady = false
     var ampShooterReady = false
 
-    private var driverstationDisabled = false
-    private var driverstationAutonomous = false
-    private var driverstationTeleop = false
+    private var driverstationDisabled by booleanDashboardModule("Disabled", false)
+    private var driverstationAutonomous by booleanDashboardModule("Autonomous", false)
+    private var driverstationTeleop by booleanDashboardModule("Teleop", false)
 
     var noteIndicatorLights = false
 
@@ -179,6 +182,8 @@ object LEDState: KPeriodic() {
         driverstationAutonomous = DriverStation.isAutonomousEnabled()
         driverstationTeleop = DriverStation.isTeleopEnabled()
         alliance = State.alliance
+        allianceDashboard = alliance.toString()
+
         inSpeakerRange = (RobotPosition.distanceToSpeaker() < 3.0.meters) && noteInIntake
 
         animationScope.update()

@@ -19,13 +19,12 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.util.WPILibVersion
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
+import org.team9432.lib.coroutines.RIODispatcher
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
-import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 import java.util.function.Supplier
 import kotlin.system.exitProcess
@@ -299,7 +298,7 @@ abstract class RobotBase protected constructor(): AutoCloseable {
             if (HAL.hasMain()) {
                 val userCodeThread = Thread(
                     {
-                        runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
+                        runBlocking(RIODispatcher) {
                             coroutineScope = this
                             runRobot(robotSupplier)
                         }
