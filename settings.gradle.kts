@@ -4,13 +4,18 @@ pluginManagement {
     val kotlinVersion: String by settings
     val kspVersion: String by settings
     val frcYear: String by settings
+    val composeVersion: String by settings
+    val kotlinxSerializationVersion: String by settings
 
     plugins {
         id("com.google.devtools.ksp") version kspVersion
         kotlin("jvm") version kotlinVersion
+        id("org.jetbrains.compose") version composeVersion
+        id("org.jetbrains.kotlin.plugin.serialization") version kotlinxSerializationVersion
     }
 
     repositories {
+        mavenCentral()
         mavenLocal()
         gradlePluginPortal()
 
@@ -35,8 +40,9 @@ pluginManagement {
 val props: Properties = System.getProperties()
 props.setProperty("org.gradle.internal.native.headers.unresolved.dependencies.ignore", "true")
 
-rootProject.name = "robotbase"
+rootProject.name = "2024-Sonic"
 
 include(":robot")
 include(":annotation")
 include(":dashboard")
+include(":dashboard-app")

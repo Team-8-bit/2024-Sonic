@@ -9,6 +9,7 @@ import org.team9432.lib.wrappers.neo.LoggedNeo
 import edu.wpi.first.wpilibj2.command.Command as WPICommand
 import edu.wpi.first.wpilibj2.command.Subsystem as WPISubsystem
 
+
 /** Sysid config wrapper that hides the Java unit library. */
 class KSysIdConfig(
     /** The voltage ramp rate used for quasistatic test routines in volts/sec. */

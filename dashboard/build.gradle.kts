@@ -3,7 +3,7 @@ val kotlinVersion: String by project
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.21"
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 group = "org.team9432.lib.dashboard"
