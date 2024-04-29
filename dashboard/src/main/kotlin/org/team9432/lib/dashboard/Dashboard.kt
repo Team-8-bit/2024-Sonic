@@ -9,13 +9,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import org.team9432.lib.dashboard.ktor.plugins.*
 import org.team9432.lib.dashboard.ktor.plugins.Websockets.configureSockets
-import org.team9432.lib.dashboard.modules.ModuleBase
 import org.team9432.lib.dashboard.modules.ModuleGroup
 import org.team9432.lib.dashboard.modules.ValueUpdateMessage
 import kotlin.coroutines.CoroutineContext
-import kotlin.reflect.KClass
-
-typealias ModuleType = KClass<out ModuleBase>
 
 object Dashboard {
     lateinit var context: CoroutineContext
