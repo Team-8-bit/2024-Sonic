@@ -9,39 +9,24 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import org.team9432.lib.dashboard.ktor.plugins.*
 import org.team9432.lib.dashboard.ktor.plugins.Websockets.configureSockets
-import org.team9432.lib.dashboard.modules.ModuleGroup
-import org.team9432.lib.dashboard.modules.ValueUpdateMessage
 import kotlin.coroutines.CoroutineContext
 
 object Dashboard {
-    lateinit var context: CoroutineContext
+    private lateinit var context: CoroutineContext
     fun start(context: CoroutineContext) {
         Dashboard.context = context
         embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module).start(wait = false)
     }
 
-
-    val valueMap = mutableMapOf<String, ValueUpdateMessage<*>>()
+    val valueMap = mutableMapOf<String, ValueUpdateMessage>()
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun sendValue(message: ValueUpdateMessage<*>) {
+    fun sendValue(message: ValueUpdateMessage) {
         valueMap[message.key] = message
 
         GlobalScope.launch(context) {
             withTimeout(2000L) {
                 Websockets.sendToConnectedSockets(message)
-            }
-        }
-    }
-
-    var currentLayout: ModuleGroup? = null
-
-    @OptIn(DelicateCoroutinesApi::class)
-    fun setLayout(layout: ModuleGroup) {
-        currentLayout = layout
-        GlobalScope.launch {
-            withTimeout(2000L) {
-                Websockets.sendLayoutToConnectedSockets(layout)
             }
         }
     }

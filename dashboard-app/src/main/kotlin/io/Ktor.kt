@@ -11,19 +11,19 @@ import io.ktor.serialization.kotlinx.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.team9432.lib.dashboard.modules.Message
+import org.team9432.lib.dashboard.Message
 
 object Ktor {
     var connected by mutableStateOf(false)
         private set
 
-    val client = HttpClient {
+    private val client = HttpClient {
         install(WebSockets) {
             contentConverter = KotlinxWebsocketSerializationConverter(Json)
         }
     }
 
-    var session: DefaultClientWebSocketSession? = null
+    private var session: DefaultClientWebSocketSession? = null
 
     var reconnectAttempt: Int = 0
     var reconnectCountdown by mutableIntStateOf(0)

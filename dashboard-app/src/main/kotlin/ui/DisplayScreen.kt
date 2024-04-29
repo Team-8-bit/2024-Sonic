@@ -8,50 +8,32 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.sp
-import org.team9432.lib.dashboard.modules.*
+import org.team9432.lib.dashboard.ImmutableBoolean
+import org.team9432.lib.dashboard.ImmutableDouble
+import org.team9432.lib.dashboard.ImmutableString
+import org.team9432.lib.dashboard.Type
 import ui.colors.Colors
 
-val valueMap = mutableStateMapOf<String, Any?>()
-var layout by mutableStateOf<ModuleGroup>(Col())
+val valueMap = mutableStateMapOf<String, Type>()
 
 @Composable
 @Preview
 fun DisplayScreen() {
     Surface(Modifier.fillMaxSize(), color = Colors.background) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            displayGroup(layout)
-        }
-    }
-}
-
-@Composable
-fun display(module: Module) {
-    when (module) {
-        is ModuleGroup -> displayGroup(module)
-        is ModuleBase -> displayModule(module)
-    }
-}
-
-@Composable
-fun displayGroup(module: ModuleGroup) {
-    when (module) {
-        is Row -> {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                for (childModule in module.modules) {
-                    display(childModule)
-                }
-            }
-        }
-
-        is Col -> {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                for (childModule in module.modules) {
-                    display(childModule)
+                display("count")
+                display("Alliance")
+                Row {
+                    display("Teleop")
+                    display("Autonomous")
+                    display("Disabled")
                 }
             }
         }
@@ -59,34 +41,28 @@ fun displayGroup(module: ModuleGroup) {
 }
 
 @Composable
-fun displayModule(module: ModuleBase) {
-    when (module) {
-        is BooleanModule -> booleanModule(module)
-        is DoubleModule -> doubleModule(module)
-        is StringModule -> textModule(module)
+fun display(name: String) {
+    when (val value = valueMap[name]) {
+        is ImmutableBoolean -> immutableBooleanModule(value.name, value.value)
+        is ImmutableString -> immutableTextModule(value.name, value.value)
+        is ImmutableDouble -> immutableTextModule(value.name, value.value.toString())
+        null -> immutableTextModule(name, "missing value")
+        else -> immutableTextModule(name, "Unsupported Type")
     }
 }
 
 @Composable
-fun booleanModule(module: BooleanModule) {
+fun immutableBooleanModule(name: String, value: Boolean) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = module.name, color = Colors.text, fontSize = 20.sp)
-        Switch(checked = (valueMap[module.name] as? Boolean) ?: false, enabled = false, onCheckedChange = {})
+        Text(text = name, color = Colors.text, fontSize = 20.sp)
+        Switch(checked = value, enabled = false, onCheckedChange = {})
     }
 }
 
 @Composable
-fun textModule(module: StringModule) {
+fun immutableTextModule(name: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = module.name, color = Colors.text, fontSize = 20.sp)
-        Text(text = (valueMap[module.name] as? String) ?: "null", color = Colors.text, fontSize = 15.sp, fontStyle = FontStyle.Italic)
-    }
-}
-
-@Composable
-fun doubleModule(module: DoubleModule) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = module.name, color = Colors.text, fontSize = 20.sp)
-        Text(text = (valueMap[module.name] as? Double)?.toString() ?: "null", color = Colors.text, fontSize = 15.sp, fontStyle = FontStyle.Italic)
+        Text(text = name, color = Colors.text, fontSize = 20.sp)
+        Text(text = value, color = Colors.text, fontSize = 15.sp, fontStyle = FontStyle.Italic)
     }
 }

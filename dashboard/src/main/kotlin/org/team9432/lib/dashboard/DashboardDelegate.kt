@@ -1,40 +1,37 @@
 package org.team9432.lib.dashboard
 
-import org.team9432.lib.dashboard.modules.BooleanValueUpdateMessage
-import org.team9432.lib.dashboard.modules.DoubleValueUpdateMessage
-import org.team9432.lib.dashboard.modules.StringValueUpdateMessage
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
 fun textDashboardModule(title: String, initialValue: String): ReadWriteProperty<Any?, String> {
     var lastValue = initialValue
-    Dashboard.sendValue(StringValueUpdateMessage(title, initialValue))
+    Dashboard.sendValue(ValueUpdateMessage(title, ImmutableString(title, initialValue)))
     return Delegates.observable(initialValue) { _, _, newValue ->
         if (newValue != lastValue) {
             lastValue = newValue
-            Dashboard.sendValue(StringValueUpdateMessage(title, newValue))
+            Dashboard.sendValue(ValueUpdateMessage(title, ImmutableString(title, newValue)))
         }
     }
 }
 
 fun doubleDashboardModule(title: String, initialValue: Double): ReadWriteProperty<Any?, Double> {
     var lastValue = initialValue
-    Dashboard.sendValue(DoubleValueUpdateMessage(title, initialValue))
+    Dashboard.sendValue(ValueUpdateMessage(title, ImmutableDouble(title, initialValue)))
     return Delegates.observable(initialValue) { _, _, newValue ->
         if (newValue != lastValue) {
             lastValue = newValue
-            Dashboard.sendValue(DoubleValueUpdateMessage(title, newValue))
+            Dashboard.sendValue(ValueUpdateMessage(title, ImmutableDouble(title, newValue)))
         }
     }
 }
 
 fun booleanDashboardModule(title: String, initialValue: Boolean): ReadWriteProperty<Any?, Boolean> {
     var lastValue = initialValue
-    Dashboard.sendValue(BooleanValueUpdateMessage(title, initialValue))
+    Dashboard.sendValue(ValueUpdateMessage(title, ImmutableBoolean(title, initialValue)))
     return Delegates.observable(initialValue) { _, _, newValue ->
         if (newValue != lastValue) {
             lastValue = newValue
-            Dashboard.sendValue(BooleanValueUpdateMessage(title, newValue))
+            Dashboard.sendValue(ValueUpdateMessage(title, ImmutableBoolean(title, newValue)))
         }
     }
 }

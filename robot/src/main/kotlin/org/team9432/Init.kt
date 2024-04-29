@@ -20,7 +20,6 @@ import org.team9432.robot.RobotState
 import org.team9432.robot.auto.AutoChooser
 import org.team9432.robot.auto.builder.AutoBuilder
 import org.team9432.robot.commands.DefaultCommands
-import org.team9432.robot.getLayout
 import org.team9432.robot.oi.Controls
 import org.team9432.robot.sensors.beambreaks.Beambreaks
 import org.team9432.robot.sensors.gyro.Gyro
@@ -38,7 +37,6 @@ object Init {
 
         RobotBase.coroutineScope.launch(RIODispatcher) {
             Dashboard.start(RIODispatcher)
-            Dashboard.setLayout(getLayout())
         }
 
         var count by doubleDashboardModule("count", 0.0)
