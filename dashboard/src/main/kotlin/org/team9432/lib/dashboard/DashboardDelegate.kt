@@ -1,54 +1,40 @@
 package org.team9432.lib.dashboard
 
-import org.team9432.lib.dashboard.modules.BooleanModule
-import org.team9432.lib.dashboard.modules.DoubleModule
-import org.team9432.lib.dashboard.modules.TextModule
+import org.team9432.lib.dashboard.modules.BooleanValueUpdateMessage
+import org.team9432.lib.dashboard.modules.DoubleValueUpdateMessage
+import org.team9432.lib.dashboard.modules.StringValueUpdateMessage
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
-//class DashboardDelegate<T: ModuleBase>(title: String, initialValue: T) {
-//    val callback = Dashboard.registerField(title, initialValue)
-//
-//    private var value: T = initialValue
-//    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-//        return value
-//    }
-//
-//    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-//        if (value != this.value) callback(value)
-//        this.value = value
-//    }
-//}
-
 fun textDashboardModule(title: String, initialValue: String): ReadWriteProperty<Any?, String> {
-    val module = TextModule(title, initialValue)
-    Dashboard.sendField(module)
+    var lastValue = initialValue
+    Dashboard.sendValue(StringValueUpdateMessage(title, initialValue))
     return Delegates.observable(initialValue) { _, _, newValue ->
-        if (newValue != module.value) {
-            module.value = newValue
-            Dashboard.sendField(module)
+        if (newValue != lastValue) {
+            lastValue = newValue
+            Dashboard.sendValue(StringValueUpdateMessage(title, newValue))
         }
     }
 }
 
 fun doubleDashboardModule(title: String, initialValue: Double): ReadWriteProperty<Any?, Double> {
-    val module = DoubleModule(title, initialValue)
-    Dashboard.sendField(module)
+    var lastValue = initialValue
+    Dashboard.sendValue(DoubleValueUpdateMessage(title, initialValue))
     return Delegates.observable(initialValue) { _, _, newValue ->
-        if (newValue != module.value) {
-            module.value = newValue
-            Dashboard.sendField(module)
+        if (newValue != lastValue) {
+            lastValue = newValue
+            Dashboard.sendValue(DoubleValueUpdateMessage(title, newValue))
         }
     }
 }
 
 fun booleanDashboardModule(title: String, initialValue: Boolean): ReadWriteProperty<Any?, Boolean> {
-    val module = BooleanModule(title, initialValue)
-    Dashboard.sendField(module)
+    var lastValue = initialValue
+    Dashboard.sendValue(BooleanValueUpdateMessage(title, initialValue))
     return Delegates.observable(initialValue) { _, _, newValue ->
-        if (newValue != module.value) {
-            module.value = newValue
-            Dashboard.sendField(module)
+        if (newValue != lastValue) {
+            lastValue = newValue
+            Dashboard.sendValue(BooleanValueUpdateMessage(title, newValue))
         }
     }
 }

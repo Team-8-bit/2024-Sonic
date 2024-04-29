@@ -8,12 +8,14 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.team9432.lib.dashboard.Dashboard
-import org.team9432.lib.dashboard.modules.ModuleBase
+import org.team9432.lib.dashboard.modules.InitialMessage
+import org.team9432.lib.dashboard.modules.LayoutMessage
+import org.team9432.lib.dashboard.modules.Message
+import org.team9432.lib.dashboard.modules.ModuleGroup
 import java.time.Duration
 import java.util.*
 
 object Websockets {
-
     private val connections = Collections.synchronizedSet(LinkedHashSet<WebSocketServerSession>())
 
     fun Application.configureSockets() {
@@ -42,10 +44,16 @@ object Websockets {
     }
 
     suspend fun initializeConnection(connection: WebSocketServerSession) {
-        connection.sendSerialized(Dashboard.valueMap)
+        connection.sendSerialized<Message>(
+            InitialMessage(Dashboard.valueMap.values.toMutableList<Message>().also { list -> Dashboard.currentLayout?.let { layout -> list.add(0, LayoutMessage(layout)) } })
+        )
     }
 
-    suspend fun sendModuleToConnectedSockets(value: ModuleBase) = coroutineScope {
-        connections.forEach { launch { it.sendSerialized(listOf(value)) } }
+    suspend fun sendToConnectedSockets(message: Message) = coroutineScope {
+        connections.forEach { launch { it.sendSerialized(message) } }
+    }
+
+    suspend fun sendLayoutToConnectedSockets(layout: ModuleGroup) {
+        sendToConnectedSockets(LayoutMessage(layout))
     }
 }

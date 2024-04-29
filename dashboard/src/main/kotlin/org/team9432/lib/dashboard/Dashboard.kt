@@ -10,7 +10,12 @@ import kotlinx.coroutines.withTimeout
 import org.team9432.lib.dashboard.ktor.plugins.*
 import org.team9432.lib.dashboard.ktor.plugins.Websockets.configureSockets
 import org.team9432.lib.dashboard.modules.ModuleBase
+import org.team9432.lib.dashboard.modules.ModuleGroup
+import org.team9432.lib.dashboard.modules.ValueUpdateMessage
 import kotlin.coroutines.CoroutineContext
+import kotlin.reflect.KClass
+
+typealias ModuleType = KClass<out ModuleBase>
 
 object Dashboard {
     lateinit var context: CoroutineContext
@@ -20,15 +25,27 @@ object Dashboard {
     }
 
 
-    val valueMap = mutableSetOf<ModuleBase>()
+    val valueMap = mutableMapOf<String, ValueUpdateMessage<*>>()
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun sendField(module: ModuleBase) {
-        valueMap.add(module)
+    fun sendValue(message: ValueUpdateMessage<*>) {
+        valueMap[message.key] = message
 
         GlobalScope.launch(context) {
             withTimeout(2000L) {
-                Websockets.sendModuleToConnectedSockets(module)
+                Websockets.sendToConnectedSockets(message)
+            }
+        }
+    }
+
+    var currentLayout: ModuleGroup? = null
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun setLayout(layout: ModuleGroup) {
+        currentLayout = layout
+        GlobalScope.launch {
+            withTimeout(2000L) {
+                Websockets.sendLayoutToConnectedSockets(layout)
             }
         }
     }
@@ -41,9 +58,3 @@ fun Application.module() {
     configureRouting()
     configureSockets()
 }
-
-//fun main() {
-//    runBlocking {
-//        Dashboard.start(this)
-//    }
-//}
