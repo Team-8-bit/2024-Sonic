@@ -1,4 +1,4 @@
-package org.team9432.lib.dashboard.ktor.plugins
+package org.team9432.lib.dashboard.server
 
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
@@ -8,30 +8,25 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.team9432.lib.dashboard.Dashboard
-import org.team9432.lib.dashboard.Widget
-import java.time.Duration
+import org.team9432.lib.dashboard.WidgetData
 import java.util.*
 
-object Websockets {
+internal object Websocket {
     private val connections = Collections.synchronizedSet(LinkedHashSet<WebSocketServerSession>())
 
-    fun Application.configureSocket(path: String) {
+    fun Application.configureSocket() {
         install(WebSockets) {
-            pingPeriod = Duration.ofSeconds(15)
-            timeout = Duration.ofSeconds(15)
-            maxFrameSize = Long.MAX_VALUE
-            masking = false
             contentConverter = KotlinxWebsocketSerializationConverter(Json)
         }
 
         routing {
-            webSocket(path) {
+            webSocket("/socket") {
                 try {
                     println("New connection: $this")
                     connections += this
                     while (true) {
-                        val widget = receiveDeserialized<Widget>()
-                        Dashboard.sendValue(widget)
+                        val widgetData = receiveDeserialized<WidgetData>()
+                        Dashboard.sendValue(widgetData)
                     }
                 } finally {
                     connections -= this
@@ -40,7 +35,7 @@ object Websockets {
         }
     }
 
-    suspend fun sendToConnectedSockets(widget: Widget) = coroutineScope {
-        connections.forEach { launch { it.sendSerialized(widget) } }
+    suspend fun sendToAll(widgetData: WidgetData) = coroutineScope {
+        connections.forEach { launch { it.sendSerialized(widgetData) } }
     }
 }

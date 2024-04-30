@@ -3,21 +3,18 @@ package org.team9432.lib.dashboard
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface Widget {
+sealed interface WidgetData {
     val name: String
 }
 
 @Serializable
-data class ImmutableString(override val name: String, val value: String): Widget
+data class StringWidget(override val name: String, val value: String, val allowDashboardEdit: Boolean = false): WidgetData
 
 @Serializable
-data class ImmutableBoolean(override val name: String, val value: Boolean): Widget
+data class BooleanWidget(override val name: String, val value: Boolean, val allowDashboardEdit: Boolean = false): WidgetData
 
 @Serializable
-data class MutableBoolean(override val name: String, val value: Boolean): Widget
+data class DoubleWidget(override val name: String, val value: Double, val allowDashboardEdit: Boolean = false): WidgetData
 
 @Serializable
-data class ImmutableDouble(override val name: String, val value: Double): Widget
-
-@Serializable
-data class ImmutablePid(override val name: String, val p: Double, val i: Double, val d: Double, val setpoint: Double): Widget
+data class PidWidget(override val name: String, val p: Double, val i: Double, val d: Double, val setpoint: Double, val allowDashboardEdit: Boolean = false): WidgetData

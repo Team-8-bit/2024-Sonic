@@ -9,7 +9,7 @@ import org.team9432.lib.coroutines.RIODispatcher
 import org.team9432.lib.coroutines.delay
 import org.team9432.lib.coroutines.rioLaunch
 import org.team9432.lib.dashboard.Dashboard
-import org.team9432.lib.dashboard.doubleDashboardModule
+import org.team9432.lib.dashboard.delegates.doubleDashboardWidget
 import org.team9432.lib.led.management.AnimationManager
 import org.team9432.lib.led.strip.LEDStrip
 import org.team9432.lib.led.strip.RioLedStrip
@@ -41,7 +41,7 @@ object Init {
         }
 
         RobotBase.coroutineScope.launch {
-            var count by doubleDashboardModule("count", 0.0)
+            var count by doubleDashboardWidget("count", 0.0)
 
             while (isActive) {
                 delay(1.seconds)

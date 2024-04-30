@@ -9,9 +9,8 @@ import org.team9432.lib.coroutines.repeat
 import org.team9432.lib.coroutines.runParallel
 import org.team9432.lib.coroutines.runSequential
 import org.team9432.lib.coroutines.wait
-import org.team9432.lib.dashboard.MutableBooleanDashboardModule
-import org.team9432.lib.dashboard.booleanDashboardModule
-import org.team9432.lib.dashboard.stringDashboardModule
+import org.team9432.lib.dashboard.delegates.booleanDashboardWidget
+import org.team9432.lib.dashboard.delegates.stringDashboardWidget
 import org.team9432.lib.led.animations.*
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.predefined.*
@@ -156,7 +155,7 @@ object LEDState: KPeriodic() {
 
     /* -------- States -------- */
 
-    private var allianceDashboard by stringDashboardModule("Alliance", "Unknown")
+    private var allianceDashboard by stringDashboardWidget("Alliance", "Unknown")
     private var alliance: Alliance? = null
 
     private var noteInIntake = false
@@ -168,11 +167,11 @@ object LEDState: KPeriodic() {
     var speakerShooterReady = false
     var ampShooterReady = false
 
-    private var driverstationDisabled by booleanDashboardModule("Disabled", false)
-    private var driverstationAutonomous by booleanDashboardModule("Autonomous", false)
-    private var driverstationTeleop by booleanDashboardModule("Teleop", false)
+    private var driverstationDisabled by booleanDashboardWidget("Disabled", false)
+    private var driverstationAutonomous by booleanDashboardWidget("Autonomous", false)
+    private var driverstationTeleop by booleanDashboardWidget("Teleop", false)
 
-    private var ledTest by MutableBooleanDashboardModule("LEDTest", false)
+    private var ledTest by booleanDashboardWidget("LEDTest", false, allowDashboardEdit = true)
 
     var noteIndicatorLights = false
 
