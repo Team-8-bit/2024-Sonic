@@ -32,13 +32,13 @@ object Dashboard {
                 get("/currentstate") { call.respond(valueMap.values) }
             }
 
-            configureSocket("/timer")
+            configureSocket("/socket")
         }.start(wait = false)
     }
 
-    val valueMap = mutableMapOf<String, Type>()
+    val valueMap = mutableMapOf<String, Widget>()
 
-    fun sendValue(value: Type) {
+    fun sendValue(value: Widget) {
         valueMap[value.name] = value
 
         coroutineScope.launch(context) {

@@ -8,7 +8,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.team9432.lib.dashboard.Dashboard
-import org.team9432.lib.dashboard.Type
+import org.team9432.lib.dashboard.Widget
 import java.time.Duration
 import java.util.*
 
@@ -30,8 +30,8 @@ object Websockets {
                     println("New connection: $this")
                     connections += this
                     while (true) {
-                        val type = receiveDeserialized<Type>()
-                        Dashboard.sendValue(type)
+                        val widget = receiveDeserialized<Widget>()
+                        Dashboard.sendValue(widget)
                     }
                 } finally {
                     connections -= this
@@ -40,7 +40,7 @@ object Websockets {
         }
     }
 
-    suspend fun sendToConnectedSockets(type: Type) = coroutineScope {
-        connections.forEach { launch { it.sendSerialized(type) } }
+    suspend fun sendToConnectedSockets(widget: Widget) = coroutineScope {
+        connections.forEach { launch { it.sendSerialized(widget) } }
     }
 }

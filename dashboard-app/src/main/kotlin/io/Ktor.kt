@@ -16,7 +16,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.team9432.lib.dashboard.Type
+import org.team9432.lib.dashboard.Widget
 import ui.valueMap
 
 object Ktor {
@@ -36,8 +36,8 @@ object Ktor {
 
     private var session: DefaultClientWebSocketSession? = null
 
-    fun sendType(type: Type) {
-        coroutineScope.launch { session?.sendSerialized(type) }
+    fun sendType(widget: Widget) {
+        coroutineScope.launch { session?.sendSerialized(widget) }
     }
 
     private lateinit var coroutineScope: CoroutineScope
@@ -57,7 +57,7 @@ object Ktor {
             // Receive and process information
             try {
                 while (true) {
-                    val message = session.receiveDeserialized<Type>()
+                    val message = session.receiveDeserialized<Widget>()
                     valueMap[message.name] = message
                 }
             } catch (e: Exception) {
@@ -69,7 +69,7 @@ object Ktor {
         }
     }
 
-    private suspend fun getInitialData(): List<Type> {
+    private suspend fun getInitialData(): List<Widget> {
         var reconnectAttempt = 0
         while (true) {
             try {
@@ -92,7 +92,7 @@ object Ktor {
         var reconnectAttempt = 0
         while (true) {
             try {
-                return client.webSocketSession(host = "localhost", port = 8080, path = "/timer")
+                return client.webSocketSession(host = "localhost", port = 8080, path = "/socket")
             } catch (e: Exception) {
                 println("Error while connecting: ${e.message}")
 

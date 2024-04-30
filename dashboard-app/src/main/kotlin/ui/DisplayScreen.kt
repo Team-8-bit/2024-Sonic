@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import org.team9432.lib.dashboard.*
 import ui.colors.Colors
 
-val valueMap = mutableStateMapOf<String, Type>()
+val valueMap = mutableStateMapOf<String, Widget>()
 
 @Composable
 @Preview
