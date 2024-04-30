@@ -7,9 +7,7 @@ import io.ktor.server.websocket.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.team9432.lib.dashboard.Dashboard
-import org.team9432.lib.dashboard.InitialMessage
-import org.team9432.lib.dashboard.Message
+import org.team9432.lib.dashboard.ValueUpdateMessage
 import java.time.Duration
 import java.util.*
 
@@ -29,7 +27,6 @@ object Websockets {
             webSocket("/timer") {
                 try {
                     println("New connection: $this")
-                    initializeConnection(this)
                     connections += this
                     for (frame in incoming) {
                         // Do nothing
@@ -41,11 +38,7 @@ object Websockets {
         }
     }
 
-    suspend fun initializeConnection(connection: WebSocketServerSession) {
-        connection.sendSerialized<Message>(InitialMessage(Dashboard.valueMap.values.toList<Message>()))
-    }
-
-    suspend fun sendToConnectedSockets(message: Message) = coroutineScope {
+    suspend fun sendToConnectedSockets(message: ValueUpdateMessage) = coroutineScope {
         connections.forEach { launch { it.sendSerialized(message) } }
     }
 }

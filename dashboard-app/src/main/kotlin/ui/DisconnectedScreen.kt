@@ -21,7 +21,7 @@ fun DisconnectedScreen() {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(text = "Disconnected", color = Colors.text)
-                Text(text = "Reconnecting in ${Ktor.reconnectCountdown + 1}, attempt ${Ktor.reconnectAttempt}", color = Colors.text, fontStyle = FontStyle.Italic, fontSize = 13.sp)
+                Text(text = "Reconnecting in ${Ktor.reconnectCountdown + 1}", color = Colors.text, fontStyle = FontStyle.Italic, fontSize = 13.sp)
             }
         }
     }
