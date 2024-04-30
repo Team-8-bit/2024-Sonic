@@ -15,7 +15,8 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.team9432.lib.dashboard.ValueUpdateMessage
+import org.team9432.lib.dashboard.Type
+import ui.valueMap
 
 object Ktor {
     var connected by mutableStateOf(false)
@@ -32,38 +33,54 @@ object Ktor {
 
     var reconnectCountdown by mutableIntStateOf(0)
 
+    private var session: DefaultClientWebSocketSession? = null
+
+    fun sendType(type: Type) {
+        coroutineScope.launch { session?.sendSerialized(type) }
+    }
+
     fun run() {
         coroutineScope.launch {
             while (true) {
                 val initialData = getInitialData()
-                initialData.forEach { MessageProcessor.process(it) }
+                initialData.forEach { valueMap[it.name] = it }
 
                 // Connect to the websocket
                 val session = connectToWebsocket()
                 connected = true
+                this@Ktor.session = session
 
                 // Receive and process information
                 try {
                     while (true) {
-                        val message = session.receiveDeserialized<ValueUpdateMessage>()
-                        MessageProcessor.process(message)
+                        val message = session.receiveDeserialized<Type>()
+                        valueMap[message.name] = message
                     }
                 } catch (e: Exception) {
                     println("Error while receiving: ${e.message}")
-                } finally {
-                    connected = false
                 }
+
+                connected = false
+                this@Ktor.session = null
             }
         }
     }
 
-    private suspend fun getInitialData(): List<ValueUpdateMessage> {
+    private suspend fun getInitialData(): List<Type> {
+        var reconnectAttempt = 0
         while (true) {
             try {
                 return client.get("http://localhost:8080/currentstate").body()
             } catch (e: Exception) {
                 println("Error while getting initial data: ${e.message}")
-                delay(1000)
+
+                reconnectAttempt++
+                // Reconnect time gets longer as attempts go up, with a max of five seconds
+                val delayTime = reconnectAttempt.coerceAtMost(5)
+
+                println("Connection failed, retrying in $delayTime seconds.")
+
+                runReconnectCountdown(delayTime)
             }
         }
     }
@@ -91,8 +108,8 @@ object Ktor {
         reconnectCountdown = delayTime
 
         do {
-            delay(1000)
             reconnectCountdown -= 1
+            delay(1000)
         } while (reconnectCountdown > 0)
     }
 }

@@ -18,15 +18,15 @@ object Dashboard {
         embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module).start(wait = false)
     }
 
-    val valueMap = mutableMapOf<String, ValueUpdateMessage>()
+    val valueMap = mutableMapOf<String, Type>()
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun sendValue(message: ValueUpdateMessage) {
-        valueMap[message.key] = message
+    fun sendValue(value: Type) {
+        valueMap[value.name] = value
 
         GlobalScope.launch(context) {
             withTimeout(2000L) {
-                Websockets.sendToConnectedSockets(message)
+                Websockets.sendToConnectedSockets(value)
             }
         }
     }

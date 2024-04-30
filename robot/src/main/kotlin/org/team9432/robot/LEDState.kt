@@ -9,8 +9,9 @@ import org.team9432.lib.coroutines.repeat
 import org.team9432.lib.coroutines.runParallel
 import org.team9432.lib.coroutines.runSequential
 import org.team9432.lib.coroutines.wait
+import org.team9432.lib.dashboard.MutableBooleanDashboardModule
 import org.team9432.lib.dashboard.booleanDashboardModule
-import org.team9432.lib.dashboard.textDashboardModule
+import org.team9432.lib.dashboard.stringDashboardModule
 import org.team9432.lib.led.animations.*
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.predefined.*
@@ -59,7 +60,7 @@ object LEDState: KPeriodic() {
     /* -------- Animation States -------- */
 
     private val animationScope = AnimationBindScope.build {
-        If({ testEmergencySwitchActive }) {
+        If({ ledTest }) {
             setAnimation(
                 runParallel(
                     speakerLeft.solid(Color.Green),
@@ -155,7 +156,7 @@ object LEDState: KPeriodic() {
 
     /* -------- States -------- */
 
-    private var allianceDashboard by textDashboardModule("Alliance", "Unknown")
+    private var allianceDashboard by stringDashboardModule("Alliance", "Unknown")
     private var alliance: Alliance? = null
 
     private var noteInIntake = false
@@ -170,6 +171,8 @@ object LEDState: KPeriodic() {
     private var driverstationDisabled by booleanDashboardModule("Disabled", false)
     private var driverstationAutonomous by booleanDashboardModule("Autonomous", false)
     private var driverstationTeleop by booleanDashboardModule("Teleop", false)
+
+    private var ledTest by MutableBooleanDashboardModule("LEDTest", false)
 
     var noteIndicatorLights = false
 

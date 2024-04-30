@@ -7,7 +7,8 @@ import io.ktor.server.websocket.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.team9432.lib.dashboard.ValueUpdateMessage
+import org.team9432.lib.dashboard.Dashboard
+import org.team9432.lib.dashboard.Type
 import java.time.Duration
 import java.util.*
 
@@ -28,8 +29,9 @@ object Websockets {
                 try {
                     println("New connection: $this")
                     connections += this
-                    for (frame in incoming) {
-                        // Do nothing
+                    while (true) {
+                        val type = receiveDeserialized<Type>()
+                        Dashboard.sendValue(type)
                     }
                 } finally {
                     connections -= this
@@ -38,7 +40,7 @@ object Websockets {
         }
     }
 
-    suspend fun sendToConnectedSockets(message: ValueUpdateMessage) = coroutineScope {
-        connections.forEach { launch { it.sendSerialized(message) } }
+    suspend fun sendToConnectedSockets(type: Type) = coroutineScope {
+        connections.forEach { launch { it.sendSerialized(type) } }
     }
 }
