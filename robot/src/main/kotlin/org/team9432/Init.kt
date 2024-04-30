@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import org.team9432.lib.advantagekit.Logger
 import org.team9432.lib.coroutines.RIODispatcher
 import org.team9432.lib.coroutines.delay
+import org.team9432.lib.coroutines.rioLaunch
 import org.team9432.lib.dashboard.Dashboard
 import org.team9432.lib.dashboard.doubleDashboardModule
 import org.team9432.lib.led.management.AnimationManager
@@ -35,13 +36,13 @@ object Init {
     fun initRobot() {
         LEDStrip.create(RioLedStrip(118, Devices.LED_PORT))
 
-        RobotBase.coroutineScope.launch(RIODispatcher) {
-            Dashboard.start(RIODispatcher)
+        RobotBase.coroutineScope.rioLaunch {
+            Dashboard.run(RIODispatcher)
         }
 
-        var count by doubleDashboardModule("count", 0.0)
-
         RobotBase.coroutineScope.launch {
+            var count by doubleDashboardModule("count", 0.0)
+
             while (isActive) {
                 delay(1.seconds)
                 count++

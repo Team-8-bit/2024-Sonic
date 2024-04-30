@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import coroutineScope
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -12,6 +11,8 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -39,30 +40,32 @@ object Ktor {
         coroutineScope.launch { session?.sendSerialized(type) }
     }
 
-    fun run() {
-        coroutineScope.launch {
-            while (true) {
-                val initialData = getInitialData()
-                initialData.forEach { valueMap[it.name] = it }
+    private lateinit var coroutineScope: CoroutineScope
 
-                // Connect to the websocket
-                val session = connectToWebsocket()
-                connected = true
-                this@Ktor.session = session
+    suspend fun run() = coroutineScope {
+        coroutineScope = this
 
-                // Receive and process information
-                try {
-                    while (true) {
-                        val message = session.receiveDeserialized<Type>()
-                        valueMap[message.name] = message
-                    }
-                } catch (e: Exception) {
-                    println("Error while receiving: ${e.message}")
+        while (true) {
+            val initialData = getInitialData()
+            initialData.forEach { valueMap[it.name] = it }
+
+            // Connect to the websocket
+            val session = connectToWebsocket()
+            connected = true
+            this@Ktor.session = session
+
+            // Receive and process information
+            try {
+                while (true) {
+                    val message = session.receiveDeserialized<Type>()
+                    valueMap[message.name] = message
                 }
-
-                connected = false
-                this@Ktor.session = null
+            } catch (e: Exception) {
+                println("Error while receiving: ${e.message}")
             }
+
+            connected = false
+            this@Ktor.session = null
         }
     }
 

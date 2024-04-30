@@ -25,6 +25,8 @@ fun Section.pulse(
     timePerStep: Time = 20.milliseconds,
 ) = object: Animation(this) {
     override suspend fun runAnimation() {
+        colorset.resetToDefault()
+
         val stepsInOrder = colorset.indices.toList().let { if (runReversed) it.reversed() else it }
 
         while (true) {

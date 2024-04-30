@@ -15,7 +15,7 @@ import java.util.*
 object Websockets {
     private val connections = Collections.synchronizedSet(LinkedHashSet<WebSocketServerSession>())
 
-    fun Application.configureSockets() {
+    fun Application.configureSocket(path: String) {
         install(WebSockets) {
             pingPeriod = Duration.ofSeconds(15)
             timeout = Duration.ofSeconds(15)
@@ -25,7 +25,7 @@ object Websockets {
         }
 
         routing {
-            webSocket("/timer") {
+            webSocket(path) {
                 try {
                     println("New connection: $this")
                     connections += this
