@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import io.Ktor
-import org.team9432.lib.dashboard.BooleanWidget
+import io.Client
+import org.team9432.lib.dashboard.server.sendable.BooleanWidget
 import ui.colors.Colors
 
 @Composable
@@ -17,7 +17,7 @@ fun BooleanWidget(name: String, value: Boolean, enabled: Boolean) {
         Text(text = name, color = Colors.text, fontSize = 20.sp, textAlign = TextAlign.Center)
         Switch(checked = value, enabled = enabled, onCheckedChange = { isChecked ->
             if (enabled) {
-                Ktor.sendType(BooleanWidget(name, isChecked, enabled))
+                Client.updateWidget(BooleanWidget(name, isChecked, enabled))
             }
         })
     }

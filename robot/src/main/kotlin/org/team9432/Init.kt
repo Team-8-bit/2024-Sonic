@@ -40,6 +40,8 @@ object Init {
             Dashboard.run(RIODispatcher)
         }
 
+        DashboardTabs.sendToDashboard()
+
         RobotBase.coroutineScope.launch {
             var count by doubleDashboardWidget("count", 0.0)
 

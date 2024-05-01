@@ -8,7 +8,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.team9432.lib.dashboard.Dashboard
-import org.team9432.lib.dashboard.WidgetData
+import org.team9432.lib.dashboard.server.sendable.Sendable
 import java.util.*
 
 internal object Websocket {
@@ -25,8 +25,9 @@ internal object Websocket {
                     println("New connection: $this")
                     connections += this
                     while (true) {
-                        val widgetData = receiveDeserialized<WidgetData>()
-                        Dashboard.sendValue(widgetData)
+                        val value = receiveDeserialized<Sendable>()
+                        sendToAll(value)
+                        Dashboard.processInformation(value)
                     }
                 } finally {
                     connections -= this
@@ -35,7 +36,7 @@ internal object Websocket {
         }
     }
 
-    suspend fun sendToAll(widgetData: WidgetData) = coroutineScope {
+    suspend fun sendToAll(widgetData: Sendable) = coroutineScope {
         connections.forEach { launch { it.sendSerialized(widgetData) } }
     }
 }

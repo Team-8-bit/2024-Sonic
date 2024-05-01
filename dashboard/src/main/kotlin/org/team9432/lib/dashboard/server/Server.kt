@@ -9,8 +9,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.team9432.lib.dashboard.Dashboard
-import org.team9432.lib.dashboard.WidgetData
 import org.team9432.lib.dashboard.server.Websocket.configureSocket
+import org.team9432.lib.dashboard.server.sendable.Sendable
 
 object Server {
     private lateinit var coroutineScope: CoroutineScope
@@ -28,7 +28,7 @@ object Server {
         }.start(wait = false)
     }
 
-    fun sendToAll(value: WidgetData) {
+    fun sendToAll(value: Sendable) {
         coroutineScope.launch(Dashboard.coroutineContext) {
             Websocket.sendToAll(value)
         }

@@ -1,9 +1,9 @@
-package org.team9432.lib.dashboard
+package org.team9432.lib.dashboard.server.sendable
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface WidgetData {
+sealed interface WidgetData: Sendable {
     val name: String
 }
 

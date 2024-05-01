@@ -1,6 +1,10 @@
 package org.team9432.lib.dashboard.delegates
 
-import org.team9432.lib.dashboard.*
+import org.team9432.lib.dashboard.Dashboard
+import org.team9432.lib.dashboard.server.sendable.BooleanWidget
+import org.team9432.lib.dashboard.server.sendable.DoubleWidget
+import org.team9432.lib.dashboard.server.sendable.StringWidget
+import org.team9432.lib.dashboard.server.sendable.WidgetData
 import kotlin.reflect.KProperty
 
 fun stringDashboardWidget(title: String, initialValue: String, allowDashboardEdit: Boolean = false) =
@@ -14,16 +18,16 @@ fun doubleDashboardWidget(title: String, initialValue: Double, allowDashboardEdi
 
 class GenericWidget<T>(private val title: String, initialValue: T, private val getWidget: (T) -> WidgetData, private val getValue: (WidgetData?) -> T) {
     init {
-        Dashboard.sendValue(getWidget(initialValue))
+        Dashboard.updateWidget(getWidget(initialValue))
     }
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return getValue(Dashboard.getValue(title))
+        return getValue(Dashboard.getWidgetData(title))
     }
 
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        if (value != getValue(Dashboard.getValue(title))) {
-            Dashboard.sendValue(getWidget(value))
+        if (value != getValue(Dashboard.getWidgetData(title))) {
+            Dashboard.updateWidget(getWidget(value))
         }
     }
 }

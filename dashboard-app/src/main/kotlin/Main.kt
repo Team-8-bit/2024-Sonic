@@ -2,7 +2,10 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import io.Client
 import io.Ktor
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -24,11 +27,11 @@ fun App() {
 fun main() {
     runBlocking {
         launch {
-            Ktor.run()
+            Client.run()
         }
 
         application {
-            Window(onCloseRequest = ::exitApplication, title = "Dashboard") {
+            Window(onCloseRequest = ::exitApplication, title = "Dashboard", state = WindowState(WindowPlacement.Maximized)) {
                 App()
             }
         }

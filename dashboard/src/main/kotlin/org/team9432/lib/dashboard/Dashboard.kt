@@ -3,6 +3,7 @@ package org.team9432.lib.dashboard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import org.team9432.lib.dashboard.server.Server
+import org.team9432.lib.dashboard.server.sendable.*
 import kotlin.coroutines.CoroutineContext
 
 object Dashboard {
@@ -17,20 +18,40 @@ object Dashboard {
         Server.run()
     }
 
+    fun processInformation(sendable: Sendable) {
+        when (sendable) {
+            is WidgetData -> currentValues[sendable.name] = sendable
+            else -> {}
+        }
+    }
+
+
+    /* -------- Widgets -------- */
+
     private val currentValues = mutableMapOf<String, WidgetData>()
 
-    fun sendValue(value: WidgetData) {
+    fun updateWidget(value: WidgetData) {
         currentValues[value.name] = value
-
         Server.sendToAll(value)
     }
 
-    fun getValue(name: String): WidgetData? {
-        return currentValues[name]
+    fun getWidgetData(name: String) = currentValues[name]
+    fun getAllWidgetData() = currentValues.values.toList()
+
+
+    /* -------- Tabs -------- */
+
+    private val currentTabs = mutableMapOf<String, Tab>()
+
+    fun addTab(tab: Tab) {
+        currentTabs[tab.name] = tab
+        Server.sendToAll(AddTab(tab.name, tab))
     }
 
-    fun getAllWidgets(): List<WidgetData> {
-        return currentValues.values.toList()
+    fun removeTab(name: String) {
+        currentTabs.remove(name)
+        Server.sendToAll(RemoveTab(name))
     }
 
+    fun getAllTabs() = currentTabs.values.toList()
 }
