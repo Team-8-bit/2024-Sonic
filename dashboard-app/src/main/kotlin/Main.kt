@@ -16,6 +16,7 @@ import ui.DisplayScreen
 @Preview
 fun App() {
     MaterialTheme {
+        // Either display the dashboard or wait for connection
         if (Ktor.connected) {
             DisplayScreen()
         } else {

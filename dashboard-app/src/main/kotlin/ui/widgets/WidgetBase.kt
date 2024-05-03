@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ui.colors.Colors
 
+/** The base of all displayed widgets, adds background and border. */
 @Composable
 fun WidgetBase(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
     Surface(modifier = modifier.padding(5.dp), color = Colors.foreground, shape = RoundedCornerShape(10), border = BorderStroke(2.dp, Colors.text)) {

@@ -11,6 +11,7 @@ import io.Client
 import org.team9432.lib.dashboard.server.sendable.BooleanWidget
 import ui.colors.Colors
 
+/** Boolean displayed as a toggle switch. */
 @Composable
 fun BooleanWidget(name: String, value: Boolean, enabled: Boolean) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {

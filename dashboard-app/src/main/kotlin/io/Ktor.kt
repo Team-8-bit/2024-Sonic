@@ -19,9 +19,7 @@ import kotlinx.serialization.json.Json
 import org.team9432.lib.dashboard.server.sendable.Sendable
 
 object Ktor {
-    var connected by mutableStateOf(false)
-        private set
-
+    /** The [HttpClient] instance used by the dashboard. */
     private val client = HttpClient {
         install(WebSockets) {
             contentConverter = KotlinxWebsocketSerializationConverter(Json)
@@ -31,20 +29,28 @@ object Ktor {
         }
     }
 
+    /** Whether the dashboard is currently connected to the robot. */
+    var connected by mutableStateOf(false)
+        private set
+
+    /** The number of seconds until the dashboard attempts to connect to the robot again. */
     var reconnectCountdown by mutableIntStateOf(0)
 
     private var session: DefaultClientWebSocketSession? = null
 
+    /** Sends the given [Sendable] to the robot code. */
     fun send(sendable: Sendable) {
         coroutineScope.launch { session?.sendSerialized(sendable) }
     }
 
     private lateinit var coroutineScope: CoroutineScope
 
+    /** Starts and runs the client, must be called before anything else. */
     suspend fun run() = coroutineScope {
         coroutineScope = this
 
         while (true) {
+            // Get the current state of everything from the robot code
             val initialData = getInitialData()
             initialData.forEach { Client.processInformation(it) }
 
@@ -68,12 +74,14 @@ object Ktor {
         }
     }
 
+    /** Gets the page of initial information from the robot. */
     private suspend fun getInitialData(): List<Sendable> {
         var reconnectAttempt = 0
         while (true) {
             try {
+                // Attempt to get the page
                 return client.get("http://localhost:8080/currentstate").body()
-            } catch (e: Exception) {
+            } catch (e: Exception) { // If it didn't work, wait a bit and try again
                 println("Error while getting initial data: ${e.message}")
 
                 reconnectAttempt++
@@ -87,12 +95,14 @@ object Ktor {
         }
     }
 
+    /** Connects to the robot websocket and returns the running session. */
     private suspend fun connectToWebsocket(): DefaultClientWebSocketSession {
         var reconnectAttempt = 0
         while (true) {
             try {
+                // Attempt to connect
                 return client.webSocketSession(host = "localhost", port = 8080, path = "/socket")
-            } catch (e: Exception) {
+            } catch (e: Exception) { // If it didn't work, wait a bit and try again
                 println("Error while connecting: ${e.message}")
 
                 reconnectAttempt++
@@ -106,6 +116,7 @@ object Ktor {
         }
     }
 
+    /** Runs a countdown for the given number of seconds. Also updates [reconnectCountdown] so it is displayed on the disconnected page. */
     private suspend fun runReconnectCountdown(delayTime: Int) {
         reconnectCountdown = delayTime
 

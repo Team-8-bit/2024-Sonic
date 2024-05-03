@@ -1,6 +1,5 @@
 package ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -21,26 +20,29 @@ import ui.widgets.BooleanWidget
 import ui.widgets.TextWidget
 import ui.widgets.WidgetBase
 
-private val numberOfCols = 10 // X
-private val numberOfRows = 6 // Y
+// Number of rows and columns to display
+private var numberOfCols = 10 // X
+private var numberOfRows = 6 // Y
 
-var maxY by mutableFloatStateOf(0F)
-var maxX by mutableFloatStateOf(0F)
+// X and Y dimensions of the widget area
+var widgetAreaY by mutableFloatStateOf(0F)
+var widgetAreaX by mutableFloatStateOf(0F)
 
+/** Displays the widget layout from the robot. */
 @Composable
-@Preview
 fun DisplayScreen() {
     Surface(Modifier.fillMaxSize(), color = Colors.background) {
-        Box(Modifier.fillMaxSize().onGloballyPositioned { maxY = it.size.height.toFloat(); maxX = it.size.width.toFloat() }) {
+        Box(Modifier.fillMaxSize().onGloballyPositioned { widgetAreaY = it.size.height.toFloat(); widgetAreaX = it.size.width.toFloat() }) {
             Client.currentTabs.values.firstOrNull()?.data?.forEach { widgetData -> Widget(widgetData) }
         }
     }
 }
 
+/** Displays a widget of a given size at the given position. */
 @Composable
 fun Widget(data: TabWidget) {
-    val xPerUnit = maxX.pxToDp() / numberOfCols
-    val yPerUnit = maxY.pxToDp() / numberOfRows
+    val xPerUnit = widgetAreaX.pxToDp() / numberOfCols
+    val yPerUnit = widgetAreaY.pxToDp() / numberOfRows
 
     WidgetBase(
         Modifier
@@ -54,17 +56,18 @@ fun Widget(data: TabWidget) {
     }
 }
 
+/** Finds and displays the correct type of widget by the given name. */
 @Composable
 fun display(name: String) {
     when (val value = Client.getWidgetData(name)) {
-        is StringWidget -> TextWidget(value.name, value.value, enabled = value.allowDashboardEdit)
+        is StringWidget -> TextWidget(value.name, value.value)
         is BooleanWidget -> BooleanWidget(value.name, value.value, enabled = value.allowDashboardEdit)
-        is DoubleWidget -> TextWidget(value.name, value.value.toString(), enabled = value.allowDashboardEdit)
+        is DoubleWidget -> TextWidget(value.name, value.value.toString())
 
-        null -> TextWidget(name, "missing value", enabled = true)
-        else -> TextWidget(name, "Unsupported Type", enabled = true)
+        null -> TextWidget(name, "missing value")
     }
 }
 
+/** Converts the value in px to dp. */
 @Composable
 fun Float.pxToDp() = (this / LocalDensity.current.density).dp
