@@ -66,7 +66,8 @@ dependencies {
     implementation implementation(project(':annotation'))
     ksp ksp(project(':annotation'))
 
-    implementation implementation(project(':dashboard'))
+    implementation implementation(project(':dashboard-lib'))
+
 
     wpi.java.deps.wpilib().forEach { implementation(it) }
     wpi.java.vendor.java().forEach { implementation(it) }

@@ -44,5 +44,5 @@ rootProject.name = "2024-Sonic"
 
 include(":robot")
 include(":annotation")
-include(":dashboard")
+include(":dashboard-lib")
 include(":dashboard-app")
