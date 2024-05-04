@@ -15,7 +15,6 @@ import org.team9432.lib.dashboard.server.sendable.BooleanWidget
 import org.team9432.lib.dashboard.server.sendable.DoubleWidget
 import org.team9432.lib.dashboard.server.sendable.StringWidget
 import org.team9432.lib.dashboard.server.sendable.TabWidget
-import ui.colors.Colors
 import ui.widgets.BooleanWidget
 import ui.widgets.TextWidget
 import ui.widgets.WidgetBase
@@ -31,7 +30,7 @@ var widgetAreaX by mutableFloatStateOf(0F)
 /** Displays the widget layout from the robot. */
 @Composable
 fun DisplayScreen() {
-    Surface(Modifier.fillMaxSize(), color = Colors.background) {
+    Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize().onGloballyPositioned { widgetAreaY = it.size.height.toFloat(); widgetAreaX = it.size.width.toFloat() }) {
             Client.currentTabs.values.first { it.index == currentTabIndex }.data.forEach { widgetData -> Widget(widgetData) }
         }

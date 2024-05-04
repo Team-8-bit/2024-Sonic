@@ -11,16 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.sp
 import io.Ktor
-import ui.colors.Colors
 
 /** Displays the disconnected screen. This just has the countdown until the next connection attempt. */
 @Composable
 fun DisconnectedScreen() {
-    Surface(Modifier.fillMaxSize(), color = Colors.background) {
+    Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "Disconnected", color = Colors.text)
-                Text(text = "Reconnecting in ${Ktor.reconnectCountdown + 1}", color = Colors.text, fontStyle = FontStyle.Italic, fontSize = 13.sp)
+                Text(text = "Disconnected")
+                Text(text = "Reconnecting in ${Ktor.reconnectCountdown + 1}", fontStyle = FontStyle.Italic, fontSize = 13.sp)
             }
         }
     }

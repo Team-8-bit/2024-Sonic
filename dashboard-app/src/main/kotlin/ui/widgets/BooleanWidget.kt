@@ -9,13 +9,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import io.Client
 import org.team9432.lib.dashboard.server.sendable.BooleanWidget
-import ui.colors.Colors
 
 /** Boolean displayed as a toggle switch. */
 @Composable
 fun BooleanWidget(name: String, value: Boolean, enabled: Boolean) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = name, color = Colors.text, fontSize = 20.sp, textAlign = TextAlign.Center)
+        Text(text = name, fontSize = 20.sp, textAlign = TextAlign.Center)
         Switch(checked = value, enabled = enabled, onCheckedChange = { isChecked ->
             if (enabled) {
                 Client.updateWidget(BooleanWidget(name, isChecked, enabled))
