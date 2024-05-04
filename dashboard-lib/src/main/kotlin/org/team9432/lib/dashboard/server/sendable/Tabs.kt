@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class AddTab(val name: String, val tab: Tab): Sendable
 
 @Serializable
-data class Tab(val name: String, val data: List<TabWidget>)
+data class Tab(val name: String, val index: Int, val data: List<TabWidget>)
 
 @Serializable
 data class TabWidget(val row: Int, val col: Int, val name: String, val rowsSpanned: Int, val colsSpanned: Int)

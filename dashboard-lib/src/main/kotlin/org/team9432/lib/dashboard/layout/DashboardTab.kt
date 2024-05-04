@@ -3,7 +3,7 @@ package org.team9432.lib.dashboard.layout
 import org.team9432.lib.dashboard.server.sendable.Tab
 import org.team9432.lib.dashboard.server.sendable.TabWidget
 
-class DashboardTab(rows: Int, cols: Int, val name: String = "Unnamed") {
+class DashboardTab(rows: Int, cols: Int, val index: Int, val name: String = "Unnamed") {
     private data class Coordinate(val row: Int, val col: Int)
 
     private val rowIndices = 0..<rows
@@ -38,5 +38,5 @@ class DashboardTab(rows: Int, cols: Int, val name: String = "Unnamed") {
         registeredWidgets.add(TabWidget(row, col, name, rowsSpanned, colsSpanned))
     }
 
-    fun getSendable(): Tab = Tab(name, registeredWidgets)
+    fun getSendable(): Tab = Tab(name, index, registeredWidgets)
 }

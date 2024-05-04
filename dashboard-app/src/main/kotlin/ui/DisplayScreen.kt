@@ -33,7 +33,7 @@ var widgetAreaX by mutableFloatStateOf(0F)
 fun DisplayScreen() {
     Surface(Modifier.fillMaxSize(), color = Colors.background) {
         Box(Modifier.fillMaxSize().onGloballyPositioned { widgetAreaY = it.size.height.toFloat(); widgetAreaX = it.size.width.toFloat() }) {
-            Client.currentTabs.values.firstOrNull()?.data?.forEach { widgetData -> Widget(widgetData) }
+            Client.currentTabs.values.first { it.index == currentTabIndex }.data.forEach { widgetData -> Widget(widgetData) }
         }
     }
 }

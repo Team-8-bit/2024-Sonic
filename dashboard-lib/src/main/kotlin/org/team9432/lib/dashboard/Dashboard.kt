@@ -44,6 +44,7 @@ object Dashboard {
     private val currentTabs = mutableMapOf<String, Tab>()
 
     fun addTab(tab: Tab) {
+        assert(currentTabs.none { it.value.index == tab.index }) { "There is already a tab at index ${tab.index}!" }
         currentTabs[tab.name] = tab
         Server.sendToAll(AddTab(tab.name, tab))
     }
