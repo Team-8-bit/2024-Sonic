@@ -1,36 +1,34 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import io.Client
-import io.Ktor
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import ui.DisconnectedScreen
-import ui.DisplayScreen
+import ui.AppState
+import ui.NavRail
 import ui.TabBar
+import ui.screens.DisplayScreen
+import ui.screens.SettingsScreen
 import ui.theme.AppTheme
-
-var isDark by mutableStateOf(true)
 
 @Composable
 @Preview
 fun App() {
-    AppTheme(darkTheme = isDark) {
-        // Either display the dashboard or wait for connection
-        if (Ktor.connected) {
+    AppTheme(darkTheme = AppState.isDarkMode) {
+        Row {
+            NavRail()
             Column {
                 TabBar()
-                DisplayScreen()
+                when (AppState.screen) {
+                    AppState.Screen.SETTINGS -> SettingsScreen()
+                    AppState.Screen.DATA_VIEW -> DisplayScreen(Client.getWidgetsOnTab(AppState.currentTab))
+                }
             }
-        } else {
-            DisconnectedScreen()
         }
     }
 }

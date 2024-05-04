@@ -1,9 +1,5 @@
 package io
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -17,6 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.team9432.lib.dashboard.server.sendable.Sendable
+import ui.AppState
 
 object Ktor {
     /** The [HttpClient] instance used by the dashboard. */
@@ -28,13 +25,6 @@ object Ktor {
             json()
         }
     }
-
-    /** Whether the dashboard is currently connected to the robot. */
-    var connected by mutableStateOf(false)
-        private set
-
-    /** The number of seconds until the dashboard attempts to connect to the robot again. */
-    var reconnectCountdown by mutableIntStateOf(0)
 
     private var session: DefaultClientWebSocketSession? = null
 
@@ -56,7 +46,7 @@ object Ktor {
 
             // Connect to the websocket
             val session = connectToWebsocket()
-            connected = true
+            AppState.connected = true
             this@Ktor.session = session
 
             // Receive and process information
@@ -69,7 +59,7 @@ object Ktor {
                 println("Error while receiving: ${e.message}")
             }
 
-            connected = false
+            AppState.connected = false
             this@Ktor.session = null
         }
     }
@@ -90,7 +80,7 @@ object Ktor {
 
                 println("Connection failed, retrying in $delayTime seconds.")
 
-                runReconnectCountdown(delayTime)
+                delay(delayTime * 1000L)
             }
         }
     }
@@ -111,18 +101,8 @@ object Ktor {
 
                 println("Connection failed, retrying in $delayTime seconds.")
 
-                runReconnectCountdown(delayTime)
+                delay(delayTime * 1000L)
             }
         }
-    }
-
-    /** Runs a countdown for the given number of seconds. Also updates [reconnectCountdown] so it is displayed on the disconnected page. */
-    private suspend fun runReconnectCountdown(delayTime: Int) {
-        reconnectCountdown = delayTime
-
-        do {
-            reconnectCountdown -= 1
-            delay(1000)
-        } while (reconnectCountdown > 0)
     }
 }

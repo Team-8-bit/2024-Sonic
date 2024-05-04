@@ -38,4 +38,9 @@ object Client {
     private fun removeTab(name: String) {
         currentTabs.remove(name)
     }
+
+    /** Gets the widgets that should be displayed on the given tab. */
+    fun getWidgetsOnTab(index: Int): List<TabWidget> {
+        return currentTabs.values.firstOrNull { it.index == index }?.data ?: emptyList()
+    }
 }

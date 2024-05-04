@@ -1,4 +1,4 @@
-package ui
+package ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Surface
@@ -27,12 +27,12 @@ private var numberOfRows = 6 // Y
 var widgetAreaY by mutableFloatStateOf(0F)
 var widgetAreaX by mutableFloatStateOf(0F)
 
-/** Displays the widget layout from the robot. */
+/** Displays the given widgets. */
 @Composable
-fun DisplayScreen() {
+fun DisplayScreen(widgets: List<TabWidget>) {
     Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize().onGloballyPositioned { widgetAreaY = it.size.height.toFloat(); widgetAreaX = it.size.width.toFloat() }) {
-            Client.currentTabs.values.first { it.index == currentTabIndex }.data.forEach { widgetData -> Widget(widgetData) }
+            widgets.forEach { widgetData -> Widget(widgetData) }
         }
     }
 }
