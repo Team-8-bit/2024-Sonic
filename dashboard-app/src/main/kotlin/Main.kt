@@ -1,7 +1,5 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material3.ButtonColor
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,15 +15,14 @@ import kotlinx.coroutines.runBlocking
 import ui.DisconnectedScreen
 import ui.DisplayScreen
 import ui.TabBar
-import ui.theme.darkScheme
-import ui.theme.lightScheme
+import ui.theme.AppTheme
 
 var isDark by mutableStateOf(true)
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme(colors = if (isDark) darkScheme else lightScheme) {
+    AppTheme(darkTheme = isDark) {
         // Either display the dashboard or wait for connection
         if (Ktor.connected) {
             Column {
