@@ -68,6 +68,7 @@ dependencies {
 
     implementation("org.team9432.dashboard:dashboard-lib")
     implementation("org.team9432.dashboard:dashboard-shared")
+    implementation("org.team9432.lib:robot-lib")
 
 
     wpi.java.deps.wpilib().forEach { implementation(it) }

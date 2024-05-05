@@ -38,4 +38,5 @@ props.setProperty("org.gradle.internal.native.headers.unresolved.dependencies.ig
 
 rootProject.name = "lib"
 
+include(":robot-lib")
 include(":annotation")
