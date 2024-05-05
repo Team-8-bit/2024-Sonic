@@ -1,4 +1,4 @@
-package org.team9432.lib.dashboard.server.sendable
+package org.team9432.dashboard.shared
 
 import kotlinx.serialization.Serializable
 

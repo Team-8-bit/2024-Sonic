@@ -1,7 +1,7 @@
 package io
 
 import androidx.compose.runtime.mutableStateMapOf
-import org.team9432.lib.dashboard.server.sendable.*
+import org.team9432.dashboard.shared.*
 
 /** The interface between the app and the networking code. Also tracks the current state of all widgets and tabs. */
 object Client {

@@ -1,10 +1,10 @@
 package org.team9432.lib.dashboard.delegates
 
+import org.team9432.dashboard.shared.BooleanWidget
+import org.team9432.dashboard.shared.DoubleWidget
+import org.team9432.dashboard.shared.StringWidget
+import org.team9432.dashboard.shared.WidgetData
 import org.team9432.lib.dashboard.Dashboard
-import org.team9432.lib.dashboard.server.sendable.BooleanWidget
-import org.team9432.lib.dashboard.server.sendable.DoubleWidget
-import org.team9432.lib.dashboard.server.sendable.StringWidget
-import org.team9432.lib.dashboard.server.sendable.WidgetData
 import kotlin.reflect.KProperty
 
 fun stringDashboardWidget(title: String, initialValue: String, allowDashboardEdit: Boolean = false) =

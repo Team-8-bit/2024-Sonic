@@ -63,10 +63,11 @@ wpi.java.debugJni = false
 def includeDesktopSupport = false
 
 dependencies {
-    implementation implementation(project(':annotation'))
-    ksp ksp(project(':annotation'))
+    implementation(project(':annotation'))
+    ksp(project(':annotation'))
 
-    implementation implementation(project(':dashboard-lib'))
+    implementation(project(":dashboard-shared"))
+    implementation(project(':dashboard-lib'))
 
 
     wpi.java.deps.wpilib().forEach { implementation(it) }

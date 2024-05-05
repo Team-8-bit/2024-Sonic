@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.Client
-import org.team9432.lib.dashboard.server.sendable.BooleanWidget
+import org.team9432.dashboard.shared.BooleanWidget
 
 /** Boolean displayed as a toggleable switch. */
 @Composable

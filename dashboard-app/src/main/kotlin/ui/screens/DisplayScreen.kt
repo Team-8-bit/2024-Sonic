@@ -11,10 +11,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import io.Client
-import org.team9432.lib.dashboard.server.sendable.BooleanWidget
-import org.team9432.lib.dashboard.server.sendable.DoubleWidget
-import org.team9432.lib.dashboard.server.sendable.StringWidget
-import org.team9432.lib.dashboard.server.sendable.TabWidget
+import org.team9432.dashboard.shared.BooleanWidget
+import org.team9432.dashboard.shared.DoubleWidget
+import org.team9432.dashboard.shared.StringWidget
+import org.team9432.dashboard.shared.TabWidget
 import ui.TabBar
 import ui.widgets.ImmutableBooleanWidget
 import ui.widgets.MutableBooleanWidget

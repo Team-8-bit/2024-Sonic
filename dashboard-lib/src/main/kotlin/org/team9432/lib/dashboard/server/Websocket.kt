@@ -7,8 +7,8 @@ import io.ktor.server.websocket.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import org.team9432.dashboard.shared.Sendable
 import org.team9432.lib.dashboard.Dashboard
-import org.team9432.lib.dashboard.server.sendable.Sendable
 import java.util.*
 
 internal object Websocket {

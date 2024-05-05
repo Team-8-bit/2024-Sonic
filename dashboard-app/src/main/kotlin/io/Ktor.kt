@@ -9,7 +9,7 @@ import io.ktor.serialization.kotlinx.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
-import org.team9432.lib.dashboard.server.sendable.Sendable
+import org.team9432.dashboard.shared.Sendable
 import ui.AppState
 
 object Ktor {

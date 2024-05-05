@@ -9,6 +9,7 @@ plugins {
 group = "org.team9432.lib.dashboard"
 
 dependencies {
+    implementation(project(":dashboard-shared"))
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")

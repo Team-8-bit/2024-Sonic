@@ -1,7 +1,7 @@
 package org.team9432.lib.dashboard.layout
 
-import org.team9432.lib.dashboard.server.sendable.Tab
-import org.team9432.lib.dashboard.server.sendable.TabWidget
+import org.team9432.dashboard.shared.Tab
+import org.team9432.dashboard.shared.TabWidget
 
 class DashboardTab(rows: Int, cols: Int, val index: Int, val name: String = "Unnamed") {
     private data class Coordinate(val row: Int, val col: Int)

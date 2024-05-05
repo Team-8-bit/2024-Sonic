@@ -25,6 +25,7 @@ dependencies {
     implementation(compose.material3)
     implementation(compose.materialIconsExtended)
 
+    implementation(project(":dashboard-shared"))
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-websockets:$ktorVersion")

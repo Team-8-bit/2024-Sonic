@@ -2,8 +2,8 @@ package org.team9432.lib.dashboard
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
+import org.team9432.dashboard.shared.*
 import org.team9432.lib.dashboard.server.Server
-import org.team9432.lib.dashboard.server.sendable.*
 import kotlin.coroutines.CoroutineContext
 
 object Dashboard {
