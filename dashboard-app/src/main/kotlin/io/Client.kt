@@ -17,6 +17,8 @@ object Client {
         }
     }
 
+    /** Forces the current connection to restart. */
+    fun reconnect() = Ktor.reconnect()
 
     /* -------- Widgets -------- */
 

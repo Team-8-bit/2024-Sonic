@@ -7,10 +7,7 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
 import org.team9432.lib.dashboard.server.sendable.Sendable
 import ui.AppState
@@ -33,6 +30,8 @@ object Ktor {
         coroutineScope.launch { session?.sendSerialized(sendable) }
     }
 
+    private var currentJob: Job? = null
+
     private lateinit var coroutineScope: CoroutineScope
 
     /** Starts and runs the client, must be called before anything else. */
@@ -40,28 +39,37 @@ object Ktor {
         coroutineScope = this
 
         while (true) {
-            // Get the current state of everything from the robot code
-            val initialData = getInitialData()
-            initialData.forEach { Client.processInformation(it) }
+            currentJob = launch {
+                // Get the current state of everything from the robot code
+                val initialData = getInitialData()
+                initialData.forEach { Client.processInformation(it) }
 
-            // Connect to the websocket
-            val session = connectToWebsocket()
-            AppState.connected = true
-            this@Ktor.session = session
+                // Connect to the websocket
+                val session = connectToWebsocket()
+                AppState.connected = true
+                this@Ktor.session = session
 
-            // Receive and process information
-            try {
-                while (true) {
-                    val sendable = session.receiveDeserialized<Sendable>()
-                    Client.processInformation(sendable)
+                // Receive and process information
+                try {
+                    while (true) {
+                        val sendable = session.receiveDeserialized<Sendable>()
+                        Client.processInformation(sendable)
+                    }
+                } catch (e: Exception) {
+                    println("Error while receiving: ${e.message}")
                 }
-            } catch (e: Exception) {
-                println("Error while receiving: ${e.message}")
+
+                AppState.connected = false
+                this@Ktor.session = null
             }
 
-            AppState.connected = false
-            this@Ktor.session = null
+            currentJob?.join()
         }
+    }
+
+    /** Forces the current connection to restart. */
+    fun reconnect() {
+        currentJob?.cancel()
     }
 
     /** Gets the page of initial information from the robot. */
@@ -69,8 +77,10 @@ object Ktor {
         var reconnectAttempt = 0
         while (true) {
             try {
+                val ip = Config.getRobotIP()
+                val port = Config.getRobotPort()
                 // Attempt to get the page
-                return client.get("http://localhost:8080/currentstate").body()
+                return client.get("http://$ip:$port/currentstate").body()
             } catch (e: Exception) { // If it didn't work, wait a bit and try again
                 println("Error while getting initial data: ${e.message}")
 
@@ -90,8 +100,10 @@ object Ktor {
         var reconnectAttempt = 0
         while (true) {
             try {
+                val ip = Config.getRobotIP()
+                val port = Config.getRobotPort()
                 // Attempt to connect
-                return client.webSocketSession(host = "localhost", port = 8080, path = "/socket")
+                return client.webSocketSession(host = ip, port = port.toInt(), path = "/socket")
             } catch (e: Exception) { // If it didn't work, wait a bit and try again
                 println("Error while connecting: ${e.message}")
 

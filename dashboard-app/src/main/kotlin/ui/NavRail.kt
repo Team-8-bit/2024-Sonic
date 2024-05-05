@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun NavRail() {
-    NavigationRail {
+    NavigationRail(containerColor = MaterialTheme.colorScheme.surfaceVariant) {
         NavigationRailItem(
             icon = { Icon(Icons.Default.Analytics, contentDescription = "View Data") },
             selected = AppState.screen == AppState.Screen.DATA_VIEW,

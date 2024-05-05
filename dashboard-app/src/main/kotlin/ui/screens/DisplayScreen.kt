@@ -15,7 +15,7 @@ import org.team9432.lib.dashboard.server.sendable.BooleanWidget
 import org.team9432.lib.dashboard.server.sendable.DoubleWidget
 import org.team9432.lib.dashboard.server.sendable.StringWidget
 import org.team9432.lib.dashboard.server.sendable.TabWidget
-import ui.widgets.BooleanWidget
+import ui.TabBar
 import ui.widgets.TextWidget
 import ui.widgets.WidgetBase
 
@@ -30,9 +30,12 @@ var widgetAreaX by mutableFloatStateOf(0F)
 /** Displays the given widgets. */
 @Composable
 fun DisplayScreen(widgets: List<TabWidget>) {
-    Surface(Modifier.fillMaxSize()) {
-        Box(Modifier.fillMaxSize().onGloballyPositioned { widgetAreaY = it.size.height.toFloat(); widgetAreaX = it.size.width.toFloat() }) {
-            widgets.forEach { widgetData -> Widget(widgetData) }
+    Column {
+        TabBar()
+        Surface(Modifier.fillMaxSize()) {
+            Box(Modifier.fillMaxSize().onGloballyPositioned { widgetAreaY = it.size.height.toFloat(); widgetAreaX = it.size.width.toFloat() }) {
+                widgets.forEach { widgetData -> Widget(widgetData) }
+            }
         }
     }
 }
