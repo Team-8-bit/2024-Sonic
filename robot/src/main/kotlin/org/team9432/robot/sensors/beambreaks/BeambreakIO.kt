@@ -1,6 +1,6 @@
 package org.team9432.robot.sensors.beambreaks
 
-import org.team9432.lib.annotation.Logged
+import org.team9432.annotation.Logged
 
 interface BeambreakIO {
     @Logged

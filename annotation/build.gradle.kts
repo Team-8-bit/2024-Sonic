@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm")
 }
 
-group = "org.team9432.lib.annotation"
+group = "org.team9432.annotation"
 
 dependencies {
     implementation("com.squareup:kotlinpoet:1.14.2")

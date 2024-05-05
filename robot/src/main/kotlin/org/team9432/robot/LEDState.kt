@@ -3,14 +3,14 @@ package org.team9432.robot
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
 import org.team9432.Robot
+import org.team9432.dashboard.lib.delegates.booleanDashboardWidget
+import org.team9432.dashboard.lib.delegates.stringDashboardWidget
 import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.coroutines.repeat
 import org.team9432.lib.coroutines.runParallel
 import org.team9432.lib.coroutines.runSequential
 import org.team9432.lib.coroutines.wait
-import org.team9432.lib.dashboard.delegates.booleanDashboardWidget
-import org.team9432.lib.dashboard.delegates.stringDashboardWidget
 import org.team9432.lib.led.animations.*
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.color.predefined.*

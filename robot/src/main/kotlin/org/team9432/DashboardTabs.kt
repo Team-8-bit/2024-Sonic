@@ -1,7 +1,7 @@
 package org.team9432
 
-import org.team9432.lib.dashboard.Dashboard
-import org.team9432.lib.dashboard.layout.DashboardTab
+import org.team9432.dashboard.lib.Dashboard
+import org.team9432.dashboard.lib.layout.DashboardTab
 
 object DashboardTabs {
     private val testing = DashboardTab(rows = 6, cols = 10, 0, "Testing")
