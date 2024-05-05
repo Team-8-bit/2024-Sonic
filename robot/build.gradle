@@ -66,8 +66,8 @@ dependencies {
     implementation(project(':annotation'))
     ksp(project(':annotation'))
 
-    implementation(project(":dashboard-shared"))
-    implementation(project(':dashboard-lib'))
+    implementation("org.team9432.dashboard:dashboard-lib")
+    implementation("org.team9432.dashboard:dashboard-shared")
 
 
     wpi.java.deps.wpilib().forEach { implementation(it) }

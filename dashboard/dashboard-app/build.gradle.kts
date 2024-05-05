@@ -8,7 +8,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
-group = "org.team9432.dashboard.app"
+group = "org.team9432.dashboard"
 
 repositories {
     mavenCentral()

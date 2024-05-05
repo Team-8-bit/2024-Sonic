@@ -6,7 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
-group = "org.team9432.dashboard.lib"
+group = "org.team9432.dashboard"
 
 dependencies {
     implementation(project(":dashboard-shared"))

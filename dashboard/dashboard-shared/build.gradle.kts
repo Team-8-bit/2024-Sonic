@@ -6,7 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
-group = "org.team9432.dashboard.shared"
+group = "org.team9432.dashboard"
 
 dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
@@ -15,7 +15,6 @@ dependencies {
 repositories {
     mavenCentral()
 }
-
 
 sourceSets.main {
     java.srcDirs("src/main/kotlin")

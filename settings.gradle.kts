@@ -4,14 +4,10 @@ pluginManagement {
     val kotlinVersion: String by settings
     val kspVersion: String by settings
     val frcYear: String by settings
-    val composeVersion: String by settings
-    val kotlinxSerializationVersion: String by settings
 
     plugins {
         id("com.google.devtools.ksp") version kspVersion
         kotlin("jvm") version kotlinVersion
-        id("org.jetbrains.compose") version composeVersion
-        id("org.jetbrains.kotlin.plugin.serialization") version kotlinxSerializationVersion
     }
 
     repositories {
@@ -42,8 +38,6 @@ props.setProperty("org.gradle.internal.native.headers.unresolved.dependencies.ig
 
 rootProject.name = "2024-Sonic"
 
+includeBuild("dashboard")
 include(":robot")
 include(":annotation")
-include(":dashboard-lib")
-include(":dashboard-app")
-include(":dashboard-shared")
