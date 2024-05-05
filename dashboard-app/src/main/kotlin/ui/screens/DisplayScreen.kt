@@ -16,6 +16,8 @@ import org.team9432.lib.dashboard.server.sendable.DoubleWidget
 import org.team9432.lib.dashboard.server.sendable.StringWidget
 import org.team9432.lib.dashboard.server.sendable.TabWidget
 import ui.TabBar
+import ui.widgets.ImmutableBooleanWidget
+import ui.widgets.MutableBooleanWidget
 import ui.widgets.TextWidget
 import ui.widgets.WidgetBase
 
@@ -63,7 +65,14 @@ fun Widget(data: TabWidget) {
 fun display(name: String) {
     when (val value = Client.getWidgetData(name)) {
         is StringWidget -> TextWidget(value.name, value.value)
-        is BooleanWidget -> BooleanWidget(value.name, value.value, enabled = value.allowDashboardEdit)
+        is BooleanWidget -> {
+            if (value.allowDashboardEdit) {
+                MutableBooleanWidget(value.name, value.value)
+            } else {
+                ImmutableBooleanWidget(value.name, value.value)
+            }
+        }
+
         is DoubleWidget -> TextWidget(value.name, value.value.toString())
 
         null -> TextWidget(name, "missing value")
