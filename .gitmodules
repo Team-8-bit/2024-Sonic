@@ -1,0 +1,3 @@
+[submodule "dashboard"]
+	path = dashboard
+	url = https://github.com/Team-8-bit/dashboard
