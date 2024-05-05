@@ -11,7 +11,7 @@
         <module name="2024-Sonic.robot.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="11">
+    <bytecodeTargetLevel target="1.6">
       <module name="robotbase" target="17" />
       <module name="robotbase.main" target="17" />
       <module name="robotbase.test" target="17" />
