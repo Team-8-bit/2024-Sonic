@@ -6,14 +6,7 @@ plugins {
     id("edu.wpi.first.GradleRIO").version("2024.2.1")
     id("org.jetbrains.kotlin.jvm").version("1.9.21")
     id("com.peterabeles.gversion").version("1.10")
-    id("com.google.devtools.ksp")
-}
-
-def javaVersion = JavaVersion.VERSION_17
-
-java {
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
+    id("com.google.devtools.ksp").version("1.9.21-1.0.15")
 }
 
 def ROBOT_MAIN_CLASS = "org.team9432.Main"
@@ -70,8 +63,13 @@ wpi.java.debugJni = false
 def includeDesktopSupport = false
 
 dependencies {
-    implementation implementation(project(':annotation'))
-    ksp ksp(project(':annotation'))
+    implementation("org.team9432.lib:annotation")
+    ksp("org.team9432.lib:annotation")
+
+    implementation("org.team9432.dashboard:dashboard-lib")
+    implementation("org.team9432.dashboard:dashboard-shared")
+    implementation("org.team9432.lib:robot-lib")
+
 
     wpi.java.deps.wpilib().forEach { implementation(it) }
     wpi.java.vendor.java().forEach { implementation(it) }

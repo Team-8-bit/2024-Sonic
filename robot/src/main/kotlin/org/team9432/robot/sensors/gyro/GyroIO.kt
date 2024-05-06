@@ -1,7 +1,7 @@
 package org.team9432.robot.sensors.gyro
 
 import edu.wpi.first.math.geometry.Rotation2d
-import org.team9432.lib.annotation.Logged
+import org.team9432.annotation.Logged
 
 interface GyroIO {
     @Logged

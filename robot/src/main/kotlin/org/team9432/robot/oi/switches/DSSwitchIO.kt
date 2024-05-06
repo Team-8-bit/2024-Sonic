@@ -1,6 +1,6 @@
 package org.team9432.robot.oi.switches
 
-import org.team9432.lib.annotation.Logged
+import org.team9432.annotation.Logged
 
 interface DSSwitchIO {
     @Logged

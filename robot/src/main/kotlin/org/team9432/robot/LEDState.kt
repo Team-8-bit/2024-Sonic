@@ -3,6 +3,9 @@ package org.team9432.robot
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
 import org.team9432.Robot
+import org.team9432.dashboard.lib.delegates.immutableBooleanDashboardWidget
+import org.team9432.dashboard.lib.delegates.immutableStringDashboardWidget
+import org.team9432.dashboard.lib.delegates.mutableBooleanDashboardWidget
 import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.coroutines.repeat
@@ -57,7 +60,7 @@ object LEDState: KPeriodic() {
     /* -------- Animation States -------- */
 
     private val animationScope = AnimationBindScope.build {
-        If({ testEmergencySwitchActive }) {
+        If({ ledTest }) {
             setAnimation(
                 runParallel(
                     speakerLeft.solid(Color.Green),
@@ -153,6 +156,7 @@ object LEDState: KPeriodic() {
 
     /* -------- States -------- */
 
+    private var allianceDashboard by immutableStringDashboardWidget("Alliance", "Unknown")
     private var alliance: Alliance? = null
 
     private var noteInIntake = false
@@ -164,9 +168,11 @@ object LEDState: KPeriodic() {
     var speakerShooterReady = false
     var ampShooterReady = false
 
-    private var driverstationDisabled = false
-    private var driverstationAutonomous = false
-    private var driverstationTeleop = false
+    private var driverstationDisabled by immutableBooleanDashboardWidget("Disabled", false)
+    private var driverstationAutonomous by immutableBooleanDashboardWidget("Autonomous", false)
+    private var driverstationTeleop by immutableBooleanDashboardWidget("Teleop", false)
+
+    private var ledTest by mutableBooleanDashboardWidget("LEDTest", false)
 
     var noteIndicatorLights = false
 
@@ -179,6 +185,8 @@ object LEDState: KPeriodic() {
         driverstationAutonomous = DriverStation.isAutonomousEnabled()
         driverstationTeleop = DriverStation.isTeleopEnabled()
         alliance = State.alliance
+        allianceDashboard = alliance.toString()
+
         inSpeakerRange = (RobotPosition.distanceToSpeaker() < 3.0.meters) && noteInIntake
 
         animationScope.update()
