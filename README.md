@@ -3,17 +3,11 @@
 ---
 _Code for Team 8-Bit's 2024 robot, Sonic._
 
-## Directory Functions
+## Directories
 
-- [`annotation/`](annotation/src/main/kotlin/org/team9432/lib/annotation) Contains a custom annotation processor to
-  replace AdvantageKit's @AutoLog for Kotlin.
-- [`robot/`](robot/src/main/kotlin/org/team9432) Contains all other robot code.
-
-## Notable Packages
-
-- [`org.team9432.robot`](robot/src/main/kotlin/org/team9432/robot) 2024 robot code.
-- [`org.team9432.lib`](robot/src/main/kotlin/org/team9432/lib) Library code that can be used between seasons.
-- [`org.team9432.lib.led`](robot/src/main/kotlin/org/team9432/lib/led) Custom led control library.
+- [`lib/`](lib) Robot code library.
+- [`dashboard/`](dashboard) Robot dashboard.
+- [`robot/`](robot/src/main/kotlin/org/team9432) 2024 robot code.
 
 ## Inspiration
 
