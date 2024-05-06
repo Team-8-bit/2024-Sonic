@@ -3,11 +3,13 @@
 ---
 _Code for Team 8-Bit's 2024 robot, Sonic._
 
-## Directories
-
-- [`lib/`](lib) Robot code library.
-- [`dashboard/`](dashboard) Robot dashboard.
+## Projects
 - [`robot/`](robot/src/main/kotlin/org/team9432) 2024 robot code.
+
+Uses these additional projects as git submodules:
+- [`lib/`](https://github.com/Team-8-bit/robot-lib) Robot code library.
+- [`dashboard/`](https://github.com/Team-8-bit/dashboard) Robot dashboard.
+
 
 ## Inspiration
 
