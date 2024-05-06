@@ -12,6 +12,9 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.6">
+      <module name="dashboard" target="11" />
+      <module name="dashboard.main" target="11" />
+      <module name="dashboard.test" target="11" />
       <module name="lib.lib.main" target="11" />
       <module name="lib.lib.test" target="11" />
       <module name="robotbase" target="17" />
