@@ -11,7 +11,8 @@ import org.littletonrobotics.junction.networktables.NT4Publisher
 import org.littletonrobotics.junction.wpilog.WPILOGReader
 import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.dashboard.lib.Dashboard
-import org.team9432.dashboard.lib.delegates.immutableDoubleDashboardWidget
+import org.team9432.dashboard.lib.delegates.readableDoubleDashboardWidget
+import org.team9432.dashboard.lib.delegates.writableStringDashboardWidget
 import org.team9432.lib.State
 import org.team9432.lib.coroutines.RIODispatcher
 import org.team9432.lib.coroutines.delay
@@ -49,13 +50,15 @@ object Init {
         DashboardTabs.sendToDashboard()
 
         RobotBase.coroutineScope.launch {
-            var count by immutableDoubleDashboardWidget("count", 0.0)
+            var count by readableDoubleDashboardWidget("count", 0.0)
 
             while (isActive) {
                 delay(1.seconds)
                 count++
             }
         }
+
+        val string by writableStringDashboardWidget("StringValue", "Initial") { println("Changed to $it") }
 
         AnimationManager
         LEDState
