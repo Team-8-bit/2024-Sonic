@@ -16,6 +16,7 @@ object DashboardTabs {
         testing.addWidget(row = 1, col = 1, "Alliance", WidgetType.ReadableString, colsSpanned = 2)
         testing.addWidget(row = 0, col = 1, "LEDTest", WidgetType.WritableBoolean, colsSpanned = 2)
         testing.addWidget(row = 2, col = 1, "StringValue", WidgetType.WritableString)
+        testing.addWidget(row = 2, col = 2, "Number", WidgetType.WritableDouble)
 
         test2.addWidget(row = 5, col = 0, "Teleop", WidgetType.ReadableBoolean)
         test2.addWidget(row = 1, col = 0, "Disabled", WidgetType.ReadableBoolean)

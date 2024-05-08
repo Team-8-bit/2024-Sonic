@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader
 import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.dashboard.lib.Dashboard
 import org.team9432.dashboard.lib.delegates.readableDoubleDashboardWidget
+import org.team9432.dashboard.lib.delegates.writableDoubleDashboardWidget
 import org.team9432.dashboard.lib.delegates.writableStringDashboardWidget
 import org.team9432.lib.State
 import org.team9432.lib.coroutines.RIODispatcher
@@ -58,7 +59,8 @@ object Init {
             }
         }
 
-        val string by writableStringDashboardWidget("StringValue", "Initial") { println("Changed to $it") }
+        writableStringDashboardWidget("StringValue", "Initial") { println("Changed to $it") }
+        writableDoubleDashboardWidget("Number", 2.0) { println("Changed number to $it") }
 
         AnimationManager
         LEDState
