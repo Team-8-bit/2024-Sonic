@@ -11,9 +11,11 @@ import org.littletonrobotics.junction.networktables.NT4Publisher
 import org.littletonrobotics.junction.wpilog.WPILOGReader
 import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.dashboard.lib.Dashboard
-import org.team9432.dashboard.lib.delegates.readableDoubleDashboardWidget
-import org.team9432.dashboard.lib.delegates.writableDoubleDashboardWidget
-import org.team9432.dashboard.lib.delegates.writableStringDashboardWidget
+import org.team9432.dashboard.lib.widgets.dashboardButton
+import org.team9432.dashboard.lib.widgets.dashboardDropdown
+import org.team9432.dashboard.lib.widgets.delegates.readableDashboardDouble
+import org.team9432.dashboard.lib.widgets.delegates.writableDashboardDouble
+import org.team9432.dashboard.lib.widgets.delegates.writableDashboardString
 import org.team9432.lib.State
 import org.team9432.lib.coroutines.RIODispatcher
 import org.team9432.lib.coroutines.delay
@@ -49,7 +51,7 @@ object Init {
         }
 
         RobotBase.coroutineScope.launch {
-            var count by readableDoubleDashboardWidget("count", 0.0, row = 0, col = 2, rowsSpanned = 2, tab = "Testing")
+            var count by readableDashboardDouble("count", 0.0, row = 0, col = 2, rowsSpanned = 2, tab = "Testing")
 
             DashboardTabs.sendToDashboard()
 
@@ -59,12 +61,12 @@ object Init {
             }
         }
 
-        writableStringDashboardWidget("StringValue", "Initial", row = 2, col = 1, tab = "Testing") { println("Changed to $it") }
-        writableDoubleDashboardWidget("Number", 2.0, row = 2, col = 2, tab = "Testing") { println("Changed number to $it") }
+        writableDashboardString("StringValue", "Initial", row = 2, col = 1, tab = "Testing") { println("Changed to $it") }
+        writableDashboardDouble("Number", 2.0, row = 2, col = 2, tab = "Testing") { println("Changed number to $it") }
 
-        Dashboard.registerButton("Test Button", row = 3, col = 0, tab = "Testing") { println("button was pressed!") }
+        dashboardButton("Test Button", row = 3, col = 0, tab = "Testing") { println("button was pressed!") }
 
-        Dashboard.registerDropdown("Dropdown", listOf("option one", "two", "three!"), row = 3, col = 1, tab = "Testing", colsSpanned = 2) { println("$it was selected!") }
+        dashboardDropdown("Dropdown", listOf("option one", "two", "three!"), row = 3, col = 1, tab = "Testing", colsSpanned = 2) { println("$it was selected!") }
 
         AnimationManager
         LEDState

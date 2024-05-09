@@ -3,9 +3,9 @@ package org.team9432.robot
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
 import org.team9432.Robot
-import org.team9432.dashboard.lib.delegates.readableBooleanDashboardWidget
-import org.team9432.dashboard.lib.delegates.readableStringDashboardWidget
-import org.team9432.dashboard.lib.delegates.writableBooleanDashboardWidget
+import org.team9432.dashboard.lib.widgets.delegates.readableDashboardBoolean
+import org.team9432.dashboard.lib.widgets.delegates.readableDashboardString
+import org.team9432.dashboard.lib.widgets.delegates.writableDashboardBoolean
 import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.coroutines.repeat
@@ -156,7 +156,7 @@ object LEDState: KPeriodic() {
 
     /* -------- States -------- */
 
-    private var allianceDashboard by readableStringDashboardWidget("Alliance", "Unknown", row = 1, col = 1, tab = "Testing")
+    private var allianceDashboard by readableDashboardString("Alliance", "Unknown", row = 1, col = 1, tab = "Testing")
     private var alliance: Alliance? = null
 
     private var noteInIntake = false
@@ -168,11 +168,11 @@ object LEDState: KPeriodic() {
     var speakerShooterReady = false
     var ampShooterReady = false
 
-    private var driverstationDisabled by readableBooleanDashboardWidget("Disabled", false, row = 1, col = 0, tab = "Testing")
-    private var driverstationAutonomous by readableBooleanDashboardWidget("Autonomous", false, row = 2, col = 0, tab = "Testing")
-    private var driverstationTeleop by readableBooleanDashboardWidget("Teleop", false, row = 0, col = 0, tab = "Testing")
+    private var driverstationDisabled by readableDashboardBoolean("Disabled", false, row = 1, col = 0, tab = "Testing")
+    private var driverstationAutonomous by readableDashboardBoolean("Autonomous", false, row = 2, col = 0, tab = "Testing")
+    private var driverstationTeleop by readableDashboardBoolean("Teleop", false, row = 0, col = 0, tab = "Testing")
 
-    private var ledTest by writableBooleanDashboardWidget("LEDTest", false, row = 0, col = 1, tab = "Testing")
+    private var ledTest by writableDashboardBoolean("LEDTest", false, row = 0, col = 1, tab = "Testing")
 
     var noteIndicatorLights = false
 
