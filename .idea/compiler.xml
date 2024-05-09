@@ -12,12 +12,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.6">
-      <module name="2024-Sonic.robot" target="11" />
-      <module name="2024-Sonic.robot.main" target="11" />
-      <module name="2024-Sonic.robot.test" target="11" />
-      <module name="dashboard" target="11" />
-      <module name="dashboard.main" target="11" />
-      <module name="dashboard.test" target="11" />
       <module name="lib.lib.main" target="11" />
       <module name="lib.lib.test" target="11" />
       <module name="robotbase" target="17" />

@@ -3,9 +3,9 @@ package org.team9432.robot
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
 import org.team9432.Robot
-import org.team9432.dashboard.lib.delegates.immutableBooleanDashboardWidget
-import org.team9432.dashboard.lib.delegates.immutableStringDashboardWidget
-import org.team9432.dashboard.lib.delegates.mutableBooleanDashboardWidget
+import org.team9432.dashboard.lib.delegates.readableBooleanDashboardWidget
+import org.team9432.dashboard.lib.delegates.readableStringDashboardWidget
+import org.team9432.dashboard.lib.delegates.writableBooleanDashboardWidget
 import org.team9432.lib.State
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.lib.coroutines.repeat
@@ -156,7 +156,7 @@ object LEDState: KPeriodic() {
 
     /* -------- States -------- */
 
-    private var allianceDashboard by immutableStringDashboardWidget("Alliance", "Unknown")
+    private var allianceDashboard by readableStringDashboardWidget("Alliance", "Unknown")
     private var alliance: Alliance? = null
 
     private var noteInIntake = false
@@ -168,11 +168,11 @@ object LEDState: KPeriodic() {
     var speakerShooterReady = false
     var ampShooterReady = false
 
-    private var driverstationDisabled by immutableBooleanDashboardWidget("Disabled", false)
-    private var driverstationAutonomous by immutableBooleanDashboardWidget("Autonomous", false)
-    private var driverstationTeleop by immutableBooleanDashboardWidget("Teleop", false)
+    private var driverstationDisabled by readableBooleanDashboardWidget("Disabled", false)
+    private var driverstationAutonomous by readableBooleanDashboardWidget("Autonomous", false)
+    private var driverstationTeleop by readableBooleanDashboardWidget("Teleop", false)
 
-    private var ledTest by mutableBooleanDashboardWidget("LEDTest", false)
+    private var ledTest by writableBooleanDashboardWidget("LEDTest", false)
 
     var noteIndicatorLights = false
 
