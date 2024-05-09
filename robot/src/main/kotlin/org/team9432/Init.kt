@@ -48,10 +48,10 @@ object Init {
             Dashboard.run(RIODispatcher)
         }
 
-        DashboardTabs.sendToDashboard()
-
         RobotBase.coroutineScope.launch {
-            var count by readableDoubleDashboardWidget("count", 0.0)
+            var count by readableDoubleDashboardWidget("count", 0.0, row = 0, col = 2, rowsSpanned = 2, tab = "Testing")
+
+            DashboardTabs.sendToDashboard()
 
             while (isActive) {
                 delay(1.seconds)
@@ -59,8 +59,10 @@ object Init {
             }
         }
 
-        writableStringDashboardWidget("StringValue", "Initial") { println("Changed to $it") }
-        writableDoubleDashboardWidget("Number", 2.0) { println("Changed number to $it") }
+        writableStringDashboardWidget("StringValue", "Initial", row = 2, col = 1, tab = "Testing") { println("Changed to $it") }
+        writableDoubleDashboardWidget("Number", 2.0, row = 2, col = 2, tab = "Testing") { println("Changed number to $it") }
+
+        Dashboard.registerButton("Test Button", row = 3, col = 0, tab = "Testing", colsSpanned = 3) { println("button was pressed!") }
 
         AnimationManager
         LEDState
@@ -116,8 +118,7 @@ object Init {
             Logger.addDataReceiver(
                 WPILOGWriter(
                     LogFileUtil.addPathSuffix(
-                        logPath,
-                        "_sim"
+                        logPath, "_sim"
                     )
                 )
             ) // Save outputs to a new log

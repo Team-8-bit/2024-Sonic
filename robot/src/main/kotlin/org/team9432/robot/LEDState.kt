@@ -156,7 +156,7 @@ object LEDState: KPeriodic() {
 
     /* -------- States -------- */
 
-    private var allianceDashboard by readableStringDashboardWidget("Alliance", "Unknown")
+    private var allianceDashboard by readableStringDashboardWidget("Alliance", "Unknown", row = 1, col = 1, tab = "Testing")
     private var alliance: Alliance? = null
 
     private var noteInIntake = false
@@ -168,11 +168,11 @@ object LEDState: KPeriodic() {
     var speakerShooterReady = false
     var ampShooterReady = false
 
-    private var driverstationDisabled by readableBooleanDashboardWidget("Disabled", false)
-    private var driverstationAutonomous by readableBooleanDashboardWidget("Autonomous", false)
-    private var driverstationTeleop by readableBooleanDashboardWidget("Teleop", false)
+    private var driverstationDisabled by readableBooleanDashboardWidget("Disabled", false, row = 1, col = 0, tab = "Testing")
+    private var driverstationAutonomous by readableBooleanDashboardWidget("Autonomous", false, row = 2, col = 0, tab = "Testing")
+    private var driverstationTeleop by readableBooleanDashboardWidget("Teleop", false, row = 0, col = 0, tab = "Testing")
 
-    private var ledTest by writableBooleanDashboardWidget("LEDTest", false)
+    private var ledTest by writableBooleanDashboardWidget("LEDTest", false, row = 0, col = 1, tab = "Testing")
 
     var noteIndicatorLights = false
 
