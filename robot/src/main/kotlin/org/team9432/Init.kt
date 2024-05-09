@@ -62,7 +62,9 @@ object Init {
         writableStringDashboardWidget("StringValue", "Initial", row = 2, col = 1, tab = "Testing") { println("Changed to $it") }
         writableDoubleDashboardWidget("Number", 2.0, row = 2, col = 2, tab = "Testing") { println("Changed number to $it") }
 
-        Dashboard.registerButton("Test Button", row = 3, col = 0, tab = "Testing", colsSpanned = 3) { println("button was pressed!") }
+        Dashboard.registerButton("Test Button", row = 3, col = 0, tab = "Testing") { println("button was pressed!") }
+
+        Dashboard.registerDropdown("Dropdown", listOf("option one", "two", "three!"), row = 3, col = 1, tab = "Testing", colsSpanned = 2) { println("$it was selected!") }
 
         AnimationManager
         LEDState
