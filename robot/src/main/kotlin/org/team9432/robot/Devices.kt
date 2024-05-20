@@ -35,6 +35,9 @@ object Devices {
     // Hood
     const val HOOD_ID = 53
 
+    const val LEFT_CLIMBER = 62
+    const val RIGHT_CLIMBER = 61
+
     // Beambreaks
     const val CENTER_BEAMBREAK_PORT = 2
     const val HOPPER_AMP_SIDE_BEAMBREAK_PORT = 1

@@ -11,8 +11,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher
 import org.littletonrobotics.junction.wpilog.WPILOGReader
 import org.littletonrobotics.junction.wpilog.WPILOGWriter
 import org.team9432.dashboard.lib.Dashboard
-import org.team9432.dashboard.lib.widgets.dashboardButton
-import org.team9432.dashboard.lib.widgets.dashboardDropdown
+import org.team9432.dashboard.lib.widgets.*
 import org.team9432.dashboard.lib.widgets.delegates.readableDashboardDouble
 import org.team9432.dashboard.lib.widgets.delegates.writableDashboardDouble
 import org.team9432.dashboard.lib.widgets.delegates.writableDashboardString
@@ -64,9 +63,11 @@ object Init {
         writableDashboardString("StringValue", "Initial", row = 2, col = 1, tab = "Testing") { println("Changed to $it") }
         writableDashboardDouble("Number", 2.0, row = 2, col = 2, tab = "Testing") { println("Changed number to $it") }
 
-        dashboardButton("Test Button", row = 3, col = 0, tab = "Testing") { println("button was pressed!") }
+        DashboardButton("Test Button", row = 3, col = 0, tab = "Testing") { println("button was pressed!") }
 
-        dashboardDropdown("Dropdown", listOf("option one", "two", "three!"), row = 3, col = 1, tab = "Testing", colsSpanned = 2) { println("$it was selected!") }
+        DashboardDropdown("Dropdown", listOf("option one", "two", "three!"), row = 3, col = 1, tab = "Testing", colsSpanned = 2) { println("$it was selected!") }
+
+        ReadableDashboardBooleanList("Boolist", mapOf("one" to true, "intake" to false, "shooter" to true), row = 1, col = 3, tab = "Testing")
 
         AnimationManager
         LEDState
