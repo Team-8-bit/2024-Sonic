@@ -33,8 +33,9 @@ fun NewFourAllianceNote() = SequentialCommand(
             FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
             AutoShoot(),
             IntakeNote(AllianceNote.CENTER),
-            FinishIntakingThen(AlignToIntakeNote(AllianceNote.AMP)),
+            FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
             AutoShoot(),
+            AlignToIntakeNote(AllianceNote.AMP),
             IntakeNote(AllianceNote.AMP),
             FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
             AutoShoot()

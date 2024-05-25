@@ -33,8 +33,9 @@ fun NewFourAllianceNoteReversed() = SequentialCommand(
             FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
             AutoShoot(),
             IntakeNote(AllianceNote.CENTER),
-            FinishIntakingThen(AlignToIntakeNote(AllianceNote.STAGE)),
+            FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
             AutoShoot(),
+            AlignToIntakeNote(AllianceNote.STAGE),
             IntakeNote(AllianceNote.STAGE),
             FinishIntakingThen(DriveToPosition(AutoConstants.centerNoteIntakePose)),
             AutoShoot()
