@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Notifier
 import org.team9432.LOOP_PERIOD_SECS
 import org.team9432.lib.commandbased.KPeriodic
 import org.team9432.robot.led.animation.groups.ParallelAnimationGroup
-import org.team9432.robot.led.animation.simple.BounceToColor
+import org.team9432.robot.led.animation.simple.SlideToColor
 import org.team9432.robot.led.color.Color
 import org.team9432.robot.led.color.predefined.White
 import org.team9432.robot.led.strip.LEDStrip
@@ -51,10 +51,10 @@ object AnimationManager: KPeriodic() {
     }
 
     private val loadingAnimation = ParallelAnimationGroup(
-        Sections.SPEAKER_LEFT.BounceToColor(Color.White, runReversed = true),
-        Sections.SPEAKER_RIGHT.BounceToColor(Color.White),
-        Sections.AMP_LEFT.BounceToColor(Color.White, runReversed = true),
-        Sections.AMP_RIGHT.BounceToColor(Color.White)
+        Sections.SPEAKER_LEFT.SlideToColor(Color.White),
+        Sections.SPEAKER_RIGHT.SlideToColor(Color.White),
+        Sections.AMP_LEFT.SlideToColor(Color.White),
+        Sections.AMP_RIGHT.SlideToColor(Color.White)
     )
 
     private val thread = Notifier {
