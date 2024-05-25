@@ -25,12 +25,12 @@ import org.team9432.robot.commands.stopCommand
 import org.team9432.robot.oi.switches.DSSwitches
 import org.team9432.robot.sensors.beambreaks.BeambreakIOSim
 import org.team9432.robot.sensors.gyro.Gyro
+import org.team9432.robot.subsystems.Climbers
 import org.team9432.robot.subsystems.Superstructure
 
 object Controls {
     private val driver = KXboxController(0, squareJoysticks = true, joystickDeadband = 0.075)
     private val operator = KXboxController(1, squareJoysticks = true, joystickDeadband = 0.075)
-    private val test = KXboxController(1, squareJoysticks = true, joystickDeadband = 0.075)
 
     private val slowButton = driver.rightBumper
     private val readyToShootSpeakerButton = driver.b
@@ -97,23 +97,18 @@ object Controls {
         driver.leftTrigger
             .onTrue(
                 SuppliedCommand {
-                    if (DSSwitches.teleAutoAimDisabled) ScoreAmp(4.75)
+                    if (DSSwitches.teleAutoAimDisabled) ScoreAmp(4.5)
                     else ParallelDeadlineCommand(
                         TeleAngleDrive { Rotation2d.fromDegrees(-90.0) },
-                        deadline = ScoreAmp(4.75)
+                        deadline = ScoreAmp(4.5)
                     )
                 }
             )
 
-        test.a.onTrue(MoveToPosition(RobotState.NotePosition.AMP_INTAKE))
-        test.b.onTrue(MoveToPosition(RobotState.NotePosition.SPEAKER_INTAKE))
-        test.x.onTrue(MoveToPosition(RobotState.NotePosition.AMP_HOPPER))
-        test.y.onTrue(MoveToPosition(RobotState.NotePosition.SPEAKER_HOPPER))
-
-//        operator.rightBumper.whileTrue(Climbers.Commands.runRightVoltage(12.0))
-//        operator.leftBumper.whileTrue(Climbers.Commands.runLeftVoltage(12.0))
-//        operator.rightTrigger.whileTrue(Climbers.Commands.runRightVoltage(-12.0))
-//        operator.leftTrigger.whileTrue(Climbers.Commands.runLeftVoltage(-12.0))
+        operator.rightBumper.whileTrue(Climbers.Commands.runRightVoltage(12.0))
+        operator.leftBumper.whileTrue(Climbers.Commands.runLeftVoltage(12.0))
+        operator.rightTrigger.whileTrue(Climbers.Commands.runRightVoltage(-12.0))
+        operator.leftTrigger.whileTrue(Climbers.Commands.runLeftVoltage(-12.0))
     }
 
     fun setDriverRumble(magnitude: Double) {
