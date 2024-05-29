@@ -2,6 +2,7 @@ package org.team9432.robot
 
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.DriverStation.Alliance
+import org.team9432.DashboardTab
 import org.team9432.Robot
 import org.team9432.dashboard.lib.widgets.delegates.readableDashboardBoolean
 import org.team9432.dashboard.lib.widgets.delegates.readableDashboardString
@@ -156,7 +157,7 @@ object LEDState: KPeriodic() {
 
     /* -------- States -------- */
 
-    private var allianceDashboard by readableDashboardString("Alliance", "Unknown", row = 1, col = 1, tab = "Testing")
+    private var allianceDashboard by readableDashboardString("Alliance", "Unknown", row = 1, col = 1, tab = DashboardTab.TESTING)
     private var alliance: Alliance? = null
 
     private var noteInIntake = false
@@ -168,11 +169,11 @@ object LEDState: KPeriodic() {
     var speakerShooterReady = false
     var ampShooterReady = false
 
-    private var driverstationDisabled by readableDashboardBoolean("Disabled", false, row = 1, col = 0, tab = "Testing")
-    private var driverstationAutonomous by readableDashboardBoolean("Autonomous", false, row = 2, col = 0, tab = "Testing")
-    private var driverstationTeleop by readableDashboardBoolean("Teleop", false, row = 0, col = 0, tab = "Testing")
+    private var driverstationDisabled by readableDashboardBoolean("Disabled", false, row = 1, col = 0, tab = DashboardTab.TESTING)
+    private var driverstationAutonomous by readableDashboardBoolean("Autonomous", false, row = 2, col = 0, tab = DashboardTab.TESTING)
+    private var driverstationTeleop by readableDashboardBoolean("Teleop", false, row = 0, col = 0, tab = DashboardTab.TESTING)
 
-    private var ledTest by writableDashboardBoolean("LEDTest", false, row = 0, col = 1, tab = "Testing")
+    private var ledTest by writableDashboardBoolean("LEDTest", false, row = 1, col = 2, tab = DashboardTab.COMPETITION)
 
     var noteIndicatorLights = false
 

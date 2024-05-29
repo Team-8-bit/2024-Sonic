@@ -50,9 +50,10 @@ object Init {
         }
 
         RobotBase.coroutineScope.launch {
-            var count by readableDashboardDouble("count", 0.0, row = 0, col = 2, rowsSpanned = 2, tab = "Testing")
+            var count by readableDashboardDouble("count", 0.0, row = 0, col = 2, rowsSpanned = 2, tab = DashboardTab.TESTING)
 
-            DashboardTabs.sendToDashboard()
+            Dashboard.addTab(DashboardTab.COMPETITION, 0, rows = 4, cols = 6)
+            Dashboard.addTab(DashboardTab.TESTING, 1, rows = 4, cols = 6)
 
             while (isActive) {
                 delay(1.seconds)
@@ -60,14 +61,14 @@ object Init {
             }
         }
 
-        writableDashboardString("StringValue", "Initial", row = 2, col = 1, tab = "Testing") { println("Changed to $it") }
-        writableDashboardDouble("Number", 2.0, row = 2, col = 2, tab = "Testing") { println("Changed number to $it") }
+        writableDashboardString("StringValue", "Initial", row = 2, col = 1, tab = DashboardTab.TESTING) { println("Changed to $it") }
+        writableDashboardDouble("Number", 2.0, row = 2, col = 2, tab = DashboardTab.TESTING) { println("Changed number to $it") }
 
-        DashboardButton("Test Button", row = 3, col = 0, tab = "Testing") { println("button was pressed!") }
+        DashboardButton("Test Button", row = 3, col = 0, tab = DashboardTab.TESTING) { println("button was pressed!") }
 
-        DashboardDropdown("Dropdown", listOf("option one", "two", "three!"), row = 3, col = 1, tab = "Testing", colsSpanned = 2) { println("$it was selected!") }
+        DashboardDropdown("Dropdown", listOf("option one", "two", "three!"), row = 3, col = 1, tab = DashboardTab.TESTING, colsSpanned = 2) { println("$it was selected!") }
 
-        ReadableDashboardBooleanList("Boolist", mapOf("one" to true, "intake" to false, "shooter" to true), row = 1, col = 3, tab = "Testing")
+        ReadableDashboardBooleanList("Boolist", mapOf("one" to true, "intake" to false, "shooter" to true), row = 1, col = 3, tab = DashboardTab.TESTING)
 
         AnimationManager
         LEDState

@@ -84,7 +84,7 @@
     <remote-repository>
       <option name="id" value="frcHome" />
       <option name="name" value="frcHome" />
-      <option name="url" value="file:/$USER_HOME$/wpilib/2024/maven" />
+      <option name="url" value="file:/$PROJECT_DIR$/../wpilib/2024/maven" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="maven2" />
@@ -104,7 +104,12 @@
     <remote-repository>
       <option name="id" value="WPILocal" />
       <option name="name" value="WPILocal" />
-      <option name="url" value="file:/C:/Users/Public/wpilib/2024/maven/" />
+      <option name="url" value="file:/$PROJECT_DIR$/../../Public/wpilib/2024/maven/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="WPILocal" />
+      <option name="name" value="WPILocal" />
+      <option name="url" value="file:/$PROJECT_DIR$/../../Public/wpilib/2024/maven" />
     </remote-repository>
   </component>
 </project>
